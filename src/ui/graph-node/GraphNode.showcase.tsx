@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="relative min-h-[140px]">
           <GraphNode
-            x={10}
+            x={80}
             y={10}
             header="customer_orders"
             accent

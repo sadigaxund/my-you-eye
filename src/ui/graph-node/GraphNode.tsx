@@ -89,9 +89,9 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
       {rows && rows.length > 0 && (
         <div className="divide-y divide-border/50">
           {rows.map((row, i) => (
-            <div key={i} className="grid grid-cols-[auto_1fr] gap-x-3 px-3 py-1.5 text-xs">
-              <span className="text-muted whitespace-nowrap">{row.label}</span>
-              <span className="text-fg truncate">{row.value}</span>
+            <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-3 py-1.5 text-xs items-center">
+              <span className="text-muted truncate">{row.label}</span>
+              <span className="text-fg text-right">{row.value}</span>
             </div>
           ))}
         </div>

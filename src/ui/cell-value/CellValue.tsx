@@ -3,6 +3,7 @@ import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
 import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
+import { CodeBlock } from "../code-block";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 
 export type CellValueType =
@@ -50,11 +51,11 @@ function JsonDisplay({ value }: { value: unknown }) {
 
   return (
     <Popover>
-      <PopoverTrigger className="text-left font-mono text-xs cursor-pointer hover:text-primary transition-colors">
-        <span>{preview}</span>
+      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-[120px] inline-block truncate align-middle">
+        {preview}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="max-w-md max-h-80 overflow-auto">
-        <pre className="text-xs whitespace-pre-wrap m-0">{str}</pre>
+      <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
+        <CodeBlock code={str} />
       </PopoverContent>
     </Popover>
   );
