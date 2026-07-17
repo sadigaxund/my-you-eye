@@ -1,14 +1,14 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { fontOptions } from "../../lib/fonts";
 
-const fontClass: Record<string, string> = {
-  sans: "font-sans",
-  serif: "font-serif",
-  mono: "font-mono",
-  ubuntu: "font-ubuntu",
-  titillium: "font-titillium",
-  consolas: "font-consolas",
-  jetbrains: "font-jetbrains-nerd",
+const fontVar: Record<string, string> = {
+  sans: "--font-sans",
+  serif: "--font-serif",
+  mono: "--font-mono",
+  ubuntu: "--font-ubuntu",
+  titillium: "--font-titillium",
+  consolas: "--font-consolas",
+  jetbrains: "--font-jetbrains-nerd",
 };
 
 function Swatch({ name, color }: { name: string; color: string }) {
@@ -34,7 +34,7 @@ const entry: ShowcaseEntry = {
           {fontOptions.map((f) => (
             <div key={f.value}>
               <p className="text-xs text-muted mb-1">{f.label}</p>
-              <p className={`text-xl ${fontClass[f.value]}`}>The quick brown fox jumps over the lazy dog.</p>
+              <p className="text-xl" style={{ fontFamily: `var(${fontVar[f.value]})` }}>The quick brown fox jumps over the lazy dog.</p>
             </div>
           ))}
         </div>
