@@ -8,6 +8,7 @@ const PopoverContent = forwardRef<React.ComponentRef<typeof Content>, React.Comp
       <Content
         ref={ref}
         sideOffset={4}
+        updatePositionStrategy="always"
         className={cn(
           "z-50 w-72 rounded-ui border border-border bg-bg p-panel shadow-lg outline-none",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",

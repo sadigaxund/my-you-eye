@@ -27,6 +27,9 @@ const entry: ShowcaseEntry = {
             <TableRow><TableCell>Null</TableCell><TableCell><CellValue type="null" /></TableCell></TableRow>
             <TableRow><TableCell>Badge</TableCell><TableCell><CellValue type="badge" value="Active" badgeVariant="success" /></TableCell></TableRow>
             <TableRow><TableCell>Status</TableCell><TableCell><CellValue type="status" value="Running" statusVariant="info" statusPulse /></TableCell></TableRow>
+            <TableRow><TableCell>Image</TableCell><TableCell><CellValue type="image" value="https://picsum.photos/seed/cv/80/80" /></TableCell></TableRow>
+            <TableRow><TableCell>Audio</TableCell><TableCell><CellValue type="audio" value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" /></TableCell></TableRow>
+            <TableRow><TableCell>Tree (object)</TableCell><TableCell><CellValue type="tree" value={{ name: "Project X", active: true, score: 98.5, url: "https://example.com", tags: ["frontend", "api", "docs"], config: { timeout: 5000, retries: 3, flags: { cache: true, debug: false } } }} /></TableCell></TableRow>
           </TableBody>
         </Table>
       ),

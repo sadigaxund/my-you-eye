@@ -77,3 +77,4 @@ export { Markdown } from "./ui/markdown";
 export { ScrollArea } from "./ui/scroll-area";
 export { ConnectionLine } from "./ui/connection-line";
 export { FileDrop } from "./ui/file-drop";
+export { Image } from "./ui/image";

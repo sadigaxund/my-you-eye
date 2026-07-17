@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useEffect, useCallback } from "react";
+import { forwardRef, useRef, useCallback } from "react";
 import type { TextareaHTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
@@ -28,7 +28,7 @@ export interface TextareaProps
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, variant, invalid, autoResize, ...props }, ref) => {
+  ({ className, variant, invalid, autoResize, onChange, ...props }, ref) => {
     const internalRef = useRef<HTMLTextAreaElement | null>(null);
     const setRef = useCallback(
       (node: HTMLTextAreaElement | null) => {
@@ -39,18 +39,22 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       [ref],
     );
 
-    useEffect(() => {
-      if (!autoResize || !internalRef.current) return;
-      const el = internalRef.current;
+    const resize = useCallback((el: HTMLTextAreaElement) => {
       el.style.height = "auto";
       el.style.height = `${el.scrollHeight}px`;
-    }, [autoResize]);
+    }, []);
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (autoResize) resize(e.currentTarget);
+      onChange?.(e);
+    }, [autoResize, onChange, resize]);
 
     return (
       <textarea
         ref={setRef}
         className={cn(textareaVariants({ variant, invalid }), "min-h-[80px]", className)}
         style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
+        onChange={handleChange}
         {...props}
       />
     );

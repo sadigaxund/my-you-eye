@@ -77,6 +77,8 @@ function DraggableNode({
 
   const onUp = useCallback(() => { dragging.current = false; }, []);
 
+  const stopProp = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
+
   const pDown = useCallback((e: React.PointerEvent, ri: number, side: "left" | "right") => {
     e.stopPropagation();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -116,7 +118,8 @@ function DraggableNode({
         <div key={`${i}-${s}`} data-port={`${id}-${i}-${s}`}
           className="absolute z-20 rounded-full bg-transparent"
           style={{ left: pos.x + (s === "left" ? -PORT_HIT / 2 : NODE_WIDTH - PORT_HIT / 2), top: portY(i), width: PORT_HIT, height: PORT_HIT, cursor: "crosshair" }}
-          onPointerDown={(e) => pDown(e, i, s)} onPointerMove={(e) => pMove(e, i, s)} onPointerUp={pUp} />
+          onPointerDown={(e) => pDown(e, i, s)} onPointerMove={(e) => pMove(e, i, s)} onPointerUp={pUp}
+          onMouseDown={stopProp} />
       )))}
     </div>
   );
@@ -127,14 +130,19 @@ function CanvasDemo() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [connections, setConnections] = useState<Array<{ from: PortRef; to: PortRef }>>([]);
   const [pending, setPending] = useState<{ from: PortRef; fromPos: { x: number; y: number }; mousePos: { x: number; y: number } } | null>(null);
-  const nodes = useRef<Record<string, { x: number; y: number }>>({});
+  const [nodes, setNodes] = useState<Record<string, { x: number; y: number }>>({});
 
-  const onNodeMove = useCallback((id: string, x: number, y: number) => { nodes.current[id] = { x, y }; }, []);
+  const onNodeMove = useCallback((id: string, x: number, y: number) => {
+    setNodes(p => ({ ...p, [id]: { x, y } }));
+  }, []);
 
   const start = useCallback(({ from, mousePos }: { from: PortRef; mousePos: { x: number; y: number } }) => {
     setPending(null);
-    const fp = portCenter(from, nodes.current);
-    if (fp) setPending({ from, fromPos: fp, mousePos });
+    setNodes(p => {
+      const fp = portCenter(from, p);
+      if (fp) setPending({ from, fromPos: fp, mousePos });
+      return p;
+    });
   }, []);
 
   const move = useCallback(({ canvasX, canvasY }: { canvasX: number; canvasY: number }) => {
@@ -148,6 +156,10 @@ function CanvasDemo() {
         setConnections(c => [...c, { from: p.from, to: target }]);
       return null;
     });
+  }, []);
+
+  const deleteConn = useCallback((i: number) => {
+    setConnections(c => c.filter((_, idx) => idx !== i));
   }, []);
 
   const dc: DragCallbacks = { onPortDragStart: start, onPortDragMove: move, onPortDragEnd: end };
@@ -181,11 +193,19 @@ function CanvasDemo() {
           { label: "Status", value: "complete" },
           { label: "Duration", value: "1m 03s" },
         ]} />
-      <svg className="absolute inset-0 pointer-events-none" style={{ overflow: "visible", width: "100%", height: "100%" }}>
+      <svg className="absolute inset-0" style={{ overflow: "visible", width: "100%", height: "100%" }}>
         {connections.map((c, i) => {
-          const f = portCenter(c.from, nodes.current);
-          const t = portCenter(c.to, nodes.current);
-          return f && t ? <path key={i} d={generatePath(f, t, "bezier")} className="fill-none stroke-primary stroke-[2px]" /> : null;
+          const f = portCenter(c.from, nodes);
+          const t = portCenter(c.to, nodes);
+          if (!f || !t) return null;
+          return (
+            <g key={i}>
+              <path d={generatePath(f, t, "bezier")} fill="none" stroke="transparent" strokeWidth="12"
+                className="cursor-pointer" style={{ pointerEvents: "auto" }}
+                onContextMenu={(e) => { e.preventDefault(); deleteConn(i); }} />
+              <path d={generatePath(f, t, "bezier")} className="fill-none stroke-primary stroke-[2px] pointer-events-none" />
+            </g>
+          );
         })}
         {pending && <path d={generatePath(pending.fromPos, pending.mousePos, "bezier")}
           className="fill-none stroke-muted stroke-[2px] opacity-60" style={{ strokeDasharray: "6 3" }} />}
