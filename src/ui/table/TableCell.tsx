@@ -9,17 +9,23 @@ const cellVariants = cva("", {
       compact: "p-2 text-xs",
       normal: "p-3 text-sm",
     },
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+    },
   },
   defaultVariants: {
     density: "normal",
+    align: "left",
   },
 });
 
 export interface TableCellProps extends HTMLAttributes<HTMLTableCellElement>, VariantProps<typeof cellVariants> {}
 
 const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ className, density, ...props }, ref) => (
-    <td ref={ref} className={cn(cellVariants({ density }), className)} {...props} />
+  ({ className, density, align, ...props }, ref) => (
+    <td ref={ref} className={cn(cellVariants({ density, align }), className)} {...props} />
   ),
 );
 TableCell.displayName = "TableCell";

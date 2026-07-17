@@ -71,5 +71,6 @@ export {
   DrawerFooter,
 } from "./ui/drawer";
 export { DataList } from "./ui/data-list";
+export { DataTable } from "./ui/patterns/data-table";
 export { Slider } from "./ui/slider";
 export { Markdown } from "./ui/markdown";

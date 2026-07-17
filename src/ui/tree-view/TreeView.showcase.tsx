@@ -1,12 +1,48 @@
+import { useState } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
 import { TreeView } from ".";
 import type { TreeNode } from ".";
+
+function ControlledTreeViewDemo() {
+  const [expanded, setExpanded] = useState(new Set(["1", "2"]));
+  return (
+    <div className="max-w-xl px-2">
+      <div className="flex gap-2 mb-3">
+        <button
+          type="button"
+          onClick={() => setExpanded(new Set(["1", "1-1", "1-2", "2", "2-1"]))}
+          className="px-2 py-1 text-xs rounded-ui border border-border bg-bg cursor-pointer"
+        >
+          Expand all
+        </button>
+        <button
+          type="button"
+          onClick={() => setExpanded(new Set())}
+          className="px-2 py-1 text-xs rounded-ui border border-border bg-bg cursor-pointer"
+        >
+          Collapse all
+        </button>
+      </div>
+      <TreeView
+        data={sampleData}
+        expandedKeys={expanded}
+        onToggle={(id) => {
+          setExpanded((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+          });
+        }}
+      />
+    </div>
+  );
+}
 
 const sampleData: TreeNode[] = [
   {
     id: "1",
     label: "users",
-    defaultCollapsed: false,
     children: [
       {
         id: "1-1",
@@ -50,18 +86,22 @@ const entry: ShowcaseEntry = {
   group: "data",
   demos: [
     {
-      name: "Default & Condensed",
+      name: "Default & Condensed (depth-based expand)",
       render: () => (
         <div className="flex gap-6 max-w-2xl">
           <div className="flex-1 min-w-0 px-2">
-            <TreeView data={sampleData} />
+            <TreeView data={sampleData} defaultExpandedDepth={1} />
           </div>
           <div className="w-px bg-border shrink-0" />
           <div className="flex-1 min-w-0 px-2">
-            <TreeView data={sampleData} variant="condensed" />
+            <TreeView data={sampleData} variant="condensed" defaultExpandedDepth={2} />
           </div>
         </div>
       ),
+    },
+    {
+      name: "Controlled expand state",
+      render: () => <ControlledTreeViewDemo />,
     },
   ],
 };
