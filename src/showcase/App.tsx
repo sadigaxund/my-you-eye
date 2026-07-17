@@ -14,6 +14,7 @@ const GROUPS: ShowcaseGroup[] = [
 ];
 
 type FontMode = "sans" | "serif" | "mono";
+type ThemeProfile = "default" | "neon" | "high-contrast";
 
 const entries: ShowcaseEntry[] = Object.values(
   import.meta.glob("../ui/**/*.showcase.tsx", { eager: true }),
@@ -27,6 +28,7 @@ export default function App() {
   const [dark, setDark] = useState(false);
   const [tab, setTab] = useState<ShowcaseGroup>("inputs");
   const [font, setFont] = useState<FontMode>("sans");
+  const [theme, setTheme] = useState<ThemeProfile>("default");
 
   const toggleDark = () => {
     setDark((d) => {
@@ -35,11 +37,29 @@ export default function App() {
     });
   };
 
+  const handleThemeChange = (val: ThemeProfile) => {
+    setTheme(val);
+    if (val === "default") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.dataset.theme = val;
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-bg text-fg p-panel">
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">UI Showcase</h1>
         <div className="flex items-center gap-inline">
+          <select
+            value={theme}
+            onChange={(e) => handleThemeChange(e.target.value as ThemeProfile)}
+            className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
+          >
+            <option value="default">Default</option>
+            <option value="neon">Neon</option>
+            <option value="high-contrast">High Contrast</option>
+          </select>
           <select
             value={font}
             onChange={(e) => {
@@ -80,9 +100,9 @@ export default function App() {
         ))}
       </nav>
 
-      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 md:before:absolute md:before:left-1/2 md:before:top-0 md:before:-translate-x-px md:before:h-full md:before:w-px md:before:bg-border md:before:opacity-40">
+      <main className="columns-1 md:columns-2 xl:columns-3 gap-8 [column-rule:1px_solid_var(--color-border)]">
         {groupEntries(tab).map((entry) => (
-          <section key={entry.title}>
+          <section key={entry.title} className="break-inside-avoid mb-8 w-full">
             <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
             <div className="space-y-4">
               {entry.demos.map((demo) => (
@@ -97,7 +117,7 @@ export default function App() {
           </section>
         ))}
         {groupEntries(tab).length === 0 && (
-          <p className="text-muted text-sm col-span-full">
+          <p className="text-muted text-sm">
             No components in this group yet.
           </p>
         )}
