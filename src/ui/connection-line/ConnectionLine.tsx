@@ -13,6 +13,7 @@ const lineVariants = cva("fill-none", {
       default: "stroke-muted stroke-[2px]",
       connected: "stroke-primary stroke-[2px]",
       highlighted: "stroke-primary stroke-[2px] drop-shadow-[0_0_4px_var(--color-primary)]",
+      pending: "stroke-muted stroke-[2px] opacity-60 [stroke-dasharray:6_3]",
     },
   },
   defaultVariants: {
