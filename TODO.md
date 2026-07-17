@@ -64,9 +64,9 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 5 — App patterns
 
-- [ ] **PageShell** (pattern) — page header (title, description, actions slot) + content area. Group: `patterns`.
-- [ ] **Toolbar** (pattern) — search Input + filter slots + actions, responsive row. Group: `patterns`.
-- [ ] **StatCard** (pattern) — label + value + optional delta badge. Group: `patterns`.
+- [x] **PageShell** (pattern) — page header (title, description, actions slot) + content area. Group: `patterns`.
+- [x] **Toolbar** (pattern) — search Input + filter slots + actions, responsive row. Group: `patterns`.
+- [x] **StatCard** (pattern) — label + value + optional delta badge. Group: `patterns`.
 
 ## Phase 6 — Distribution & upkeep (when needed, not before)
 

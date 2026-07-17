@@ -43,3 +43,6 @@ export { Avatar } from "./ui/avatar";
 export { Skeleton } from "./ui/skeleton";
 export { EmptyState } from "./ui/empty-state";
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./ui/table";
+export { PageShell } from "./ui/patterns/page-shell";
+export { Toolbar } from "./ui/patterns/toolbar";
+export { StatCard } from "./ui/patterns/stat-card";
