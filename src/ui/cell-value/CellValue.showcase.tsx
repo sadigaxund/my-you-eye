@@ -51,7 +51,7 @@ const entry: ShowcaseEntry = {
             <TableRow><TableCell>Date (old)</TableCell><TableCell align="right"><CellValue type="date" value="2026-06-01" /></TableCell></TableRow>
             <TableRow><TableCell>Date (today)</TableCell><TableCell align="right"><CellValue type="date" value="2026-07-17" /></TableCell></TableRow>
             <TableRow><TableCell>Datetime</TableCell><TableCell align="right"><CellValue type="datetime" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
-            <TableRow><TableCell>Array</TableCell><TableCell><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
+            <TableRow><TableCell>Array</TableCell><TableCell align="right"><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
           </TableBody>
         </Table>
       ),

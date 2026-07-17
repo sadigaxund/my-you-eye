@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/cn";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../../table";
 import { CellValue } from "../../cell-value";
+import { ScrollArea } from "../../scroll-area";
 import type { CellValueType, UrlReplacement } from "../../cell-value";
 
 type StatusVariant = "neutral" | "success" | "warning" | "danger" | "info";
@@ -45,7 +46,7 @@ const dataTableVariants = cva("", {
 
 const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
   ({ className, columns, rows, variant, density, stickyHeader, replacements, ...props }, ref) => (
-    <div ref={ref} className={cn("w-full overflow-auto", className)} {...props}>
+    <ScrollArea ref={ref} className={cn("w-full", className)} {...props}>
       <Table variant={variant} density={density}>
         <TableHeader sticky={stickyHeader}>
           <TableRow>
@@ -76,7 +77,7 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
           ))}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   ),
 );
 DataTable.displayName = "DataTable";

@@ -10,6 +10,14 @@ function Dot({ x, y, state }: { x: number; y: number; state?: "default" | "conne
   );
 }
 
+function Label({ x, y, children }: { x: number; y: number; children: string }) {
+  return (
+    <div style={{ position: "absolute", left: x, top: y, transform: "translateX(-50%)" }} className="text-xs text-muted">
+      {children}
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "ConnectionLine",
   group: "canvas",
@@ -18,18 +26,18 @@ const entry: ShowcaseEntry = {
       name: "Path variants",
       render: () => (
         <div className="relative h-72">
-          <ConnectionLine from={{ x: 40, y: 35 }} to={{ x: 260, y: 75 }} variant="bezier" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 105 }} to={{ x: 260, y: 145 }} variant="stepped" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 180 }} to={{ x: 260, y: 130 }} variant="straight" state="default" />
-          <Dot x={40} y={35} state="connected" />
-          <Dot x={260} y={75} state="connected" />
-          <Dot x={40} y={105} state="connected" />
-          <Dot x={260} y={145} state="connected" />
-          <Dot x={40} y={180} state="default" />
-          <Dot x={260} y={130} state="default" />
-          <div className="absolute left-3 top-[18px] text-xs text-muted">Bezier</div>
-          <div className="absolute left-3 top-[90px] text-xs text-muted">Stepped</div>
-          <div className="absolute left-3 top-[162px] text-xs text-muted">Straight</div>
+          <ConnectionLine from={{ x: 40, y: 40 }} to={{ x: 260, y: 80 }} variant="bezier" state="connected" />
+          <ConnectionLine from={{ x: 40, y: 110 }} to={{ x: 260, y: 150 }} variant="stepped" state="connected" />
+          <ConnectionLine from={{ x: 40, y: 185 }} to={{ x: 260, y: 135 }} variant="straight" state="default" />
+          <Dot x={40} y={40} state="connected" />
+          <Dot x={260} y={80} state="connected" />
+          <Dot x={40} y={110} state="connected" />
+          <Dot x={260} y={150} state="connected" />
+          <Dot x={40} y={185} state="default" />
+          <Dot x={260} y={135} state="default" />
+          <Label x={40} y={22}>Bezier</Label>
+          <Label x={40} y={92}>Stepped</Label>
+          <Label x={40} y={167}>Straight</Label>
         </div>
       ),
     },
@@ -46,9 +54,9 @@ const entry: ShowcaseEntry = {
           <Dot x={260} y={65} state="connected" />
           <Dot x={40} y={100} state="highlighted" />
           <Dot x={260} y={100} state="highlighted" />
-          <div className="absolute left-3 top-[18px] text-xs text-muted">default</div>
-          <div className="absolute left-3 top-[53px] text-xs text-muted">connected</div>
-          <div className="absolute left-3 top-[88px] text-xs text-muted">highlighted</div>
+          <Label x={40} y={12}>default</Label>
+          <Label x={40} y={47}>connected</Label>
+          <Label x={40} y={82}>highlighted</Label>
         </div>
       ),
     },
