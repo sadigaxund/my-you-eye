@@ -1,9 +1,8 @@
 import { useCallback } from "react";
-
-const GRID = 16;
+import { GRID, snap as gridSnap } from "../graph-node/grid";
 
 export function snap(v: number): number {
-  return Math.round(v / GRID) * GRID;
+  return gridSnap(v);
 }
 
 export function useSnap() {

@@ -7,19 +7,8 @@ export interface ScrollAreaProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className, children, style, ...props }, ref) => (
-    <div
-      ref={ref}
-      style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent", ...style }}
-      className={cn(
-        "overflow-auto",
-        "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5",
-        "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:hover:bg-muted",
-        "[&::-webkit-scrollbar-track]:bg-transparent",
-        className
-      )}
-      {...props}
-    >
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn("overflow-auto", className)} {...props}>
       {children}
     </div>
   ),

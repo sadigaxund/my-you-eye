@@ -57,10 +57,9 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             <svg viewBox="0 0 12 12" className="size-3.5 fill-muted"><path d="M3 1h6l2 2v6a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm0 1v7h7V3.5L8.5 2H3z" /><path d="M2 4H1v6a1 1 0 001 1h6v-1" /></svg>
           )}
         </button>
-        <pre
-          ref={ref}
-          className={cn("p-panel text-xs leading-relaxed overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-track]:bg-transparent", wrap && "whitespace-pre-wrap")}
-          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
+          <pre
+            ref={ref}
+            className={cn("p-panel text-xs leading-relaxed overflow-x-auto", wrap && "whitespace-pre-wrap")}
           {...props}
         >
           <code>{code}</code>

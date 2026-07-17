@@ -53,7 +53,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={setRef}
         className={cn(textareaVariants({ variant, invalid }), "min-h-[80px]", className)}
-        style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
         onChange={handleChange}
         {...props}
       />

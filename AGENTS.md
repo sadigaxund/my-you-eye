@@ -31,6 +31,10 @@ set of components. Your job is to keep it that way. These rules are not suggesti
    className. Every profile must define the complete color token set (enforced by
    `scripts/check-themes.mjs` wired into `npm run validate`). Any new visual constant must
    become a base token in `src/styles/tokens.css` first, then every profile defines it.
+10. **Scrollbars are styled globally** from `globals.css` via `*::-webkit-scrollbar` + Firefox
+    `scrollbar-color`/`scrollbar-width`, all token-driven. Never add per-component scrollbar
+    styling. If a container needs scrolling, just use `overflow-auto` — the global CSS handles
+    the visual.
 
 ---
 

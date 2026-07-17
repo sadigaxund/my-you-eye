@@ -61,8 +61,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
         {...props}
       >
         {header && (
-          <div className="flex flex-col shrink-0" style={{ height: HEADER * GRID }}>
-            {accent && <div className="h-1 shrink-0 rounded-t-ui bg-primary" />}
+          <div className={cn("flex flex-col shrink-0", accent && "border-t-2 border-primary")} style={{ height: HEADER * GRID }}>
             <div className="flex items-center px-3 border-b border-border flex-1 min-h-0">
               <div className="flex items-center gap-inline flex-1 min-w-0">
                 <div className="flex gap-0.5">

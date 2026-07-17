@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useState, useCallback, useEffect } from "react";
 import type { ReactNode, HTMLAttributes } from "react";
 import { cn } from "../../lib/cn";
+import { GRID } from "../graph-node/grid";
 
 export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
   gridSize?: number;
@@ -10,19 +11,46 @@ export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
   zoomStep?: number;
   controls?: ReactNode;
   onBackgroundClick?: () => void;
+  offset?: { x: number; y: number };
+  zoom?: number;
+  onOffsetChange?: (o: { x: number; y: number }) => void;
+  onZoomChange?: (z: number) => void;
 }
 
 const btn =
   "inline-flex items-center justify-center size-7 rounded-ui-sm border border-border bg-bg text-xs text-fg hover:bg-secondary cursor-pointer";
 
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
-  ({ className, gridSize = 20, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, controls, children, style, onBackgroundClick, ...props }, ref) => {
+  ({ className, gridSize = GRID, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, controls, children, style, onBackgroundClick, offset: controlledOffset, zoom: controlledZoom, onOffsetChange, onZoomChange, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [offset, setOffset] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(initialZoom);
+    const [internalOffset, setInternalOffset] = useState({ x: 0, y: 0 });
+    const [internalZoom, setInternalZoom] = useState(initialZoom);
+
+    const isControlled = controlledOffset !== undefined;
+    const offset = isControlled ? controlledOffset : internalOffset;
+    const zoom = controlledZoom !== undefined ? controlledZoom : internalZoom;
+
     const dragging = useRef(false);
     const dragStart = useRef({ x: 0, y: 0 });
     const dragOffset = useRef({ x: 0, y: 0 });
+
+    const setOffset = useCallback((o: { x: number; y: number } | ((prev: { x: number; y: number }) => { x: number; y: number })) => {
+      if (isControlled) {
+        const next = typeof o === "function" ? o(offset) : o;
+        onOffsetChange?.(next);
+      } else {
+        setInternalOffset(o);
+      }
+    }, [isControlled, offset, onOffsetChange]);
+
+    const setZoom = useCallback((z: number | ((prev: number) => number)) => {
+      if (onZoomChange) {
+        const next = typeof z === "function" ? z(zoom) : z;
+        onZoomChange(next);
+      } else {
+        setInternalZoom(z);
+      }
+    }, [zoom, onZoomChange]);
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
       if (e.button !== 0) return;
@@ -32,26 +60,43 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       dragOffset.current = { x: offset.x, y: offset.y };
     }, [offset, onBackgroundClick]);
 
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const handleMouseMove = useCallback((e: MouseEvent) => {
       if (!dragging.current) return;
       setOffset({
         x: dragOffset.current.x + (e.clientX - dragStart.current.x),
         y: dragOffset.current.y + (e.clientY - dragStart.current.y),
       });
-    }, []);
+    }, [setOffset]);
 
     const handleMouseUp = useCallback(() => {
       dragging.current = false;
     }, []);
 
+    useEffect(() => {
+      if (!dragging.current) return;
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, [dragging.current, handleMouseMove, handleMouseUp]);
+
     const handleWheel = useCallback((e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
       setZoom((z) => {
         const next = e.deltaY < 0 ? z + zoomStep : z - zoomStep;
-        return Math.min(maxZoom, Math.max(minZoom, Math.round(next * 10) / 10));
+        const clamped = Math.min(maxZoom, Math.max(minZoom, Math.round(next * 10) / 10));
+        const scale = clamped / z;
+        setOffset((o) => ({ x: cx - (cx - o.x) * scale, y: cy - (cy - o.y) * scale }));
+        return clamped;
       });
-    }, [minZoom, maxZoom, zoomStep]);
+    }, [minZoom, maxZoom, zoomStep, setZoom, setOffset]);
 
     useEffect(() => {
       const el = containerRef.current;
@@ -67,13 +112,15 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     const scaledGrid = gridSize * zoom;
     const bgPos = `${offset.x}px ${offset.y}px`;
 
+    const mergedRef = useCallback((node: HTMLDivElement | null) => {
+      (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }, [ref]);
+
     return (
       <div
-        ref={(node) => {
-          (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-          if (typeof ref === "function") ref(node);
-          else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-        }}
+        ref={mergedRef}
         className={cn("relative overflow-hidden bg-bg select-none", className)}
         style={style}
         {...props}
@@ -81,7 +128,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle,color-mix(in oklch,var(--color-border) 60%,var(--color-muted))_2px,transparent_2px)",
+            backgroundImage: "radial-gradient(circle, var(--color-grid-dot) 1.5px, transparent 1.5px)",
             backgroundSize: `${scaledGrid}px ${scaledGrid}px`,
             backgroundPosition: bgPos,
           }}
@@ -89,9 +136,6 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <div
           className="absolute inset-0"
           onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
           style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`, transformOrigin: "0 0" }}
         >
           {children}

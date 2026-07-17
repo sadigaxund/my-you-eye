@@ -11,6 +11,9 @@
   --color-warning: oklch(0.6 0.2 80);
   --color-border: oklch(0.4 0 0);
   --color-ring: oklch(0.3 0.15 265);
+  --color-grid-dot: oklch(0.5 0 0);
+  --color-scrollbar: oklch(0.4 0 0);
+  --color-scrollbar-hover: oklch(0.2 0 0);
   --border-width: 2px;
   --backdrop-blur: 0px;
   --shadow-card: none;
@@ -27,4 +30,7 @@
   --color-secondary-fg: oklch(1 0 0);
   --color-border: oklch(0.6 0 0);
   --color-ring: oklch(0.7 0.2 265);
+  --color-grid-dot: oklch(0.6 0 0);
+  --color-scrollbar: oklch(0.6 0 0);
+  --color-scrollbar-hover: oklch(0.8 0 0);
 }

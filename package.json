@@ -7,6 +7,7 @@
     "build": "tsc -b && vite build",
     "build:lib": "tsup",
     "validate": "tsc --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && npm run build:lib && vite build",
+    "audit": "node scripts/audit.mjs",
     "preview": "vite preview",
     "prepare": "npm run build:lib"
   },

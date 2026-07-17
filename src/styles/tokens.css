@@ -59,6 +59,11 @@
   /* ---- Grid ---- */
   --grid-unit: 16px;
 
+  /* ---- Scrollbar ---- */
+  --color-scrollbar: oklch(0.87 0.01 260);
+  --color-scrollbar-hover: oklch(0.55 0.01 260);
+  --color-grid-dot: oklch(0.77 0.01 260);
+
   /* ---- Scale ---- */
   --scale: 1;
 }

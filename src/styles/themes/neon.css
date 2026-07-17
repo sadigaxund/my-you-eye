@@ -11,6 +11,9 @@
   --color-warning: oklch(0.8 0.28 80);
   --color-border: oklch(0.3 0.12 180 / 0.5);
   --color-ring: oklch(0.7 0.28 180);
+  --color-grid-dot: oklch(0.4 0.12 180 / 0.4);
+  --color-scrollbar: oklch(0.3 0.12 180 / 0.5);
+  --color-scrollbar-hover: oklch(0.6 0.08 180);
   --border-width: 1.5px;
   --backdrop-blur: 8px;
   --shadow-card: 0 0 12px oklch(0.7 0.28 180 / 0.15);
@@ -27,4 +30,7 @@
   --color-secondary-fg: oklch(0.9 0.1 180);
   --color-border: oklch(0.25 0.1 180 / 0.5);
   --color-ring: oklch(0.6 0.28 180);
+  --color-grid-dot: oklch(0.35 0.1 180 / 0.4);
+  --color-scrollbar: oklch(0.25 0.1 180 / 0.5);
+  --color-scrollbar-hover: oklch(0.5 0.06 180);
 }
