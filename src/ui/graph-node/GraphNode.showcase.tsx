@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex items-center justify-center gap-4 h-48">
+        <div className="flex items-center justify-center gap-4 h-56">
           <GraphNode
             x={0} y={0} className="static"
             header="orders"
@@ -47,10 +47,9 @@ const entry: ShowcaseEntry = {
     {
       name: "Connected node",
       render: () => (
-        <div className="relative" style={{ height: 220 }}>
+        <div className="flex items-center justify-center h-56">
           <GraphNode
-            x={30}
-            y={10}
+            x={0} y={0} className="static"
             header="customer_orders"
             accent
             footer="12 cols · 1.2M rows"
@@ -67,10 +66,9 @@ const entry: ShowcaseEntry = {
     {
       name: "Multi-output",
       render: () => (
-        <div className="relative" style={{ height: 180 }}>
+        <div className="flex items-center justify-center h-48">
           <GraphNode
-            x={20}
-            y={10}
+            x={0} y={0} className="static"
             header="user_events"
             accent
             footer="8 cols · 5.6M events"
