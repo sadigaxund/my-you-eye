@@ -8,6 +8,14 @@ const users = [
   { name: "Diana", email: "diana@example.com", role: "Editor", status: "Active", sessions: 2341, lastLogin: "2026-07-17T09:45:00Z" },
 ];
 
+const statusVariants = [
+  { label: "Neutral", value: "neutral" },
+  { label: "Online", value: "success" },
+  { label: "Warning", value: "warning" },
+  { label: "Error", value: "danger" },
+  { label: "Processing", value: "info" },
+];
+
 const entry: ShowcaseEntry = {
   title: "DataTable",
   group: "data",
@@ -25,6 +33,18 @@ const entry: ShowcaseEntry = {
             { key: "lastLogin", header: "Last Login", type: "datetime" },
           ]}
           rows={users}
+        />
+      ),
+    },
+    {
+      name: "Status variants",
+      render: () => (
+        <DataTable
+          columns={[
+            { key: "label", header: "Status" },
+            { key: "value", header: "Indicator", type: "status", statusVariant: (v) => v as string },
+          ]}
+          rows={statusVariants}
         />
       ),
     },

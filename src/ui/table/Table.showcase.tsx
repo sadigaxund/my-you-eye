@@ -1,6 +1,7 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".";
 import { ScrollArea } from "../scroll-area";
+import { StatusDot } from "../status-dot";
 
 const sampleRows = [
   { name: "John Doe", role: "Admin", status: "Active" },
@@ -40,7 +41,12 @@ const entry: ShowcaseEntry = {
               <TableRow key={i} density="compact">
                 <TableCell density="compact">{row.name}</TableCell>
                 <TableCell density="compact">{row.role}</TableCell>
-                <TableCell density="compact">{row.status}</TableCell>
+                <TableCell density="compact">
+                  <span className="inline-flex items-center gap-1.5">
+                    <StatusDot variant={row.status === "Active" ? "success" : "danger"} size="sm" />
+                    {row.status}
+                  </span>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -18,6 +18,8 @@ function Label({ x, y, children }: { x: number; y: number; children: string }) {
   );
 }
 
+const W = 300;
+
 const entry: ShowcaseEntry = {
   title: "ConnectionLine",
   group: "canvas",
@@ -25,38 +27,42 @@ const entry: ShowcaseEntry = {
     {
       name: "Path variants",
       render: () => (
-        <div className="relative h-72">
-          <ConnectionLine from={{ x: 40, y: 40 }} to={{ x: 260, y: 80 }} variant="bezier" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 110 }} to={{ x: 260, y: 150 }} variant="stepped" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 185 }} to={{ x: 260, y: 135 }} variant="straight" state="default" />
-          <Dot x={40} y={40} state="connected" />
-          <Dot x={260} y={80} state="connected" />
-          <Dot x={40} y={110} state="connected" />
-          <Dot x={260} y={150} state="connected" />
-          <Dot x={40} y={185} state="default" />
-          <Dot x={260} y={135} state="default" />
-          <Label x={40} y={22}>Bezier</Label>
-          <Label x={40} y={92}>Stepped</Label>
-          <Label x={40} y={167}>Straight</Label>
+        <div className="flex justify-center">
+          <div className="relative" style={{ width: W, height: 288 }}>
+            <ConnectionLine from={{ x: 20, y: 40 }} to={{ x: W - 20, y: 80 }} variant="bezier" state="connected" />
+            <ConnectionLine from={{ x: 20, y: 110 }} to={{ x: W - 20, y: 150 }} variant="stepped" state="connected" />
+            <ConnectionLine from={{ x: 20, y: 185 }} to={{ x: W - 20, y: 135 }} variant="straight" state="default" />
+            <Dot x={20} y={40} state="connected" />
+            <Dot x={W - 20} y={80} state="connected" />
+            <Dot x={20} y={110} state="connected" />
+            <Dot x={W - 20} y={150} state="connected" />
+            <Dot x={20} y={185} state="default" />
+            <Dot x={W - 20} y={135} state="default" />
+            <Label x={20} y={22}>Bezier</Label>
+            <Label x={20} y={92}>Stepped</Label>
+            <Label x={20} y={167}>Straight</Label>
+          </div>
         </div>
       ),
     },
     {
       name: "States",
       render: () => (
-        <div className="relative h-40">
-          <ConnectionLine from={{ x: 40, y: 30 }} to={{ x: 260, y: 30 }} state="default" />
-          <ConnectionLine from={{ x: 40, y: 65 }} to={{ x: 260, y: 65 }} state="connected" />
-          <ConnectionLine from={{ x: 40, y: 100 }} to={{ x: 260, y: 100 }} state="highlighted" />
-          <Dot x={40} y={30} state="default" />
-          <Dot x={260} y={30} state="default" />
-          <Dot x={40} y={65} state="connected" />
-          <Dot x={260} y={65} state="connected" />
-          <Dot x={40} y={100} state="highlighted" />
-          <Dot x={260} y={100} state="highlighted" />
-          <Label x={40} y={12}>default</Label>
-          <Label x={40} y={47}>connected</Label>
-          <Label x={40} y={82}>highlighted</Label>
+        <div className="flex justify-center">
+          <div className="relative" style={{ width: W, height: 160 }}>
+            <ConnectionLine from={{ x: 20, y: 30 }} to={{ x: W - 20, y: 30 }} state="default" />
+            <ConnectionLine from={{ x: 20, y: 65 }} to={{ x: W - 20, y: 65 }} state="connected" />
+            <ConnectionLine from={{ x: 20, y: 100 }} to={{ x: W - 20, y: 100 }} state="highlighted" />
+            <Dot x={20} y={30} state="default" />
+            <Dot x={W - 20} y={30} state="default" />
+            <Dot x={20} y={65} state="connected" />
+            <Dot x={W - 20} y={65} state="connected" />
+            <Dot x={20} y={100} state="highlighted" />
+            <Dot x={W - 20} y={100} state="highlighted" />
+            <Label x={20} y={12}>default</Label>
+            <Label x={20} y={47}>connected</Label>
+            <Label x={20} y={82}>highlighted</Label>
+          </div>
         </div>
       ),
     },

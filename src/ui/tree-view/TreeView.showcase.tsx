@@ -2,13 +2,12 @@ import { useState } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
 import { TreeView } from ".";
 import type { TreeNode } from ".";
-import { ScrollArea } from "../scroll-area";
 
 function ControlledTreeViewDemo() {
   const [expanded, setExpanded] = useState(new Set(["1", "2"]));
   return (
-      <div className="max-w-xl">
-        <div className="flex gap-2 mb-3 px-2">
+    <div className="max-w-xl">
+      <div className="flex gap-2 mb-3 px-2">
         <button
           type="button"
           onClick={() => setExpanded(new Set(["1", "1-1", "1-2", "2", "2-1"]))}
@@ -24,7 +23,7 @@ function ControlledTreeViewDemo() {
           Collapse all
         </button>
       </div>
-      <ScrollArea className="max-h-64 px-2">
+      <div className="h-80 px-2">
         <TreeView
           data={sampleData}
           expandedKeys={expanded}
@@ -36,9 +35,9 @@ function ControlledTreeViewDemo() {
               return next;
             });
           }}
-          />
-      </ScrollArea>
+        />
       </div>
+    </div>
   );
 }
 
