@@ -14,26 +14,28 @@ const fruits: ComboboxOption[] = [
   { value: "honeydew", label: "Honeydew" },
 ];
 
+function ComboboxBasicDemo() {
+  const [val, setVal] = useState("");
+  return (
+    <div className="flex flex-col gap-3 max-w-xs">
+      <Combobox
+        options={fruits}
+        value={val}
+        onChange={setVal}
+        placeholder="Pick a fruit..."
+      />
+      <p className="text-xs text-muted">Selected: {val || "none"}</p>
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Combobox",
   group: "inputs",
   demos: [
     {
       name: "Basic",
-      render: () => {
-        const [val, setVal] = useState("");
-        return (
-          <div className="flex flex-col gap-3 max-w-xs">
-            <Combobox
-              options={fruits}
-              value={val}
-              onChange={setVal}
-              placeholder="Pick a fruit..."
-            />
-            <p className="text-xs text-muted">Selected: {val || "none"}</p>
-          </div>
-        );
-      },
+      render: () => <ComboboxBasicDemo />,
     },
     {
       name: "Disabled",

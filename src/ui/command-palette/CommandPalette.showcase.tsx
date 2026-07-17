@@ -22,56 +22,60 @@ const groups = [
   { label: "Run", actionIds: ["run", "deploy"] },
 ];
 
+function CommandPaletteBasicDemo() {
+  const [open, setOpen] = useState(false);
+  const [log, setLog] = useState("");
+  const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
+
+  return (
+    <div className="flex flex-col gap-3 max-w-xs">
+      <Button onClick={() => setOpen(true)}>
+        Open Palette <Kbd>⌘K</Kbd>
+      </Button>
+      <CommandPalette
+        open={open}
+        onOpenChange={setOpen}
+        actions={actions}
+        onSelect={handleSelect}
+      />
+      {log && <p className="text-xs text-muted">{log}</p>}
+    </div>
+  );
+}
+
+function CommandPaletteGroupedDemo() {
+  const [open, setOpen] = useState(false);
+  const [log, setLog] = useState("");
+  const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
+
+  return (
+    <div className="flex flex-col gap-3 max-w-xs">
+      <Button onClick={() => setOpen(true)} variant="secondary">
+        Open Grouped <Kbd>⌘K</Kbd>
+      </Button>
+      <CommandPalette
+        open={open}
+        onOpenChange={setOpen}
+        actions={actions}
+        groups={groups}
+        onSelect={handleSelect}
+      />
+      {log && <p className="text-xs text-muted">{log}</p>}
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "CommandPalette",
   group: "overlay",
   demos: [
     {
       name: "Basic",
-      render: () => {
-        const [open, setOpen] = useState(false);
-        const [log, setLog] = useState("");
-        const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
-
-        return (
-          <div className="flex flex-col gap-3 max-w-xs">
-            <Button onClick={() => setOpen(true)}>
-              Open Palette <Kbd>⌘K</Kbd>
-            </Button>
-            <CommandPalette
-              open={open}
-              onOpenChange={setOpen}
-              actions={actions}
-              onSelect={handleSelect}
-            />
-            {log && <p className="text-xs text-muted">{log}</p>}
-          </div>
-        );
-      },
+      render: () => <CommandPaletteBasicDemo />,
     },
     {
       name: "With groups",
-      render: () => {
-        const [open, setOpen] = useState(false);
-        const [log, setLog] = useState("");
-        const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
-
-        return (
-          <div className="flex flex-col gap-3 max-w-xs">
-            <Button onClick={() => setOpen(true)} variant="secondary">
-              Open Grouped <Kbd>⌘K</Kbd>
-            </Button>
-            <CommandPalette
-              open={open}
-              onOpenChange={setOpen}
-              actions={actions}
-              groups={groups}
-              onSelect={handleSelect}
-            />
-            {log && <p className="text-xs text-muted">{log}</p>}
-          </div>
-        );
-      },
+      render: () => <CommandPaletteGroupedDemo />,
     },
   ],
 };
