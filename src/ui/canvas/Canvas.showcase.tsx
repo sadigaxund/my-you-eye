@@ -31,13 +31,19 @@ function DraggableNode({
   initialY,
   header,
   snap,
-  children,
+  accent,
+  variant,
+  footer,
+  rows,
 }: {
   initialX: number;
   initialY: number;
   header: string;
   snap: boolean;
-  children: string;
+  accent?: boolean;
+  variant?: "default" | "selected" | "muted";
+  footer?: string;
+  rows?: { label: string; value: string; portLeft?: { side: "left"; state?: "default" | "connected" | "highlighted" }; portRight?: { side: "right"; state?: "default" | "connected" | "highlighted" } }[];
 }) {
   const [pos, setPos] = useState({ x: initialX, y: initialY });
   const [selected, setSelected] = useState(false);
@@ -79,22 +85,63 @@ function DraggableNode({
       onMouseLeave={handleMouseUp}
       style={{ cursor: dragging.current ? "grabbing" : "grab" }}
     >
-      <GraphNode x={pos.x} y={pos.y} header={header} variant={selected ? "selected" : "default"}>
-        {children}
-      </GraphNode>
+      <GraphNode
+        x={pos.x} y={pos.y}
+        header={header}
+        variant={selected ? "selected" : variant}
+        accent={accent}
+        footer={footer}
+        rows={rows}
+      />
     </div>
   );
 }
 
-function DraggableCanvasDemo() {
+function CanvasDemo() {
   const [snap, setSnap] = useState(true);
   return (
     <Canvas
-      className="h-80 w-full rounded-ui border border-border"
+      className="h-96 w-full rounded-ui border border-border"
       controls={<SnapToggle snap={snap} onToggle={() => setSnap((s) => !s)} />}
     >
-      <DraggableNode initialX={40} initialY={30} header="Source" snap={snap}>Click to select, drag to move</DraggableNode>
-      <DraggableNode initialX={300} initialY={30} header="Sink" snap={snap}>Toggle snap in bottom-right</DraggableNode>
+      <DraggableNode
+        initialX={30} initialY={20}
+        header="extract_api"
+        accent
+        snap={snap}
+        footer="15 cols · 2.1M rows"
+        rows={[
+          { label: "Source", value: "REST API", portRight: { side: "right", state: "connected" } },
+          { label: "Status", value: "complete" },
+          { label: "Duration", value: "45.2s" },
+        ]}
+      />
+      <DraggableNode
+        initialX={260} initialY={40}
+        header="transform"
+        variant="selected"
+        accent
+        snap={snap}
+        footer="22 cols · 1.8M rows"
+        rows={[
+          { label: "Pipeline", value: "active", portLeft: { side: "left", state: "connected" }, portRight: { side: "right", state: "connected" } },
+          { label: "Rows in", value: "2.1M" },
+          { label: "Rows out", value: "1.8M" },
+          { label: "Duration", value: "2m 14s" },
+        ]}
+      />
+      <DraggableNode
+        initialX={490} initialY={20}
+        header="load_warehouse"
+        accent
+        snap={snap}
+        footer="22 cols · 1.8M rows"
+        rows={[
+          { label: "Target", value: "Snowflake", portLeft: { side: "left", state: "connected" } },
+          { label: "Status", value: "complete" },
+          { label: "Duration", value: "1m 03s" },
+        ]}
+      />
     </Canvas>
   );
 }
@@ -104,24 +151,8 @@ const entry: ShowcaseEntry = {
   group: "canvas",
   demos: [
     {
-      name: "Empty grid",
-      render: () => (
-        <Canvas className="h-48 w-full rounded-ui border border-border" />
-      ),
-    },
-    {
-      name: "With nodes (drag to pan, ctrl+scroll to zoom)",
-      render: () => (
-        <Canvas className="h-80 w-full rounded-ui border border-border">
-          <GraphNode x={40} y={30} header="Extract" accent ports={[{ side: "right", state: "connected" }]}>API → Raw</GraphNode>
-          <GraphNode x={280} y={30} header="Transform" variant="selected" accent ports={[{ side: "left", state: "connected" }, { side: "right", state: "connected" }]}>Clean + Map</GraphNode>
-          <GraphNode x={520} y={30} header="Load" accent ports={[{ side: "left", state: "connected" }]}>DB → Warehouse</GraphNode>
-        </Canvas>
-      ),
-    },
-    {
-      name: "Draggable nodes (snap to grid)",
-      render: () => <DraggableCanvasDemo />,
+      name: "Pipeline canvas (drag nodes, toggle snap, pan/zoom)",
+      render: () => <CanvasDemo />,
     },
   ],
 };
