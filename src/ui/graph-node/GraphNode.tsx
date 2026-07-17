@@ -77,9 +77,9 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
             <div className="flex items-center px-3 border-b border-border flex-1 min-h-0">
               <div className="flex items-center gap-inline flex-1 min-w-0">
                 <div className="flex gap-0.5">
-                  <span className="size-1.5 rounded-full bg-muted" />
-                  <span className="size-1.5 rounded-full bg-muted" />
-                  <span className="size-1.5 rounded-full bg-muted" />
+                  <span className="size-1.5 rounded-full bg-danger" />
+                  <span className="size-1.5 rounded-full bg-warning" />
+                  <span className="size-1.5 rounded-full bg-success" />
                 </div>
                 <span className="text-xs font-semibold truncate">{header}</span>
               </div>
@@ -91,7 +91,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
             {rows!.map((row, i) => (
               <div
                 key={i}
-                className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-3 text-xs items-center border-b border-border/50 last:border-b-0"
+                className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-3 text-xs items-center border-b border-border/50 last:border-b-0 hover:bg-muted/10 transition-colors"
                 style={{ height: ROW * GRID }}
               >
                 <span className="text-muted truncate">{row.label}</span>
@@ -151,9 +151,10 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
         )}
         {footer && (
           <div
-            className="px-3 border-t border-border text-xs text-muted flex items-center shrink-0"
+            className="px-3 border-t border-border text-xs text-muted flex items-center gap-1.5 shrink-0 bg-muted/5"
             style={{ height: FOOTER * GRID }}
           >
+            <span className="text-muted/40">◆</span>
             {footer}
           </div>
         )}
