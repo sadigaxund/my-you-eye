@@ -5,7 +5,6 @@ export const fontOptions = [
   { value: "ubuntu", label: "Ubuntu" },
   { value: "titillium", label: "Titillium Web" },
   { value: "consolas", label: "Consolas" },
-  { value: "meslo", label: "Meslo Nerd" },
   { value: "jetbrains", label: "JetBrains Nerd" },
 ] as const;
 

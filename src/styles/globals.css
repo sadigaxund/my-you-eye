@@ -35,11 +35,6 @@
   --font-mono: var(--font-consolas);
 }
 
-[data-font="meslo"] {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-meslo-nerd);
-}
-
 [data-font="jetbrains"] {
   --font-sans: var(--font-sans);
   --font-mono: var(--font-jetbrains-nerd);
