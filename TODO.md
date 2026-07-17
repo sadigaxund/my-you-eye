@@ -47,7 +47,7 @@ Check items off (`[x]`) as they complete.
       2. every showcase default export has a `group` from the fixed list
       3. every component folder is re-exported from `src/index.ts`
       Exit non-zero with a clear message naming the offending folder.
-- [ ] **0.9 Package setup for consumption**: `package.json` with name `@sakhund/ui`,
+- [ ] **0.9 Package setup for consumption**: `package.json` with name `@sadigaxund/ui`,
       `exports` map (`.` → dist ESM + types, `./styles.css` → built CSS), `files: ["dist"]`,
       `prepare: "npm run build:lib"`, tsup config building `src/index.ts` (external:
       react, react-dom).
