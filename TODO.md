@@ -45,12 +45,12 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 3 — Overlays & feedback
 
-- [ ] **Dialog** — `@radix-ui/react-dialog`. Sizes `sm | md | lg`; header/footer subcomponents. Group: `overlay`.
-- [ ] **Tooltip** — `@radix-ui/react-tooltip`. Single provider exported too. Group: `overlay`.
-- [ ] **DropdownMenu** — `@radix-ui/react-dropdown-menu`. Items, separators, destructive item style. Group: `overlay`.
-- [ ] **Popover** — `@radix-ui/react-popover`. Group: `overlay`.
-- [ ] **Toast** — `@radix-ui/react-toast`. Variants: `default | success | danger`; exported `useToast()` + `<Toaster/>`. Group: `feedback`.
-- [ ] **ConfirmDialog** (pattern) — Dialog + Buttons; props: `title`, `description`, `confirmLabel`, `destructive?`, `onConfirm`. Group: `patterns`.
+- [x] **Dialog** — `@radix-ui/react-dialog`. Sizes `sm | md | lg`; header/footer subcomponents. Group: `overlay`.
+- [x] **Tooltip** — `@radix-ui/react-tooltip`. Single provider exported too. Group: `overlay`.
+- [x] **DropdownMenu** — `@radix-ui/react-dropdown-menu`. Items, separators, destructive item style. Group: `overlay`.
+- [x] **Popover** — `@radix-ui/react-popover`. Group: `overlay`.
+- [x] **Toast** — `@radix-ui/react-toast`. Variants: `default | success | danger`; exported `useToast()` + `<Toaster/>`. Group: `feedback`.
+- [x] **ConfirmDialog** (pattern) — Dialog + Buttons; props: `title`, `description`, `confirmLabel`, `destructive?`, `onConfirm`. Group: `patterns`.
 
 ## Phase 4 — Navigation & data
 

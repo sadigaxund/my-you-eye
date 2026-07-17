@@ -14,3 +14,25 @@ export { Switch } from "./ui/switch";
 export { Textarea } from "./ui/textarea";
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/select";
 export { FormField } from "./ui/patterns/form-field";
+export {
+  Dialog,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "./ui/dialog";
+export { TooltipProvider, Tooltip, TooltipContent } from "./ui/tooltip";
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "./ui/dropdown-menu";
+export { Popover, PopoverTrigger, PopoverContent, PopoverClose } from "./ui/popover";
+export { Toaster, useToast } from "./ui/toast";
+export { ConfirmDialog } from "./ui/patterns/confirm-dialog";
