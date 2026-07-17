@@ -3,6 +3,7 @@ import type { ReactNode, HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { nodeHeightPx, portY, HEADER, ROW, FOOTER, GRID } from "./grid";
+import { Port } from "../port";
 
 const ROW_PORT_Y_OFFSET = HEADER * GRID;
 
@@ -45,18 +46,6 @@ export interface GraphNodeProps
   ports?: PortDef[];
   footer?: ReactNode;
   rows?: GraphNodeRow[];
-}
-
-function PortDot({ state }: { state?: "default" | "connected" | "highlighted" }) {
-  return (
-    <div
-      className={cn(
-        "size-3 rounded-full border-2 bg-bg transition-colors shrink-0",
-        state === "connected" ? "border-primary bg-primary" : "border-muted",
-        state === "highlighted" && "border-primary ring-2 ring-primary/30",
-      )}
-    />
-  );
 }
 
 const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
@@ -106,7 +95,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                       className="absolute pointer-events-auto"
                       style={{ left: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(-50%, -50%)" }}
                     >
-                      <PortDot state={row.portLeft.state} />
+                      <Port state={row.portLeft.state} side="in" />
                     </div>
                   )}
                   {row.portRight && (
@@ -114,7 +103,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                       className="absolute pointer-events-auto"
                       style={{ right: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(50%, -50%)" }}
                     >
-                      <PortDot state={row.portRight.state} />
+                      <Port state={row.portRight.state} side="out" />
                     </div>
                   )}
                 </div>
@@ -142,7 +131,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                   )}
                   style={{ top: yPos, transform: "translateY(-50%)" }}
                 >
-                  <PortDot state={p.state} />
+                  <Port state={p.state} side={p.side === "left" ? "in" : "out"} />
                   {p.label && <span className="text-xs text-muted">{p.label}</span>}
                 </div>
               );
