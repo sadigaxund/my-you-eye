@@ -86,6 +86,19 @@ function DraggableNode({
   );
 }
 
+function DraggableCanvasDemo() {
+  const [snap, setSnap] = useState(true);
+  return (
+    <Canvas
+      className="h-80 w-full rounded-ui border border-border"
+      controls={<SnapToggle snap={snap} onToggle={() => setSnap((s) => !s)} />}
+    >
+      <DraggableNode initialX={40} initialY={30} header="Source" snap={snap}>Click to select, drag to move</DraggableNode>
+      <DraggableNode initialX={300} initialY={30} header="Sink" snap={snap}>Toggle snap in bottom-right</DraggableNode>
+    </Canvas>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Canvas",
   group: "canvas",
@@ -108,18 +121,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Draggable nodes (snap to grid)",
-      render: () => {
-        const [snap, setSnap] = useState(true);
-        return (
-          <Canvas
-            className="h-80 w-full rounded-ui border border-border"
-            controls={<SnapToggle snap={snap} onToggle={() => setSnap((s) => !s)} />}
-          >
-            <DraggableNode initialX={40} initialY={30} header="Source" snap={snap}>Click to select, drag to move</DraggableNode>
-            <DraggableNode initialX={300} initialY={30} header="Sink" snap={snap}>Toggle snap in bottom-right</DraggableNode>
-          </Canvas>
-        );
-      },
+      render: () => <DraggableCanvasDemo />,
     },
   ],
 };
