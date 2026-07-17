@@ -6,7 +6,34 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- **Design tokens system** — `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-serif` tokens for consistent sizing, spacing, and shadows across all components.
+- **Showcase masonry layout** — CSS columns (columns-1/2/3) replacing grid, column-rule divider. Short and tall components pack without ragged gaps.
+- **Grid-locked GraphNode** — height derived from row count formula (HEADER + rows*ROW + FOOTER), row-anchored ports via `portLeft`/`portRight` on each row. Multiple same-side ports distributed vertically.
+- **Snapping helper** — `snap()`/`useSnap` in canvas folder for 16px grid snapping. Draggable node demo.
+- **Theme/profile system** — profiles defined in `src/styles/themes/*.css` as complete token-override blocks. `--border-width`, `--backdrop-blur` tokens wired to Card and Dialog. Profile switcher in showcase header.
+- **Theme validation** — `scripts/check-themes.mjs` asserts every profile defines the full color token set; wired into `npm run validate`.
+- **CellValue numeric types** — `number` (monospace, right-align, Intl.NumberFormat), `date`/`datetime` (relative + absolute), `bytes`, `duration`, `array` (chips via Badge).
+- **CellValue JSON copy button** — copy-to-clipboard button in the JSON popover header.
+- **Table alignment** — `align` prop on TableCell and TableHead (left/center/right). Numbers now render right-aligned.
+- **Table sticky header** — `sticky` prop on TableHeader for scrollable tables.
+- **DataTable pattern** — auto-rendering table from `columns: {key, header, type, align}` + rows array. Each cell rendered via CellValue.
+- **TreeView depth-based expand** — `defaultExpandedDepth` (default 1) replaces all-collapsed default.
+- **TreeView guide lines** — vertical indent guides connecting parent to children.
+- **TreeView controlled state** — `expandedKeys`/`onToggle` props for external expand control.
+- **TreeView keyboard navigation** — arrow keys, Home/End for focus movement.
+- **AGENTS.md rules** — §4 showcase layout fixed infrastructure; §0.9 theme/profile token-override contract.
+- **Sample profiles** — neon (frosted, cyan glow) and high-contrast (bold borders, no shadows) shipped.
+
+### Changed
+
+- **Dark mode** — moved from inline in tokens.css to `src/styles/themes/dark.css`.
+- **GraphNode ports** — removed left-full/right-full label rendering that overlapped neighbors. Ports now anchored to their row.
+- **GraphNode height** — content-driven height replaced with grid-derived height when `rows` prop is used.
+- **AGENTS.md groups** — updated groups list to include `canvas` and `typography`.
+
+### Fixed
+
+- **Showcase layout** — removed md:grid-cols-2 grid and column-divider hack; CSS columns pack uneven heights without ragged whitespace.
+- **Port overlap** — multiple ports on same side no longer stack at top-1/2; distributed vertically by index.
 - **Canvas pan & zoom** — drag-to-pan, ctrl+scroll zoom (0.25–3x), floating zoom controls at bottom-right.
 - **GraphNode** — node box with header/body/footer slots, accent bar, port anchors outside border. Variants: `default | selected | muted`.
 - **Port** — small circle handle for node edges. Variants: `in | out`; states: `default | connected | highlighted`.

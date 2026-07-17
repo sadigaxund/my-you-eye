@@ -26,11 +26,13 @@ export interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof Content>,
     VariantProps<typeof dialogContentVariants> {}
 
+const dialogOverlayWithBlur = `${dialogOverlay} [backdrop-filter:var(--backdrop-blur)]`;
+
 const DialogContent = forwardRef<React.ComponentRef<typeof Content>, DialogContentProps>(
   ({ className, size, children, ...props }, ref) => (
     <Portal>
-      <Overlay className={dialogOverlay} />
-      <Content ref={ref} className={cn(dialogContentVariants({ size }), className)} {...props}>
+      <Overlay className={dialogOverlayWithBlur} />
+      <Content ref={ref} className={cn(dialogContentVariants({ size }), className)} style={{ borderWidth: "var(--border-width)" }} {...props}>
         {children}
         <Close className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100">
           <svg viewBox="0 0 15 15" className="size-4 fill-current">

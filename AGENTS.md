@@ -27,6 +27,10 @@ set of components. Your job is to keep it that way. These rules are not suggesti
 8. **Keep CHANGELOG.md updated.** Every time a phase, component, or significant change is
    completed, add or update an entry under the `[Unreleased]` section. Follow the
    [keepachangelog.com](https://keepachangelog.com) format (Added / Changed / Fixed / Removed).
+9. **A theme/profile is a token-override block only** — never a component fork or per-theme
+   className. Every profile must define the complete color token set (enforced by
+   `scripts/check-themes.mjs` wired into `npm run validate`). Any new visual constant must
+   become a base token in `src/styles/tokens.css` first, then every profile defines it.
 
 ---
 
@@ -114,6 +118,8 @@ split subparts into additional files **inside the same folder** (e.g. `Table.Row
 
 ## 4. Showcase rules
 
+**Showcase layout is fixed infrastructure.** A new component adds exactly one `<section>` inside the `<main>`; never add per-component layout hacks (col-span, margins, positioning, custom widths). The CSS columns (masonry) layout handles packing automatically.
+
 The showcase app auto-discovers every `*.showcase.tsx` under `src/ui/` via
 `import.meta.glob`. There is **no manual registration list** — the file itself is the
 registration.
@@ -144,7 +150,7 @@ const entry: ShowcaseEntry = {
 export default entry;
 ```
 
-**Groups (fixed):** `inputs` | `display` | `feedback` | `overlay` | `navigation` | `data` | `patterns`
+**Groups (fixed):** `inputs` | `display` | `feedback` | `overlay` | `navigation` | `canvas` | `data` | `patterns` | `typography`
 
 - Add your component to the group that fits. Every group is a tab in the showcase.
 - **Do not invent a new group** unless: (a) you have 3+ components that genuinely fit no
@@ -191,7 +197,46 @@ Rules about validation itself:
 - ❌ Declaring a task done with `npm run validate` red or without visual showcase check
 - ❌ Business logic, data fetching, routing, or app state inside `src/ui/`
 
-## 7. If you are unsure
+## 7. Project memory — contracts future sessions should not re-derive
+
+### Grid / Port formula (GraphNode)
+
+Constants (TS mirror in `src/ui/graph-node/grid.ts`, CSS in `--grid-unit`):
+- `GRID = 16` (px)
+- `HEADER = 2` (cells)
+- `ROW = 2` (cells per body row)
+- `FOOTER = 1` (cell)
+
+Node height is a **function of row count**, never content-driven or free-drag:
+```
+heightCells = HEADER + rows.length * ROW + (footer ? FOOTER : 0)
+heightPx    = heightCells * GRID      // always a grid multiple
+portY(i)    = (HEADER + i * ROW + ROW / 2) * GRID   // row center on grid line
+snap(v)     = Math.round(v / GRID) * GRID
+```
+
+Why it works: `ROW` is even → `ROW / 2` is a whole cell → every port center lands on a grid line. Snap two node tops to the grid → ports across nodes are colinear. Same-row-count nodes are identical height by construction. Overflow scrolls/clips inside a fixed band.
+
+When `rows` is provided, node height is locked. Each row can have `portLeft?: PortDef` and `portRight?: PortDef` — dots render on the node border at the row's vertical center. Labels are the row content inside the node.
+
+When `rows` is NOT provided, the legacy `ports?: PortDef[]` prop works but distributes multiple same-side ports vertically by index (not all at top-1/2).
+
+### Theme / Profile contract
+
+A profile is a **token-override block only** — never a component fork or per-theme className.
+
+```
+[data-theme="<name>"] { ... }       // light variant
+[data-theme="<name>"].dark { ... }  // dark variant (orthogonal)
+```
+
+Every profile must define the complete color token set (enforced by `scripts/check-themes.mjs`, wired into `npm run validate`). Any new visual constant must:
+1. Become a base token in `src/styles/tokens.css` inside `@theme`
+2. Be defined in every theme file
+
+Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-*`, `--text-*`, `--border-width`, `--backdrop-blur`, `--grid-unit`.
+
+## 8. If you are unsure
 
 Stop. Say exactly what you were trying to do, which rule blocks you, and what options you
 see. A question costs nothing; silent rule-bending costs the repo its integrity.

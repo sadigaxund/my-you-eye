@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "./tokens.css" layer(theme);
+@import "./themes/dark.css" layer(theme);
+@import "./themes/neon.css" layer(theme);
+@import "./themes/high-contrast.css" layer(theme);
 
 :root {
   color-scheme: light dark;

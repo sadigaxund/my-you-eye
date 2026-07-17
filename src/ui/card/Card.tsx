@@ -21,8 +21,13 @@ export interface CardProps
     VariantProps<typeof cardVariants> {}
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ variant }), className)} {...props} />
+  ({ className, variant, style, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(cardVariants({ variant }), className)}
+      style={{ borderWidth: "var(--border-width)", ...style }}
+      {...props}
+    />
   ),
 );
 Card.displayName = "Card";

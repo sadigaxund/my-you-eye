@@ -1,0 +1,30 @@
+[data-theme="neon"] {
+  --color-bg: oklch(0.05 0.06 280);
+  --color-fg: oklch(0.95 0.12 180);
+  --color-muted: oklch(0.6 0.08 180);
+  --color-primary: oklch(0.7 0.28 180);
+  --color-primary-fg: oklch(0 0 0);
+  --color-secondary: oklch(0.15 0.06 280);
+  --color-secondary-fg: oklch(0.95 0.12 180);
+  --color-danger: oklch(0.7 0.28 10);
+  --color-success: oklch(0.7 0.28 150);
+  --color-warning: oklch(0.8 0.28 80);
+  --color-border: oklch(0.3 0.12 180 / 0.5);
+  --color-ring: oklch(0.7 0.28 180);
+  --border-width: 1.5px;
+  --backdrop-blur: 8px;
+  --shadow-card: 0 0 12px oklch(0.7 0.28 180 / 0.15);
+  --shadow-elevated: 0 0 24px oklch(0.7 0.28 180 / 0.25);
+}
+
+[data-theme="neon"].dark {
+  --color-bg: oklch(0.02 0.04 280);
+  --color-fg: oklch(0.9 0.1 180);
+  --color-muted: oklch(0.5 0.06 180);
+  --color-primary: oklch(0.6 0.28 180);
+  --color-primary-fg: oklch(0 0 0);
+  --color-secondary: oklch(0.1 0.04 280);
+  --color-secondary-fg: oklch(0.9 0.1 180);
+  --color-border: oklch(0.25 0.1 180 / 0.5);
+  --color-ring: oklch(0.6 0.28 180);
+}
