@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Canvas } from ".";
 import { GraphNode } from "../graph-node";
-import { snap } from "./use-snap";
+import { snap as snapToGrid } from "./use-snap";
 
 function DraggableNode({
   initialX,
@@ -16,12 +16,15 @@ function DraggableNode({
   children: string;
 }) {
   const [pos, setPos] = useState({ x: initialX, y: initialY });
+  const [selected, setSelected] = useState(false);
+  const [snap, setSnap] = useState(true);
   const dragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const nodeStart = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    setSelected(true);
     dragging.current = true;
     dragStart.current = { x: e.clientX, y: e.clientY };
     nodeStart.current = { x: pos.x, y: pos.y };
@@ -31,11 +34,14 @@ function DraggableNode({
     if (!dragging.current) return;
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
-    setPos({
-      x: snap(nodeStart.current.x + dx),
-      y: snap(nodeStart.current.y + dy),
-    });
-  }, []);
+    let newX = nodeStart.current.x + dx;
+    let newY = nodeStart.current.y + dy;
+    if (snap) {
+      newX = snapToGrid(newX);
+      newY = snapToGrid(newY);
+    }
+    setPos({ x: newX, y: newY });
+  }, [snap]);
 
   const handleMouseUp = useCallback(() => {
     dragging.current = false;
@@ -43,13 +49,25 @@ function DraggableNode({
 
   return (
     <div
+      className="relative"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      style={{ cursor: "grab" }}
+      style={{ cursor: dragging.current ? "grabbing" : "grab" }}
     >
-      <GraphNode x={pos.x} y={pos.y} header={header}>
+      <div className="absolute -top-7 left-0 flex items-center gap-2 z-10">
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setSnap((s) => !s); }}
+          className={`text-[10px] px-1.5 py-0.5 rounded-sm border cursor-pointer ${
+            snap ? "bg-primary text-primary-fg border-primary" : "bg-bg text-muted border-border"
+          }`}
+        >
+          {snap ? "Snap: ON" : "Snap: OFF"}
+        </button>
+      </div>
+      <GraphNode x={pos.x} y={pos.y} header={header} variant={selected ? "selected" : "default"}>
         {children}
       </GraphNode>
     </div>
@@ -80,8 +98,8 @@ const entry: ShowcaseEntry = {
       name: "Draggable nodes (snap to grid)",
       render: () => (
         <Canvas className="h-80 w-full rounded-ui border border-border">
-          <DraggableNode initialX={40} initialY={30} header="Source">Drag me</DraggableNode>
-          <DraggableNode initialX={300} initialY={30} header="Sink">Snaps to 16px grid</DraggableNode>
+          <DraggableNode initialX={40} initialY={30} header="Source">Click to select, drag to move</DraggableNode>
+          <DraggableNode initialX={300} initialY={30} header="Sink">Snap/SnapOff toggle above</DraggableNode>
         </Canvas>
       ),
     },
