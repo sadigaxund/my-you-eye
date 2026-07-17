@@ -84,15 +84,15 @@ export default function App() {
         ))}
       </nav>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:before:absolute md:before:left-1/2 md:before:top-0 md:before:-translate-x-px md:before:h-full md:before:w-px md:before:bg-border md:before:opacity-40">
         {groupEntries(tab).map((entry) => (
-          <section key={entry.title} className={entry.demos.length === 1 ? "md:col-span-2" : ""}>
+          <section key={entry.title} className="break-inside-avoid">
             <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
             <div className="space-y-4">
               {entry.demos.map((demo) => (
                 <div key={demo.name}>
                   <p className="text-sm text-muted mb-2">{demo.name}</p>
-                  <div className="border border-border rounded-ui p-panel">
+                  <div className="border border-border rounded-ui p-panel overflow-visible">
                     {demo.render()}
                   </div>
                 </div>

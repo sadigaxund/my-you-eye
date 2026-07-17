@@ -50,18 +50,16 @@ const entry: ShowcaseEntry = {
   group: "data",
   demos: [
     {
-      name: "Nested data tree",
+      name: "Default & Condensed",
       render: () => (
-        <div className="max-w-md">
-          <TreeView data={sampleData} />
-        </div>
-      ),
-    },
-    {
-      name: "Condensed variant",
-      render: () => (
-        <div className="max-w-md">
-          <TreeView data={sampleData} variant="condensed" />
+        <div className="flex gap-4 max-w-lg">
+          <div className="flex-1 min-w-0">
+            <TreeView data={sampleData} />
+          </div>
+          <div className="w-px bg-border shrink-0" />
+          <div className="flex-1 min-w-0">
+            <TreeView data={sampleData} variant="condensed" />
+          </div>
         </div>
       ),
     },

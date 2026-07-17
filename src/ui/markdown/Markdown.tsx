@@ -1,83 +1,143 @@
 import { useMemo } from "react";
-import type { HTMLAttributes } from "react";
+import type { ReactNode, HTMLAttributes } from "react";
 import { cn } from "../../lib/cn";
+import { CodeBlock } from "../code-block";
 
 export interface MarkdownProps extends HTMLAttributes<HTMLDivElement> {
   content: string;
 }
 
+type Block =
+  | { type: "heading"; level: number; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[] }
+  | { type: "code"; code: string }
+  | { type: "empty" };
+
 function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function renderInline(text: string): string {
-  const codeInline = text.replace(/`([^`]+)`/g, "<code class=\"rounded-ui-sm bg-secondary px-1 py-0.5 text-xs font-mono\">$1</code>");
-  const bold = codeInline.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  const italic = bold.replace(/\*(.+?)\*/g, "<em>$1</em>");
-  const links = italic.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href=\"$2\" class=\"text-primary hover:underline\">$1</a>");
-  return links;
+function renderInline(text: string): ReactNode {
+  const parts: ReactNode[] = [];
+  const regex = /(`[^`]+`)|(\*\*(.+?)\*\*)|(\*(.+?)\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(escapeHtml(text.slice(lastIndex, match.index)));
+    }
+    if (match[1]) {
+      parts.push(<code key={match.index} className="rounded-ui-sm bg-secondary px-1 py-0.5 text-xs font-mono">{match[1].slice(1, -1)}</code>);
+    } else if (match[3]) {
+      parts.push(<strong key={match.index}>{escapeHtml(match[3])}</strong>);
+    } else if (match[5]) {
+      parts.push(<em key={match.index}>{escapeHtml(match[5])}</em>);
+    } else if (match[7]) {
+      parts.push(<a key={match.index} href={match[8]} className="text-primary hover:underline">{escapeHtml(match[7])}</a>);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(escapeHtml(text.slice(lastIndex)));
+  }
+
+  return parts.length === 1 ? parts[0] : parts.length > 1 ? <>{parts}</> : "";
 }
 
-function renderMarkdown(content: string): string {
+function parseBlocks(content: string): Block[] {
   const lines = content.split("\n");
-  const html: string[] = [];
-  let inList = false;
+  const blocks: Block[] = [];
+  let i = 0;
 
-  for (const raw of lines) {
-    const line = raw.trimEnd();
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line === "") {
+      i++;
+      continue;
+    }
+
     const heading = line.match(/^(#{1,6})\s+(.+)/);
     if (heading) {
-      if (inList) { html.push("</ul>"); inList = false; }
-      const level = heading[1].length;
-      const text = renderInline(escapeHtml(heading[2]));
-      html.push(`<h${level} class="text-${["base", "lg", "base", "sm", "xs", "xs"][level - 1]} font-semibold mt-3 mb-1">${text}</h${level}>`);
+      blocks.push({ type: "heading", level: heading[1].length, text: heading[2] });
+      i++;
+      continue;
+    }
+
+    if (line.startsWith("```")) {
+      const codeLines: string[] = [];
+      i++;
+      while (i < lines.length && !lines[i].startsWith("```")) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      i++;
+      blocks.push({ type: "code", code: codeLines.join("\n") });
       continue;
     }
 
     const listItem = line.match(/^[-*]\s+(.+)/);
     if (listItem) {
-      if (!inList) { html.push("<ul class=\"list-disc pl-5 space-y-0.5 my-1\">"); inList = true; }
-      html.push(`<li class="text-sm">${renderInline(escapeHtml(listItem[1]))}</li>`);
-      continue;
-    }
-
-    if (line.startsWith("```")) {
-      if (inList) { html.push("</ul>"); inList = false; }
-      html.push("<pre class=\"overflow-x-auto rounded-ui bg-secondary p-3 my-2\"><code class=\"text-xs leading-relaxed\">");
-      continue;
-    }
-
-    if (html.length > 0 && html[html.length - 1]?.startsWith("<pre")) {
-      if (line.startsWith("```")) {
-        html.push("</code></pre>");
-      } else {
-        html.push(escapeHtml(line) + "\n");
+      const items: string[] = [listItem[1]];
+      i++;
+      while (i < lines.length) {
+        const next = lines[i].match(/^[-*]\s+(.+)/);
+        if (next) { items.push(next[1]); i++; }
+        else break;
       }
+      blocks.push({ type: "list", items });
       continue;
     }
 
-    if (inList) { html.push("</ul>"); inList = false; }
-
-    if (line === "") {
-      html.push("");
-      continue;
+    const paraLines: string[] = [line];
+    i++;
+    while (i < lines.length && lines[i] !== "") {
+      paraLines.push(lines[i]);
+      i++;
     }
-
-    html.push(`<p class="text-sm my-1">${renderInline(escapeHtml(line))}</p>`);
+    blocks.push({ type: "paragraph", text: paraLines.join(" ") });
   }
 
-  if (inList) html.push("</ul>");
-  return html.join("\n");
+  return blocks;
 }
 
 export function Markdown({ content, className, ...props }: MarkdownProps) {
-  const html = useMemo(() => renderMarkdown(content), [content]);
+  const blocks = useMemo(() => parseBlocks(content), [content]);
 
   return (
-    <div
-      className={cn("prose prose-sm max-w-none", className)}
-      dangerouslySetInnerHTML={{ __html: html }}
-      {...props}
-    />
+    <div className={cn("space-y-3", className)} {...props}>
+      {blocks.map((block, i) => {
+        switch (block.type) {
+          case "heading": {
+            const sizes = ["", "text-lg", "text-base", "text-sm", "text-xs", "text-xs"];
+            const cls = cn(sizes[block.level - 1] ?? "text-base", "font-semibold text-fg");
+            const h = block.level;
+            return h === 1 ? <h1 key={i} className={cls}>{renderInline(block.text)}</h1>
+                 : h === 2 ? <h2 key={i} className={cls}>{renderInline(block.text)}</h2>
+                 : h === 3 ? <h3 key={i} className={cls}>{renderInline(block.text)}</h3>
+                 : h === 4 ? <h4 key={i} className={cls}>{renderInline(block.text)}</h4>
+                 : h === 5 ? <h5 key={i} className={cls}>{renderInline(block.text)}</h5>
+                 : <h6 key={i} className={cls}>{renderInline(block.text)}</h6>;
+          }
+          case "paragraph":
+            return <p key={i} className="text-sm leading-relaxed text-fg">{renderInline(block.text)}</p>;
+          case "list":
+            return (
+              <ul key={i} className="list-disc pl-5 space-y-0.5">
+                {block.items.map((item, j) => (
+                  <li key={j} className="text-sm text-fg">{renderInline(item)}</li>
+                ))}
+              </ul>
+            );
+          case "code":
+            return <CodeBlock key={i} code={block.code} />;
+          default:
+            return null;
+        }
+      })}
+    </div>
   );
 }

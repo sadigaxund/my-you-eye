@@ -118,7 +118,19 @@ Check items off (`[x]`) as they complete.
 - [x] **Slider** — styled range input with label + value display.
 - [x] **Markdown** — lightweight renderer (headings, bold, italic, code, links, lists, code blocks). Zero npm deps.
 
-## Phase 10 — Remaining
+## Phase 10 — Feedback fixes
+
+- [ ] **MD render typography** — rewrite renderer to output clean semantic HTML. Let parent .prose handle all styling.
+- [ ] **CodeBlock copy button** — clipboard icon, appears on hover (opacity-0 group-hover:opacity-100). No header conflict.
+- [ ] **Markdown reuse CodeBlock** — render fenced code blocks as `<CodeBlock>` instead of raw `<pre><code>`.
+- [ ] **2-column layout fixes** — remove col-span-2, add auto-rows-fr, constrain wide demos (Spinner/Skeleton/Toast/Label/RadioGroup/Slider/Markdown), fix overlay demo z-stacking with overflow-visible.
+- [ ] **Port spacing** — add `gap-2` between port circle and label (currently almost touching).
+- [ ] **GraphNode variants overlap** — stagger x positions (0, 200, 400) so they don't stack.
+- [ ] **Remove duplicate canvas demo** — delete "On canvas" from GraphNode showcase (redundant with Canvas showcase).
+- [ ] **Vertical column separator** — `::before` pseudo-element, 1px, `opacity-0.4`, only on md+.
+- [ ] **Merge DataList/TreeView showcase demos** — "Default & Compact" side-by-side in one container instead of two wide containers.
+
+## Phase 11 — Remaining
 
 - [ ] **Drawer** — slide-in panel from left/right, Radix Dialog-based.
 - [ ] **Combobox** — autocomplete/select-with-search, Popover + Input.

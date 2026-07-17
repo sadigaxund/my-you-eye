@@ -32,9 +32,9 @@ export interface PortProps
 
 const Port = forwardRef<HTMLDivElement, PortProps>(
   ({ className, side, state, label, ...props }, ref) => (
-    <div ref={ref} className={cn("relative flex items-center", side === "in" ? "flex-row" : "flex-row-reverse")}>
+    <div ref={ref} className={cn("relative flex items-center gap-2", side === "in" ? "flex-row" : "flex-row-reverse")}>
       <div className={cn(portVariants({ side, state }), className)} {...props} />
-      {label && <span className={cn("text-xs text-muted px-1.5", side === "in" ? "pl-0" : "pr-0")}>{label}</span>}
+      {label && <span className="text-xs text-muted">{label}</span>}
     </div>
   ),
 );
