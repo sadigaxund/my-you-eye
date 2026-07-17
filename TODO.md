@@ -84,9 +84,9 @@ Check items off (`[x]`) as they complete.
 > Minimal visual building blocks for node-based UIs (pipelines, lineage, graphs).
 > No Radix — pure layout components. Consuming apps add interactivity on top.
 
-- [ ] **Canvas** — positioned container with dot-grid background pattern. Props: `width`, `height`, `zoom?`, `pan?`. Group: `display`.
-- [ ] **GraphNode** — node box with `header`, `body`, `footer` slots, colored accent bar, and port anchor areas on left/right edges. Variants: `default | selected | muted`. Group: `display`.
-- [ ] **Port** — small circle handle positioned on a GraphNode edge. Variants: `in | out`; visual states: `default | connected | highlighted`. Group: `display`.
+- [x] **Canvas** — positioned container with dot-grid background pattern. Props: `width`, `height`, `zoom?`, `pan?`. Group: `display`.
+- [x] **GraphNode** — node box with `header`, `body`, `footer` slots, colored accent bar, and port anchor areas on left/right edges. Variants: `default | selected | muted`. Group: `display`.
+- [x] **Port** — small circle handle positioned on a GraphNode edge. Variants: `in | out`; visual states: `default | connected | highlighted`. Group: `display`.
 
 ## Phase 8 — Finishing touches
 
