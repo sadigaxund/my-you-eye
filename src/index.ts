@@ -36,3 +36,10 @@ export {
 export { Popover, PopoverTrigger, PopoverContent, PopoverClose } from "./ui/popover";
 export { Toaster, useToast } from "./ui/toast";
 export { ConfirmDialog } from "./ui/patterns/confirm-dialog";
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+export { Breadcrumbs } from "./ui/breadcrumbs";
+export { Pagination } from "./ui/pagination";
+export { Avatar } from "./ui/avatar";
+export { Skeleton } from "./ui/skeleton";
+export { EmptyState } from "./ui/empty-state";
+export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./ui/table";

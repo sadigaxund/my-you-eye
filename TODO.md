@@ -54,13 +54,13 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 4 — Navigation & data
 
-- [ ] **Tabs** — `@radix-ui/react-tabs`. Variants: `underline | pills`. Group: `navigation`.
-- [ ] **Breadcrumbs** — no Radix. Group: `navigation`.
-- [ ] **Pagination** — no Radix (uses Button internally). Group: `navigation`.
-- [ ] **Avatar** — `@radix-ui/react-avatar`. Sizes `sm | md | lg`; fallback initials. Group: `display`.
-- [ ] **Skeleton** — no Radix. Shapes: `text | circle | rect`. Group: `feedback`.
-- [ ] **EmptyState** — no Radix. Icon slot + title + description + action slot. Group: `display`.
-- [ ] **Table** — no Radix. Variants: `default | striped`; density `compact | normal`. Subcomponents in same folder (mind the 250-line limit — split files). Group: `data`.
+- [x] **Tabs** — `@radix-ui/react-tabs`. Variants: `underline | pills`. Group: `navigation`.
+- [x] **Breadcrumbs** — no Radix. Group: `navigation`.
+- [x] **Pagination** — no Radix (uses Button internally). Group: `navigation`.
+- [x] **Avatar** — `@radix-ui/react-avatar`. Sizes `sm | md | lg`; fallback initials. Group: `display`.
+- [x] **Skeleton** — no Radix. Shapes: `text | circle | rect`. Group: `feedback`.
+- [x] **EmptyState** — no Radix. Icon slot + title + description + action slot. Group: `display`.
+- [x] **Table** — no Radix. Variants: `default | striped`; density `compact | normal`. Subcomponents in same folder (mind the 250-line limit — split files). Group: `data`.
 
 ## Phase 5 — App patterns
 
