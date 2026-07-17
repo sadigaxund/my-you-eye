@@ -8,10 +8,10 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="relative" style={{ height: 180 }}>
-          <GraphNode x={0} y={10} header="Default">Body content</GraphNode>
-          <GraphNode x={200} y={10} header="Selected" variant="selected">Body content</GraphNode>
-          <GraphNode x={400} y={10} header="Muted" variant="muted">Body content</GraphNode>
+        <div className="flex items-center justify-center gap-4 h-48">
+          <GraphNode x={0} y={0} className="static" header="Default">Body content</GraphNode>
+          <GraphNode x={0} y={0} className="static" header="Selected" variant="selected">Body content</GraphNode>
+          <GraphNode x={0} y={0} className="static" header="Muted" variant="muted">Body content</GraphNode>
         </div>
       ),
     },

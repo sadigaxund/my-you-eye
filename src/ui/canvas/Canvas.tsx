@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState, useCallback, useEffect } from "react";
-import type { HTMLAttributes } from "react";
+import type { ReactNode, HTMLAttributes } from "react";
 import { cn } from "../../lib/cn";
 
 export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
@@ -8,13 +8,14 @@ export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
   minZoom?: number;
   maxZoom?: number;
   zoomStep?: number;
+  controls?: ReactNode;
 }
 
 const btn =
   "inline-flex items-center justify-center size-7 rounded-ui-sm border border-border bg-bg text-xs text-fg hover:bg-secondary cursor-pointer";
 
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
-  ({ className, gridSize = 20, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, children, style, ...props }, ref) => {
+  ({ className, gridSize = 20, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, controls, children, style, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(initialZoom);
@@ -78,7 +79,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle,var(--color-border)_1.5px,transparent_1.5px)",
+            backgroundImage: "radial-gradient(circle,color-mix(in oklch,var(--color-border) 60%,var(--color-muted))_2px,transparent_2px)",
             backgroundSize: `${scaledGrid}px ${scaledGrid}px`,
             backgroundPosition: bgPos,
           }}
@@ -99,6 +100,12 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
             {Math.round(zoom * 100)}%
           </button>
           <button type="button" className={btn} onClick={zoomIn} title="Zoom in">+</button>
+          {controls && (
+            <>
+              <div className="w-px h-4 bg-border mx-0.5" />
+              {controls}
+            </>
+          )}
         </div>
       </div>
     );
