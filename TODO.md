@@ -73,11 +73,11 @@ Check items off (`[x]`) as they complete.
 > Base primitives useful across any app, plus a cell renderer for data-heavy tables.
 > No new Radix packages needed.
 
-- [ ] **Separator** — no Radix. Variants: `horizontal | vertical`. Group: `display`.
-- [ ] **Progress** — no Radix. Variants: `default | success | warning | danger`; optional label. Group: `feedback`.
-- [ ] **StatusDot** — no Radix. Variants: `neutral | success | warning | danger | info`; sizes `sm | md`. Group: `display`.
-- [ ] **Kbd** — no Radix. Renders `<kbd>` with styling. Group: `display`.
-- [ ] **CellValue** — no Radix. Type-aware cell renderer for `<TableCell>`. Props: `type: "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"`, `value`. Group: `data`.
+- [x] **Separator** — no Radix. Variants: `horizontal | vertical`. Group: `display`.
+- [x] **Progress** — no Radix. Variants: `default | success | warning | danger`; optional label. Group: `feedback`.
+- [x] **StatusDot** — no Radix. Variants: `neutral | success | warning | danger | info`; sizes `sm | md`. Group: `display`.
+- [x] **Kbd** — no Radix. Renders `<kbd>` with styling. Group: `display`.
+- [x] **CellValue** — no Radix. Type-aware cell renderer for `<TableCell>`. Props: `type: "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"`, `value`. Group: `data`.
 
 ## Phase 7 — Canvas & graph primitives
 
