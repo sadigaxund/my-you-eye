@@ -28,6 +28,29 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "With rows",
+      render: () => (
+        <div className="relative min-h-[140px]">
+          <GraphNode
+            x={10}
+            y={10}
+            header="customer_orders"
+            accent
+            ports={[
+              { side: "left", label: "input", state: "connected" },
+              { side: "right", label: "output", state: "connected" },
+            ]}
+            rows={[
+              { label: "Status", value: <span className="text-success font-medium">running</span> },
+              { label: "Rows", value: "1,234,567" },
+              { label: "Columns", value: "12" },
+              { label: "Duration", value: "3.2s" },
+            ]}
+          />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

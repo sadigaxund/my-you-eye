@@ -25,6 +25,11 @@ export interface PortDef {
   state?: "default" | "connected" | "highlighted";
 }
 
+export interface GraphNodeRow {
+  label: string;
+  value: ReactNode;
+}
+
 export interface GraphNodeProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof graphNodeVariants> {
@@ -34,10 +39,11 @@ export interface GraphNodeProps
   accent?: boolean;
   ports?: PortDef[];
   footer?: ReactNode;
+  rows?: GraphNodeRow[];
 }
 
 const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
-  ({ className, variant, x, y, header, accent, ports, footer, children, style, ...props }, ref) => (
+  ({ className, variant, x, y, header, accent, ports, footer, rows, children, style, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(graphNodeVariants({ variant }), className)}
@@ -80,7 +86,17 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
           ))}
         </div>
       )}
-      {children && <div className="px-3 py-2 text-xs">{children}</div>}
+      {rows && rows.length > 0 && (
+        <div className="divide-y divide-border/50">
+          {rows.map((row, i) => (
+            <div key={i} className="grid grid-cols-[auto_1fr] gap-x-3 px-3 py-1.5 text-xs">
+              <span className="text-muted whitespace-nowrap">{row.label}</span>
+              <span className="text-fg truncate">{row.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {!rows && children && <div className="px-3 py-2 text-xs">{children}</div>}
       {footer && <div className="px-3 py-1.5 border-t border-border text-xs text-muted">{footer}</div>}
     </div>
   ),
