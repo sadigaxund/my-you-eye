@@ -68,9 +68,31 @@ Check items off (`[x]`) as they complete.
 - [x] **Toolbar** (pattern) — search Input + filter slots + actions, responsive row. Group: `patterns`.
 - [x] **StatCard** (pattern) — label + value + optional delta badge. Group: `patterns`.
 
-## Phase 6 — Distribution & upkeep (when needed, not before)
+## Phase 6 — Missing primitives & rich data
 
-- [ ] Tag `v0.1.0` once Phases 0–3 are done; consume from a real app via `npm i github:<user>/Frontend-AI#v0.1.0`.
+> Base primitives useful across any app, plus a cell renderer for data-heavy tables.
+> No new Radix packages needed.
+
+- [ ] **Separator** — no Radix. Variants: `horizontal | vertical`. Group: `display`.
+- [ ] **Progress** — no Radix. Variants: `default | success | warning | danger`; optional label. Group: `feedback`.
+- [ ] **StatusDot** — no Radix. Variants: `neutral | success | warning | danger | info`; sizes `sm | md`. Group: `display`.
+- [ ] **Kbd** — no Radix. Renders `<kbd>` with styling. Group: `display`.
+- [ ] **CellValue** — no Radix. Type-aware cell renderer for `<TableCell>`. Props: `type: "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"`, `value`. Group: `data`.
+
+## Phase 7 — Canvas & graph primitives
+
+> Minimal visual building blocks for node-based UIs (pipelines, lineage, graphs).
+> No Radix — pure layout components. Consuming apps add interactivity on top.
+
+- [ ] **Canvas** — positioned container with dot-grid background pattern. Props: `width`, `height`, `zoom?`, `pan?`. Group: `display`.
+- [ ] **GraphNode** — node box with `header`, `body`, `footer` slots, colored accent bar, and port anchor areas on left/right edges. Variants: `default | selected | muted`. Group: `display`.
+- [ ] **Port** — small circle handle positioned on a GraphNode edge. Variants: `in | out`; visual states: `default | connected | highlighted`. Group: `display`.
+
+## Phase 8 — Finishing touches
+
+> Do once all components are built and validated.
+
+- [ ] Tag `v0.1.0` once Phases 0–7 are done; consume from a real app via `npm i github:<user>/Frontend-AI#v0.1.0`.
 - [ ] Add an `AUDIT.md` procedure: script/checklist comparing exports vs showcase vs real usage in consuming apps; run after every batch of cheap-LLM work.
 - [ ] Consider versioned releases with changesets + npm publish only if git-URL installs become painful.
 
