@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { Dialog, DialogContent } from "../dialog";
+import { ScrollArea } from "../scroll-area";
 import { cn } from "../../lib/cn";
 
 export interface CommandAction {
@@ -102,7 +103,8 @@ export function CommandPalette({
             className="w-full bg-transparent px-4 py-3 text-sm outline-none placeholder:text-muted"
           />
         </div>
-        <div className="max-h-80 overflow-y-auto p-2" onKeyDown={handleKeyDown}>
+        <ScrollArea className="max-h-80">
+          <div className="p-2" onKeyDown={handleKeyDown}>
           {flatItems.length === 0 ? (
             <p className="px-2 py-8 text-sm text-muted text-center">{emptyText}</p>
           ) : groupedFiltered ? (
@@ -143,6 +145,7 @@ export function CommandPalette({
             ))
           )}
         </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

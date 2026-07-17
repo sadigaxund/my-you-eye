@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ShowcaseEntry, ShowcaseGroup } from "./types";
 import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 
 const GROUPS: ShowcaseGroup[] = [
   "inputs",
@@ -52,28 +53,29 @@ export default function App() {
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">UI Showcase</h1>
         <div className="flex items-center gap-inline">
-          <select
-            value={theme}
-            onChange={(e) => handleThemeChange(e.target.value as ThemeProfile)}
-            className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
-          >
-            <option value="default">Default</option>
-            <option value="neon">Neon</option>
-            <option value="high-contrast">High Contrast</option>
-          </select>
-          <select
-            value={font}
-            onChange={(e) => {
-              const val = e.target.value as FontMode;
-              setFont(val);
-              document.documentElement.dataset.font = val;
-            }}
-            className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
-          >
-            {fontOptions.map((f) => (
-              <option key={f.value} value={f.value}>{f.label}</option>
-            ))}
-          </select>
+          <Select value={theme} onValueChange={(v) => handleThemeChange(v as ThemeProfile)}>
+            <SelectTrigger size="sm" className="w-auto gap-2">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="neon">Neon</SelectItem>
+              <SelectItem value="high-contrast">High Contrast</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={font} onValueChange={(v) => {
+            setFont(v as FontMode);
+            document.documentElement.dataset.font = v;
+          }}>
+            <SelectTrigger size="sm" className="w-auto gap-2">
+              <SelectValue placeholder="Font" />
+            </SelectTrigger>
+            <SelectContent>
+              {fontOptions.map((f) => (
+                <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button
             type="button"
             onClick={toggleDark}

@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Input } from "../input";
+import { ScrollArea } from "../scroll-area";
 import { cn } from "../../lib/cn";
 
 export interface ComboboxOption {
@@ -78,29 +79,31 @@ export function Combobox({
             className="border-0 rounded-none ring-0 focus-visible:ring-0"
           />
         </div>
-        <div className="max-h-60 overflow-y-auto p-1">
-          {filtered.length === 0 ? (
-            <p className="px-2 py-4 text-sm text-muted text-center">{emptyText}</p>
-          ) : (
-            filtered.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={cn(
-                  "w-full text-left px-2 py-1.5 rounded-ui-sm text-sm hover:bg-secondary focus:bg-secondary outline-none",
-                  option.value === value && "bg-primary/10 text-primary font-medium",
-                )}
-                onClick={() => {
-                  onChange?.(option.value);
-                  setOpen(false);
-                  setQuery("");
-                }}
-              >
-                {option.label}
-              </button>
-            ))
-          )}
-        </div>
+        <ScrollArea className="max-h-60">
+          <div className="p-1">
+            {filtered.length === 0 ? (
+              <p className="px-2 py-4 text-sm text-muted text-center">{emptyText}</p>
+            ) : (
+              filtered.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-ui-sm text-sm hover:bg-secondary focus:bg-secondary outline-none",
+                    option.value === value && "bg-primary/10 text-primary font-medium",
+                  )}
+                  onClick={() => {
+                    onChange?.(option.value);
+                    setOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))
+            )}
+          </div>
+        </ScrollArea>
       </PopoverContent>
     </Popover>
   );

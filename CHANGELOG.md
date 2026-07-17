@@ -6,6 +6,18 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **FileDrop component** — drag-and-drop file upload zone with drag-over/error/success visual states, file type/size validation, click-to-browse fallback. `src/ui/file-drop/`.
+- **Avatar showcase demos** — image grid with all sizes, fallback variants, colored ring frames (primary/success/warning), status dot overlays (online/away/offline).
+- **Custom scrollbar utility** — Firefox (`scrollbarWidth`/`scrollbarColor`) and webkit (`::-webkit-scrollbar` pseudo-elements) scrollbar styling applied to `<textarea>` and `<pre>` elements via CVA base classes and inline style.
+
+### Changed
+
+- **Header controls** — native `<select>` elements replaced with reusable `Select` component (Radix-based) for theme and font pickers.
+- **Combobox scrollbar** — options list now wrapped in `<ScrollArea>` instead of plain `overflow-y-auto` div.
+- **CommandPalette scrollbar** — results list now wrapped in `<ScrollArea>` instead of plain `overflow-y-auto` div.
+- **DrawerBody scrollbar** — content area now wraps children in `<ScrollArea>` for consistent custom scrollbar appearance.
+- **CodeBlock scrollbar** — `<pre>` element now uses the same custom scrollbar styling classes as ScrollArea.
+
 - **Single-source font list** — `src/lib/fonts.ts` exports the canonical `fontOptions` array and derived `FontMode` type. `src/showcase/App.tsx` consumes it instead of duplicating option tags. AGENTS.md now documents the font maintenance contract.
 - **Showcase masonry layout** — CSS columns (columns-1/2/3) replacing grid, column-rule divider. Short and tall components pack without ragged gaps.
 - **Grid-locked GraphNode** — height derived from row count formula (HEADER + rows*ROW + FOOTER), row-anchored ports via `portLeft`/`portRight` on each row. Multiple same-side ports distributed vertically.

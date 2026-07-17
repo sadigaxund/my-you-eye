@@ -1,6 +1,19 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Avatar } from ".";
 
+function FrameDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-6">
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <div key={size} className="flex flex-col items-center gap-2">
+          <span className="text-xs text-muted capitalize">{size}</span>
+          <Avatar size={size} src={`https://i.pravatar.cc/80?u=${size}`} alt="User" fallback="U" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Avatar",
   group: "display",
@@ -16,17 +29,51 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "With image",
+      name: "Fallback variants",
       render: () => (
-        <div className="flex items-center gap-3">
-          <Avatar
-            size="md"
-            src="https://i.pravatar.cc/80?u=1"
-            alt="User"
-            fallback="U"
-          />
+        <div className="flex flex-wrap items-center gap-3">
           <Avatar size="md" fallback="AB" />
           <Avatar size="md" fallback="MK" />
+          <Avatar size="md" fallback="JD" />
+        </div>
+      ),
+    },
+    {
+      name: "With image",
+      render: () => <FrameDemo />,
+    },
+    {
+      name: "With ring",
+      render: () => (
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="rounded-full ring-2 ring-primary ring-offset-2 ring-offset-bg">
+            <Avatar size="md" src="https://i.pravatar.cc/80?u=ring1" alt="User" fallback="U" />
+          </div>
+          <div className="rounded-full ring-2 ring-success ring-offset-2 ring-offset-bg">
+            <Avatar size="md" src="https://i.pravatar.cc/80?u=ring2" alt="User" fallback="U" />
+          </div>
+          <div className="rounded-full ring-2 ring-warning ring-offset-2 ring-offset-bg">
+            <Avatar size="md" src="https://i.pravatar.cc/80?u=ring3" alt="User" fallback="U" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      name: "With status dot",
+      render: () => (
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="relative">
+            <Avatar size="lg" src="https://i.pravatar.cc/80?u=dot1" alt="User" fallback="U" />
+            <span className="absolute bottom-0 right-0 size-3 rounded-full ring-2 ring-bg bg-success" />
+          </div>
+          <div className="relative">
+            <Avatar size="lg" src="https://i.pravatar.cc/80?u=dot2" alt="User" fallback="U" />
+            <span className="absolute bottom-0 right-0 size-3 rounded-full ring-2 ring-bg bg-warning" />
+          </div>
+          <div className="relative">
+            <Avatar size="md" fallback="OF" />
+            <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full ring-2 ring-bg bg-danger" />
+          </div>
         </div>
       ),
     },

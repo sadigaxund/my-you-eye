@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { Root, Trigger, Portal, Overlay, Content, Title, Description, Close } from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
+import { ScrollArea } from "../scroll-area";
 import { cn } from "../../lib/cn";
 
 const drawerOverlay = "fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
@@ -69,8 +70,10 @@ const DrawerDescription = forwardRef<React.ComponentRef<typeof Description>, Rea
 DrawerDescription.displayName = "DrawerDescription";
 
 const DrawerBody = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex-1 overflow-y-auto p-panel", className)} {...props} />
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn("flex-1", className)} {...props}>
+      <ScrollArea className="h-full p-panel">{children}</ScrollArea>
+    </div>
   ),
 );
 DrawerBody.displayName = "DrawerBody";

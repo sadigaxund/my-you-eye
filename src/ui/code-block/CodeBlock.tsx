@@ -59,7 +59,8 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
         </button>
         <pre
           ref={ref}
-          className={cn("p-panel text-xs leading-relaxed overflow-x-auto", wrap && "whitespace-pre-wrap")}
+          className={cn("p-panel text-xs leading-relaxed overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-track]:bg-transparent", wrap && "whitespace-pre-wrap")}
+          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-border) transparent" }}
           {...props}
         >
           <code>{code}</code>
