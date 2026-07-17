@@ -51,21 +51,17 @@ function ConnectionLine({
   to,
 }: ConnectionLineProps) {
   const d = useMemo(() => generatePath(from, to, variant ?? "bezier"), [from, to, variant]);
-  const minX = Math.min(from.x, to.x) - 20;
-  const minY = Math.min(from.y, to.y) - 20;
-  const maxX = Math.max(from.x, to.x) + 20;
-  const maxY = Math.max(from.y, to.y) + 20;
 
   return (
     <svg
       className={cn(lineVariants({ variant, state }), className)}
       style={{
         position: "absolute",
-        left: minX,
-        top: minY,
-        width: maxX - minX,
-        height: maxY - minY,
+        inset: 0,
+        width: "100%",
+        height: "100%",
         pointerEvents: "none",
+        overflow: "visible",
       }}
     >
       <path d={d} />

@@ -6,8 +6,8 @@ import type { TreeNode } from ".";
 function ControlledTreeViewDemo() {
   const [expanded, setExpanded] = useState(new Set(["1", "2"]));
   return (
-    <div className="max-w-xl px-2">
-      <div className="flex gap-2 mb-3">
+      <div className="max-w-xl">
+        <div className="flex gap-2 mb-3 px-2">
         <button
           type="button"
           onClick={() => setExpanded(new Set(["1", "1-1", "1-2", "2", "2-1"]))}
@@ -23,18 +23,20 @@ function ControlledTreeViewDemo() {
           Collapse all
         </button>
       </div>
-      <TreeView
-        data={sampleData}
-        expandedKeys={expanded}
-        onToggle={(id) => {
-          setExpanded((prev) => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id);
-            else next.add(id);
-            return next;
-          });
-        }}
-      />
+      <div className="max-h-64 overflow-auto px-2">
+        <TreeView
+          data={sampleData}
+          expandedKeys={expanded}
+          onToggle={(id) => {
+            setExpanded((prev) => {
+              const next = new Set(prev);
+              if (next.has(id)) next.delete(id);
+              else next.add(id);
+              return next;
+            });
+          }}
+        />
+      </div>
     </div>
   );
 }

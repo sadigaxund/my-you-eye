@@ -132,7 +132,6 @@ function CanvasDemo() {
         id="transform"
         initialX={260} initialY={40}
         header="transform"
-        variant="selected"
         accent
         snap={snap}
         selectedId={selectedId}
