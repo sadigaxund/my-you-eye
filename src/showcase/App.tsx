@@ -13,7 +13,7 @@ const GROUPS: ShowcaseGroup[] = [
   "typography",
 ];
 
-type FontMode = "sans" | "serif" | "mono";
+type FontMode = "sans" | "serif" | "mono" | "ubuntu" | "titillium" | "consolas" | "meslo" | "jetbrains";
 type ThemeProfile = "default" | "neon" | "high-contrast";
 
 const entries: ShowcaseEntry[] = Object.values(
@@ -69,9 +69,14 @@ export default function App() {
             }}
             className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
           >
-            <option value="sans">Sans</option>
-            <option value="serif">Serif</option>
-            <option value="mono">Mono</option>
+            <option value="sans">Sans (Inter)</option>
+            <option value="serif">Serif (Georgia)</option>
+            <option value="mono">Mono (JetBrains)</option>
+            <option value="ubuntu">Ubuntu</option>
+            <option value="titillium">Titillium Web</option>
+            <option value="consolas">Consolas</option>
+            <option value="meslo">Meslo Nerd</option>
+            <option value="jetbrains">JetBrains Nerd</option>
           </select>
           <button
             type="button"
