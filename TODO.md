@@ -26,13 +26,13 @@ Check items off (`[x]`) as they complete.
 > For each component: follow AGENTS.md §2 checklist. Radix packages listed per item are
 > pre-approved to install. Variants listed are the required minimum.
 
-- [ ] **Button** — no Radix. Variants: `primary | secondary | ghost | danger`; sizes `sm | md | lg`; states: disabled, `loading` (spinner + disabled). Group: `inputs`.
-- [ ] **Spinner** — no Radix. Sizes `sm | md | lg`. Group: `feedback`. (Before Button's `loading` state — Button uses it.)
-- [ ] **Input** — no Radix. Variants: `default | filled`; sizes `sm | md`; states: disabled, `invalid` (danger ring). Group: `inputs`.
-- [ ] **Label** — `@radix-ui/react-label`. Group: `inputs`.
-- [ ] **Card** — no Radix. Variants: `default | outlined | elevated`. Subcomponents in same folder: `CardHeader`, `CardTitle`, `CardContent`, `CardFooter`. Group: `display`.
-- [ ] **Badge** — no Radix. Variants: `neutral | primary | success | warning | danger`; styles `solid | soft`. Group: `display`.
-- [ ] **Alert** — no Radix. Variants: `info | success | warning | danger`; optional title + icon slot. Group: `feedback`.
+- [x] **Button** — no Radix. Variants: `primary | secondary | ghost | danger`; sizes `sm | md | lg`; states: disabled, `loading` (spinner + disabled). Group: `inputs`.
+- [x] **Spinner** — no Radix. Sizes `sm | md | lg`. Group: `feedback`. (Before Button's `loading` state — Button uses it.)
+- [x] **Input** — no Radix. Variants: `default | filled`; sizes `sm | md`; states: disabled, `invalid` (danger ring). Group: `inputs`.
+- [x] **Label** — `@radix-ui/react-label`. Group: `inputs`.
+- [x] **Card** — no Radix. Variants: `default | outlined | elevated`. Subcomponents in same folder: `CardHeader`, `CardTitle`, `CardContent`, `CardFooter`. Group: `display`.
+- [x] **Badge** — no Radix. Variants: `neutral | primary | success | warning | danger`; styles `solid | soft`. Group: `display`.
+- [x] **Alert** — no Radix. Variants: `info | success | warning | danger`; optional title + icon slot. Group: `feedback`.
 
 ## Phase 2 — Form controls
 
