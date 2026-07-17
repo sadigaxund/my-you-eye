@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import type { ShowcaseEntry, ShowcaseGroup } from "./types";
 
 const GROUPS: ShowcaseGroup[] = [
@@ -14,7 +14,6 @@ const GROUPS: ShowcaseGroup[] = [
 ];
 
 type FontMode = "sans" | "serif" | "mono";
-const FONT_CYCLE: FontMode[] = ["sans", "serif", "mono"];
 
 const entries: ShowcaseEntry[] = Object.values(
   import.meta.glob("../ui/**/*.showcase.tsx", { eager: true }),
@@ -29,34 +28,31 @@ export default function App() {
   const [tab, setTab] = useState<ShowcaseGroup>("inputs");
   const [font, setFont] = useState<FontMode>("sans");
 
-  const toggleDark = useCallback(() => {
+  const toggleDark = () => {
     setDark((d) => {
       document.documentElement.classList.toggle("dark", !d);
       return !d;
     });
-  }, []);
-
-  const cycleFont = useCallback(() => {
-    setFont((f) => {
-      const next = FONT_CYCLE[(FONT_CYCLE.indexOf(f) + 1) % FONT_CYCLE.length];
-      document.documentElement.dataset.font = next;
-      return next;
-    });
-  }, []);
+  };
 
   return (
     <div className="min-h-dvh bg-bg text-fg p-panel">
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">UI Showcase</h1>
         <div className="flex items-center gap-inline">
-          <button
-            type="button"
-            onClick={cycleFont}
-            className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer capitalize"
-            title="Cycle font family"
+          <select
+            value={font}
+            onChange={(e) => {
+              const val = e.target.value as FontMode;
+              setFont(val);
+              document.documentElement.dataset.font = val;
+            }}
+            className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
           >
-            {font}
-          </button>
+            <option value="sans">Sans</option>
+            <option value="serif">Serif</option>
+            <option value="mono">Mono</option>
+          </select>
           <button
             type="button"
             onClick={toggleDark}
@@ -84,22 +80,27 @@ export default function App() {
         ))}
       </nav>
 
-      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:before:absolute md:before:left-1/2 md:before:top-0 md:before:-translate-x-px md:before:h-full md:before:w-px md:before:bg-border md:before:opacity-40">
-        {groupEntries(tab).map((entry) => (
-          <section key={entry.title} className="break-inside-avoid">
-            <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
-            <div className="space-y-4">
-              {entry.demos.map((demo) => (
-                <div key={demo.name}>
-                  <p className="text-sm text-muted mb-2">{demo.name}</p>
-                  <div className="border border-border rounded-ui p-panel overflow-visible">
-                    {demo.render()}
+      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:before:absolute md:before:left-1/2 md:before:top-4 md:before:-translate-x-px md:before:[height:calc(100%-2rem)] md:before:w-px md:before:bg-border md:before:opacity-40">
+        {groupEntries(tab).flatMap((entry, idx) => [
+          idx > 0 && (
+            <div key={`sep-${idx}`} className="col-span-full h-px bg-border/30 mx-4" />
+          ),
+          (
+            <section key={entry.title} className="break-inside-avoid">
+              <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
+              <div className="space-y-4">
+                {entry.demos.map((demo) => (
+                  <div key={demo.name}>
+                    <p className="text-sm text-muted mb-2">{demo.name}</p>
+                    <div className="border border-border rounded-ui p-panel overflow-visible">
+                      {demo.render()}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+                ))}
+              </div>
+            </section>
+          ),
+        ]).filter(Boolean)}
         {groupEntries(tab).length === 0 && (
           <p className="text-muted text-sm col-span-full">
             No components in this group yet.

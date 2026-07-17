@@ -78,7 +78,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle,color-mix(in oklch,var(--color-border) 60%,transparent)_1px,transparent_1px)",
+            backgroundImage: "radial-gradient(circle,var(--color-border)_1.5px,transparent_1.5px)",
             backgroundSize: `${scaledGrid}px ${scaledGrid}px`,
             backgroundPosition: bgPos,
           }}

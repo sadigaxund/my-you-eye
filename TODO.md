@@ -120,15 +120,20 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 10 — Feedback fixes
 
-- [ ] **MD render typography** — rewrite renderer to output clean semantic HTML. Let parent .prose handle all styling.
-- [ ] **CodeBlock copy button** — clipboard icon, appears on hover (opacity-0 group-hover:opacity-100). No header conflict.
-- [ ] **Markdown reuse CodeBlock** — render fenced code blocks as `<CodeBlock>` instead of raw `<pre><code>`.
-- [ ] **2-column layout fixes** — remove col-span-2, add auto-rows-fr, constrain wide demos (Spinner/Skeleton/Toast/Label/RadioGroup/Slider/Markdown), fix overlay demo z-stacking with overflow-visible.
-- [ ] **Port spacing** — add `gap-2` between port circle and label (currently almost touching).
-- [ ] **GraphNode variants overlap** — stagger x positions (0, 200, 400) so they don't stack.
-- [ ] **Remove duplicate canvas demo** — delete "On canvas" from GraphNode showcase (redundant with Canvas showcase).
-- [ ] **Vertical column separator** — `::before` pseudo-element, 1px, `opacity-0.4`, only on md+.
-- [ ] **Merge DataList/TreeView showcase demos** — "Default & Compact" side-by-side in one container instead of two wide containers.
+- [x] **MD render typography** — rewrite to parse into React blocks, clean semantic HTML, reuse CodeBlock for fences.
+- [x] **CodeBlock copy button** — clipboard icon on hover, no header conflict.
+- [x] **2-column layout fixes** — removed col-span-2, horizontal section separators, vertical sep with clever offset, overflow-visible on demo containers.
+- [x] **Port spacing** — added `gap-2` between circle and label.
+- [x] **GraphNode variants overlap** — staggered x positions (0, 200, 400).
+- [x] **Remove duplicate canvas demo** — deleted "On canvas" from GraphNode showcase.
+- [x] **Vertical column separator** — `::before` pseudo top-4 bottom-4.
+- [x] **Merge DataList/TreeView showcase demos** — side-by-side with vertical divider, `max-w-2xl`, `gap-6`.
+- [x] **Font switcher dropdown** — `<select>` with all three options instead of cycle button.
+- [x] **Canvas dots** — removed color-mix, `1.5px` dots with `var(--color-border)`.
+- [x] **StatCard margins** — removed `p-panel` override, uses CardContent default `p-6 pt-0` + `pt-4`.
+- [x] **URL masking showcase** — added API key redaction example.
+- [x] **CHANGELOG.md** — created with full history from TODO.md phases.
+- [x] **AGENTS.md rule 8** — added changelog update requirement.
 
 ## Phase 11 — Remaining
 

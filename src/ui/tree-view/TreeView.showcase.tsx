@@ -52,12 +52,12 @@ const entry: ShowcaseEntry = {
     {
       name: "Default & Condensed",
       render: () => (
-        <div className="flex gap-4 max-w-lg">
-          <div className="flex-1 min-w-0">
+        <div className="flex gap-6 max-w-2xl">
+          <div className="flex-1 min-w-0 px-2">
             <TreeView data={sampleData} />
           </div>
           <div className="w-px bg-border shrink-0" />
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 px-2">
             <TreeView data={sampleData} variant="condensed" />
           </div>
         </div>

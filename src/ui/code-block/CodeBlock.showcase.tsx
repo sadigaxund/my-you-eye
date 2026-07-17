@@ -23,7 +23,7 @@ const entry: ShowcaseEntry = {
       name: "Basic",
       render: () => (
         <div className="max-w-xl">
-          <CodeBlock code={python} language="python" />
+          <CodeBlock code={python} />
         </div>
       ),
     },

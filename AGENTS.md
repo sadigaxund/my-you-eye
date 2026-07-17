@@ -24,6 +24,9 @@ set of components. Your job is to keep it that way. These rules are not suggesti
 6. **Never edit `dist/`, lockfiles (except via `npm install`), or generated files.**
 7. **Do not add dependencies** without an explicit instruction from the human. Radix
    per-component packages needed for a planned component are pre-approved (see TODO.md).
+8. **Keep CHANGELOG.md updated.** Every time a phase, component, or significant change is
+   completed, add or update an entry under the `[Unreleased]` section. Follow the
+   [keepachangelog.com](https://keepachangelog.com) format (Added / Changed / Fixed / Removed).
 
 ---
 
