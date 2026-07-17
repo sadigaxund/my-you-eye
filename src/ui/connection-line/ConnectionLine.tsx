@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
-const lineVariants = cva("fill-none pointer-events-none", {
+const lineVariants = cva("fill-none", {
   variants: {
     variant: {
       bezier: "",
@@ -51,9 +51,9 @@ function ConnectionLine({
   to,
 }: ConnectionLineProps) {
   const d = useMemo(() => generatePath(from, to, variant ?? "bezier"), [from, to, variant]);
-  const minX = Math.min(from.x, to.x) - 40;
+  const minX = Math.min(from.x, to.x) - 20;
   const minY = Math.min(from.y, to.y) - 20;
-  const maxX = Math.max(from.x, to.x) + 40;
+  const maxX = Math.max(from.x, to.x) + 20;
   const maxY = Math.max(from.y, to.y) + 20;
 
   return (
@@ -65,7 +65,7 @@ function ConnectionLine({
         top: minY,
         width: maxX - minX,
         height: maxY - minY,
-        overflow: "visible",
+        pointerEvents: "none",
       }}
     >
       <path d={d} />

@@ -27,6 +27,7 @@ function SnapToggle({ snap, onToggle }: { snap: boolean; onToggle: () => void })
 }
 
 function DraggableNode({
+  id,
   initialX,
   initialY,
   header,
@@ -34,8 +35,11 @@ function DraggableNode({
   accent,
   variant,
   footer,
+  selectedId,
+  onSelect,
   rows,
 }: {
+  id: string;
   initialX: number;
   initialY: number;
   header: string;
@@ -43,21 +47,24 @@ function DraggableNode({
   accent?: boolean;
   variant?: "default" | "selected" | "muted";
   footer?: string;
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
   rows?: { label: string; value: string; portLeft?: { side: "left"; state?: "default" | "connected" | "highlighted" }; portRight?: { side: "right"; state?: "default" | "connected" | "highlighted" } }[];
 }) {
   const [pos, setPos] = useState({ x: initialX, y: initialY });
-  const [selected, setSelected] = useState(false);
   const dragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const nodeStart = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelected(true);
+    onSelect(id);
     dragging.current = true;
     dragStart.current = { x: e.clientX, y: e.clientY };
     nodeStart.current = { x: pos.x, y: pos.y };
-  }, [pos]);
+  }, [pos, id, onSelect]);
+
+  const isSelected = selectedId === id;
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragging.current) return;
@@ -88,7 +95,7 @@ function DraggableNode({
       <GraphNode
         x={pos.x} y={pos.y}
         header={header}
-        variant={selected ? "selected" : variant}
+        variant={isSelected ? "selected" : variant}
         accent={accent}
         footer={footer}
         rows={rows}
@@ -99,16 +106,21 @@ function DraggableNode({
 
 function CanvasDemo() {
   const [snap, setSnap] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
     <Canvas
       className="h-96 w-full rounded-ui border border-border"
       controls={<SnapToggle snap={snap} onToggle={() => setSnap((s) => !s)} />}
+      onBackgroundClick={() => setSelectedId(null)}
     >
       <DraggableNode
+        id="extract"
         initialX={30} initialY={20}
         header="extract_api"
         accent
         snap={snap}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
         footer="15 cols · 2.1M rows"
         rows={[
           { label: "Source", value: "REST API", portRight: { side: "right", state: "connected" } },
@@ -117,11 +129,14 @@ function CanvasDemo() {
         ]}
       />
       <DraggableNode
+        id="transform"
         initialX={260} initialY={40}
         header="transform"
         variant="selected"
         accent
         snap={snap}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
         footer="22 cols · 1.8M rows"
         rows={[
           { label: "Pipeline", value: "active", portLeft: { side: "left", state: "connected" }, portRight: { side: "right", state: "connected" } },
@@ -131,10 +146,13 @@ function CanvasDemo() {
         ]}
       />
       <DraggableNode
+        id="load"
         initialX={490} initialY={20}
         header="load_warehouse"
         accent
         snap={snap}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
         footer="22 cols · 1.8M rows"
         rows={[
           { label: "Target", value: "Snowflake", portLeft: { side: "left", state: "connected" } },

@@ -9,13 +9,14 @@ export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
   maxZoom?: number;
   zoomStep?: number;
   controls?: ReactNode;
+  onBackgroundClick?: () => void;
 }
 
 const btn =
   "inline-flex items-center justify-center size-7 rounded-ui-sm border border-border bg-bg text-xs text-fg hover:bg-secondary cursor-pointer";
 
 const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
-  ({ className, gridSize = 20, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, controls, children, style, ...props }, ref) => {
+  ({ className, gridSize = 20, initialZoom = 1, minZoom = 0.25, maxZoom = 3, zoomStep = 0.1, controls, children, style, onBackgroundClick, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(initialZoom);
@@ -25,10 +26,11 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
       if (e.button !== 0) return;
+      onBackgroundClick?.();
       dragging.current = true;
       dragStart.current = { x: e.clientX, y: e.clientY };
       dragOffset.current = { x: offset.x, y: offset.y };
-    }, [offset]);
+    }, [offset, onBackgroundClick]);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
       if (!dragging.current) return;

@@ -17,26 +17,26 @@ const entry: ShowcaseEntry = {
     {
       name: "Path variants",
       render: () => (
-        <div className="relative h-56 border border-border rounded-ui">
-          <ConnectionLine from={{ x: 40, y: 40 }} to={{ x: 260, y: 40 }} variant="bezier" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 80 }} to={{ x: 260, y: 80 }} variant="stepped" state="connected" />
-          <ConnectionLine from={{ x: 40, y: 120 }} to={{ x: 260, y: 120 }} variant="straight" state="default" />
-          <Dot x={40} y={40} state="connected" />
-          <Dot x={260} y={40} state="connected" />
-          <Dot x={40} y={80} state="connected" />
-          <Dot x={260} y={80} state="connected" />
-          <Dot x={40} y={120} state="default" />
-          <Dot x={260} y={120} state="default" />
-          <div className="absolute left-12 top-[26px] text-xs text-muted">Bezier</div>
-          <div className="absolute left-12 top-[66px] text-xs text-muted">Stepped</div>
-          <div className="absolute left-12 top-[106px] text-xs text-muted">Straight</div>
+        <div className="relative h-72">
+          <ConnectionLine from={{ x: 40, y: 35 }} to={{ x: 260, y: 75 }} variant="bezier" state="connected" />
+          <ConnectionLine from={{ x: 40, y: 105 }} to={{ x: 260, y: 145 }} variant="stepped" state="connected" />
+          <ConnectionLine from={{ x: 40, y: 180 }} to={{ x: 260, y: 130 }} variant="straight" state="default" />
+          <Dot x={40} y={35} state="connected" />
+          <Dot x={260} y={75} state="connected" />
+          <Dot x={40} y={105} state="connected" />
+          <Dot x={260} y={145} state="connected" />
+          <Dot x={40} y={180} state="default" />
+          <Dot x={260} y={130} state="default" />
+          <div className="absolute left-3 top-[18px] text-xs text-muted">Bezier</div>
+          <div className="absolute left-3 top-[90px] text-xs text-muted">Stepped</div>
+          <div className="absolute left-3 top-[162px] text-xs text-muted">Straight</div>
         </div>
       ),
     },
     {
       name: "States",
       render: () => (
-        <div className="relative h-36 border border-border rounded-ui">
+        <div className="relative h-40">
           <ConnectionLine from={{ x: 40, y: 30 }} to={{ x: 260, y: 30 }} state="default" />
           <ConnectionLine from={{ x: 40, y: 65 }} to={{ x: 260, y: 65 }} state="connected" />
           <ConnectionLine from={{ x: 40, y: 100 }} to={{ x: 260, y: 100 }} state="highlighted" />
@@ -46,9 +46,9 @@ const entry: ShowcaseEntry = {
           <Dot x={260} y={65} state="connected" />
           <Dot x={40} y={100} state="highlighted" />
           <Dot x={260} y={100} state="highlighted" />
-          <div className="absolute left-12 top-[18px] text-xs text-muted">default</div>
-          <div className="absolute left-12 top-[53px] text-xs text-muted">connected</div>
-          <div className="absolute left-12 top-[88px] text-xs text-muted">highlighted</div>
+          <div className="absolute left-3 top-[18px] text-xs text-muted">default</div>
+          <div className="absolute left-3 top-[53px] text-xs text-muted">connected</div>
+          <div className="absolute left-3 top-[88px] text-xs text-muted">highlighted</div>
         </div>
       ),
     },
