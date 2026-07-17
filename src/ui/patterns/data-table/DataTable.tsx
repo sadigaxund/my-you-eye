@@ -6,6 +6,8 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".
 import { CellValue } from "../../cell-value";
 import type { CellValueType, UrlReplacement } from "../../cell-value";
 
+type StatusVariant = "neutral" | "success" | "warning" | "danger" | "info";
+
 export interface DataTableColumn {
   key: string;
   header: string;
@@ -13,7 +15,7 @@ export interface DataTableColumn {
   align?: "left" | "right" | "center";
   badgeVariant?: "neutral" | "primary" | "success" | "warning" | "danger";
   badgeStyle?: "solid" | "soft";
-  statusVariant?: "neutral" | "success" | "warning" | "danger" | "info";
+  statusVariant?: StatusVariant | ((value: unknown) => StatusVariant);
   statusPulse?: boolean;
 }
 
@@ -58,13 +60,13 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
           {rows.map((row, i) => (
             <TableRow key={i} density={density}>
               {columns.map((col) => (
-                <TableCell key={col.key} density={density} align={col.align}>
+                  <TableCell key={col.key} density={density} align={col.align}>
                   <CellValue
                     type={col.type}
                     value={row[col.key]}
                     badgeVariant={col.badgeVariant}
                     badgeStyle={col.badgeStyle}
-                    statusVariant={col.statusVariant}
+                    statusVariant={typeof col.statusVariant === "function" ? col.statusVariant(row[col.key]) : col.statusVariant}
                     statusPulse={col.statusPulse}
                     replacements={replacements}
                   />

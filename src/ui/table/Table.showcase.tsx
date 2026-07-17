@@ -1,5 +1,6 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".";
+import { ScrollArea } from "../scroll-area";
 
 const sampleRows = [
   { name: "John Doe", role: "Admin", status: "Active" },
@@ -74,7 +75,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sticky header (scroll down)",
       render: () => (
-        <div className="max-h-48 overflow-auto border border-border rounded-ui">
+        <ScrollArea className="max-h-48 border border-border rounded-ui">
           <Table>
             <TableHeader sticky>
               <TableRow>
@@ -93,7 +94,7 @@ const entry: ShowcaseEntry = {
               ))}
             </TableBody>
           </Table>
-        </div>
+        </ScrollArea>
       ),
     },
   ],

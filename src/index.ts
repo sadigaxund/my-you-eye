@@ -74,3 +74,5 @@ export { DataList } from "./ui/data-list";
 export { DataTable } from "./ui/patterns/data-table";
 export { Slider } from "./ui/slider";
 export { Markdown } from "./ui/markdown";
+export { ScrollArea } from "./ui/scroll-area";
+export { ConnectionLine } from "./ui/connection-line";

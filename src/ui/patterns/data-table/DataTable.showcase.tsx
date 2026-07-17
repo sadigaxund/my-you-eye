@@ -20,7 +20,7 @@ const entry: ShowcaseEntry = {
             { key: "name", header: "Name" },
             { key: "email", header: "Email", type: "email" },
             { key: "role", header: "Role", type: "badge", badgeVariant: "primary" },
-            { key: "status", header: "Status", type: "status", statusVariant: "success" },
+            { key: "status", header: "Status", type: "status", statusVariant: (v) => v === "Active" ? "success" : "danger" },
             { key: "sessions", header: "Sessions", type: "number", align: "right" },
             { key: "lastLogin", header: "Last Login", type: "datetime" },
           ]}

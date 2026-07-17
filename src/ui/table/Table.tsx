@@ -26,7 +26,7 @@ export interface TableProps
 
 const Table = forwardRef<HTMLTableElement, TableProps>(
   ({ className, variant, density, ...props }, ref) => (
-    <div className="relative w-full overflow-auto">
+    <div className="relative w-full overflow-x-auto">
       <table ref={ref} className={cn(tableVariants({ variant, density }), className)} {...props} />
     </div>
   ),
