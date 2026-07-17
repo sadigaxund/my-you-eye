@@ -80,27 +80,22 @@ export default function App() {
         ))}
       </nav>
 
-      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:before:absolute md:before:left-1/2 md:before:top-4 md:before:-translate-x-px md:before:[height:calc(100%-2rem)] md:before:w-px md:before:bg-border md:before:opacity-40">
-        {groupEntries(tab).flatMap((entry, idx) => [
-          idx > 0 && (
-            <div key={`sep-${idx}`} className="col-span-full h-px bg-border/30 mx-4" />
-          ),
-          (
-            <section key={entry.title} className="break-inside-avoid">
-              <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
-              <div className="space-y-4">
-                {entry.demos.map((demo) => (
-                  <div key={demo.name}>
-                    <p className="text-sm text-muted mb-2">{demo.name}</p>
-                    <div className="border border-border rounded-ui p-panel overflow-visible">
-                      {demo.render()}
-                    </div>
+      <main className="relative grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 md:before:absolute md:before:left-1/2 md:before:top-0 md:before:-translate-x-px md:before:h-full md:before:w-px md:before:bg-border md:before:opacity-40">
+        {groupEntries(tab).map((entry) => (
+          <section key={entry.title}>
+            <h2 className="text-lg font-semibold mb-3">{entry.title}</h2>
+            <div className="space-y-4">
+              {entry.demos.map((demo) => (
+                <div key={demo.name}>
+                  <p className="text-sm text-muted mb-2">{demo.name}</p>
+                  <div className="border border-border rounded-ui p-panel overflow-visible">
+                    {demo.render()}
                   </div>
-                ))}
-              </div>
-            </section>
-          ),
-        ]).filter(Boolean)}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
         {groupEntries(tab).length === 0 && (
           <p className="text-muted text-sm col-span-full">
             No components in this group yet.
