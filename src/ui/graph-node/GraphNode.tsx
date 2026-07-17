@@ -154,7 +154,6 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
             className="px-3 border-t border-border text-xs text-muted flex items-center gap-1.5 shrink-0 bg-muted/5"
             style={{ height: FOOTER * GRID }}
           >
-            <span className="text-muted/40">◆</span>
             {footer}
           </div>
         )}
