@@ -66,25 +66,30 @@ const SelectContent = forwardRef<React.ComponentRef<typeof Content>, React.Compo
 );
 SelectContent.displayName = "SelectContent";
 
-export type SelectItemProps = React.ComponentPropsWithoutRef<typeof Item>;
+export interface SelectItemProps extends React.ComponentPropsWithoutRef<typeof Item> {
+  showIndicator?: boolean;
+}
 
 const SelectItem = forwardRef<React.ComponentRef<typeof Item>, SelectItemProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ className, children, showIndicator = true, ...props }, ref) => (
     <Item
       ref={ref}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-ui-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-secondary focus:text-secondary-fg data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex w-full cursor-default select-none items-center rounded-ui-sm py-1.5 pr-2 text-sm outline-none focus:bg-secondary focus:text-secondary-fg data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        showIndicator ? "pl-8" : "pl-2",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
-        <ItemIndicator>
-          <svg viewBox="0 0 8 8" className="size-3 fill-current">
-            <path d="M1 4l2 2 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-          </svg>
-        </ItemIndicator>
-      </span>
+      {showIndicator && (
+        <span className="absolute left-2 flex size-3.5 items-center justify-center">
+          <ItemIndicator>
+            <svg viewBox="0 0 8 8" className="size-3 fill-current">
+              <path d="M1 4l2 2 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" />
+            </svg>
+          </ItemIndicator>
+        </span>
+      )}
       <ItemText>{children}</ItemText>
     </Item>
   ),

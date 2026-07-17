@@ -53,6 +53,24 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "No indicator",
+      render: () => (
+        <div className="flex flex-col gap-3 max-w-xs">
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Pick one" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1" showIndicator={false}>Option A</SelectItem>
+              <SelectItem value="2" showIndicator={false}>Option B</SelectItem>
+              <SelectItem value="3" showIndicator={false}>Option C</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted">Items without checkmark indicator</p>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;
