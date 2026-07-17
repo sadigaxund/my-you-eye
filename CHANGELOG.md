@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **Single-source font list** — `src/lib/fonts.ts` exports the canonical `fontOptions` array and derived `FontMode` type. `src/showcase/App.tsx` consumes it instead of duplicating option tags. AGENTS.md now documents the font maintenance contract.
 - **Showcase masonry layout** — CSS columns (columns-1/2/3) replacing grid, column-rule divider. Short and tall components pack without ragged gaps.
 - **Grid-locked GraphNode** — height derived from row count formula (HEADER + rows*ROW + FOOTER), row-anchored ports via `portLeft`/`portRight` on each row. Multiple same-side ports distributed vertically.
 - **Snapping helper** — `snap()`/`useSnap` in canvas folder for 16px grid snapping. Draggable node demo.
@@ -29,9 +30,16 @@ All notable changes to this project are documented here.
 - **GraphNode ports** — removed left-full/right-full label rendering that overlapped neighbors. Ports now anchored to their row.
 - **GraphNode height** — content-driven height replaced with grid-derived height when `rows` prop is used.
 - **AGENTS.md groups** — updated groups list to include `canvas` and `typography`.
+- **GraphNode header dots** — changed from three gray circles to red/yellow/green traffic-light window control colors.
+- **GraphNode row hover** — added `hover:bg-muted/10 transition-colors` to rows for subtle interactive feedback.
+- **GraphNode footer** — removed diamond icon prefix; footer content now renders cleanly without a prefix.
+- **Canvas showcase** — merged 3 separate demos (empty grid, static nodes, draggable nodes) into a single "Pipeline canvas" demo with 3 draggable ETL nodes using the row-based GraphNode design.
+- **GraphNode showcase** — all 3 demos now use the consistent row-accent-footer design with meaningful metadata instead of disconnected children-based layouts.
+- **Port showcase** — "Sides" and "Row-aligned ports" demos now use node-border-like containers with ports positioned at edge midpoints, matching GraphNode's port dot layout.
 
 ### Fixed
 
+- **Canvas showcase white screen** — extracted `DraggableCanvasDemo` into a module-level component to avoid hooks-in-render-function bug (same root cause as previous Combobox/TreeView tab-switch crash).
 - **Showcase layout** — removed md:grid-cols-2 grid and column-divider hack; CSS columns pack uneven heights without ragged whitespace.
 - **Port overlap** — multiple ports on same side no longer stack at top-1/2; distributed vertically by index.
 - **Canvas pan & zoom** — drag-to-pan, ctrl+scroll zoom (0.25–3x), floating zoom controls at bottom-right.
