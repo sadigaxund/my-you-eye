@@ -32,7 +32,7 @@ const DialogContent = forwardRef<React.ComponentRef<typeof Content>, DialogConte
       <Overlay className={dialogOverlay} />
       <Content ref={ref} className={cn(dialogContentVariants({ size }), className)} {...props}>
         {children}
-        <Close className="absolute right-4 top-4 rounded-ui-sm opacity-70 hover:opacity-100">
+        <Close className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100">
           <svg viewBox="0 0 15 15" className="size-4 fill-current">
             <path d="M2 2l11 11M13 2L2 13" stroke="currentColor" strokeWidth="1.5" fill="none" />
           </svg>
@@ -66,7 +66,7 @@ DialogDescription.displayName = "DialogDescription";
 
 const DialogFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center justify-end gap-2 mt-6", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center justify-end gap-inline mt-6", className)} {...props} />
   ),
 );
 DialogFooter.displayName = "DialogFooter";

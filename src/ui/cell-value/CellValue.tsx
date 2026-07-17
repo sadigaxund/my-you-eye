@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
 import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
+import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 
 export type CellValueType =
   | "text"
@@ -15,6 +15,8 @@ export type CellValueType =
   | "badge"
   | "status";
 
+export type UrlReplacement = { pattern: string | RegExp; label: string };
+
 export interface CellValueProps {
   type?: CellValueType;
   value: unknown;
@@ -22,18 +24,19 @@ export interface CellValueProps {
   badgeStyle?: BadgeProps["style"];
   statusVariant?: StatusDotProps["variant"];
   statusPulse?: boolean;
+  replacements?: UrlReplacement[];
 }
 
 function BooleanDisplay({ value }: { value: unknown }) {
   const truthy = Boolean(value);
   return (
-    <span className={cn("inline-flex items-center", truthy ? "text-success" : "text-muted")}>
-      {truthy ? (
-        <svg viewBox="0 0 12 12" className="size-3.5 fill-current">
+      <span className={cn("inline-flex items-center", truthy ? "text-success" : "text-muted")}>
+        {truthy ? (
+          <svg viewBox="0 0 12 12" className="size-icon fill-current">
           <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" fill="none" />
         </svg>
       ) : (
-        <svg viewBox="0 0 12 12" className="size-3.5 fill-current">
+          <svg viewBox="0 0 12 12" className="size-icon fill-current">
           <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" fill="none" />
         </svg>
       )}
@@ -42,23 +45,28 @@ function BooleanDisplay({ value }: { value: unknown }) {
 }
 
 function JsonDisplay({ value }: { value: unknown }) {
-  const [expanded, setExpanded] = useState(false);
   const str = JSON.stringify(value, null, 2);
   const preview = str.length > 50 ? str.slice(0, 50) + "…" : str;
 
   return (
-    <button
-      type="button"
-      onClick={() => setExpanded(!expanded)}
-      className="text-left font-mono text-xs cursor-pointer hover:text-primary transition-colors"
-    >
-      {expanded ? (
-        <pre className="whitespace-pre-wrap m-0">{str}</pre>
-      ) : (
+    <Popover>
+      <PopoverTrigger className="text-left font-mono text-xs cursor-pointer hover:text-primary transition-colors">
         <span>{preview}</span>
-      )}
-    </button>
+      </PopoverTrigger>
+      <PopoverContent side="bottom" align="start" className="max-w-md max-h-80 overflow-auto">
+        <pre className="text-xs whitespace-pre-wrap m-0">{str}</pre>
+      </PopoverContent>
+    </Popover>
   );
+}
+
+function applyReplacements(str: string, replacements?: UrlReplacement[]) {
+  if (!replacements || replacements.length === 0) return str;
+  let result = str;
+  for (const r of replacements) {
+    result = result.replaceAll(r.pattern, r.label);
+  }
+  return result;
 }
 
 export function CellValue({
@@ -68,6 +76,7 @@ export function CellValue({
   badgeStyle,
   statusVariant,
   statusPulse,
+  replacements,
 }: CellValueProps) {
   if (value === null || value === undefined || type === "null") {
     return <span className="text-muted">—</span>;
@@ -93,10 +102,10 @@ export function CellValue({
           href={String(value)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-primary hover:underline"
+          className="inline-flex items-center gap-tight text-primary hover:underline"
         >
-          {String(value)}
-          <svg viewBox="0 0 12 12" className="size-3 shrink-0 fill-current opacity-60">
+          {applyReplacements(String(value), replacements)}
+          <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim">
             <path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" />
           </svg>
         </a>

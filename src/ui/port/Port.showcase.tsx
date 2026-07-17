@@ -3,7 +3,7 @@ import { Port } from ".";
 
 const entry: ShowcaseEntry = {
   title: "Port",
-  group: "display",
+  group: "canvas",
   demos: [
     {
       name: "States",

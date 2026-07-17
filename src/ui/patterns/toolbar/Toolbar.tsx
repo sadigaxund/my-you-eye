@@ -12,14 +12,14 @@ const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(
   ({ search, filters, actions, className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", className)}
+      className={cn("flex flex-col gap-stack sm:flex-row sm:items-center sm:justify-between", className)}
       {...props}
     >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+      <div className="flex flex-col gap-inline sm:flex-row sm:items-center sm:gap-stack">
         {search && <div className="w-full sm:w-auto">{search}</div>}
-        {filters && <div className="flex items-center gap-2">{filters}</div>}
+        {filters && <div className="flex items-center gap-inline">{filters}</div>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && <div className="flex items-center gap-inline">{actions}</div>}
     </div>
   ),
 );

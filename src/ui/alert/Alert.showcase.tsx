@@ -32,9 +32,11 @@ const entry: ShowcaseEntry = {
     {
       name: "With icon",
       render: () => (
-        <Alert variant="success" title="Done" icon={<span>✓</span>}>
-          Your changes have been saved.
-        </Alert>
+        <div className="max-w-lg">
+          <Alert variant="success" title="Done" icon={<span>✓</span>}>
+            Your changes have been saved.
+          </Alert>
+        </div>
       ),
     },
   ],

@@ -6,3 +6,17 @@
   background-color: var(--color-bg);
   color: var(--color-fg);
 }
+
+[data-font="serif"] {
+  --font-sans: var(--font-serif);
+  --font-mono: "Courier New", monospace;
+}
+
+[data-font="mono"] {
+  --font-sans: var(--font-mono);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  font-size: calc(1rem * var(--scale, 1));
+}

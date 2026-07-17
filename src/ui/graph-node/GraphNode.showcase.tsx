@@ -4,12 +4,12 @@ import { Canvas } from "../canvas";
 
 const entry: ShowcaseEntry = {
   title: "GraphNode",
-  group: "display",
+  group: "canvas",
   demos: [
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-wrap gap-4 min-h-[180px]">
+        <div className="relative flex flex-wrap gap-4 min-h-[180px]">
           <GraphNode x={0} y={0} header="Default">Body content</GraphNode>
           <GraphNode x={0} y={0} header="Selected" variant="selected">Body content</GraphNode>
           <GraphNode x={0} y={0} header="Muted" variant="muted">Body content</GraphNode>
@@ -19,12 +19,14 @@ const entry: ShowcaseEntry = {
     {
       name: "With accent & ports",
       render: () => (
-        <GraphNode x={0} y={0} header="Source" accent ports={[{ side: "right", label: "output", state: "connected" }]}>
-          <div className="space-y-1">
-            <div>Status: <span className="text-success">running</span></div>
-            <div>Rows: 1,234</div>
-          </div>
-        </GraphNode>
+        <div className="relative min-h-[120px]">
+          <GraphNode x={10} y={10} header="Source" accent ports={[{ side: "right", label: "output", state: "connected" }]}>
+            <div className="space-y-1">
+              <div>Status: <span className="text-success">running</span></div>
+              <div>Rows: 1,234</div>
+            </div>
+          </GraphNode>
+        </div>
       ),
     },
     {

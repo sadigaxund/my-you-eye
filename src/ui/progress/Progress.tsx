@@ -24,7 +24,7 @@ export interface ProgressProps extends HTMLAttributes<HTMLDivElement>, VariantPr
 
 const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   ({ value, variant, label, className, ...props }, ref) => (
-    <div className={cn("flex flex-col gap-1", className)} {...props}>
+    <div className={cn("flex flex-col gap-tight", className)} {...props}>
       {label && (
         <div className="flex justify-between text-xs">
           <span className="text-muted">{label}</span>

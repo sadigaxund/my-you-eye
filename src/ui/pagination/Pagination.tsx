@@ -24,7 +24,7 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
 
 const Pagination = forwardRef<HTMLElement, PaginationProps>(
   ({ currentPage, totalPages, onPageChange, className, ...props }, ref) => (
-    <nav ref={ref} aria-label="Pagination" className={cn("flex items-center gap-1", className)} {...props}>
+    <nav ref={ref} aria-label="Pagination" className={cn("flex items-center gap-tight", className)} {...props}>
       <Button
         variant="ghost"
         size="sm"

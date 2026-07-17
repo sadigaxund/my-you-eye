@@ -14,7 +14,7 @@ export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
 const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
   ({ label, value, delta, icon, className, ...props }, ref) => (
     <Card ref={ref} className={cn(className)} {...props}>
-      <CardContent className="p-4">
+      <CardContent className="p-panel">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted">{label}</p>

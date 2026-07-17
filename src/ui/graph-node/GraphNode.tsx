@@ -4,13 +4,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const graphNodeVariants = cva(
-  "absolute flex flex-col rounded-ui border bg-bg shadow-sm min-w-[160px]",
+  "absolute flex flex-col rounded-ui border bg-bg shadow-card min-w-[160px]",
   {
     variants: {
       variant: {
         default: "border-border",
         selected: "border-primary ring-2 ring-primary/20",
-        muted: "border-border opacity-60",
+        muted: "border-border opacity-dim",
       },
     },
     defaultVariants: {
@@ -47,7 +47,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
       {accent && <div className="h-1 shrink-0 rounded-t-ui bg-primary" />}
       {header && (
         <div className="flex items-center px-3 py-2 border-b border-border">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+           <div className="flex items-center gap-inline flex-1 min-w-0">
             <div className="flex gap-0.5">
               <span className="size-1.5 rounded-full bg-muted" />
               <span className="size-1.5 rounded-full bg-muted" />
@@ -63,18 +63,19 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
             <div
               key={i}
               className={cn(
-                "absolute flex items-center gap-1 pointer-events-auto",
-                p.side === "left" ? "-left-3" : "-right-3",
+                "absolute flex items-center gap-1.5 pointer-events-auto whitespace-nowrap",
+                p.side === "left" ? "right-full flex-row-reverse mr-1.5" : "left-full flex-row ml-1.5",
                 "top-1/2 -translate-y-1/2",
               )}
             >
               <div
                 className={cn(
-                  "size-3 rounded-full border-2 bg-bg transition-colors",
+                  "size-3 rounded-full border-2 bg-bg transition-colors shrink-0",
                   p.state === "connected" ? "border-primary bg-primary" : "border-muted",
                   p.state === "highlighted" && "border-primary ring-2 ring-primary/30",
                 )}
               />
+              {p.label && <span className="text-xs text-muted">{p.label}</span>}
             </div>
           ))}
         </div>

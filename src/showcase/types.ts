@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type ShowcaseGroup = "inputs" | "display" | "feedback" | "overlay" | "navigation" | "data" | "patterns";
+export type ShowcaseGroup = "inputs" | "display" | "feedback" | "overlay" | "navigation" | "canvas" | "data" | "patterns" | "typography";
 
 export interface ShowcaseEntry {
   title: string;

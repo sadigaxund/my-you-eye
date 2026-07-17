@@ -12,7 +12,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between gap-3 rounded-ui border p-4 shadow-lg data-[swipe=end]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0",
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-stack rounded-ui border p-panel shadow-lg data-[swipe=end]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0",
   {
     variants: {
       variant: {
@@ -59,7 +59,7 @@ const ToastItem = forwardRef<React.ComponentRef<typeof Root>, ToastItemProps>(
         {title && <Title className="text-sm font-semibold">{title}</Title>}
         {description && <Description className="text-sm opacity-90">{description}</Description>}
       </div>
-      <Close className="shrink-0 opacity-60 hover:opacity-100">
+      <Close className="shrink-0 opacity-dim hover:opacity-100">
         <svg viewBox="0 0 15 15" className="size-4 fill-current">
           <path d="M2 2l11 11M13 2L2 13" stroke="currentColor" strokeWidth="1.5" fill="none" />
         </svg>
@@ -90,7 +90,7 @@ export function Toaster({ children }: { children?: ReactNode }) {
         {toasts.map((t) => (
           <ToastItem key={t.id} {...t} />
         ))}
-        <Viewport className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm" />
+        <Viewport className="fixed bottom-panel right-panel z-[100] flex flex-col gap-inline w-full max-w-sm" />
       </Provider>
     </ToastContext.Provider>
   );

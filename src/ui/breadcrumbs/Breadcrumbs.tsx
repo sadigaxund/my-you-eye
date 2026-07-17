@@ -14,12 +14,12 @@ export interface BreadcrumbsProps extends HTMLAttributes<HTMLElement> {
 
 const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
   ({ items, separator = "/", className, ...props }, ref) => (
-    <nav ref={ref} aria-label="Breadcrumb" className={cn("flex items-center gap-1 text-sm", className)} {...props}>
-      <ol className="flex items-center gap-1">
+    <nav ref={ref} aria-label="Breadcrumb" className={cn("flex items-center gap-tight text-sm", className)} {...props}>
+      <ol className="flex items-center gap-tight">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
           return (
-            <li key={i} className="flex items-center gap-1">
+            <li key={i} className="flex items-center gap-tight">
               {i > 0 && <span className="text-muted">{separator}</span>}
               {item.href && !isLast ? (
                 <a href={item.href} className="text-muted hover:text-fg transition-colors">

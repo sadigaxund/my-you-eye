@@ -8,17 +8,44 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        neutral: "bg-secondary text-secondary-fg",
-        primary: "bg-primary text-primary-fg",
-        success: "bg-success text-bg",
-        warning: "bg-warning text-bg",
-        danger: "bg-danger text-primary-fg",
+        neutral: ["text-secondary-fg", "bg-secondary/60"],
+        primary: ["text-primary", "bg-primary/15"],
+        success: ["text-success", "bg-success/15"],
+        warning: ["text-warning", "bg-warning/15"],
+        danger: ["text-danger", "bg-danger/15"],
       },
       style: {
         solid: "",
-        soft: "bg-opacity-15",
+        soft: "",
       },
     },
+    compoundVariants: [
+      {
+        style: "solid",
+        variant: "neutral",
+        className: "bg-secondary text-secondary-fg",
+      },
+      {
+        style: "solid",
+        variant: "primary",
+        className: "bg-primary text-primary-fg",
+      },
+      {
+        style: "solid",
+        variant: "success",
+        className: "bg-success text-bg",
+      },
+      {
+        style: "solid",
+        variant: "warning",
+        className: "bg-warning text-bg",
+      },
+      {
+        style: "solid",
+        variant: "danger",
+        className: "bg-danger text-primary-fg",
+      },
+    ],
     defaultVariants: {
       variant: "neutral",
       style: "solid",

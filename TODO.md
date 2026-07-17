@@ -84,17 +84,48 @@ Check items off (`[x]`) as they complete.
 > Minimal visual building blocks for node-based UIs (pipelines, lineage, graphs).
 > No Radix — pure layout components. Consuming apps add interactivity on top.
 
-- [x] **Canvas** — positioned container with dot-grid background pattern. Props: `width`, `height`, `zoom?`, `pan?`. Group: `display`.
-- [x] **GraphNode** — node box with `header`, `body`, `footer` slots, colored accent bar, and port anchor areas on left/right edges. Variants: `default | selected | muted`. Group: `display`.
-- [x] **Port** — small circle handle positioned on a GraphNode edge. Variants: `in | out`; visual states: `default | connected | highlighted`. Group: `display`.
+- [x] **Canvas** — positioned container with drag-to-pan, ctrl+scroll zoom, zoom controls, dot-grid background. Group: `canvas`.
+- [x] **GraphNode** — node box with header/body/footer slots, accent bar, port anchor zones outside border. Variants: `default | selected | muted`. Group: `canvas`.
+- [x] **Port** — small circle handle. Variants: `in | out`; states: `default | connected | highlighted`. Group: `canvas`.
 
-## Phase 8 — Finishing touches
+---
 
-> Do once all components are built and validated.
+## Phase 8 — Polish, tokens & showcase overhaul
 
-- [ ] Tag `v0.1.0` once Phases 0–7 are done; consume from a real app via `npm i github:<user>/Frontend-AI#v0.1.0`.
-- [ ] Add an `AUDIT.md` procedure: script/checklist comparing exports vs showcase vs real usage in consuming apps; run after every batch of cheap-LLM work.
-- [ ] Consider versioned releases with changesets + npm publish only if git-URL installs become painful.
+- [x] **Badge soft variant fix** — `bg-opacity-15` was a silent no-op in Tailwind v4. Replaced with `bg-{variant}/15` via compoundVariants.
+- [x] **GraphNode floating fix** — missing `position: relative` on non-Canvas demos.
+- [x] **Alert icon width fix** — added `max-w-lg` to "With icon" demo for consistency.
+- [x] **New `canvas` showcase group** — added to types & App; moved Canvas/GraphNode/Port.
+- [x] **Dot grid visibility** — `0.5px` → `1px` dot + `color-mix` for subtle opacity.
+- [x] **Design tokens audit** — added `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-serif` tokens.
+- [x] **Magic value audit** — replaced `p-4` → `p-panel`, `gap-3` → `gap-stack`, `gap-2` → `gap-inline`, `gap-1` → `gap-tight`, `opacity-60` → `opacity-dim`, `shadow-sm` → `shadow-card` across all component code.
+- [x] **Tokens showcase tab** — color swatches, spacing bars, radius shapes, text sizes under `typography` group.
+- [x] **Font switcher** — cycle button in header toggles `sans → serif → mono` across entire showcase via `data-font`.
+- [x] **Global scale CSS** — `html { font-size: calc(1rem * var(--scale, 1)) }` ready for scale slider.
+- [x] **2-column showcase layout** — `grid-cols-1 md:grid-cols-2`. Single-demo entries span full width.
+- [x] **Canvas: drag-to-pan** — left-click drag; offset applied to transform + grid background.
+- [x] **Canvas: ctrl+scroll zoom** — 0.25–3 range, step 0.1; inner layer scale transform.
+- [x] **Canvas zoom controls** — floating bar: `−` `100%` `+` at bottom-right.
+- [x] **Port label redesign** — ports use `right-full`/`left-full`, labels never overlap node content.
+- [x] **JSON cell → Popover** — replaces inline expand with Popover containing scrollable JSON.
+- [x] **URL replacements** — `UrlReplacement[]` prop for pattern-based masking on URL type.
+
+## Phase 9 — New components
+
+- [x] **TreeView** — collapsible nested tree. Leaf values reuse CellValue. Variants: `default | condensed`.
+- [x] **CodeBlock** — code display with header/language bar. Variants: `default | elevated`.
+- [x] **DataList** — key-value list with CellValue rendering. Variants: `default | compact`.
+- [x] **Slider** — styled range input with label + value display.
+- [x] **Markdown** — lightweight renderer (headings, bold, italic, code, links, lists, code blocks). Zero npm deps.
+
+## Phase 10 — Remaining
+
+- [ ] **Drawer** — slide-in panel from left/right, Radix Dialog-based.
+- [ ] **Combobox** — autocomplete/select-with-search, Popover + Input.
+- [ ] **Command palette** — ⌘K-style fuzzy search overlay.
+- [ ] Tag `v0.1.0`; consume from a real app.
+- [ ] Add `AUDIT.md` procedure.
+- [ ] Consider versioned releases with changesets.
 
 ---
 

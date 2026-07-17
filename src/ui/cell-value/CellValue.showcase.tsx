@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
             <TableRow><TableCell>Boolean true</TableCell><TableCell><CellValue type="boolean" value={true} /></TableCell></TableRow>
             <TableRow><TableCell>Boolean false</TableCell><TableCell><CellValue type="boolean" value={false} /></TableCell></TableRow>
             <TableRow><TableCell>Email</TableCell><TableCell><CellValue type="email" value="user@example.com" /></TableCell></TableRow>
-            <TableRow><TableCell>URL</TableCell><TableCell><CellValue type="url" value="https://example.com" /></TableCell></TableRow>
+            <TableRow><TableCell>URL</TableCell><TableCell><CellValue type="url" value="https://example.com/path/abc123" replacements={[{ pattern: "abc123", label: "..." }]} /></TableCell></TableRow>
             <TableRow><TableCell>JSON</TableCell><TableCell><CellValue type="json" value={{ name: "foo", count: 42, nested: { key: true } }} /></TableCell></TableRow>
             <TableRow><TableCell>Null</TableCell><TableCell><CellValue type="null" /></TableCell></TableRow>
             <TableRow><TableCell>Badge</TableCell><TableCell><CellValue type="badge" value="Active" badgeVariant="success" /></TableCell></TableRow>

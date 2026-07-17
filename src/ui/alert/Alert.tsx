@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const alertVariants = cva(
-  "relative w-full rounded-ui border p-4",
+  "relative w-full rounded-ui border p-panel",
   {
     variants: {
       variant: {
@@ -30,9 +30,9 @@ export interface AlertProps
 const Alert = forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant, title, icon, children, ...props }, ref) => (
     <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props}>
-      <div className="flex gap-3">
+      <div className="flex gap-stack">
         {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-tight">
           {title && <h5 className="text-sm font-semibold">{title}</h5>}
           <div className="text-sm">{children}</div>
         </div>
