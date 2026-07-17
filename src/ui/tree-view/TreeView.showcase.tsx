@@ -23,7 +23,7 @@ function ControlledTreeViewDemo() {
           Collapse all
         </button>
       </div>
-      <div className="h-80 px-2">
+      <div className="h-[440px] px-2">
         <TreeView
           data={sampleData}
           expandedKeys={expanded}

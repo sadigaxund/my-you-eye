@@ -13,7 +13,7 @@ const entry: ShowcaseEntry = {
             x={0} y={0} className="static"
             header="orders"
             accent
-            footer="table"
+            footer="source"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
             header="orders"
             variant="selected"
             accent
-            footer="table"
+            footer="source"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
@@ -35,7 +35,7 @@ const entry: ShowcaseEntry = {
             header="orders"
             variant="muted"
             accent
-            footer="table"
+            footer="source"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
