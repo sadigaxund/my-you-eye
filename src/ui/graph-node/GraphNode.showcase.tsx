@@ -9,31 +9,47 @@ const entry: ShowcaseEntry = {
       name: "Variants",
       render: () => (
         <div className="flex items-center justify-center gap-4 h-48">
-          <GraphNode x={0} y={0} className="static" header="Default">Body content</GraphNode>
-          <GraphNode x={0} y={0} className="static" header="Selected" variant="selected">Body content</GraphNode>
-          <GraphNode x={0} y={0} className="static" header="Muted" variant="muted">Body content</GraphNode>
-        </div>
-      ),
-    },
-    {
-      name: "With accent & top-level ports",
-      render: () => (
-        <div className="relative" style={{ height: 140 }}>
-          <GraphNode x={10} y={10} header="Source" accent ports={[{ side: "right", label: "output", state: "connected" }]}>
-            <div className="space-y-1">
-              <div>Status: <span className="text-success">running</span></div>
-              <div>Rows: 1,234</div>
-            </div>
-          </GraphNode>
-        </div>
-      ),
-    },
-    {
-      name: "Multi-row with row-anchored ports",
-      render: () => (
-        <div className="relative" style={{ height: 260 }}>
           <GraphNode
-            x={80}
+            x={0} y={0} className="static"
+            header="sales_raw"
+            accent
+            footer="table"
+            rows={[
+              { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
+              { label: "Rows", value: "894K", portRight: { side: "right", state: "connected" } },
+            ]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="sales_raw"
+            variant="selected"
+            accent
+            footer="table"
+            rows={[
+              { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
+              { label: "Rows", value: "894K", portRight: { side: "right", state: "connected" } },
+            ]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="sales_raw"
+            variant="muted"
+            accent
+            footer="table"
+            rows={[
+              { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
+              { label: "Rows", value: "894K", portRight: { side: "right", state: "connected" } },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      name: "Connected node (accent + ports)",
+      render: () => (
+        <div className="relative" style={{ height: 220 }}>
+          <GraphNode
+            x={30}
             y={10}
             header="customer_orders"
             accent
@@ -49,21 +65,20 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "Two ports same side (no rows)",
+      name: "Two ports same side",
       render: () => (
-        <div className="relative" style={{ height: 140 }}>
+        <div className="relative" style={{ height: 180 }}>
           <GraphNode
-            x={10}
+            x={20}
             y={10}
-            header="Multi-output"
-            ports={[
-              { side: "right", label: "output_a", state: "connected" },
-              { side: "right", label: "output_b", state: "default" },
-              { side: "left", label: "input", state: "connected" },
+            header="multi_output"
+            accent
+            rows={[
+              { label: "Output A", value: "active", portRight: { side: "right", state: "connected" } },
+              { label: "Output B", value: "standby", portRight: { side: "right", state: "default" } },
+              { label: "Input C", value: "trigger", portLeft: { side: "left", state: "connected" } },
             ]}
-          >
-            Distributes ports vertically
-          </GraphNode>
+          />
         </div>
       ),
     },

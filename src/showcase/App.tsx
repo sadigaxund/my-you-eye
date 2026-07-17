@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { ShowcaseEntry, ShowcaseGroup } from "./types";
+import { fontOptions } from "../lib/fonts";
+import type { FontMode } from "../lib/fonts";
 
 const GROUPS: ShowcaseGroup[] = [
   "inputs",
@@ -13,7 +15,6 @@ const GROUPS: ShowcaseGroup[] = [
   "typography",
 ];
 
-type FontMode = "sans" | "serif" | "mono" | "ubuntu" | "titillium" | "consolas" | "meslo" | "jetbrains";
 type ThemeProfile = "default" | "neon" | "high-contrast";
 
 const entries: ShowcaseEntry[] = Object.values(
@@ -69,14 +70,9 @@ export default function App() {
             }}
             className="px-3 py-1 rounded-ui border border-border text-sm cursor-pointer bg-bg appearance-none"
           >
-            <option value="sans">Sans (Inter)</option>
-            <option value="serif">Serif (Georgia)</option>
-            <option value="mono">Mono (JetBrains)</option>
-            <option value="ubuntu">Ubuntu</option>
-            <option value="titillium">Titillium Web</option>
-            <option value="consolas">Consolas</option>
-            <option value="meslo">Meslo Nerd</option>
-            <option value="jetbrains">JetBrains Nerd</option>
+            {fontOptions.map((f) => (
+              <option key={f.value} value={f.value}>{f.label}</option>
+            ))}
           </select>
           <button
             type="button"

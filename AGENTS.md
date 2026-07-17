@@ -236,6 +236,14 @@ Every profile must define the complete color token set (enforced by `scripts/che
 
 Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-*`, `--text-*`, `--border-width`, `--backdrop-blur`, `--grid-unit`.
 
+### Font maintenance contract
+
+When adding a new font family, update **both** places (they are not auto-synced):
+1. `src/styles/globals.css` — add the `@font-face` block(s) and a `[data-font="<name>"]` rule setting the appropriate font-family token.
+2. `src/lib/fonts.ts` — add an entry to the `fontOptions` array (value matches the `data-font` attribute value, label is the display name).
+
+`src/showcase/App.tsx` reads from `fonts.ts` — no separate update needed.
+
 ## 8. If you are unsure
 
 Stop. Say exactly what you were trying to do, which rule blocks you, and what options you
