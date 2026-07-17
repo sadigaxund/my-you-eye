@@ -57,6 +57,19 @@ export { Port } from "./ui/port";
 export { Typography } from "./ui/typography";
 export { TreeView } from "./ui/tree-view";
 export { CodeBlock } from "./ui/code-block";
+export { Combobox } from "./ui/combobox";
+export { CommandPalette } from "./ui/command-palette";
+export {
+  Drawer,
+  DrawerTrigger,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerBody,
+  DrawerFooter,
+} from "./ui/drawer";
 export { DataList } from "./ui/data-list";
 export { Slider } from "./ui/slider";
 export { Markdown } from "./ui/markdown";

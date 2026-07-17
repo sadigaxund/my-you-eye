@@ -19,16 +19,25 @@ All notable changes to this project are documented here.
 - **Showcase token reference** — color swatches, spacing bars, radius samples, text sizes under the `typography` tab.
 - **Showcase 2-column layout** — responsive grid with vertical column separator and horizontal section dividers.
 - **Canvas showcase group** — new `canvas` tab for Canvas, GraphNode, Port components.
-- **URL masking** — `replacements` prop on CellValue for pattern-based placeholder display in URLs.
+- **URL replacements** — `replacements` prop on CellValue for pattern-based label display on URLs.
 - **Global scale CSS hook** — `html { font-size: calc(1rem * var(--scale, 1)) }` ready for a scale slider.
+- **Drawer** — slide-in panel from left/right via Radix Dialog. Sizes: `sm | md | lg`. Subcomponents: Header, Title, Description, Body, Footer.
+- **Combobox** — autocomplete with search input inside Popover. Keyboard navigation, filtered options list.
+- **CommandPalette** — ⌘K-style fuzzy search overlay with grouped actions, keyboard navigation, and keyboard shortcut hints.
+- **GitHub Actions publish workflow** — auto-publishes to npm when a `v*` tag is pushed.
+- **Select `showIndicator` prop** — suppress the checkmark indicator on SelectItem.
+- **GraphNode `rows` prop** — structured two-column key-value table body inside graph nodes.
 
 ### Changed
 
 - **Magic values → tokens** — replaced hardcoded `p-4`, `gap-3`, `gap-2`, `gap-1`, `opacity-60`, `shadow-sm` etc. with semantic token-mapped Tailwind classes across all component files.
 - **Badge soft variants** — rewritten with proper Tailwind v4 `/15` opacity syntax (was a silent no-op).
 - **GraphNode ports** — repositioned outside node border using `right-full`/`left-full`, labels never overlap node content.
-- **CellValue JSON display** — inline expand/collapse replaced with Popover for zero table layout shift.
+- **CellValue JSON display** — now renders as headerless CodeBlock inside the Popover. Preview text truncated to prevent overflow.
 - **Showcase demo containers** — DataList and TreeView variants displayed side-by-side instead of separate wide containers.
+- **GraphNode rows alignment** — keys left-aligned with truncation, values right-aligned.
+- **Package renamed** — from `@sadigaxund/ui` to `my-you-eye`.
+- **Showcase URL demos** — replaced privacy masking with visual link labels (e.g. `example.com/path`, `API Docs →`).
 
 ### Fixed
 
@@ -40,6 +49,9 @@ All notable changes to this project are documented here.
 - **Port label spacing** — circle and label were almost touching; added `gap-2` between them.
 - **StatCard padding** — `p-panel` override (16px) was tighter than CardContent default `p-6 pt-0` (24px). Removed override to let default spacing apply.
 - **Showcase overlay demos** — added `overflow-visible` to demo containers so Dialog/Popover/Tooltip portals don't clip.
+- **Showcase 2-column layout** — full-width separators broke grid auto-flow, pushing all content to left column. Replaced with `gap-y-8`.
+- **TreeView JSON overflow** — JSON values longer than container width spilling over. Preview now truncates with ellipsis.
+- **GraphNode demo overflow** — "With rows" node positioned at `x=10` crossed the center column separator. Moved to `x=80`.
 
 ## [0.0.0] — 2026-07-17
 

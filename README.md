@@ -71,8 +71,8 @@ npm install github:<your-username>/Frontend-AI
 ```
 
 ```tsx
-import { Button, Card, Dialog } from "@sadigaxund/ui";
-import "@sadigaxund/ui/styles.css";
+import { Button, Card, Dialog } from "my-you-eye";
+import "my-you-eye/styles.css";
 ```
 
 To pick up changes made here in all apps: bump the git tag here, `npm update` in each app.

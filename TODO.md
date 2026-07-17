@@ -16,7 +16,7 @@ Check items off (`[x]`) as they complete.
 - [x] **0.6 Showcase shell** — `src/showcase/types.ts` + `src/showcase/App.tsx` with glob discovery, group tabs, dark toggle
 - [x] **0.7 ESLint flat config** — bans styled native elements outside src/ui/, restricted imports, arbitrary colors, 250-line limit
 - [x] **0.8 Showcase coverage script** — `scripts/check-showcase.mjs` checks each component folder has showcase + export
-- [x] **0.9 Package setup for consumption** — `@sadigaxund/ui`, exports map, tsup build, files: ["dist"]
+- [x] **0.9 Package setup for consumption** — `my-you-eye`, exports map, tsup build, files: ["dist"]
 - [x] **0.10 `validate` script** — `tsc --noEmit && eslint . && node scripts/check-showcase.mjs && npm run build:lib && vite build` (all green)
 - [x] **0.11 CI** — `.github/workflows/validate.yml` (push + PR)
 - [x] **0.12 Smoke test guardrails** — lint blocks styled `<button>` outside src/ui/; coverage script blocks Dummy.tsx without showcase
@@ -137,10 +137,12 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 11 — Remaining
 
-- [ ] **Drawer** — slide-in panel from left/right, Radix Dialog-based.
-- [ ] **Combobox** — autocomplete/select-with-search, Popover + Input.
-- [ ] **Command palette** — ⌘K-style fuzzy search overlay.
-- [ ] Tag `v0.1.0`; consume from a real app.
+- [x] **Drawer** — slide-in panel from left/right, Radix Dialog-based.
+- [x] **Combobox** — autocomplete/select-with-search, Popover + Input.
+- [x] **Command palette** — ⌘K-style fuzzy search overlay.
+- [x] **GitHub Actions publish workflow** — auto-publish on `v*` tags via npm.
+- [x] Tag `v0.1.0` — version bumped, prepared for publishing.
+- [ ] Consume from a real app.
 - [ ] Add `AUDIT.md` procedure.
 - [ ] Consider versioned releases with changesets.
 
