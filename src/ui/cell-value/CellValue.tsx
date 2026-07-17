@@ -17,6 +17,7 @@ export type CellValueType =
   | "badge"
   | "status"
   | "number"
+  | "percentage"
   | "date"
   | "datetime"
   | "bytes"
@@ -105,6 +106,16 @@ function NumberDisplay({ value }: { value: unknown }) {
   return (
     <span className="font-mono tabular-nums text-right block">
       {Intl.NumberFormat().format(n)}
+    </span>
+  );
+}
+
+function PercentageDisplay({ value }: { value: unknown }) {
+  const n = Number(value);
+  if (isNaN(n)) return <span className="text-muted">—</span>;
+  return (
+    <span className="font-mono tabular-nums text-right block">
+      {(n * 100).toFixed(1)}%
     </span>
   );
 }
@@ -226,6 +237,9 @@ export function CellValue({
 
     case "number":
       return <NumberDisplay value={value} />;
+
+    case "percentage":
+      return <PercentageDisplay value={value} />;
 
     case "date":
       return <DateDisplay value={value} />;

@@ -24,29 +24,6 @@ const entry: ShowcaseEntry = {
   group: "data",
   demos: [
     {
-      name: "Default",
-      render: () => (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sampleRows.map((row, i) => (
-              <TableRow key={i}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.role}</TableCell>
-                <TableCell>{row.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      ),
-    },
-    {
       name: "Striped + compact",
       render: () => (
         <Table variant="striped" density="compact">

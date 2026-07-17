@@ -13,7 +13,7 @@ const entry: ShowcaseEntry = {
             x={0} y={0} className="static"
             header="orders"
             accent
-            footer="3 cols · 894K rows"
+            footer="table"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
             header="orders"
             variant="selected"
             accent
-            footer="3 cols · 894K rows"
+            footer="table"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
@@ -35,7 +35,7 @@ const entry: ShowcaseEntry = {
             header="orders"
             variant="muted"
             accent
-            footer="3 cols · 894K rows"
+            footer="table"
             rows={[
               { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
               { label: "Recency", value: "2026-07-17", portRight: { side: "right", state: "connected" } },
@@ -52,30 +52,12 @@ const entry: ShowcaseEntry = {
             x={0} y={0} className="static"
             header="customer_orders"
             accent
-            footer="12 cols · 1.2M rows"
+            footer="transform"
             rows={[
               { label: "Pipeline", value: <span className="text-success font-medium">active</span>, portLeft: { side: "left", state: "connected" } },
-              { label: "Rows", value: "1,234,567", portRight: { side: "right", state: "connected" } },
-              { label: "Columns", value: "12" },
-              { label: "Duration", value: "3.2s", portRight: { side: "right", state: "default" } },
-            ]}
-          />
-        </div>
-      ),
-    },
-    {
-      name: "Multi-output",
-      render: () => (
-        <div className="flex items-center justify-center h-48">
-          <GraphNode
-            x={0} y={0} className="static"
-            header="user_events"
-            accent
-            footer="8 cols · 5.6M events"
-            rows={[
-              { label: "Stream A", value: "enriched", portRight: { side: "right", state: "connected" } },
-              { label: "Stream B", value: "raw", portRight: { side: "right", state: "default" } },
-              { label: "Source", value: "kafka", portLeft: { side: "left", state: "connected" } },
+              { label: "Rows in", value: "2,134,567", portLeft: { side: "left", state: "connected" } },
+              { label: "Rows out", value: "1,234,567", portRight: { side: "right", state: "connected" } },
+              { label: "Stream B", value: "standby", portRight: { side: "right", state: "default" } },
             ]}
           />
         </div>
