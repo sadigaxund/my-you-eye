@@ -36,12 +36,12 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 2 — Form controls
 
-- [ ] **Checkbox** — `@radix-ui/react-checkbox`. Sizes `sm | md`; indeterminate state. Group: `inputs`.
-- [ ] **RadioGroup** — `@radix-ui/react-radio-group`. Group: `inputs`.
-- [ ] **Switch** — `@radix-ui/react-switch`. Sizes `sm | md`. Group: `inputs`.
-- [ ] **Textarea** — no Radix. Variants match Input; `autoResize?` prop. Group: `inputs`.
-- [ ] **Select** — `@radix-ui/react-select`. Sizes `sm | md`; invalid state. Group: `inputs`.
-- [ ] **FormField** (pattern) — composes Label + slot + help/error text. Props: `label`, `error?`, `hint?`, `required?`. Group: `patterns`.
+- [x] **Checkbox** — `@radix-ui/react-checkbox`. Sizes `sm | md`; indeterminate state. Group: `inputs`.
+- [x] **RadioGroup** — `@radix-ui/react-radio-group`. Group: `inputs`.
+- [x] **Switch** — `@radix-ui/react-switch`. Sizes `sm | md`. Group: `inputs`.
+- [x] **Textarea** — no Radix. Variants match Input; `autoResize?` prop. Group: `inputs`.
+- [x] **Select** — `@radix-ui/react-select`. Sizes `sm | md`; invalid state. Group: `inputs`.
+- [x] **FormField** (pattern) — composes Label + slot + help/error text. Props: `label`, `error?`, `hint?`, `required?`. Group: `patterns`.
 
 ## Phase 3 — Overlays & feedback
 
