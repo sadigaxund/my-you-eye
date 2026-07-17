@@ -26,6 +26,25 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Row-aligned ports (two same side)",
+      render: () => (
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4 border border-border rounded-ui p-3">
+            <Port side="in" state="connected" />
+            <span className="text-xs text-muted">field_one</span>
+            <div className="flex-1" />
+            <Port side="out" state="connected" />
+          </div>
+          <div className="flex items-center gap-4 border border-border rounded-ui p-3">
+            <Port side="in" state="default" />
+            <span className="text-xs text-muted">field_two</span>
+            <div className="flex-1" />
+            <Port side="out" state="default" />
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;
