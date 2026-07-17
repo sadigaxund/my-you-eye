@@ -1,0 +1,42 @@
+@theme {
+  /* ---- Colors ---- */
+  --color-bg: oklch(1 0 0);
+  --color-fg: oklch(0.145 0 0);
+  --color-muted: oklch(0.55 0.01 260);
+  --color-primary: oklch(0.5 0.2 265);
+  --color-primary-fg: oklch(1 0 0);
+  --color-secondary: oklch(0.92 0.01 260);
+  --color-secondary-fg: oklch(0.145 0 0);
+  --color-danger: oklch(0.6 0.22 25);
+  --color-success: oklch(0.55 0.18 150);
+  --color-warning: oklch(0.7 0.18 80);
+  --color-border: oklch(0.87 0.01 260);
+  --color-ring: oklch(0.5 0.2 265);
+
+  /* ---- Shape / Space ---- */
+  --radius-ui: 6px;
+  --radius-ui-sm: 4px;
+  --radius-ui-lg: 10px;
+
+  /* ---- Typography ---- */
+  --font-sans: "Inter", "system-ui", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+}
+
+.dark {
+  --color-bg: oklch(0.145 0.01 260);
+  --color-fg: oklch(0.95 0 0);
+  --color-muted: oklch(0.65 0.01 260);
+  --color-primary: oklch(0.65 0.22 265);
+  --color-primary-fg: oklch(0 0 0);
+  --color-secondary: oklch(0.25 0.01 260);
+  --color-secondary-fg: oklch(0.95 0 0);
+  --color-border: oklch(0.3 0.01 260);
+  --color-ring: oklch(0.65 0.22 265);
+}

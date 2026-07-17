@@ -1,14 +1,51 @@
 {
   "name": "@sadigaxund/ui",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "prepare": "husky"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:lib": "tsup",
+    "validate": "tsc --noEmit && eslint . && node scripts/check-showcase.mjs && npm run build:lib && vite build",
+    "preview": "vite preview",
+    "prepare": "husky && npm run build:lib"
+  },
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "eslint": "^9.25.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.0"
+    "lint-staged": "^15.5.0",
+    "tailwindcss": "^4.1.0",
+    "tsup": "^8.4.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.31.0",
+    "vite": "^8.1.1"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs}": [

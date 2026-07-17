@@ -8,55 +8,18 @@ Check items off (`[x]`) as they complete.
 
 ## Phase 0 — Repo scaffold (infrastructure, no components yet)
 
-- [ ] **0.1 Init project**
-  ```bash
-  npm create vite@latest . -- --template react-ts
-  git init
-  ```
-- [ ] **0.2 Install dependencies** (pre-approved — the only dependency install that doesn't need per-item human approval, besides Radix packages listed in the backlog below)
-  ```bash
-  npm i clsx tailwind-merge class-variance-authority
-  npm i -D tailwindcss @tailwindcss/vite tsup eslint typescript-eslint @types/node
-  ```
-- [ ] **0.3 Tailwind v4 setup**: add `@tailwindcss/vite` plugin to `vite.config.ts`;
-      create `src/styles/globals.css` with `@import "tailwindcss";` importing `tokens.css`.
-- [ ] **0.4 Design tokens** — `src/styles/tokens.css` with CSS variables, mapped into
-      Tailwind via `@theme`. Minimum token set:
-      - Colors: `--ui-bg`, `--ui-fg`, `--ui-muted`, `--ui-primary`, `--ui-primary-fg`,
-        `--ui-secondary`, `--ui-danger`, `--ui-success`, `--ui-warning`, `--ui-border`, `--ui-ring`
-      - Dark mode: same variables redefined under `.dark` class
-      - Shape/space: `--ui-radius`, `--ui-radius-sm`, `--ui-radius-lg`
-      - Typography: `--ui-font-sans`, `--ui-font-mono`, size scale `--ui-text-xs..2xl`
-- [ ] **0.5 `cn()` helper** — `src/lib/cn.ts` (clsx + tailwind-merge).
-- [ ] **0.6 Showcase shell** — `src/showcase/types.ts` (`ShowcaseEntry` type with the 7
-      fixed groups per AGENTS.md §4) and `src/showcase/App.tsx`:
-      - `import.meta.glob("../ui/**/*.showcase.tsx", { eager: true })`
-      - One tab per group (order: inputs, display, feedback, overlay, navigation, data, patterns)
-      - Light/dark toggle in header (toggles `.dark` on `<html>`)
-      - Renders each entry: title + each demo with its name
-- [ ] **0.7 ESLint flat config** enforcing (see AGENTS.md §0, §5):
-      - `no-restricted-syntax`: styled native elements (`button`, `input`, `select`,
-        `textarea`, `table`) in JSX **outside** `src/ui/**`
-      - `no-restricted-imports`: `@radix-ui/*`, `class-variance-authority`,
-        `tailwind-merge` outside `src/ui/**` and `src/lib/**`
-      - `max-lines`: 250 (skip blank lines/comments)
-      - Ban arbitrary color classes: restrict `bg-[#`, `text-[#`, `bg-[rgb`, etc. via
-        `no-restricted-syntax` on JSX className string literals
-- [ ] **0.8 Showcase coverage script** — `scripts/check-showcase.mjs`:
-      1. every folder under `src/ui/` (and `src/ui/patterns/`) contains exactly one `*.showcase.tsx`
-      2. every showcase default export has a `group` from the fixed list
-      3. every component folder is re-exported from `src/index.ts`
-      Exit non-zero with a clear message naming the offending folder.
-- [ ] **0.9 Package setup for consumption**: `package.json` with name `@sadigaxund/ui`,
-      `exports` map (`.` → dist ESM + types, `./styles.css` → built CSS), `files: ["dist"]`,
-      `prepare: "npm run build:lib"`, tsup config building `src/index.ts` (external:
-      react, react-dom).
-- [ ] **0.10 `validate` script**: `tsc --noEmit && eslint . && node scripts/check-showcase.mjs && npm run build:lib && vite build`
-- [ ] **0.11 CI**: `.github/workflows/validate.yml` — run `npm ci && npm run validate` on
-      every push and PR. Green CI = last-known-good state for rot recovery.
-- [ ] **0.12 Smoke test the guardrails** (important — proves the tripwires work):
-      - Add a styled `<button>` to `src/showcase/App.tsx` → lint MUST fail → revert
-      - Create `src/ui/dummy/Dummy.tsx` without showcase file → coverage script MUST fail → revert
+- [x] **0.1 Init project** — Vite + React + TS scaffolded
+- [x] **0.2 Install dependencies** — all planned deps installed
+- [x] **0.3 Tailwind v4 setup** — `@tailwindcss/vite` plugin in vite.config.ts, globals.css imports tailwindcss + tokens
+- [x] **0.4 Design tokens** — `src/styles/tokens.css` with all colors, radius, typography; dark mode under `.dark`
+- [x] **0.5 `cn()` helper** — `src/lib/cn.ts` (clsx + tailwind-merge)
+- [x] **0.6 Showcase shell** — `src/showcase/types.ts` + `src/showcase/App.tsx` with glob discovery, group tabs, dark toggle
+- [x] **0.7 ESLint flat config** — bans styled native elements outside src/ui/, restricted imports, arbitrary colors, 250-line limit
+- [x] **0.8 Showcase coverage script** — `scripts/check-showcase.mjs` checks each component folder has showcase + export
+- [x] **0.9 Package setup for consumption** — `@sadigaxund/ui`, exports map, tsup build, files: ["dist"]
+- [x] **0.10 `validate` script** — `tsc --noEmit && eslint . && node scripts/check-showcase.mjs && npm run build:lib && vite build` (all green)
+- [x] **0.11 CI** — `.github/workflows/validate.yml` (push + PR)
+- [x] **0.12 Smoke test guardrails** — lint blocks styled `<button>` outside src/ui/; coverage script blocks Dummy.tsx without showcase
 
 ## Phase 1 — Core primitives
 
