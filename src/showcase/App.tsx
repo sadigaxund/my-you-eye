@@ -16,7 +16,7 @@ const GROUPS: ShowcaseGroup[] = [
   "typography",
 ];
 
-type ThemeProfile = "default" | "neon" | "high-contrast" | "glass" | "comic";
+type ThemeProfile = "default" | "neon" | "high-contrast" | "glass" | "comic" | "brutal" | "stark" | "earth";
 
 const entries: ShowcaseEntry[] = Object.values(
   import.meta.glob("../ui/**/*.showcase.tsx", { eager: true }),
@@ -63,6 +63,9 @@ export default function App() {
               <SelectItem value="high-contrast">High Contrast</SelectItem>
               <SelectItem value="glass">Glass</SelectItem>
               <SelectItem value="comic">Comic</SelectItem>
+              <SelectItem value="brutal">Brutal</SelectItem>
+              <SelectItem value="stark">Stark</SelectItem>
+              <SelectItem value="earth">Earth</SelectItem>
             </SelectContent>
           </Select>
           <Select value={font} onValueChange={(v) => {

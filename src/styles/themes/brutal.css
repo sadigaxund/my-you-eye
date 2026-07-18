@@ -1,0 +1,88 @@
+html[data-theme="brutal"] {
+  background: oklch(0.97 0.04 100);
+}
+html[data-theme="brutal"].dark {
+  background: oklch(0.18 0.01 250);
+}
+
+[data-theme="brutal"] {
+  --color-bg: oklch(0.97 0.04 100);
+  --color-fg: oklch(0.10 0 0);
+  --color-muted: oklch(0.40 0 0);
+
+  --color-primary: oklch(0.70 0.18 45);
+  --color-primary-fg: oklch(0.10 0 0);
+  --color-secondary: oklch(0.85 0.10 100);
+  --color-secondary-fg: oklch(0.10 0 0);
+
+  --color-danger: oklch(0.60 0.22 25);
+  --color-danger-fg: oklch(0.10 0 0);
+  --color-success: oklch(0.70 0.20 150);
+  --color-success-fg: oklch(0.10 0 0);
+  --color-warning: oklch(0.85 0.20 90);
+
+  --color-surface: oklch(1 0 0);
+  --color-surface-hover: oklch(0.95 0 0);
+  --color-surface-active: oklch(0.90 0 0);
+  --color-surface-elevated: oklch(1 0 0);
+
+  --color-border: oklch(0.10 0 0);
+  --color-ring: oklch(0.10 0 0);
+  --color-scrollbar: oklch(0.10 0 0);
+  --color-scrollbar-hover: oklch(0.40 0 0);
+  --color-grid-dot: oklch(0.10 0 0 / 0.2);
+
+  --border-width: 3px;
+  --backdrop-blur: 0px;
+
+  --radius-ui: 4px;
+  --radius-ui-sm: 0px;
+  --radius-ui-lg: 8px;
+
+  --shadow-card: 4px 4px 0 0 oklch(0.10 0 0);
+  --shadow-elevated: 8px 8px 0 0 oklch(0.10 0 0);
+
+  --opacity-dim: 1;
+  --opacity-muted: 1;
+}
+
+[data-theme="brutal"].dark {
+  --color-bg: oklch(0.18 0.01 250);
+  --color-fg: oklch(0.95 0 0);
+  --color-muted: oklch(0.70 0 0);
+
+  --color-primary: oklch(0.75 0.18 35);
+  --color-primary-fg: oklch(0.95 0 0);
+  --color-secondary: oklch(0.30 0.05 250);
+  --color-secondary-fg: oklch(0.95 0 0);
+
+  --color-danger: oklch(0.65 0.20 25);
+  --color-danger-fg: oklch(0.95 0 0);
+  --color-success: oklch(0.70 0.20 150);
+  --color-success-fg: oklch(0.95 0 0);
+  --color-warning: oklch(0.85 0.20 90);
+
+  --color-surface: oklch(0.25 0.01 250);
+  --color-surface-hover: oklch(0.30 0.01 250);
+  --color-surface-active: oklch(0.35 0.01 250);
+  --color-surface-elevated: oklch(0.25 0.01 250);
+
+  --color-border: oklch(0.95 0 0);
+  --color-ring: oklch(0.95 0 0);
+  --color-scrollbar: oklch(0.95 0 0);
+  --color-scrollbar-hover: oklch(0.70 0 0);
+  --color-grid-dot: oklch(0.95 0 0 / 0.2);
+
+  --border-width: 3px;
+  --backdrop-blur: 0px;
+
+  --radius-ui: 4px;
+  --radius-ui-sm: 0px;
+  --radius-ui-lg: 8px;
+
+  --shadow-card: 4px 4px 0 0 oklch(0.95 0 0);
+  --shadow-elevated: 8px 8px 0 0 oklch(0.95 0 0);
+
+  --opacity-dim: 1;
+  --opacity-muted: 1;
+}
