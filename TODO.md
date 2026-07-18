@@ -158,6 +158,16 @@ Check items off (`[x]`) as they complete.
 - [x] **E3 — DataTable pattern** — auto-renders rows via CellValue from column definitions.
 - [x] **E4 — TreeView upgrades** — `defaultExpandedDepth`, guide lines, controlled `expandedKeys`/`onToggle`, arrow-key navigation.
 
+## Phase 13 — Themes, CLI & Orchestrator fixes
+
+- [x] **Glass theme** — `glass.css` with semi-transparent surfaces, 24px backdrop blur, gradient backgrounds, edge highlights.
+- [x] **Comic theme** — `comic.css` with paper texture, warm colors, thick borders, playful shadows, Comic Sans font.
+- [x] **Comic Sans font option** — `--font-comic` token, `[data-font="comic"]` rule, font selector entry.
+- [x] **CellValue truncation** — all render paths wrap text in `truncate` elements for column overflow.
+- [x] **Toast background fix** — default variant uses `bg-surface-elevated`, success/danger use `text-primary-fg`.
+- [x] **Orchestrator node width fix** — wrapper `position: relative` + `max-w-[160px]` on GraphNode prevents port detachment.
+- [x] **CLI tool** — `bin/my-you-eye.mjs` with `init`, `list`, `sync` commands. SKILL.md + components.json shipped with package.
+
 ---
 
 ## How to start (for the human)

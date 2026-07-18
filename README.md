@@ -107,3 +107,16 @@ npm run validate   # typecheck + lint + showcase coverage + build — must be gr
 ```
 
 `npm run validate` is the definition of done for every change. See [AGENTS.md](./AGENTS.md).
+
+## CLI
+
+The package ships a tiny Node CLI (`my-you-eye`) for project setup:
+
+```
+my-you-eye init          Copy SKILL.md + components.json to skills/
+my-you-eye list          Print table of all components with groups and variants
+my-you-eye sync          Re-copy SKILL.md + components.json (overwrite)
+my-you-eye --help        Show usage
+```
+
+All file paths resolve from the package location, not the caller's cwd. The CLI has zero external dependencies.

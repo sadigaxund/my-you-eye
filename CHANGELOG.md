@@ -23,7 +23,15 @@ All notable changes to this project are documented here.
 - **Glass theme** — multiple color scheme iterations (warm → cool blue → teal+neutral) based on feedback.
 - **Font selector priority** — `[data-font]` rules remain unlayered so font dropdown always overrides theme default fonts.
 - **Theme data attributes** — `[data-font]` selectors placed after theme `@import` statements so font selector takes priority.
-- **Typography showcase** — now programmatic: iterates `fontOptions`, uses inline `fontFamily: "var(--font-<name>)"` to bypass header `data-font` cascade.
+- **OrchestratorNode width** — wrapper gets `position: relative` and GraphNode receives `max-w-[160px]` so right-side port anchors always align with the actual node right edge.
+
+### Added
+
+- **CLI tool** — `bin/my-you-eye.mjs` with `init` (copies SKILL.md + components.json to `skills/`), `list` (component table), `sync` (overwrite re-copy). Zero external deps. Ships via `package.json` `bin` and `files`.
+- **SKILL.md** — agent skill file shipped with the package for AI agents in consuming projects.
+- **components.json** — machine-readable component catalog with group, name, and variant metadata for all 52 components.
+
+### Changed
 - **Toast backgrounds** — success/danger variants changed from translucent (`bg-success/10`) to solid (`bg-success text-bg`, `bg-danger text-bg`).
 - **GraphNode footer text** — changed from `"table"` to `"source"` in all variant demos.
 - **Table sticky header** — removed `overflow-x-auto` from Table wrapper so `<thead>` sticky positions relative to outer `ScrollArea`.
