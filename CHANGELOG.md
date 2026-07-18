@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Changed
+
+- **Toast shadow** — `shadow-lg` → `shadow-elevated` so toast shadows use the theme's `--shadow-elevated` token instead of a hardcoded Tailwind shadow. Fixes toasts ignoring theme shadows (visible in Glass theme's tinted shadows).
+- **Glass dark mode `--color-primary-fg`** — changed from purple-tinted `oklch(0.15 0.05 290)` to neutral `oklch(0.1 0 0)` so foreground text works on success/danger colored backgrounds without hue clash.
+
+### Added
+
+- **`--color-success-fg` and `--color-danger-fg` tokens** — new token layer across all themes (tokens.css, dark.css, neon.css, high-contrast.css, comic.css, glass.css). Each theme defines appropriate foreground colors for success and danger semantic backgrounds, matching each theme's primary-fg pattern. Toast uses `text-success-fg` / `text-danger-fg` instead of `text-primary-fg`, giving every theme independent control over toast variant text colors.
+- **GraphNode radius** — `rounded-ui` → `rounded-node` so node corner radius (`--radius-node: 6px`) is fixed and invariant across all themes. Only `--radius-ui*` tokens are themeable.
+- **Glass theme redesign** — complete color token overhaul for true glassmorphism. Mesh gradient backgrounds (light: blue-violet-amber-cyan radial spots; dark: deep indigo-violet-cyan-teal glows). Surfaces at 50-85% opacity with 24px backdrop blur. Vibrant indigo primary (`oklch 0.55 0.22 290`). Expanded radii (16px/10px/24px). Tinted shadows. Improved contrast ratios on frosted surfaces.
+
+### Added
+
+- **Plus Jakarta Sans font option** — `--font-plus-jakarta` token in `tokens.css`, `@font-face` via Google Fonts, `[data-font="plus-jakarta"]` rule in `globals.css`, selectable from the showcase header dropdown.
+
 ## [0.2.0] — 2026-07-18
 
 ### Added

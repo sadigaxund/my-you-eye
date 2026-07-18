@@ -12,13 +12,13 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between gap-stack rounded-ui border p-panel shadow-lg data-[swipe=end]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0",
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-stack rounded-ui border p-panel shadow-elevated data-[swipe=end]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0",
   {
     variants: {
       variant: {
         default: "border-border bg-surface-elevated text-fg",
-        success: "border-success bg-success text-primary-fg",
-        danger: "border-danger bg-danger text-primary-fg",
+        success: "border-success bg-success text-success-fg",
+        danger: "border-danger bg-danger text-danger-fg",
       },
     },
     defaultVariants: {

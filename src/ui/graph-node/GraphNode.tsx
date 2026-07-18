@@ -8,7 +8,7 @@ import { Port } from "../port";
 const ROW_PORT_Y_OFFSET = HEADER * GRID;
 
 const graphNodeVariants = cva(
-  "absolute flex flex-col rounded-ui border bg-surface shadow-card min-w-[160px] overflow-hidden",
+  "absolute flex flex-col rounded-node border bg-surface shadow-card min-w-[160px] overflow-hidden",
   {
     variants: {
       variant: {

@@ -35,6 +35,10 @@ set of components. Your job is to keep it that way. These rules are not suggesti
     `scrollbar-color`/`scrollbar-width`, all token-driven. Never add per-component scrollbar
     styling. If a container needs scrolling, just use `overflow-auto` — the global CSS handles
     the visual.
+11. **Node elements (GraphNode) use a fixed corner radius** (`--radius-node` in `tokens.css`,
+    mapped as `rounded-node` utility). Themes must never override `--radius-node` — the node
+    corner radius is invariant across all themes. Only `--radius-ui*` tokens (buttons, cards,
+    dialogs, etc.) may be themed.
 
 ---
 

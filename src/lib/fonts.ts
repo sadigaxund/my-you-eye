@@ -6,6 +6,7 @@ export const fontOptions = [
   { value: "titillium", label: "Titillium Web" },
   { value: "consolas", label: "Consolas" },
   { value: "jetbrains", label: "JetBrains Nerd" },
+  { value: "plus-jakarta", label: "Plus Jakarta Sans" },
   { value: "comic", label: "Comic Sans" },
 ] as const;
 
