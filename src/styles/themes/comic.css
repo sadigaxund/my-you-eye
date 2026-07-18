@@ -45,6 +45,9 @@ html[data-theme="comic"].dark {
   --color-scrollbar: oklch(0.18 0.04 50 / 0.25);
   --color-scrollbar-hover: oklch(0.18 0.04 50 / 0.45);
   --color-grid-dot: oklch(0.3 0.04 50 / 0.35);
+  --color-code-bg: oklch(0.94 0.02 70);
+  --color-code-fg: oklch(0.10 0.03 50);
+  --color-code-muted: oklch(0.42 0.03 50);
   --border-width: 2px;
   --backdrop-blur: 0px;
   --radius-ui: 10px;
@@ -84,6 +87,9 @@ html[data-theme="comic"].dark {
   --color-scrollbar: oklch(0.72 0.03 60 / 0.25);
   --color-scrollbar-hover: oklch(0.72 0.03 60 / 0.45);
   --color-grid-dot: oklch(0.6 0.03 60 / 0.35);
+  --color-code-bg: oklch(0.18 0.02 50);
+  --color-code-fg: oklch(0.90 0.02 60);
+  --color-code-muted: oklch(0.55 0.02 60);
   --shadow-card: 3px 3px 0 oklch(0 0 0 / 0.3);
   --shadow-elevated: 5px 5px 0 oklch(0 0 0 / 0.35);
 }

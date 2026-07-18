@@ -62,11 +62,10 @@ const sampleData: TreeNode[] = [
   {
     id: "1",
     label: "users",
+    kind: "array",
     children: [
       {
-        id: "1-1",
-        label: "0",
-        value: { type: "text", value: "john@example.com" },
+        id: "1-1", label: "[0]", kind: "object",
         children: [
           { id: "1-1-1", label: "name", value: { type: "text", value: "John" } },
           { id: "1-1-2", label: "active", value: { type: "boolean", value: true } },
@@ -74,9 +73,7 @@ const sampleData: TreeNode[] = [
         ],
       },
       {
-        id: "1-2",
-        label: "1",
-        value: { type: "text", value: "jane@example.com" },
+        id: "1-2", label: "[1]", kind: "object",
         children: [
           { id: "1-2-1", label: "name", value: { type: "text", value: "Jane" } },
           { id: "1-2-2", label: "active", value: { type: "boolean", value: false } },
@@ -88,16 +85,37 @@ const sampleData: TreeNode[] = [
   {
     id: "2",
     label: "config",
+    kind: "object",
     children: [
       {
         id: "2-1",
         label: "limits",
-        value: { type: "json", value: { maxConnections: 100, timeout: 30000 } },
+        kind: "object",
+        children: [
+          { id: "2-1-1", label: "maxConnections", value: { type: "number", value: 100 } },
+          { id: "2-1-2", label: "timeout", value: { type: "number", value: 30000 } },
+          { id: "2-1-3", label: "retryDelay", value: { type: "duration", value: 5 } },
+        ],
       },
+      {
+        id: "2-2",
+        label: "tags",
+        kind: "array",
+        children: [
+          { id: "2-2-1", label: "[0]", value: { type: "text", value: "production" } },
+          { id: "2-2-2", label: "[1]", value: { type: "text", value: "us-east" } },
+        ],
+      },
+      { id: "2-3", label: "emptyArr", kind: "array", children: [] },
+      { id: "2-4", label: "emptyObj", kind: "object", children: [] },
     ],
   },
   { id: "3", label: "version", value: { type: "text", value: "2.4.1" } },
-  { id: "4", label: "null_field", value: { type: "null" } },
+  { id: "4", label: "enabled", value: { type: "boolean", value: true } },
+  { id: "5", label: "ratio", value: { type: "percentage", value: 0.75 } },
+  { id: "6", label: "null_field", value: { type: "null" } },
+  { id: "7", label: "lastLogin", value: { type: "date", value: 1710000000000 } },
+  { id: "8", label: "avatar", value: { type: "url", value: "https://example.com/avatar.png" } },
 ];
 
 const iconData: TreeNode[] = [
@@ -119,6 +137,52 @@ const iconData: TreeNode[] = [
     ],
   },
   { id: "readme", label: "README.md", icon: <FileIcon />, value: { type: "text", value: "4.8 kb" } },
+];
+
+const messyPayload: TreeNode[] = [
+  {
+    id: "m1", label: "deploy", kind: "object",
+    children: [
+      {
+        id: "m1-1", label: "environments", kind: "array",
+        children: [
+          {
+            id: "m1-1-1", label: "[0]", kind: "object",
+            children: [
+              { id: "m1-1-1-1", label: "name", value: { type: "text", value: "staging" } },
+              { id: "m1-1-1-2", label: "url", value: { type: "url", value: "https://staging.example.com" } },
+              { id: "m1-1-1-3", label: "active", value: { type: "boolean", value: true } },
+            ],
+          },
+          {
+            id: "m1-1-2", label: "[1]", kind: "object",
+            children: [
+              { id: "m1-1-2-1", label: "name", value: { type: "text", value: "production" } },
+              { id: "m1-1-2-2", label: "url", value: { type: "url", value: "https://example.com" } },
+              { id: "m1-1-2-3", label: "active", value: { type: "boolean", value: false } },
+            ],
+          },
+        ],
+      },
+      { id: "m1-2", label: "features", kind: "object",
+        children: [
+          { id: "m1-2-1", label: "darkMode", value: { type: "boolean", value: true } },
+          { id: "m1-2-2", label: "maxRetries", value: { type: "number", value: 3 } },
+          { id: "m1-2-3", label: "description", value: { type: "text", value: "Main deployment config" } },
+        ],
+      },
+      { id: "m1-3", label: "emptyArr", kind: "array", children: [] },
+      { id: "m1-4", label: "emptyObj", kind: "object", children: [] },
+      { id: "m1-5", label: "nullValue", value: { type: "null" } },
+    ],
+  },
+  { id: "m2", label: "metrics", kind: "array",
+    children: [
+      { id: "m2-1", label: "[0]", value: { type: "number", value: 42 } },
+      { id: "m2-2", label: "[1]", value: { type: "number", value: 7 } },
+      { id: "m2-3", label: "[2]", value: { type: "number", value: 99 } },
+    ],
+  },
 ];
 
 const entry: ShowcaseEntry = {
@@ -149,6 +213,14 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="max-w-md px-2">
           <TreeView data={iconData} defaultExpandedDepth={2} />
+        </div>
+      ),
+    },
+    {
+      name: "Messy nested payload (hover to trace depth guides)",
+      render: () => (
+        <div className="max-w-lg px-2">
+          <TreeView data={messyPayload} defaultExpandedDepth={1} />
         </div>
       ),
     },

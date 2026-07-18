@@ -2,6 +2,21 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { CodeBlock } from "../ui/code-block";
 import type { RegistryDemo } from "./registry";
 
+function PreviewContainer({ layout, children }: { layout?: "fill" | "center"; children: React.ReactNode }) {
+  if (layout === "center") {
+    return (
+      <div className="border border-border rounded-ui p-panel flex items-center justify-center overflow-visible">
+        {children}
+      </div>
+    );
+  }
+  return (
+    <div className="border border-border rounded-ui p-panel overflow-visible">
+      {children}
+    </div>
+  );
+}
+
 export function DemoSection({ demo }: { demo: RegistryDemo }) {
   const hasSource = Boolean(demo.source);
 
@@ -27,18 +42,18 @@ export function DemoSection({ demo }: { demo: RegistryDemo }) {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="preview">
-            <div className="border border-border rounded-ui p-panel flex items-center justify-center overflow-visible">
+            <PreviewContainer layout={demo.layout}>
               {demo.render()}
-            </div>
+            </PreviewContainer>
           </TabsContent>
           <TabsContent value="code">
             <CodeBlock code={demo.source ?? ""} language="tsx" />
           </TabsContent>
         </Tabs>
       ) : (
-        <div className="border border-border rounded-ui p-panel flex items-center justify-center overflow-visible">
+        <PreviewContainer layout={demo.layout}>
           {demo.render()}
-        </div>
+        </PreviewContainer>
       )}
     </section>
   );

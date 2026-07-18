@@ -75,6 +75,9 @@ html[data-theme="glass"].dark::before {
   --color-scrollbar: oklch(0 0 0 / 0.15);
   --color-scrollbar-hover: oklch(0 0 0 / 0.25);
   --color-grid-dot: oklch(0 0 0 / 0.08);
+  --color-code-bg: oklch(0.90 0.03 280);
+  --color-code-fg: oklch(0.15 0.04 290);
+  --color-code-muted: oklch(0.40 0.04 290);
 
   /* Structure & Effects */
   --border-width: 1px;
@@ -133,6 +136,9 @@ html[data-theme="glass"].dark::before {
   --color-scrollbar: oklch(1 1 1 / 0.15);
   --color-scrollbar-hover: oklch(1 1 1 / 0.25);
   --color-grid-dot: oklch(1 1 1 / 0.08);
+  --color-code-bg: oklch(0.12 0.03 290);
+  --color-code-fg: oklch(0.95 0 0);
+  --color-code-muted: oklch(0.65 0.04 290);
 
   /* Shadows (Deeper for dark mode definition) */
   --shadow-card: 0 8px 32px 0 oklch(0 0 0 / 0.40);

@@ -41,20 +41,20 @@ const entry: ShowcaseEntry = {
           <TableHeader>
             <TableRow>
               <TableHead>Type</TableHead>
-              <TableHead align="right">Value</TableHead>
+              <TableHead>Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow><TableCell>Number</TableCell><TableCell align="right"><CellValue type="number" value={1234567.89} /></TableCell></TableRow>
-            <TableRow><TableCell>Percentage</TableCell><TableCell align="right"><CellValue type="percentage" value={0.123} /></TableCell></TableRow>
-            <TableRow><TableCell>Bytes</TableCell><TableCell align="right"><CellValue type="bytes" value={2048} /></TableCell></TableRow>
-            <TableRow><TableCell>Bytes (large)</TableCell><TableCell align="right"><CellValue type="bytes" value={1073741824} /></TableCell></TableRow>
-            <TableRow><TableCell>Duration</TableCell><TableCell align="right"><CellValue type="duration" value={3661} /></TableCell></TableRow>
-            <TableRow><TableCell>Duration (seconds)</TableCell><TableCell align="right"><CellValue type="duration" value={45} /></TableCell></TableRow>
-            <TableRow><TableCell>Date (old)</TableCell><TableCell align="right"><CellValue type="date" value="2026-06-01" /></TableCell></TableRow>
-            <TableRow><TableCell>Date (today)</TableCell><TableCell align="right"><CellValue type="date" value="2026-07-17" /></TableCell></TableRow>
-            <TableRow><TableCell>Datetime</TableCell><TableCell align="right"><CellValue type="datetime" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
-            <TableRow><TableCell>Array</TableCell><TableCell align="right"><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
+            <TableRow><TableCell>Number</TableCell><TableCell><CellValue type="number" value={1234567.89} /></TableCell></TableRow>
+            <TableRow><TableCell>Percentage</TableCell><TableCell><CellValue type="percentage" value={0.123} /></TableCell></TableRow>
+            <TableRow><TableCell>Bytes</TableCell><TableCell><CellValue type="bytes" value={2048} /></TableCell></TableRow>
+            <TableRow><TableCell>Bytes (large)</TableCell><TableCell><CellValue type="bytes" value={1073741824} /></TableCell></TableRow>
+            <TableRow><TableCell>Duration</TableCell><TableCell><CellValue type="duration" value={3661} /></TableCell></TableRow>
+            <TableRow><TableCell>Duration (seconds)</TableCell><TableCell><CellValue type="duration" value={45} /></TableCell></TableRow>
+            <TableRow><TableCell>Date (old)</TableCell><TableCell><CellValue type="date" value="2026-06-01" /></TableCell></TableRow>
+            <TableRow><TableCell>Date (today)</TableCell><TableCell><CellValue type="date" value="2026-07-17" /></TableCell></TableRow>
+            <TableRow><TableCell>Datetime</TableCell><TableCell><CellValue type="datetime" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
+            <TableRow><TableCell>Array</TableCell><TableCell><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
           </TableBody>
         </Table>
       ),

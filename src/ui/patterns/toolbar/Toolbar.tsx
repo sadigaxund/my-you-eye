@@ -54,7 +54,7 @@ const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(
             {search && <div className="w-full sm:w-auto sm:min-w-56">{search}</div>}
             {filters && <div className="flex flex-wrap items-center gap-inline">{filters}</div>}
           </div>
-          {actions && <div className="flex shrink-0 items-center gap-inline">{actions}</div>}
+          {actions && <div className="flex w-full sm:w-auto shrink-0 items-center gap-inline">{actions}</div>}
         </div>
         {hasMeta && (
           <div className="flex flex-wrap items-center gap-inline border-t border-border pt-inline">

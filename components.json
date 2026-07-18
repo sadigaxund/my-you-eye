@@ -9,12 +9,11 @@
       "folder": "ui/canvas",
       "props": {},
       "demos": [
-        "Empty grid",
-        "Edge states"
+        "Empty grid"
       ]
     },
     {
-      "name": "ConnectionLine",
+      "name": "Edge",
       "group": "canvas",
       "folder": "ui/connection-line",
       "props": {
@@ -28,7 +27,21 @@
         ]
       },
       "demos": [
-        "Path variants"
+        "Path variants",
+        "Edge states"
+      ]
+    },
+    {
+      "name": "Graph",
+      "group": "canvas",
+      "folder": "ui/patterns/graph",
+      "props": {
+        "type": [
+          "button"
+        ]
+      },
+      "demos": [
+        "Pipeline editor (drag nodes, connect ports, delete selected)"
       ]
     },
     {
@@ -43,19 +56,6 @@
       },
       "demos": [
         "Variants"
-      ]
-    },
-    {
-      "name": "Orchestrator",
-      "group": "canvas",
-      "folder": "ui/patterns/orchestrator",
-      "props": {
-        "type": [
-          "button"
-        ]
-      },
-      "demos": [
-        "Pipeline editor (drag nodes, connect ports, delete selected)"
       ]
     },
     {
@@ -97,9 +97,6 @@
           "text",
           "tree",
           "url"
-        ],
-        "align": [
-          "right"
         ]
       },
       "demos": [
@@ -174,7 +171,8 @@
       "demos": [
         "Default & Condensed (depth-based expand)",
         "Controlled expand state",
-        "Leading icons (click a row, then use arrow keys)"
+        "Leading icons (click a row, then use arrow keys)",
+        "Messy nested payload (hover to trace depth guides)"
       ]
     },
     {
@@ -248,8 +246,9 @@
         ]
       },
       "demos": [
-        "Basic",
-        "With header",
+        "Bare (no header, no language)",
+        "Language-only (badge overlay, no header bar)",
+        "With header + language",
         "Elevated",
         "Line numbers",
         "No wrap (horizontal scroll)"
@@ -783,12 +782,17 @@
       "props": {
         "variant": [
           "elevated",
+          "neutral",
           "surface"
+        ],
+        "style": [
+          "soft"
         ]
       },
       "demos": [
-        "Variants",
-        "Custom colors",
+        "Theme-driven (default)",
+        "Texture × Strength matrix",
+        "Custom colors + paper texture",
         "Radii"
       ]
     },

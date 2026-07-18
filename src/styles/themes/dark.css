@@ -16,6 +16,9 @@
   --color-grid-dot: oklch(0.35 0.01 260);
   --color-scrollbar: oklch(0.3 0.01 260);
   --color-scrollbar-hover: oklch(0.65 0.01 260);
+  --color-code-bg: oklch(0.12 0.01 260);
+  --color-code-fg: oklch(0.92 0.005 260);
+  --color-code-muted: oklch(0.55 0.01 260);
   --color-danger: oklch(0.65 0.22 25);
   --color-danger-fg: oklch(0 0 0);
   --color-success: oklch(0.62 0.17 150);

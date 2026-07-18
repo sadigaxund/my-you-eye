@@ -16,5 +16,5 @@ export interface ShowcaseEntry {
   parent?: string;
   /** Short one/two-sentence blurb shown under the title in the docs main pane. Optional. */
   description?: string;
-  demos: { name: string; description?: string; render: () => ReactNode }[];
+  demos: { name: string; description?: string; render: () => ReactNode; layout?: "fill" | "center" }[];
 }

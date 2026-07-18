@@ -32,6 +32,9 @@ html[data-theme="brutal"].dark {
   --color-scrollbar: oklch(0.10 0 0);
   --color-scrollbar-hover: oklch(0.40 0 0);
   --color-grid-dot: oklch(0.10 0 0 / 0.2);
+  --color-code-bg: oklch(0.95 0.04 100);
+  --color-code-fg: oklch(0.10 0 0);
+  --color-code-muted: oklch(0.35 0 0);
 
   --border-width: 3px;
   --backdrop-blur: 0px;
@@ -76,6 +79,9 @@ html[data-theme="brutal"].dark {
   --color-scrollbar: oklch(0.95 0 0);
   --color-scrollbar-hover: oklch(0.70 0 0);
   --color-grid-dot: oklch(0.95 0 0 / 0.2);
+  --color-code-bg: oklch(0.15 0.01 250);
+  --color-code-fg: oklch(0.92 0 0);
+  --color-code-muted: oklch(0.60 0 0);
 
   --border-width: 3px;
   --backdrop-blur: 0px;

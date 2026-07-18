@@ -20,6 +20,7 @@ export interface TreeNode {
   value?: TreeNodeValue;
   children?: TreeNode[];
   icon?: ReactNode;
+  kind?: "object" | "array";
 }
 
 export interface TreeViewProps extends VariantProps<typeof treeVariants> {
@@ -49,13 +50,13 @@ interface VisibleEntry {
   hasChildren: boolean;
 }
 
-function computeInitialExpanded(data: TreeNode[], defaultExpandedDepth: number): Set<string> {
+function computeInitialExpanded(data: TreeNode[], depth: number): Set<string> {
   const set = new Set<string>();
-  function walk(nodes: TreeNode[], depth: number) {
+  function walk(nodes: TreeNode[], d: number) {
     for (const node of nodes) {
-      if (node.children && node.children.length > 0 && depth < defaultExpandedDepth) {
+      if (node.children?.length && d < depth) {
         set.add(node.id);
-        walk(node.children, depth + 1);
+        walk(node.children, d + 1);
       }
     }
   }
@@ -63,14 +64,9 @@ function computeInitialExpanded(data: TreeNode[], defaultExpandedDepth: number):
   return set;
 }
 
-function flattenVisible(
-  nodes: TreeNode[],
-  expanded: Set<string>,
-  parentId: string | null,
-  acc: VisibleEntry[],
-): VisibleEntry[] {
+function flattenVisible(nodes: TreeNode[], expanded: Set<string>, parentId: string | null, acc: VisibleEntry[]): VisibleEntry[] {
   for (const node of nodes) {
-    const hasChildren = !!node.children && node.children.length > 0;
+    const hasChildren = !!node.children?.length;
     acc.push({ id: node.id, parentId, hasChildren });
     if (hasChildren && expanded.has(node.id)) {
       flattenVisible(node.children!, expanded, node.id, acc);
@@ -80,19 +76,15 @@ function flattenVisible(
 }
 
 function renderNodes(
-  nodes: TreeNode[],
-  depth: number,
-  ancestorLines: boolean[],
-  variant: "default" | "condensed",
-  indent: number,
-  expanded: Set<string>,
-  currentId: string | undefined,
-  onToggle: (id: string) => void,
+  nodes: TreeNode[], depth: number, ancestorLines: boolean[],
+  variant: "default" | "condensed", indent: number,
+  expanded: Set<string>, currentId: string | undefined, hoveredId: string | undefined,
+  onToggle: (id: string) => void, onHover: (id: string | undefined) => void,
   replacements: UrlReplacement[] | undefined,
 ): ReactNode {
   return nodes.map((node, i) => {
     const isLast = i === nodes.length - 1;
-    const hasChildren = !!node.children && node.children.length > 0;
+    const hasChildren = !!node.children?.length;
     const isExpanded = hasChildren && expanded.has(node.id);
     return (
       <TreeItem
@@ -105,21 +97,17 @@ function renderNodes(
         isLast={isLast}
         expanded={isExpanded}
         current={node.id === currentId}
+        hovered={node.id === hoveredId}
         onToggle={onToggle}
+        onHover={onHover}
         replacements={replacements}
       >
         {isExpanded && (
           <ul role="group" className="list-none m-0 p-0">
             {renderNodes(
-              node.children!,
-              depth + 1,
-              [...ancestorLines, !isLast],
-              variant,
-              indent,
-              expanded,
-              currentId,
-              onToggle,
-              replacements,
+              node.children!, depth + 1, [...ancestorLines, !isLast],
+              variant, indent, expanded, currentId, hoveredId,
+              onToggle, onHover, replacements,
             )}
           </ul>
         )}
@@ -129,13 +117,8 @@ function renderNodes(
 }
 
 export function TreeView({
-  data,
-  variant = "default",
-  indent = 16,
-  defaultExpandedDepth = 1,
-  expandedKeys,
-  onToggle,
-  replacements,
+  data, variant = "default", indent = 16, defaultExpandedDepth = 1,
+  expandedKeys, onToggle, replacements,
 }: TreeViewProps) {
   const treeRef = useRef<HTMLUListElement>(null);
   const v = variant ?? "default";
@@ -145,21 +128,17 @@ export function TreeView({
   );
   const expanded = expandedKeys ?? internalExpanded;
 
-  const toggle = useCallback(
-    (id: string) => {
-      if (expandedKeys) {
-        onToggle?.(id);
-        return;
-      }
-      setInternalExpanded((prev) => {
-        const next = new Set(prev);
-        if (next.has(id)) next.delete(id);
-        else next.add(id);
-        return next;
-      });
-    },
-    [expandedKeys, onToggle],
-  );
+  const toggle = useCallback((id: string) => {
+    if (expandedKeys) { onToggle?.(id); return; }
+    setInternalExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }, [expandedKeys, onToggle]);
+
+  const [hoveredId, setHoveredId] = useState<string | undefined>(undefined);
+  const onHover = useCallback((id: string | undefined) => setHoveredId(id), []);
 
   const visible = useMemo(() => flattenVisible(data, expanded, null, []), [data, expanded]);
   const [focusIndex, setFocusIndex] = useState(0);
@@ -168,56 +147,34 @@ export function TreeView({
     if (focusIndex > visible.length - 1) setFocusIndex(Math.max(0, visible.length - 1));
   }, [visible, focusIndex]);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (visible.length === 0) return;
-      const cur = visible[focusIndex];
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setFocusIndex((i) => Math.min(i + 1, visible.length - 1));
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setFocusIndex((i) => Math.max(i - 1, 0));
-          break;
-        case "ArrowRight":
-          e.preventDefault();
-          if (!cur) break;
-          if (cur.hasChildren && !expanded.has(cur.id)) {
-            toggle(cur.id);
-          } else if (cur.hasChildren) {
-            setFocusIndex((i) => Math.min(i + 1, visible.length - 1));
-          }
-          break;
-        case "ArrowLeft":
-          e.preventDefault();
-          if (!cur) break;
-          if (cur.hasChildren && expanded.has(cur.id)) {
-            toggle(cur.id);
-          } else if (cur.parentId) {
-            const pIdx = visible.findIndex((entry) => entry.id === cur.parentId);
-            if (pIdx >= 0) setFocusIndex(pIdx);
-          }
-          break;
-        case "Home":
-          e.preventDefault();
-          setFocusIndex(0);
-          break;
-        case "End":
-          e.preventDefault();
-          setFocusIndex(visible.length - 1);
-          break;
-        case "Enter":
-        case " ":
-          e.preventDefault();
-          if (cur?.hasChildren) toggle(cur.id);
-          break;
-      }
-    },
-    [visible, focusIndex, expanded, toggle],
-  );
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (visible.length === 0) return;
+    const cur = visible[focusIndex];
+    switch (e.key) {
+      case "ArrowDown": e.preventDefault(); setFocusIndex((i) => Math.min(i + 1, visible.length - 1)); break;
+      case "ArrowUp": e.preventDefault(); setFocusIndex((i) => Math.max(i - 1, 0)); break;
+      case "ArrowRight":
+        e.preventDefault();
+        if (cur.hasChildren && !expanded.has(cur.id)) toggle(cur.id);
+        else if (cur.hasChildren) setFocusIndex((i) => Math.min(i + 1, visible.length - 1));
+        break;
+      case "ArrowLeft":
+        e.preventDefault();
+        if (cur.hasChildren && expanded.has(cur.id)) toggle(cur.id);
+        else if (cur.parentId) {
+          const pIdx = visible.findIndex((entry) => entry.id === cur.parentId);
+          if (pIdx >= 0) setFocusIndex(pIdx);
+        }
+        break;
+      case "Home": e.preventDefault(); setFocusIndex(0); break;
+      case "End": e.preventDefault(); setFocusIndex(visible.length - 1); break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (cur?.hasChildren) toggle(cur.id);
+        break;
+    }
+  }, [visible, focusIndex, expanded, toggle]);
 
   useEffect(() => {
     if (visible.length === 0) return;
@@ -236,7 +193,7 @@ export function TreeView({
       onKeyDown={handleKeyDown}
       className={cn(treeVariants({ variant: v }), "list-none m-0 p-0 outline-none")}
     >
-      {renderNodes(data, 0, [], v, indent, expanded, currentId, toggle, replacements)}
+      {renderNodes(data, 0, [], v, indent, expanded, currentId, hoveredId, toggle, onHover, replacements)}
     </ul>
   );
 }

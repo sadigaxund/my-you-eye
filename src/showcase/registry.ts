@@ -20,6 +20,7 @@ export interface RegistryDemo {
   render: () => ReactNode;
   /** Extracted JSX source, or null if extraction wasn't confident. */
   source: string | null;
+  layout?: "fill" | "center";
 }
 
 export interface RegistryEntry {
@@ -81,6 +82,7 @@ export const entries: RegistryEntry[] = Object.entries(modules)
         description: demo.description,
         render: demo.render,
         source: raw ? extractDemoSource(raw, demo.name) : null,
+        layout: demo.layout,
       })),
     };
   })

@@ -79,6 +79,6 @@ export { ScrollArea } from "./ui/scroll-area";
 export { ConnectionLine } from "./ui/connection-line";
 export { FileDrop } from "./ui/file-drop";
 export { Image } from "./ui/image";
-export { Orchestrator } from "./ui/patterns/orchestrator";
-export type { OrchestratorProps, EditorNode, EditorEdge } from "./ui/patterns/orchestrator";
+export { Graph } from "./ui/patterns/graph";
+export type { GraphProps, EditorNode, EditorEdge } from "./ui/patterns/graph";
 export { TexturedSurface } from "./ui/patterns/textured-surface";

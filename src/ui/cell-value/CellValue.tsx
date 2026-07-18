@@ -173,7 +173,7 @@ function objToTreeNodes(obj: unknown, path = ""): TreeNode[] {
     if (obj.length === 0) return [{ id: `${path}_empty`, label: "[]", value: { type: "text", value: "[]" } }];
     return obj.map((item, i) => {
       const id = `${path}_${i}`;
-      if (typeof item === "object" && item !== null) return { id, label: `[${i}]`, children: objToTreeNodes(item, id) };
+      if (typeof item === "object" && item !== null) return { id, label: `[${i}]`, children: objToTreeNodes(item, id), kind: "array" as const };
       return { id, label: `[${i}]`, value: { type: detectType(item), value: item } };
     });
   }
@@ -182,7 +182,7 @@ function objToTreeNodes(obj: unknown, path = ""): TreeNode[] {
     if (entries.length === 0) return [{ id: `${path}_empty`, label: "{}", value: { type: "text", value: "{}" } }];
     return entries.map(([key, val]) => {
       const id = `${path}_${key}`;
-      if (typeof val === "object" && val !== null) return { id, label: key, children: objToTreeNodes(val, id) };
+      if (typeof val === "object" && val !== null) return { id, label: key, children: objToTreeNodes(val, id), kind: "object" as const };
       return { id, label: key, value: { type: detectType(val), value: val } };
     });
   }

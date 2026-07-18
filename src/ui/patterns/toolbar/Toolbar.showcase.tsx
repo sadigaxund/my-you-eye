@@ -94,14 +94,26 @@ const entry: ShowcaseEntry = {
       name: "Narrow / responsive collapse",
       render: () => (
         <div className="flex justify-center">
-          <div className="w-64 border border-dashed border-border p-2">
+          <div className="w-72 border border-dashed border-muted/40 rounded-ui p-2 space-y-1">
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <span className="text-xs text-muted font-mono">320px viewport</span>
+              <svg viewBox="0 0 10 14" className="size-3 fill-muted"><rect x="0.5" y="0.5" width="9" height="13" rx="1.5" stroke="currentColor" strokeWidth="0.5" fill="none" /><path d="M3 11h4" stroke="currentColor" strokeWidth="0.5" fill="none" /></svg>
+            </div>
             <Toolbar
-              leading={<span className="text-sm font-medium text-fg">Files</span>}
-              search={<Input placeholder="Search..." size="sm" />}
-              filters={<Button size="sm" variant="secondary">Type</Button>}
-              actions={<Button size="sm">Upload</Button>}
+              search={<Input placeholder="Search files..." size="sm" />}
+              filters={
+                <Button size="sm" variant="secondary" className="text-xs px-2 gap-1">
+                  <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M1 2h8v1H1V2zm1 3h6v1H2V5zm1 3h4v1H3V8z" /></svg>
+                  Type
+                </Button>
+              }
+              actions={
+                <Button size="sm" className="text-xs px-2 gap-1">
+                  <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M5 1v8M1 5h8" stroke="currentColor" strokeWidth="1.5" fill="none" /></svg>
+                  New
+                </Button>
+              }
               resultCount="42 results"
-              chips={[{ key: "type", label: "Type: PDF" }]}
             />
           </div>
         </div>

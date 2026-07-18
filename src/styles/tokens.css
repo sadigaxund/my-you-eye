@@ -1,5 +1,8 @@
 @theme {
   /* ---- Colors ---- */
+  --color-code-bg: oklch(0.97 0.005 260);
+  --color-code-fg: oklch(0.2 0.01 260);
+  --color-code-muted: oklch(0.5 0.01 260);
   --color-bg: oklch(0.985 0 0);
   --color-fg: oklch(0.145 0 0);
   --color-muted: oklch(0.55 0.01 260);

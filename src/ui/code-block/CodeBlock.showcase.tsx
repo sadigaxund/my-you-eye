@@ -22,7 +22,7 @@ const entry: ShowcaseEntry = {
   group: "display",
   demos: [
     {
-      name: "Basic",
+      name: "Bare (no header, no language)",
       render: () => (
         <div className="max-w-xl">
           <CodeBlock code={python} />
@@ -30,7 +30,15 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "With header",
+      name: "Language-only (badge overlay, no header bar)",
+      render: () => (
+        <div className="max-w-xl">
+          <CodeBlock code={python} language="python" />
+        </div>
+      ),
+    },
+    {
+      name: "With header + language",
       render: () => (
         <div className="max-w-xl">
           <CodeBlock code={json} language="json" header="package.json" />

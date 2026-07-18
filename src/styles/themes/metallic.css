@@ -69,6 +69,9 @@ html[data-theme="metallic"].dark::before {
   --color-scrollbar: oklch(0.5 0.006 250);
   --color-scrollbar-hover: oklch(0.35 0.006 250);
   --color-grid-dot: oklch(0.4 0.006 250 / 0.3);
+  --color-code-bg: oklch(0.88 0.005 250);
+  --color-code-fg: oklch(0.15 0.005 250);
+  --color-code-muted: oklch(0.4 0.006 250);
 
   /* Structure & Effects — no blur, crisp thin border */
   --border-width: 1px;
@@ -124,6 +127,9 @@ html[data-theme="metallic"].dark::before {
   --color-scrollbar: oklch(0.45 0.006 250);
   --color-scrollbar-hover: oklch(0.6 0.006 250);
   --color-grid-dot: oklch(0.5 0.006 250 / 0.3);
+  --color-code-bg: oklch(0.2 0.006 250);
+  --color-code-fg: oklch(0.92 0.005 250);
+  --color-code-muted: oklch(0.55 0.006 250);
 
   --shadow-card: 2px 3px 0 0 oklch(0 0 0 / 0.5);
   --shadow-elevated: 4px 6px 0 0 oklch(0 0 0 / 0.6);

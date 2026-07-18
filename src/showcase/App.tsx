@@ -63,7 +63,7 @@ export default function App() {
           >
             ☰
           </button>
-          <h1 className="text-lg font-bold">UI Showcase</h1>
+          <h1 className="text-lg font-bold">MyUI Showcase</h1>
         </div>
         <div className="flex items-center gap-inline">
           <Select value={theme} onValueChange={(v) => handleThemeChange(v as ThemeProfile)}>

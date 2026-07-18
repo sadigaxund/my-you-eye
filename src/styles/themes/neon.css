@@ -21,6 +21,9 @@
   --color-grid-dot: oklch(0.4 0.12 180 / 0.4);
   --color-scrollbar: oklch(0.3 0.12 180 / 0.5);
   --color-scrollbar-hover: oklch(0.6 0.08 180);
+  --color-code-bg: oklch(0.08 0.06 280);
+  --color-code-fg: oklch(0.92 0.12 180);
+  --color-code-muted: oklch(0.5 0.08 180);
   --border-width: 1.5px;
   --backdrop-blur: 8px;
   --shadow-card: 0 0 12px oklch(0.7 0.28 180 / 0.15);
@@ -49,4 +52,7 @@
   --color-danger-fg: oklch(0 0 0);
   --color-success-fg: oklch(0 0 0);
   --color-scrollbar-hover: oklch(0.5 0.06 180);
+  --color-code-bg: oklch(0.04 0.04 280);
+  --color-code-fg: oklch(0.88 0.1 180);
+  --color-code-muted: oklch(0.5 0.07 180);
 }
