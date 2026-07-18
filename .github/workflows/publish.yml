@@ -1,12 +1,13 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
-  id-token: write        # Required for Trusted Publishing
+  id-token: write
 
 jobs:
   publish:
@@ -21,5 +22,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
+
+      - run: npm run validate
 
       - run: npm publish --access public
