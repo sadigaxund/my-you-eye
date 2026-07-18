@@ -1,109 +1,106 @@
-# Frontend-AI — UI Template Repository
+# my-you-eye
 
-A single source of truth for UI components, consumed by all frontend apps as a package.
-Built so that **AI agents (including cheaper LLMs) can safely reuse, extend, and add components
-without hand-rolling native HTML or drifting from the house style.**
+A themeable, AI-maintainable UI component library — primitives, rich data components, and a
+full **node-based canvas editor** — built so that agents (even cheap ones) can reuse and extend
+it without drifting from the house style.
 
-> **If you are an AI agent working in this repo, STOP and read [AGENTS.md](./AGENTS.md) first.
-> It is the binding ruleset. Nothing in this README overrides it.**
+<sub>Radix · Tailwind v4 · CVA · shadcn-style owned components · 50+ components · light/dark + swappable themes</sub>
 
-## What this repo is
+```tsx
+import { Button, Card, Table } from "my-you-eye";
+import "my-you-eye/styles.css";
 
-- A curated set of UI primitives (`src/ui/`) and composed patterns (`src/ui/patterns/`),
-  each with a small fixed set of approved design variants.
-- A **showcase app** (`src/showcase/`) that renders every component and every variant,
-  auto-discovered from `*.showcase.tsx` files — nothing is registered by hand.
-- A **validation pipeline** (`npm run validate`) that makes rule violations a red build
-  instead of something a human has to discover later.
-
-## What this repo is NOT
-
-- Not a general component library for the world. It is *our* house standard.
-- Not a place for app business logic. Components here are presentation + interaction only.
-- Not a parts bin of one-off styles. Every visual decision flows from tokens and variants.
-
-## Stack
-
-| Concern | Choice | Why |
-|---|---|---|
-| Build/dev | Vite + React 18 + TypeScript (strict) | Simple SPA, no SSR footguns, fast |
-| Styling | Tailwind CSS v4 (local build, no CDN) | Compiled at build time, zero runtime remote deps |
-| Behavior primitives | Radix UI (per-component packages) | Mature accessibility (focus, keyboard, ARIA) |
-| Variants | `class-variance-authority` (CVA) | Declarative, enforceable variant sets |
-| Class merging | `clsx` + `tailwind-merge` via `cn()` | Predictable `className` overrides |
-| Library build | `tsup` (runs on `prepare`) | Consumable via `npm install` from a git URL |
-
-Component implementations follow the **shadcn/ui pattern**: the code is copied into this repo
-and owned here. There is no upstream component dependency that can break or restyle us.
-
-## Repository layout
-
-```
-src/
-  index.ts                  # public API — the ONLY entry consuming apps import from
-  lib/
-    cn.ts                   # clsx + tailwind-merge helper
-  styles/
-    tokens.css              # ALL design tokens (colors, radius, spacing, typography)
-    globals.css             # tailwind entry + base styles
-  ui/                       # one folder per primitive component
-    button/
-      Button.tsx            # component + CVA variants
-      Button.showcase.tsx   # demo entries for the showcase app
-      index.ts              # re-exports
-    ...
-    patterns/               # composed components (built FROM primitives)
-      form-field/
-      ...
-  showcase/                 # showcase app shell (dev-only, not exported)
-    App.tsx                 # glob-discovers *.showcase.tsx, renders group tabs
-    types.ts                # ShowcaseEntry contract
-scripts/
-  check-showcase.mjs        # fails if any component folder lacks a showcase file
-AGENTS.md                   # binding rules for AI agents
-TODO.md                     # bootstrap plan + component backlog
+<Button variant="primary">Save</Button>
 ```
 
-## Consuming this package from an app
+---
+
+## Highlights
+
+- **50+ components** — inputs, overlays, feedback, navigation, and rich data (`Table`,
+  `TreeView`, `CellValue`, `DataList`, `CodeBlock`, `Markdown`). Full list:
+  **[COMPONENTS.md](./COMPONENTS.md)**.
+- **Canvas / data-orchestration editor** — `Canvas`, `GraphNode`, `Port`, `Edge`, plus an
+  `Orchestrator` pattern with node drag, grid snapping, port-to-port connections, pan/zoom,
+  selection, and delete.
+- **Themes without forks** — every color, radius, spacing, font, and border value is a CSS
+  token. A theme is a token-override block; `data-theme` + `.dark` swap the entire look. No
+  component is restyled per theme.
+- **Guardrails, not vibes** — `npm run validate` turns rule violations into a red build: no
+  styled native elements outside `src/ui/`, no hardcoded colors, every component has a showcase,
+  every theme defines the full token set.
+
+## Install
 
 ```bash
-npm install github:<your-username>/Frontend-AI
+npm install github:sadigaxund/my-you-eye
 ```
 
 ```tsx
-import { Button, Card, Dialog } from "my-you-eye";
+// once, at your app root
 import "my-you-eye/styles.css";
+// anywhere
+import { Dialog, TreeView } from "my-you-eye";
 ```
 
-To pick up changes made here in all apps: bump the git tag here, `npm update` in each app.
+To pick up changes: bump the tag here, then `npm update` in each app.
 
-## The three customization channels (in order of preference)
+## Customize — three channels, in order of preference
 
-1. **Theme tokens** — global restyle with zero code changes. Override CSS variables in the
-   consuming app's root stylesheet:
+1. **Theme tokens** — global restyle, zero code. Override the CSS variables at your root, or
+   set `data-theme="neon"` / `class="dark"` on `<html>`.
    ```css
    :root {
-     --ui-primary: oklch(0.6 0.2 25);
-     --ui-radius: 4px;
+     --color-primary: oklch(0.6 0.2 25);
+     --radius-ui: 4px;
    }
    ```
-2. **Variant props** — per-usage choice from the approved set:
+2. **Variant props** — per-use choice from the approved set (see [COMPONENTS.md](./COMPONENTS.md)):
    ```tsx
    <Button variant="danger" size="sm">Delete</Button>
    ```
-3. **`className`** — one-off *layout* tweaks only (width, margin). Never a redesign:
+3. **`className`** — one-off *layout* only (width, margin), never a redesign:
    ```tsx
    <Button className="w-full">Submit</Button>
    ```
 
-If a `className` tweak keeps recurring, it must become a variant in this repo (see AGENTS.md).
+If a `className` tweak keeps recurring, it should become a variant in this repo — see
+[AGENTS.md](./AGENTS.md).
 
-## Development
+## Discovering components (humans and agents)
+
+`components.json` and [COMPONENTS.md](./COMPONENTS.md) are **auto-generated** from the showcase
+files on every commit and every library build, so they never drift. An agent working in a
+consuming app should read `components.json` and follow [SKILL.md](./SKILL.md) before building
+any UI.
+
+## The showcase
+
+Every component and every variant renders in a live showcase with light/dark, font, and theme
+switches — the source of truth for how things actually look.
+
+```bash
+npm run dev        # http://localhost:5173
+```
+
+## What this is / is not
+
+- **Is** a curated house standard: primitives in `src/ui/`, compositions in `src/ui/patterns/`,
+  each with a small fixed set of approved variants.
+- **Is not** a general-purpose library for the world, a home for business logic or data
+  fetching, or a parts bin of one-off styles.
+
+## For contributors and agents
+
+> **If you are an AI agent working in this repo, read [AGENTS.md](./AGENTS.md) first.** It is
+> the binding ruleset; nothing here overrides it.
 
 ```bash
 npm install
-npm run dev        # showcase app at localhost:5173
-npm run validate   # typecheck + lint + showcase coverage + build — must be green
+npm run dev        # showcase
+npm run validate   # typecheck + lint + coverage + themes + build — the definition of done
+npm run audit      # non-blocking drift report
+npm run manifest   # regenerate components.json + COMPONENTS.md
 ```
 
 `npm run validate` is the definition of done for every change. See [AGENTS.md](./AGENTS.md).
@@ -120,3 +117,40 @@ my-you-eye --help        Show usage
 ```
 
 All file paths resolve from the package location, not the caller's cwd. The CLI has zero external dependencies.
+
+| Concern | Choice | Why |
+|---|---|---|
+| Build/dev | Vite + React + TypeScript (strict) | Simple SPA, no SSR footguns |
+| Styling | Tailwind CSS v4 (local build, no CDN) | Compiled at build time, no remote deps |
+| Behavior | Radix UI (per-component packages) | Mature accessibility: focus, keyboard, ARIA |
+| Variants | `class-variance-authority` | Declarative, enforceable variant sets |
+| Class merging | `clsx` + `tailwind-merge` via `cn()` | Predictable `className` overrides |
+| Library build | `tsup` | Consumable via `npm install` from a git URL |
+
+Components follow the **shadcn/ui pattern**: code is copied in and owned here, so no upstream
+dependency can break or restyle us.
+
+### Layout
+
+```
+src/
+  index.ts             # public API — the ONLY entry consuming apps import from
+  lib/cn.ts            # clsx + tailwind-merge helper
+  styles/
+    tokens.css         # ALL base design tokens
+    themes/*.css       # per-theme token overrides (dark, neon, high-contrast, …)
+    globals.css        # tailwind entry, global scrollbar, base styles
+  ui/<component>/      # Component.tsx + Component.showcase.tsx + index.ts
+  ui/patterns/         # compositions built FROM primitives (FormField, Orchestrator, …)
+  showcase/            # dev-only showcase app (glob-discovers *.showcase.tsx)
+scripts/
+  check-showcase.mjs   # every component folder has a showcase + export
+  check-themes.mjs     # every theme defines the full token set
+  gen-manifest.mjs     # regenerates components.json + COMPONENTS.md
+  audit.mjs            # non-blocking drift report
+AGENTS.md · SKILL.md · TODO.md · CHANGELOG.md
+```
+
+## License
+
+See [LICENSE](./LICENSE).
