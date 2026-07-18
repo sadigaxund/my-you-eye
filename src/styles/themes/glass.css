@@ -30,6 +30,14 @@ html[data-theme="glass"].dark {
    Theme Tokens
    ========================================= */
 
+/* Apply backdrop blur to all glass surfaces */
+[data-theme="glass"] .bg-surface,
+[data-theme="glass"] .bg-surface-hover,
+[data-theme="glass"] .bg-surface-active,
+[data-theme="glass"] .bg-surface-elevated {
+  backdrop-filter: blur(var(--backdrop-blur));
+}
+
 [data-theme="glass"] {
   /* Colors - Core & Text */
   --color-bg: oklch(0.92 0.03 280 / 0.8);
