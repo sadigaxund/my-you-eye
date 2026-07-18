@@ -39,7 +39,6 @@
 @import "./themes/comic.css" layer(theme);
 @import "./themes/brutal.css" layer(theme);
 @import "./themes/stark.css" layer(theme);
-@import "./themes/earth.css" layer(theme);
 
 :root {
   color-scheme: light dark;
