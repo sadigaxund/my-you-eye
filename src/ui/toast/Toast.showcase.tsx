@@ -6,7 +6,7 @@ function ToastDemo() {
   const { toast } = useToast();
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap justify-center gap-3">
       <Button onClick={() => toast({ title: "Saved", description: "Changes saved successfully.", variant: "success" })}>
         Success toast
       </Button>

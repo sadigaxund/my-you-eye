@@ -29,7 +29,7 @@ function Edge({ from, to, state, className, hitStrokeWidth = HIT_STROKE, onClick
   const d = useMemo(() => generatePath(from, to, "bezier"), [from, to]);
 
   return (
-    <g>
+    <g onMouseDown={(e) => e.stopPropagation()}>
       {onClick || onContextMenu ? (
         <path d={d} fill="none" stroke="transparent" strokeWidth={hitStrokeWidth}
           className="cursor-pointer" style={{ pointerEvents: "auto" }}

@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Basic slider",
       render: () => (
-        <div className="max-w-xs space-y-4">
+        <div className="max-w-xs mx-auto space-y-4">
           <Slider defaultValue={50} />
           <Slider defaultValue={30} label="Volume" showValue />
           <Slider defaultValue={75} label="Brightness" showValue min={0} max={200} />

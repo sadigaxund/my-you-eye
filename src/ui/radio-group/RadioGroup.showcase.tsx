@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Default",
       render: () => (
-        <div className="max-w-max">
+        <div className="max-w-max mx-auto">
         <RadioGroup defaultValue="a">
           <label className="flex items-center gap-2">
             <RadioGroupItem value="a" /> <span className="text-sm">Option A</span>

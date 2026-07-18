@@ -7,28 +7,25 @@ const entry: ShowcaseEntry = {
   group: "patterns",
   demos: [
     {
-      name: "Default",
+      name: "Variants",
       render: () => (
-        <ConfirmDialog
-          title="Delete item"
-          description="This action cannot be undone."
-          confirmLabel="Delete"
-          destructive
-          onConfirm={() => alert("Confirmed!")}
-          trigger={<Button variant="danger">Delete</Button>}
-        />
-      ),
-    },
-    {
-      name: "Non-destructive",
-      render: () => (
-        <ConfirmDialog
-          title="Leave page?"
-          description="You have unsaved changes."
-          confirmLabel="Leave"
-          onConfirm={() => alert("Left!")}
-          trigger={<Button variant="secondary">Leave</Button>}
-        />
+        <div className="flex justify-center gap-6">
+          <ConfirmDialog
+            title="Delete item"
+            description="This action cannot be undone."
+            confirmLabel="Delete"
+            destructive
+            onConfirm={() => alert("Confirmed!")}
+            trigger={<Button variant="danger">Delete</Button>}
+          />
+          <ConfirmDialog
+            title="Leave page?"
+            description="You have unsaved changes."
+            confirmLabel="Leave"
+            onConfirm={() => alert("Left!")}
+            trigger={<Button variant="secondary">Leave</Button>}
+          />
+        </div>
       ),
     },
   ],

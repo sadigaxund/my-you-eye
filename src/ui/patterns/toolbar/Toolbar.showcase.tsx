@@ -11,6 +11,7 @@ const entry: ShowcaseEntry = {
     {
       name: "All slots filled",
       render: () => (
+        <div className="flex justify-center">
         <Toolbar
           search={<Input placeholder="Search orders..." size="sm" className="min-w-[220px]" />}
           filters={
@@ -27,6 +28,7 @@ const entry: ShowcaseEntry = {
             </>
           }
         />
+        </div>
       ),
     },
 

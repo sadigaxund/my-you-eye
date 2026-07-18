@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants (solid)",
       render: () => (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Badge variant="neutral">Neutral</Badge>
           <Badge variant="primary">Primary</Badge>
           <Badge variant="success">Success</Badge>
@@ -20,7 +20,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants (soft)",
       render: () => (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Badge variant="neutral" style="soft">Neutral</Badge>
           <Badge variant="primary" style="soft">Primary</Badge>
           <Badge variant="success" style="soft">Success</Badge>

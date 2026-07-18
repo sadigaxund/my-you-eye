@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Select>
             <SelectTrigger size="sm">
               <SelectValue placeholder="Small" />
@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
     {
       name: "States",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Select disabled>
             <SelectTrigger>
               <SelectValue placeholder="Disabled" />
@@ -56,7 +56,7 @@ const entry: ShowcaseEntry = {
     {
       name: "No indicator",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Select>
             <SelectTrigger>
               <SelectValue placeholder="Pick one" />

@@ -10,7 +10,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Fit modes",
       render: () => (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           {(["cover", "contain", "fill", "none"] as const).map((fit) => (
             <div key={fit} className="flex flex-col gap-1.5 items-center">
               <Image src={SRC} fit={fit} className="size-24 border border-border" />
@@ -23,7 +23,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Border radius",
       render: () => (
-        <div className="flex flex-wrap items-start gap-4">
+        <div className="flex flex-wrap justify-center items-start gap-4">
           {(["none", "sm", "md", "lg", "full"] as const).map((r) => (
             <div key={r} className="flex flex-col gap-1.5 items-center">
               <Image src={SRC} radius={r} className="size-20" />
@@ -36,7 +36,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Aspect ratio",
       render: () => (
-        <div className="flex flex-wrap items-start gap-4">
+        <div className="flex flex-wrap justify-center items-start gap-4">
           {(["square", "video", "wide", "tall"] as const).map((a) => (
             <div key={a} className="flex flex-col gap-1.5 items-center">
               <Image src={SRC} aspect={a} className="w-24" />
@@ -49,7 +49,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Styles",
       render: () => (
-        <div className="flex flex-wrap items-start gap-4">
+        <div className="flex flex-wrap justify-center items-start gap-4">
           <div className="flex flex-col gap-1.5 items-center">
             <Image src={SRC} className="size-20" />
             <span className="text-xs text-muted">Default</span>
@@ -72,7 +72,7 @@ const entry: ShowcaseEntry = {
     {
       name: "With caption",
       render: () => (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           <Image src="https://picsum.photos/seed/cap1/300/200" radius="md" caption="A scenic mountain view" className="w-48" />
           <Image src="https://picsum.photos/seed/cap2/300/200" radius="lg" bordered shadowed caption="City skyline at dusk" className="w-48" />
         </div>

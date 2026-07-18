@@ -10,6 +10,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Default",
       render: () => (
+        <div className="flex justify-center">
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="secondary">Open popover</Button>
@@ -23,6 +24,7 @@ const entry: ShowcaseEntry = {
             </div>
           </PopoverContent>
         </Popover>
+        </div>
       ),
     },
   ],

@@ -9,6 +9,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Default",
       render: () => (
+        <div className="flex justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary">Open menu</Button>
@@ -21,6 +22,7 @@ const entry: ShowcaseEntry = {
             <DropdownMenuItem destructive>Delete account</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       ),
     },
   ],

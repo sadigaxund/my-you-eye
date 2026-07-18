@@ -3,7 +3,7 @@ import { Avatar } from ".";
 
 function FrameDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-6">
+    <div className="flex flex-wrap justify-center items-center gap-6">
       {(["sm", "md", "lg"] as const).map((size) => (
         <div key={size} className="flex flex-col items-center gap-2">
           <span className="text-xs text-muted capitalize">{size}</span>
@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           <Avatar size="sm" fallback="JD" />
           <Avatar size="md" fallback="JD" />
           <Avatar size="lg" fallback="JD" />
@@ -31,7 +31,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Fallback variants",
       render: () => (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap justify-center items-center gap-3">
           <Avatar size="md" fallback="AB" />
           <Avatar size="md" fallback="MK" />
           <Avatar size="md" fallback="JD" />
@@ -45,7 +45,7 @@ const entry: ShowcaseEntry = {
     {
       name: "With ring",
       render: () => (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap justify-center items-center gap-3">
           <div className="rounded-full ring-2 ring-primary ring-offset-2 ring-offset-bg">
             <Avatar size="md" src="https://http.cat/204" alt="Cat" fallback="C" />
           </div>
@@ -61,7 +61,7 @@ const entry: ShowcaseEntry = {
     {
       name: "With status dot",
       render: () => (
-        <div className="flex flex-wrap items-center gap-6">
+        <div className="flex flex-wrap justify-center items-center gap-6">
           <div className="relative">
             <Avatar size="lg" src="https://http.cat/302" alt="Cat" fallback="C" />
             <span className="absolute bottom-0 right-0 size-3 rounded-full ring-2 ring-bg bg-success" />

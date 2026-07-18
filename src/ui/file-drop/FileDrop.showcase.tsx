@@ -7,12 +7,14 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Default",
-      render: () => <FileDrop className="max-w-sm" onDrop={(files) => console.log(files)} />,
+      render: () => <div className="flex justify-center"><FileDrop className="max-w-sm" onDrop={(files) => console.log(files)} /></div>,
     },
     {
       name: "Single image only",
       render: () => (
+        <div className="flex justify-center">
         <FileDrop className="max-w-sm" multiple={false} accept="image/*" maxSize={5 * 1024 * 1024} onDrop={(files) => console.log(files)} />
+        </div>
       ),
     },
   ],

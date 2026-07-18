@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Shapes",
       render: () => (
-        <div className="flex flex-col gap-4 max-w-xs">
+        <div className="flex flex-col gap-4 max-w-xs mx-auto">
           <Skeleton shape="text" />
           <Skeleton shape="text" width="75%" />
           <Skeleton shape="text" width="50%" />

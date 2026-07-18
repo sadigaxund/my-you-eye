@@ -8,17 +8,17 @@ const entry: ShowcaseEntry = {
     {
       name: "Horizontal",
       render: () => (
-        <div className="flex flex-col gap-2 max-w-xs">
-          <p className="text-sm">Above</p>
+        <div className="flex flex-col gap-2 max-w-xs mx-auto">
+          <p className="text-sm text-center">Above</p>
           <Separator />
-          <p className="text-sm">Below</p>
+          <p className="text-sm text-center">Below</p>
         </div>
       ),
     },
     {
       name: "Vertical",
       render: () => (
-        <div className="flex items-center gap-3 h-10">
+        <div className="flex items-center justify-center gap-3 h-10">
           <span className="text-sm">Left</span>
           <Separator orientation="vertical" />
           <span className="text-sm">Center</span>

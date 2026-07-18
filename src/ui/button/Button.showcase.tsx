@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           <Button variant="primary">Primary</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost">Ghost</Button>
@@ -19,7 +19,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
@@ -29,7 +29,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Disabled & loading",
       render: () => (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           <Button disabled>Disabled</Button>
           <Button loading>Loading</Button>
           <Button variant="danger" loading>

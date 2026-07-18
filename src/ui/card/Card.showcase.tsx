@@ -9,7 +9,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-col gap-4 max-w-sm">
+        <div className="flex flex-col gap-4 max-w-sm mx-auto">
           <Card variant="default">
             <CardHeader><CardTitle>Default</CardTitle></CardHeader>
             <CardContent>This is a default card with a border.</CardContent>
@@ -28,14 +28,14 @@ const entry: ShowcaseEntry = {
     {
       name: "With footer actions",
       render: () => (
-        <Card className="max-w-sm">
+        <div className="flex justify-center"><Card className="max-w-sm">
           <CardHeader><CardTitle>Confirm action</CardTitle></CardHeader>
           <CardContent>Are you sure you want to delete this item?</CardContent>
           <CardFooter className="flex justify-end gap-2">
             <Button variant="ghost" size="sm">Cancel</Button>
             <Button variant="danger" size="sm">Delete</Button>
           </CardFooter>
-        </Card>
+        </Card></div>
       ),
     },
   ],

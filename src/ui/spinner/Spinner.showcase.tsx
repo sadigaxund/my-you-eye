@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex items-center gap-4 max-w-max">
+        <div className="flex items-center justify-center gap-4">
           <Spinner size="sm" />
           <Spinner size="md" />
           <Spinner size="lg" />

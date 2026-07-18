@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-lg">
+        <div className="flex flex-col gap-3 max-w-lg mx-auto">
           <Alert variant="info">This is an informational message.</Alert>
           <Alert variant="success">Operation completed successfully.</Alert>
           <Alert variant="warning">Please review before proceeding.</Alert>
@@ -19,7 +19,7 @@ const entry: ShowcaseEntry = {
     {
       name: "With title",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-lg">
+        <div className="flex flex-col gap-3 max-w-lg mx-auto">
           <Alert variant="info" title="Heads up!">
             We just released a new version.
           </Alert>
@@ -32,7 +32,7 @@ const entry: ShowcaseEntry = {
     {
       name: "With icon",
       render: () => (
-        <div className="max-w-lg">
+        <div className="max-w-lg mx-auto">
           <Alert variant="success" title="Done" icon={<span>✓</span>}>
             Your changes have been saved.
           </Alert>

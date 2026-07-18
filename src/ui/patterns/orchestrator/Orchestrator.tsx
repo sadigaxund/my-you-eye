@@ -13,7 +13,7 @@ export type { PortRef, EditorNode, EditorEdge };
 
 export interface OrchestratorProps {
   initialNodes: EditorNode[];
-  initialEdges: EditorEdge[];
+  initialEdges?: EditorEdge[];
   snapToGrid?: boolean;
   className?: string;
   controls?: ReactNode;
@@ -30,6 +30,7 @@ interface InternalState {
   nodes: EditorNode[];
   edges: EditorEdge[];
   selectedNodeIds: string[];
+  selectedEdgeIds: string[];
   connecting: ConnectingState | null;
   offset: { x: number; y: number };
   zoom: number;
@@ -38,6 +39,7 @@ interface InternalState {
 type Action =
   | { type: "MOVE_NODE"; id: string; x: number; y: number }
   | { type: "SELECT_NODE"; id: string }
+  | { type: "SELECT_EDGE"; id: string }
   | { type: "DESELECT_ALL" }
   | { type: "START_CONNECTING"; from: PortRef; fromPos: { x: number; y: number }; cursorWorld: { x: number; y: number } }
   | { type: "MOVE_CONNECTING"; cursorWorld: { x: number; y: number } }
@@ -54,9 +56,11 @@ function orchestratorReducer(state: InternalState, action: Action): InternalStat
         nodes: state.nodes.map((n) => (n.id === action.id ? { ...n, x: action.x, y: action.y } : n)),
       };
     case "SELECT_NODE":
-      return { ...state, selectedNodeIds: [action.id] };
+      return { ...state, selectedNodeIds: [action.id], selectedEdgeIds: [] };
+    case "SELECT_EDGE":
+      return { ...state, selectedEdgeIds: [action.id], selectedNodeIds: [] };
     case "DESELECT_ALL":
-      return { ...state, selectedNodeIds: [] };
+      return { ...state, selectedNodeIds: [], selectedEdgeIds: [] };
     case "START_CONNECTING":
       return { ...state, connecting: { from: action.from, fromPos: action.fromPos, cursorWorld: action.cursorWorld } };
     case "MOVE_CONNECTING":
@@ -80,12 +84,14 @@ function orchestratorReducer(state: InternalState, action: Action): InternalStat
       return { ...state, connecting: null };
     }
     case "DELETE_SELECTED": {
-      const ids = new Set(state.selectedNodeIds);
+      const nodeIds = new Set(state.selectedNodeIds);
+      const edgeIds = new Set(state.selectedEdgeIds);
       return {
         ...state,
-        nodes: state.nodes.filter((n) => !ids.has(n.id)),
-        edges: state.edges.filter((e) => !ids.has(e.from.nodeId) && !ids.has(e.to.nodeId)),
+        nodes: state.nodes.filter((n) => !nodeIds.has(n.id)),
+        edges: state.edges.filter((e) => !nodeIds.has(e.from.nodeId) && !nodeIds.has(e.to.nodeId) && !edgeIds.has(e.id)),
         selectedNodeIds: [],
+        selectedEdgeIds: [],
       };
     }
     case "SET_OFFSET":
@@ -96,11 +102,11 @@ function orchestratorReducer(state: InternalState, action: Action): InternalStat
 }
 
 const Orchestrator: FC<OrchestratorProps> = ({
-  initialNodes, initialEdges, snapToGrid: snapToGridProp = false, className, controls, onChange,
+  initialNodes, initialEdges = [], snapToGrid: snapToGridProp = false, className, controls, onChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [state, dispatch] = useReducer(orchestratorReducer, {
-    nodes: initialNodes, edges: initialEdges, selectedNodeIds: [], connecting: null,
+    nodes: initialNodes, edges: initialEdges, selectedNodeIds: [], selectedEdgeIds: [], connecting: null,
     offset: { x: 0, y: 0 }, zoom: 1,
   });
 
@@ -171,7 +177,7 @@ const Orchestrator: FC<OrchestratorProps> = ({
 
   useEffect(() => {
     const onKeyDown = (e: globalThis.KeyboardEvent) => {
-      if ((e.key === "Delete" || e.key === "Backspace") && stateRef.current.selectedNodeIds.length > 0) {
+      if ((e.key === "Delete" || e.key === "Backspace") && (stateRef.current.selectedNodeIds.length > 0 || stateRef.current.selectedEdgeIds.length > 0)) {
         dispatch({ type: "DELETE_SELECTED" });
       }
     };
@@ -179,7 +185,11 @@ const Orchestrator: FC<OrchestratorProps> = ({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const { nodes, edges, selectedNodeIds, connecting, offset, zoom } = state;
+  const handleEdgeClick = useCallback((edgeId: string) => {
+    dispatch({ type: "SELECT_EDGE", id: edgeId });
+  }, []);
+
+  const { nodes, edges, selectedNodeIds, selectedEdgeIds, connecting, offset, zoom } = state;
 
   return (
     <Canvas
@@ -197,7 +207,17 @@ const Orchestrator: FC<OrchestratorProps> = ({
           const fn = nodes.find((n) => n.id === edge.from.nodeId);
           const tn = nodes.find((n) => n.id === edge.to.nodeId);
           if (!fn || !tn) return null;
-          return <Edge key={edge.id} from={getPortAnchor(fn, edge.from.rowIndex, edge.from.side)} to={getPortAnchor(tn, edge.to.rowIndex, edge.to.side)} state={edge.state} />;
+          const accent = fn.accent || tn.accent;
+          return (
+            <Edge
+              key={edge.id}
+              from={getPortAnchor(fn, edge.from.rowIndex, edge.from.side)}
+              to={getPortAnchor(tn, edge.to.rowIndex, edge.to.side)}
+              state={selectedEdgeIds.includes(edge.id) ? "selected" : (edge.state ?? "default")}
+              className={accent && !selectedEdgeIds.includes(edge.id) ? "stroke-primary" : undefined}
+              onClick={() => handleEdgeClick(edge.id)}
+            />
+          );
         })}
         {connecting && (
           <path d={generatePath(connecting.fromPos, connecting.cursorWorld, "bezier")}

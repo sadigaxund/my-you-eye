@@ -28,17 +28,19 @@ function CommandPaletteBasicDemo() {
   const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
 
   return (
-    <div className="flex flex-col gap-3 max-w-xs">
+    <div className="flex flex-col gap-3 max-w-xs mx-auto">
+      <div className="flex justify-center">
       <Button onClick={() => setOpen(true)}>
         Open Palette <Kbd>⌘K</Kbd>
       </Button>
+      </div>
       <CommandPalette
         open={open}
         onOpenChange={setOpen}
         actions={actions}
         onSelect={handleSelect}
       />
-      {log && <p className="text-xs text-muted">{log}</p>}
+      {log && <p className="text-xs text-muted text-center">{log}</p>}
     </div>
   );
 }
@@ -49,10 +51,12 @@ function CommandPaletteGroupedDemo() {
   const handleSelect = useCallback((a: CommandAction) => setLog(`Selected: ${a.label}`), []);
 
   return (
-    <div className="flex flex-col gap-3 max-w-xs">
+    <div className="flex flex-col gap-3 max-w-xs mx-auto">
+      <div className="flex justify-center">
       <Button onClick={() => setOpen(true)} variant="secondary">
         Open Grouped <Kbd>⌘K</Kbd>
       </Button>
+      </div>
       <CommandPalette
         open={open}
         onOpenChange={setOpen}
@@ -60,7 +64,7 @@ function CommandPaletteGroupedDemo() {
         groups={groups}
         onSelect={handleSelect}
       />
-      {log && <p className="text-xs text-muted">{log}</p>}
+      {log && <p className="text-xs text-muted text-center">{log}</p>}
     </div>
   );
 }

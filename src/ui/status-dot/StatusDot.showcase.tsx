@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <span className="flex items-center gap-2 text-sm"><StatusDot variant="neutral" /> Neutral</span>
           <span className="flex items-center gap-2 text-sm"><StatusDot variant="success" /> Success</span>
           <span className="flex items-center gap-2 text-sm"><StatusDot variant="warning" /> Warning</span>
@@ -20,7 +20,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <span className="flex items-center gap-2 text-sm"><StatusDot size="sm" variant="success" /> Small</span>
           <span className="flex items-center gap-2 text-sm"><StatusDot size="md" variant="success" /> Medium</span>
         </div>
@@ -29,7 +29,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Pulsing",
       render: () => (
-        <span className="flex items-center gap-2 text-sm"><StatusDot variant="info" pulse /> Running</span>
+        <div className="flex justify-center"><span className="flex items-center gap-2 text-sm"><StatusDot variant="info" pulse /> Running</span></div>
       ),
     },
   ],

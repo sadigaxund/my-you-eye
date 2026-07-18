@@ -9,7 +9,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Left & Right",
       render: () => (
-        <div className="flex gap-3">
+        <div className="flex justify-center gap-3">
           <Drawer>
             <DrawerTrigger asChild>
               <Button>Open Left</Button>

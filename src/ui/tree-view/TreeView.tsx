@@ -148,7 +148,7 @@ function TreeItem({
         {node.icon && <span className="shrink-0">{node.icon}</span>}
         <span className="text-xs truncate flex-1">{node.label}</span>
         {node.value && (
-          <span className="shrink-0">
+          <span>
             <CellValue {...node.value} replacements={replacements} />
           </span>
         )}

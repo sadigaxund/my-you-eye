@@ -9,15 +9,18 @@ const entry: ShowcaseEntry = {
     {
       name: "Default",
       render: () => (
+        <div className="flex justify-center">
         <EmptyState
           title="No results found"
           description="Try adjusting your search or filters."
         />
+        </div>
       ),
     },
     {
       name: "With icon and action",
       render: () => (
+        <div className="flex justify-center">
         <EmptyState
           icon={
             <svg viewBox="0 0 24 24" className="size-10 fill-current">
@@ -28,6 +31,7 @@ const entry: ShowcaseEntry = {
           description="You've processed all pending items."
           action={<Button variant="secondary">Refresh</Button>}
         />
+        </div>
       ),
     },
   ],

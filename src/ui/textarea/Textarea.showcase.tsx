@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Textarea placeholder="Default variant" />
           <Textarea variant="filled" placeholder="Filled variant" />
         </div>
@@ -17,7 +17,7 @@ const entry: ShowcaseEntry = {
     {
       name: "States",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Textarea disabled value="Disabled" />
           <Textarea invalid placeholder="Invalid state" />
           <Textarea autoResize placeholder="Auto-resize — type here..." />

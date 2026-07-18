@@ -10,7 +10,7 @@ const entry: ShowcaseEntry = {
       name: "Directions",
       render: () => (
         <TooltipProvider>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             <Tooltip content="Top tooltip" side="top">
               <Button variant="secondary">Top</Button>
             </Tooltip>

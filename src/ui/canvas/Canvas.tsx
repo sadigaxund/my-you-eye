@@ -30,10 +30,6 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     const offset = isControlled ? controlledOffset : internalOffset;
     const zoom = controlledZoom !== undefined ? controlledZoom : internalZoom;
 
-    const dragging = useRef(false);
-    const dragStart = useRef({ x: 0, y: 0 });
-    const dragOffset = useRef({ x: 0, y: 0 });
-
     const setOffset = useCallback((o: { x: number; y: number } | ((prev: { x: number; y: number }) => { x: number; y: number })) => {
       if (isControlled) {
         const next = typeof o === "function" ? o(offset) : o;
@@ -55,32 +51,25 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
       if (e.button !== 0) return;
       onBackgroundClick?.();
-      dragging.current = true;
-      dragStart.current = { x: e.clientX, y: e.clientY };
-      dragOffset.current = { x: offset.x, y: offset.y };
-    }, [offset, onBackgroundClick]);
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startOffset = { x: offset.x, y: offset.y };
 
-    const handleMouseMove = useCallback((e: MouseEvent) => {
-      if (!dragging.current) return;
-      setOffset({
-        x: dragOffset.current.x + (e.clientX - dragStart.current.x),
-        y: dragOffset.current.y + (e.clientY - dragStart.current.y),
-      });
-    }, [setOffset]);
-
-    const handleMouseUp = useCallback(() => {
-      dragging.current = false;
-    }, []);
-
-    useEffect(() => {
-      if (!dragging.current) return;
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
+      const onMove = (ev: MouseEvent) => {
+        setOffset({
+          x: startOffset.x + (ev.clientX - startX),
+          y: startOffset.y + (ev.clientY - startY),
+        });
       };
-    }, [dragging.current, handleMouseMove, handleMouseUp]);
+
+      const onUp = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+      };
+
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+    }, [offset, setOffset, onBackgroundClick]);
 
     const handleWheel = useCallback((e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return;
@@ -123,6 +112,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         ref={mergedRef}
         className={cn("relative overflow-hidden bg-bg select-none", className)}
         style={style}
+        onMouseDown={handleMouseDown}
         {...props}
       >
         <div
@@ -135,12 +125,11 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
         />
         <div
           className="absolute inset-0"
-          onMouseDown={handleMouseDown}
           style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`, transformOrigin: "0 0" }}
         >
           {children}
         </div>
-        <div className="absolute bottom-3 right-3 flex items-center gap-0.5 rounded-ui border border-border bg-bg p-0.5 shadow-card z-10">
+        <div className="absolute bottom-3 right-3 flex items-center gap-0.5 rounded-ui border border-border bg-bg p-0.5 shadow-card z-10" onMouseDown={(e) => e.stopPropagation()}>
           <button type="button" className={btn} onClick={zoomOut} title="Zoom out">−</button>
           <button type="button" className={cn(btn, "w-auto px-2 font-mono")} onClick={resetView} title="Reset view">
             {Math.round(zoom * 100)}%

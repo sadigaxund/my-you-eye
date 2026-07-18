@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Default",
       render: () => (
-        <div className="flex flex-col gap-2 max-w-xs">
+        <div className="flex flex-col gap-2 max-w-xs mx-auto">
           <Label htmlFor="email">Email address</Label>
           <input
             id="email"

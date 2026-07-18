@@ -45,7 +45,7 @@ function JsonDisplay({ value }: { value: unknown }) {
   const preview = str.length > 50 ? str.slice(0, 50) + "…" : str;
   return (
     <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-[250px] inline-block truncate align-middle">{preview}</PopoverTrigger>
+      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-60 inline-block truncate align-middle">{preview}</PopoverTrigger>
       <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
         <CodeBlock code={str} />
       </PopoverContent>

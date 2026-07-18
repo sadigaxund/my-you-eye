@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Input placeholder="Default variant" />
           <Input variant="filled" placeholder="Filled variant" />
         </div>
@@ -17,7 +17,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Input size="sm" placeholder="Small" />
           <Input size="md" placeholder="Medium" />
         </div>
@@ -26,7 +26,7 @@ const entry: ShowcaseEntry = {
     {
       name: "States",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Input disabled value="Disabled" />
           <Input invalid placeholder="Invalid state" />
         </div>

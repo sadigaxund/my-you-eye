@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
-import { Combobox } from ".";
-import type { ComboboxOption } from ".";
+import { MultiSelect } from ".";
+import type { MultiSelectOption } from ".";
 
-const fruits: ComboboxOption[] = [
+const fruits: MultiSelectOption[] = [
   { value: "apple", label: "Apple" },
   { value: "banana", label: "Banana" },
   { value: "cherry", label: "Cherry" },
@@ -14,38 +14,42 @@ const fruits: ComboboxOption[] = [
   { value: "honeydew", label: "Honeydew" },
 ];
 
-function ComboboxBasicDemo() {
-  const [val, setVal] = useState("");
+function BasicDemo() {
+  const [val, setVal] = useState<string[]>(["apple", "cherry"]);
   return (
     <div className="flex flex-col gap-3 max-w-xs mx-auto">
-      <Combobox
+      <MultiSelect
         options={fruits}
         value={val}
         onChange={setVal}
-        placeholder="Pick a fruit..."
+        placeholder="Pick fruits..."
       />
-      <p className="text-xs text-muted">Selected: {val || "none"}</p>
+      <p className="text-xs text-muted text-center">Selected: {val.join(", ") || "none"}</p>
     </div>
   );
 }
 
 const entry: ShowcaseEntry = {
-  title: "Combobox",
+  title: "MultiSelect",
   group: "inputs",
   demos: [
     {
       name: "Basic",
-      render: () => <ComboboxBasicDemo />,
+      render: () => <BasicDemo />,
+    },
+    {
+      name: "Empty",
+      render: () => (
+        <div className="max-w-xs mx-auto">
+          <MultiSelect options={fruits} placeholder="Pick fruits..." />
+        </div>
+      ),
     },
     {
       name: "Disabled",
       render: () => (
         <div className="max-w-xs mx-auto">
-          <Combobox
-            options={fruits}
-            placeholder="Disabled combobox"
-            disabled
-          />
+          <MultiSelect options={fruits} value={["banana"]} placeholder="Pick fruits..." disabled />
         </div>
       ),
     },

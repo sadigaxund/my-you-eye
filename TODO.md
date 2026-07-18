@@ -139,6 +139,7 @@ Check items off (`[x]`) as they complete.
 
 - [x] **Drawer** — slide-in panel from left/right, Radix Dialog-based.
 - [x] **Combobox** — autocomplete/select-with-search, Popover + Input.
+- [x] **MultiSelect** — multi-select combobox with search, checkboxes, and badge tags.
 - [x] **Command palette** — ⌘K-style fuzzy search overlay.
 - [x] **GitHub Actions publish workflow** — auto-publish on `v*` tags via npm.
 - [x] Tag `v0.1.0` — version bumped, prepared for publishing.

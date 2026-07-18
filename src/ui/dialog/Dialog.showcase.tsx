@@ -10,7 +10,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           <Dialog>
             <DialogTrigger asChild><Button size="sm">Small</Button></DialogTrigger>
             <DialogContent size="sm">
@@ -42,6 +42,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Form example",
       render: () => (
+        <div className="flex justify-center">
         <Dialog>
           <DialogTrigger asChild><Button>Edit profile</Button></DialogTrigger>
           <DialogContent>
@@ -59,6 +60,7 @@ const entry: ShowcaseEntry = {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       ),
     },
   ],

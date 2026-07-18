@@ -78,7 +78,7 @@ function Demo() {
 
 const entry: ShowcaseEntry = {
   title: "Orchestrator",
-  group: "patterns",
+  group: "canvas",
   demos: [{ name: "Pipeline editor (drag nodes, connect ports, delete selected)", render: () => <Demo /> }],
 };
 export default entry;

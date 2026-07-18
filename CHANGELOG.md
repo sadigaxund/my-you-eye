@@ -132,3 +132,4 @@ All notable changes to this project are documented here.
 - **Phase 5** — PageShell, Toolbar, StatCard.
 - **Phase 6** — Separator, Progress, StatusDot, Kbd, CellValue.
 - **Phase 7** — Canvas (initial), GraphNode, Port.
+- **Phase 8** — ConnectionLine, ScrollArea, Image, FileDrop, Avatar, CellValue (image/audio), MultiSelect.

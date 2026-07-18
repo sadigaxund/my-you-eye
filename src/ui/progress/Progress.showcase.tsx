@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Variants",
       render: () => (
-        <div className="flex flex-col gap-4 max-w-xs">
+        <div className="flex flex-col gap-4 max-w-xs mx-auto">
           <Progress value={65} variant="default" label="Processing" />
           <Progress value={100} variant="success" label="Complete" />
           <Progress value={45} variant="warning" label="Warning" />
@@ -19,7 +19,7 @@ const entry: ShowcaseEntry = {
     {
       name: "No label",
       render: () => (
-        <div className="flex flex-col gap-3 max-w-xs">
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <Progress value={30} />
           <Progress value={75} variant="success" />
         </div>

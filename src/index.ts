@@ -58,6 +58,7 @@ export { Typography } from "./ui/typography";
 export { TreeView } from "./ui/tree-view";
 export { CodeBlock } from "./ui/code-block";
 export { Combobox } from "./ui/combobox";
+export { MultiSelect } from "./ui/multi-select";
 export { CommandPalette } from "./ui/command-palette";
 export {
   Drawer,

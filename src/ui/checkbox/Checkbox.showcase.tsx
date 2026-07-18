@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Sizes",
       render: () => (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <label className="flex items-center gap-2">
             <Checkbox size="sm" /> <span className="text-sm">Small</span>
           </label>
@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
     {
       name: "States",
       render: () => (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 items-start w-max mx-auto">
           <label className="flex items-center gap-2">
             <Checkbox defaultChecked /> <span className="text-sm">Checked</span>
           </label>
