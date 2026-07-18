@@ -9,6 +9,10 @@
   --color-danger: oklch(0.7 0.28 10);
   --color-success: oklch(0.7 0.28 150);
   --color-warning: oklch(0.8 0.28 80);
+  --color-surface: oklch(0.08 0.06 280);
+  --color-surface-hover: oklch(0.12 0.06 280);
+  --color-surface-active: oklch(0.15 0.06 280);
+  --color-surface-elevated: oklch(0.1 0.08 280);
   --color-border: oklch(0.3 0.12 180 / 0.5);
   --color-ring: oklch(0.7 0.28 180);
   --color-grid-dot: oklch(0.4 0.12 180 / 0.4);
@@ -28,6 +32,10 @@
   --color-primary-fg: oklch(0 0 0);
   --color-secondary: oklch(0.1 0.04 280);
   --color-secondary-fg: oklch(0.9 0.1 180);
+  --color-surface: oklch(0.04 0.04 280);
+  --color-surface-hover: oklch(0.07 0.04 280);
+  --color-surface-active: oklch(0.1 0.04 280);
+  --color-surface-elevated: oklch(0.06 0.06 280);
   --color-border: oklch(0.25 0.1 180 / 0.5);
   --color-ring: oklch(0.6 0.28 180);
   --color-grid-dot: oklch(0.35 0.1 180 / 0.4);

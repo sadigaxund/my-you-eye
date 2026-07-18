@@ -121,7 +121,7 @@ const Orchestrator: FC<OrchestratorProps> = ({
 
   useEffect(() => {
     onChangeRef.current?.({ nodes: state.nodes, edges: state.edges });
-  });
+  }, [state.nodes, state.edges]);
 
   const screenToWorld = useCallback((clientX: number, clientY: number) => {
     const rect = containerRef.current?.getBoundingClientRect();

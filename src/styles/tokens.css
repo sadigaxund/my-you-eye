@@ -10,6 +10,10 @@
   --color-danger: oklch(0.6 0.22 25);
   --color-success: oklch(0.55 0.18 150);
   --color-warning: oklch(0.7 0.18 80);
+  --color-surface: oklch(1 0 0);
+  --color-surface-hover: oklch(0.97 0 0);
+  --color-surface-active: oklch(0.95 0 0);
+  --color-surface-elevated: oklch(1 0 0);
   --color-border: oklch(0.87 0.01 260);
   --color-ring: oklch(0.5 0.2 265);
 

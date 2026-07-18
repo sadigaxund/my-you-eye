@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { GraphNode } from "../../graph-node";
 import type { EditorNode, PortRef } from "./types";
 import { PortHitZone } from "./PortHitZone";
+import { NODE_WIDTH } from "./types";
 
 export function OrchestratorNode({
   node, isSelected, onSelect, onDragStart, onPortEvent,
@@ -18,7 +19,7 @@ export function OrchestratorNode({
   }, [node.id, node.x, node.y, onSelect, onDragStart]);
 
   return (
-    <div className="absolute" style={{ left: node.x, top: node.y }} onMouseDown={onDown}>
+    <div className="absolute" style={{ left: node.x, top: node.y, width: NODE_WIDTH }} onMouseDown={onDown}>
       <GraphNode
         x={0} y={0}
         header={node.header}

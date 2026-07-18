@@ -19,6 +19,16 @@ All notable changes to this project are documented here.
 - **Canvas real-time connection redraw** — `nodePositions` changed from `useRef` to `useState` so SVG paths update during drag.
 - **ConnectionLine `pending` variant** — dashed `stroke-dasharray:6 3` preview line shown during drag.
 
+### Added
+
+- **Surface token layer** — `--color-surface`, `--color-surface-hover`, `--color-surface-active`, `--color-surface-elevated` tokens in `tokens.css` and all theme files, decoupling component surfaces from page background.
+
+### Changed
+
+- **Card** — background migrated from `bg-bg` to `bg-surface` (base surface token).
+- **Dialog, Drawer, Popover** — backgrounds migrated from `bg-bg` to `bg-surface-elevated` (elevated surface token).
+- **GraphNode** — background migrated from `bg-bg` to `bg-surface`.
+
 ### Changed
 
 - **Single-source font list** — `src/lib/fonts.ts` is the canonical source; Typography showcase and header font picker consume it. Removed Meslo Nerd font and `--font-meslo-nerd` token.
