@@ -32,3 +32,7 @@ npm-debug.log*
 
 # AI config (local overrides, not templates)
 .claude/
+
+
+# Misc
+tmp/

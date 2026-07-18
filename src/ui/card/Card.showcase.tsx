@@ -5,6 +5,7 @@ import { Button } from "../button";
 const entry: ShowcaseEntry = {
   title: "Card",
   group: "display",
+  description: "A container with header, title, content, and footer slots for grouping related content.",
   demos: [
     {
       name: "Variants",

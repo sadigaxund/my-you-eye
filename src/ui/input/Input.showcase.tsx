@@ -4,6 +4,7 @@ import { Input } from ".";
 const entry: ShowcaseEntry = {
   title: "Input",
   group: "inputs",
+  description: "A single-line text field with default and filled variants, two sizes, and an invalid state for validation errors.",
   demos: [
     {
       name: "Variants",

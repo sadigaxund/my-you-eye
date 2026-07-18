@@ -6,6 +6,7 @@ import { Input } from "../input";
 const entry: ShowcaseEntry = {
   title: "Dialog",
   group: "overlay",
+  description: "A modal overlay for focused tasks like forms and confirmations, in small, medium, and large sizes.",
   demos: [
     {
       name: "Sizes",

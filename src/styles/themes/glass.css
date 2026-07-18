@@ -1,28 +1,40 @@
 /* =========================================
    HTML Background Gradients (Mesh Effect)
    ========================================= */
+/* Rendered on a fixed-position, pointer-events:none, NON-transforming
+   pseudo-element rather than `background-attachment: fixed` on html. A
+   fixed-attachment background is re-evaluated as part of html's own paint,
+   which is exactly what backdrop-filter has to resample every time anything
+   composites nearby (e.g. Canvas panning) — see AGENTS.md §7 "Canvas drag
+   performance contract" and the "never background-attachment: fixed" rule
+   in §0. A `position: fixed` pseudo-element is its own composited layer: it
+   never moves, never repaints on scroll/drag, and backdrop-filter can
+   sample it cheaply. */
 
 /* Light Mode Mesh Background */
-html[data-theme="glass"] {
+html[data-theme="glass"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-color: oklch(0.95 0.02 280);
   background-image:
     radial-gradient(circle at 0% 0%, oklch(0.88 0.12 230) 0px, transparent 50%),
     radial-gradient(circle at 100% 0%, oklch(0.92 0.14 320) 0px, transparent 50%),
     radial-gradient(circle at 100% 100%, oklch(0.85 0.12 45) 0px, transparent 50%),
     radial-gradient(circle at 0% 100%, oklch(0.90 0.10 180) 0px, transparent 50%);
-  background-attachment: fixed;
   background-size: cover;
 }
 
 /* Dark Mode Mesh Background */
-html[data-theme="glass"].dark {
+html[data-theme="glass"].dark::before {
   background-color: oklch(0.12 0.03 290);
   background-image:
     radial-gradient(circle at 0% 0%, oklch(0.35 0.15 280) 0px, transparent 50%),
     radial-gradient(circle at 100% 0%, oklch(0.25 0.12 320) 0px, transparent 50%),
     radial-gradient(circle at 100% 100%, oklch(0.30 0.14 200) 0px, transparent 50%),
     radial-gradient(circle at 0% 100%, oklch(0.20 0.10 350) 0px, transparent 50%);
-  background-attachment: fixed;
   background-size: cover;
 }
 
@@ -32,31 +44,33 @@ html[data-theme="glass"].dark {
 
 [data-theme="glass"] {
   /* Colors - Core & Text */
-  --color-bg: oklch(0.92 0.03 280 / 0.8);
+  --color-bg: oklch(0.92 0.03 280);
   --color-fg: oklch(0.20 0.04 290);
   --color-muted: oklch(0.45 0.04 290);
 
   /* Colors - Accents */
   --color-primary: oklch(0.55 0.22 290);
   --color-primary-fg: oklch(0.98 0 0);
-  --color-secondary: oklch(0.25 0.05 290 / 0.08);
-  --color-secondary-fg: oklch(0.25 0.04 290);
+  --color-secondary: oklch(0.88 0.03 290);
+  --color-secondary-fg: oklch(0.20 0.04 290);
 
-  /* Colors - Semantic states */
-  --color-danger: oklch(0.60 0.20 25 / 0.75);
+  /* Colors - Semantic states (opaque — transparency belongs only on
+     --color-surface-*, never on state colors; see AGENTS.md §7) */
+  --color-danger: oklch(0.50 0.22 25);
   --color-danger-fg: oklch(0.98 0 0);
-  --color-success: oklch(0.65 0.18 150 / 0.75);
+  --color-success: oklch(0.42 0.15 150);
   --color-success-fg: oklch(0.98 0 0);
-  --color-warning: oklch(0.75 0.18 75 / 0.75);
+  --color-warning: oklch(0.75 0.18 75);
 
-  /* Colors - Glass Surfaces */
+  /* Colors - Glass Surfaces (translucency lives only here) */
   --color-surface: oklch(1 0 0 / 0.70);
   --color-surface-hover: oklch(1 0 0 / 0.80);
   --color-surface-active: oklch(1 0 0 / 0.90);
   --color-surface-elevated: oklch(1 0 0 / 0.85);
+  --color-canvas-surface: oklch(0.97 0.01 280);
 
   /* Colors - Utilities */
-  --color-border: oklch(1 0 0 / 0.75);
+  --color-border: oklch(0.32 0.06 290 / 0.45);
   --color-ring: oklch(0.55 0.22 290 / 0.4);
   --color-scrollbar: oklch(0 0 0 / 0.15);
   --color-scrollbar-hover: oklch(0 0 0 / 0.25);
@@ -78,36 +92,44 @@ html[data-theme="glass"].dark {
   /* Opacities */
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
+
+  --texture-opacity: 0;
+  --texture-blend: multiply;
 }
 
 [data-theme="glass"].dark {
   /* Colors - Core & Text */
-  --color-bg: oklch(0.08 0.03 290 / 0.8);
+  --color-bg: oklch(0.14 0.03 290);
   --color-fg: oklch(0.98 0 0);
   --color-muted: oklch(0.75 0.04 290);
 
-  /* Colors - Accents */
-  --color-primary: oklch(0.48 0.22 290);
-  --color-primary-fg: oklch(0.98 0 0);
-  --color-secondary: oklch(0.85 0.05 290 / 0.15);
-  --color-secondary-fg: oklch(0.98 0 0);
+  /* Colors - Accents. Dark mode accents must GAIN luminance relative to
+     light mode (0.55), not lose it — a darker accent on an already-dark
+     background reads as muddy/invisible. Pairs with a near-black label so
+     the now-bright chip still hits AA, matching the pattern every other
+     theme uses for its dark-mode primary (see dark.css). */
+  --color-primary: oklch(0.72 0.20 290);
+  --color-primary-fg: oklch(0.15 0.03 290);
+  --color-secondary: oklch(0.28 0.05 290);
+  --color-secondary-fg: oklch(0.95 0.02 290);
 
-  /* Colors - Semantic states */
-  --color-danger: oklch(0.65 0.22 25 / 0.75);
+  /* Colors - Semantic states (opaque) */
+  --color-danger: oklch(0.50 0.22 25);
   --color-danger-fg: oklch(0.98 0 0);
-  --color-success: oklch(0.70 0.20 150 / 0.75);
+  --color-success: oklch(0.42 0.15 150);
   --color-success-fg: oklch(0.98 0 0);
-  --color-warning: oklch(0.80 0.20 75 / 0.75);
+  --color-warning: oklch(0.78 0.20 75);
 
   /* Colors - Glass Surfaces */
   --color-surface: oklch(0.22 0.05 290 / 0.65);
   --color-surface-hover: oklch(0.28 0.06 290 / 0.75);
   --color-surface-active: oklch(0.35 0.06 290 / 0.85);
   --color-surface-elevated: oklch(0.25 0.05 290 / 0.80);
+  --color-canvas-surface: oklch(0.16 0.03 290);
 
   /* Colors - Utilities */
-  --color-border: oklch(1 0 0 / 0.18);
-  --color-ring: oklch(0.70 0.18 290 / 0.4);
+  --color-border: oklch(1 0 0 / 0.30);
+  --color-ring: oklch(0.72 0.20 290 / 0.4);
   --color-scrollbar: oklch(1 1 1 / 0.15);
   --color-scrollbar-hover: oklch(1 1 1 / 0.25);
   --color-grid-dot: oklch(1 1 1 / 0.08);

@@ -11,6 +11,8 @@ const manyRows = Array.from({ length: 25 }, (_, i) => ({
 const entry: ShowcaseEntry = {
   title: "Table",
   group: "data",
+  parent: "Table",
+  description: "A tabular data display with header, body, row, and cell primitives, and an optional sticky header.",
   demos: [
     {
       name: "Sticky header (scroll down)",

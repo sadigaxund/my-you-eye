@@ -4,6 +4,26 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Canvas performance under Glass theme** — `background-attachment: fixed` on `html[data-theme="glass"]` replaced with a `position: fixed; pointer-events: none` `::before` pseudo-element (own composited layer, never repaints). `Canvas` now overrides `--backdrop-blur` and `--texture-opacity` to `0` as inline custom properties on its transforming layer, so no descendant (including anything a consumer renders inside a node) applies `backdrop-filter` or texture while panning/zooming — a structural fix, not a per-component patch. `will-change: transform` moved onto that single transforming layer only (removed the temptation to put it on individual nodes). `GraphNode` gained `contain-[layout_paint]` so one node's paint/layout never cascades to its siblings.
+- **Theme color defects (contrast + hierarchy)** — base `--color-bg` softened from pure white (`oklch(1 0 0)`) to `oklch(0.985 0 0)`. Glass light `--color-border` was a white border on a light background (invisible); now a themed, sufficiently-opaque tone. Glass dark `--color-primary` was *darker* than glass light `--color-primary` (an inversion — dark-mode accents must gain luminance); now brighter, paired with a near-black `--color-primary-fg` (matches the pattern every other theme already uses for dark-mode primary). Semantic colors (`--color-danger`, `--color-success`, `--color-warning`) were carrying alpha in Glass; now fully opaque everywhere — transparency is reserved for `--color-surface-*`. `--color-bg` is opaque in every theme now (was `/0.8` in Glass).
+- **Badge / Kbd vertical cramping** — new `--density-chip-min-h` / `--density-chip-py` tokens; both components now use a `min-height` instead of relying on `py-0.5` alone.
+
+### Added
+
+- **`scripts/check-contrast.mjs`** — wired into `npm run validate`. Asserts WCAG AA (≥4.5:1) for `fg`/`bg`, `muted`/`bg`, `primary-fg`/`primary`, `danger-fg`/`danger`, `success-fg`/`success`, `secondary-fg`/`secondary` across every theme, light and dark, by resolving the same cascade the browser uses (theme file overrides tokens.css/dark.css by source order; a theme's own `.dark` block overrides its own light block).
+- **Canvas surface boundary tokens** — `--color-canvas-surface` (opaque, per-theme) and `--texture-opacity` / `--texture-blend` (per-theme, default off) added to `tokens.css` and every theme file; enforced by `scripts/check-themes.mjs`. `GraphNode` now renders with `bg-canvas-surface` instead of `bg-surface`.
+- **Typography depth** — `--text-3xl`, `--text-4xl`; `--font-weight-normal/medium/semibold/bold`; `--leading-tight/snug/normal/relaxed`; `--tracking-tight/normal/wide`.
+- **Motion tokens** — `--duration-fast/normal/slow`, `--ease-standard/in/out`. Replaced hardcoded `duration-300` (Progress) and `duration-200` (Drawer) with token-driven values.
+- **Z-index scale** — `--z-base`, `--z-canvas-grid`, `--z-canvas-controls`, `--z-dropdown`, `--z-overlay`, `--z-toast`. Replaced hardcoded `z-50`/`z-10`/`z-[100]` in Canvas, Dialog, Drawer, Popover, Tooltip, DropdownMenu, Select, Toast.
+- **Focus ring tokens** — `--focus-ring-width`, `--focus-ring-offset`. Replaced hardcoded `ring-2`/`ring-offset-2` across all focusable primitives.
+- **`TexturedSurface` rebuilt as a real overlay** — the texture is now a `::after` pseudo-element (`pointer-events-none`, opacity/blend from theme tokens, sized from `--texture-size`) instead of being baked into the element's own `background-image`. It rasterizes once and is a no-op in every theme except `comic` (the only theme that sets `--texture-opacity` above 0), enforced by the boundary tokens above.
+
+### Removed
+
+- **`TexturedText`** — the earlier "paper texture" attempt on text (`bg-clip-text` + a fixed blend mode, regardless of theme) only changed colors and font sizes; it didn't model texture as an overlay, had no per-theme on/off, and duplicated `Typography`'s scope. Removed rather than patched — text-clip textures can't share the overlay model `TexturedSurface` now uses. `TexturedSurface` (below) is the supported way to apply texture.
+
 ### Changed
 
 - **Toast shadow** — `shadow-lg` → `shadow-elevated` so toast shadows use the theme's `--shadow-elevated` token instead of a hardcoded Tailwind shadow. Fixes toasts ignoring theme shadows (visible in Glass theme's tinted shadows).

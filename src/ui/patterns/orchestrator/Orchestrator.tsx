@@ -213,7 +213,7 @@ const Orchestrator: FC<OrchestratorProps> = ({
               key={edge.id}
               from={getPortAnchor(fn, edge.from.rowIndex, edge.from.side)}
               to={getPortAnchor(tn, edge.to.rowIndex, edge.to.side)}
-              state={selectedEdgeIds.includes(edge.id) ? "selected" : (edge.state ?? "default")}
+              state={selectedEdgeIds.includes(edge.id) ? "highlighted" : (edge.state ?? "default")}
               className={accent && !selectedEdgeIds.includes(edge.id) ? "stroke-primary" : undefined}
               onClick={() => handleEdgeClick(edge.id)}
             />

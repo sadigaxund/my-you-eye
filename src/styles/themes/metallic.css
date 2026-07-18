@@ -1,0 +1,130 @@
+/* =========================================
+   Metallic — brushed metal.
+   =========================================
+   Cool grey palette with a subtle sheen, crisp thin borders, tight
+   specular-feeling highlights, and hard-edged (zero-blur, offset) shadows —
+   the opposite mood of `frosted`'s soft diffusion. No backdrop blur: metal
+   is opaque, not glass.
+
+   The brush-grain texture is an anisotropic (horizontal) noise pattern, not
+   the shared isotropic paper-grain default. It overrides --texture-paper /
+   --texture-size locally (still purely token-driven through the shared
+   TexturedSurface ::after mechanism — no component edits) so the grain
+   actually reads as directional brushing rather than crumpled paper. */
+
+html[data-theme="metallic"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: oklch(0.86 0.006 250);
+  /* Faint top specular sheen, like light raking across brushed aluminum. */
+  background-image: linear-gradient(
+    180deg,
+    oklch(1 0 0 / 0.35) 0%,
+    transparent 22%
+  );
+  background-size: cover;
+}
+
+html[data-theme="metallic"].dark::before {
+  background-color: oklch(0.22 0.006 250);
+  background-image: linear-gradient(
+    180deg,
+    oklch(1 0 0 / 0.08) 0%,
+    transparent 22%
+  );
+}
+
+[data-theme="metallic"] {
+  /* Colors - Core & Text */
+  --color-bg: oklch(0.86 0.006 250);
+  --color-fg: oklch(0.18 0.005 250);
+  --color-muted: oklch(0.45 0.006 250);
+
+  /* Colors - Accents (steel blue-grey, low chroma) */
+  --color-primary: oklch(0.42 0.03 250);
+  --color-primary-fg: oklch(1 0 0);
+  --color-secondary: oklch(0.78 0.008 250);
+  --color-secondary-fg: oklch(0.18 0.005 250);
+
+  /* Colors - Semantic states (opaque) */
+  --color-danger: oklch(0.50 0.20 25);
+  --color-danger-fg: oklch(1 0 0);
+  --color-success: oklch(0.45 0.15 155);
+  --color-success-fg: oklch(1 0 0);
+  --color-warning: oklch(0.70 0.18 80);
+
+  /* Colors - Surfaces (opaque brushed-metal panels, not glass) */
+  --color-surface: oklch(0.90 0.004 250);
+  --color-surface-hover: oklch(0.87 0.004 250);
+  --color-surface-active: oklch(0.83 0.005 250);
+  --color-surface-elevated: oklch(0.92 0.004 250);
+  --color-canvas-surface: oklch(0.90 0.004 250);
+
+  /* Colors - Utilities */
+  --color-border: oklch(0.55 0.006 250);
+  --color-ring: oklch(0.42 0.03 250 / 0.4);
+  --color-scrollbar: oklch(0.5 0.006 250);
+  --color-scrollbar-hover: oklch(0.35 0.006 250);
+  --color-grid-dot: oklch(0.4 0.006 250 / 0.3);
+
+  /* Structure & Effects — no blur, crisp thin border */
+  --border-width: 1px;
+  --backdrop-blur: 0px;
+
+  /* Radii — tight, industrial, hard-edged */
+  --radius-ui: 4px;
+  --radius-ui-sm: 2px;
+  --radius-ui-lg: 8px;
+
+  /* Shadows — hard-edged (zero blur), offset, tight — opposite of frosted's
+     soft diffusion */
+  --shadow-card: 2px 3px 0 0 oklch(0.15 0.005 250 / 0.25);
+  --shadow-elevated: 4px 6px 0 0 oklch(0.15 0.005 250 / 0.35);
+
+  --opacity-dim: 0.6;
+  --opacity-muted: 0.4;
+
+  /* Anisotropic horizontal brush-grain: low x-frequency (long streaks),
+     high y-frequency (thin lines stacked), tiled as a wide/short strip so
+     the streak direction reads clearly as horizontal brushing. */
+  --texture-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='brush'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23brush)' opacity='0.5'/%3E%3C/svg%3E");
+  --texture-size: 320px 48px;
+  --texture-opacity: 0.35;
+  --texture-blend: overlay;
+}
+
+[data-theme="metallic"].dark {
+  --color-bg: oklch(0.22 0.006 250);
+  --color-fg: oklch(0.94 0.004 250);
+  --color-muted: oklch(0.68 0.006 250);
+
+  /* Dark-mode accent gains luminance over light's 0.42 (see AGENTS.md §0) */
+  --color-primary: oklch(0.72 0.03 250);
+  --color-primary-fg: oklch(0.10 0.005 250);
+  --color-secondary: oklch(0.32 0.008 250);
+  --color-secondary-fg: oklch(0.94 0.004 250);
+
+  --color-danger: oklch(0.62 0.20 25);
+  --color-danger-fg: oklch(0 0 0);
+  --color-success: oklch(0.58 0.16 155);
+  --color-success-fg: oklch(0 0 0);
+  --color-warning: oklch(0.80 0.18 80);
+
+  --color-surface: oklch(0.27 0.006 250);
+  --color-surface-hover: oklch(0.31 0.006 250);
+  --color-surface-active: oklch(0.35 0.006 250);
+  --color-surface-elevated: oklch(0.29 0.006 250);
+  --color-canvas-surface: oklch(0.27 0.006 250);
+
+  --color-border: oklch(0.55 0.006 250);
+  --color-ring: oklch(0.72 0.03 250 / 0.4);
+  --color-scrollbar: oklch(0.45 0.006 250);
+  --color-scrollbar-hover: oklch(0.6 0.006 250);
+  --color-grid-dot: oklch(0.5 0.006 250 / 0.3);
+
+  --shadow-card: 2px 3px 0 0 oklch(0 0 0 / 0.5);
+  --shadow-elevated: 4px 6px 0 0 oklch(0 0 0 / 0.6);
+}

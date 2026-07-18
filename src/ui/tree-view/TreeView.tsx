@@ -1,8 +1,8 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type { ReactNode, KeyboardEvent } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { CellValue } from "../cell-value";
+import { TreeItem } from "./TreeItem";
 import type { CellValueType, UrlReplacement } from "../cell-value";
 
 export interface TreeNodeValue {
@@ -43,136 +43,89 @@ const treeVariants = cva("", {
   },
 });
 
-function Chevron({ expanded }: { expanded: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 12 12"
-      className={cn("size-3 fill-current text-muted transition-transform shrink-0", expanded && "rotate-90")}
-    >
-      <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    </svg>
-  );
+interface VisibleEntry {
+  id: string;
+  parentId: string | null;
+  hasChildren: boolean;
 }
 
-function isExpanded(
-  nodeId: string,
-  depth: number,
-  defaultExpandedDepth: number,
-  controlledExpanded?: Set<string>,
-): boolean {
-  if (controlledExpanded) return controlledExpanded.has(nodeId);
-  return depth < defaultExpandedDepth;
-}
-
-function flattenIds(data: TreeNode[]): string[] {
-  const ids: string[] = [];
-  for (const node of data) {
-    ids.push(node.id);
-    if (node.children) ids.push(...flattenIds(node.children));
-  }
-  return ids;
-}
-
-function TreeItem({
-  node,
-  depth,
-  variant,
-  indent,
-  defaultExpandedDepth,
-  controlledExpanded,
-  onToggle,
-  replacements,
-  isLast,
-}: {
-  node: TreeNode;
-  depth: number;
-  variant: "default" | "condensed";
-  indent: number;
-  defaultExpandedDepth: number;
-  controlledExpanded?: Set<string>;
-  onToggle?: (id: string) => void;
-  replacements?: UrlReplacement[];
-  isLast: boolean;
-}) {
-  const hasChildren = node.children && node.children.length > 0;
-  const expanded = isExpanded(node.id, depth, defaultExpandedDepth, controlledExpanded);
-  const [internalExpanded, setInternalExpanded] = useState(expanded);
-
-  const actuallyExpanded = controlledExpanded ? expanded : internalExpanded;
-
-  const toggle = useCallback(() => {
-    if (!hasChildren) return;
-    if (controlledExpanded) {
-      onToggle?.(node.id);
-    } else {
-      setInternalExpanded((e) => !e);
+function computeInitialExpanded(data: TreeNode[], defaultExpandedDepth: number): Set<string> {
+  const set = new Set<string>();
+  function walk(nodes: TreeNode[], depth: number) {
+    for (const node of nodes) {
+      if (node.children && node.children.length > 0 && depth < defaultExpandedDepth) {
+        set.add(node.id);
+        walk(node.children, depth + 1);
+      }
     }
-  }, [hasChildren, controlledExpanded, onToggle, node.id]);
+  }
+  walk(data, 0);
+  return set;
+}
 
-  const itemRef = useRef<HTMLLIElement>(null);
+function flattenVisible(
+  nodes: TreeNode[],
+  expanded: Set<string>,
+  parentId: string | null,
+  acc: VisibleEntry[],
+): VisibleEntry[] {
+  for (const node of nodes) {
+    const hasChildren = !!node.children && node.children.length > 0;
+    acc.push({ id: node.id, parentId, hasChildren });
+    if (hasChildren && expanded.has(node.id)) {
+      flattenVisible(node.children!, expanded, node.id, acc);
+    }
+  }
+  return acc;
+}
 
-  return (
-    <li
-      ref={itemRef}
-      role="treeitem"
-      aria-expanded={hasChildren ? actuallyExpanded : undefined}
-      className={cn(
-        "relative",
-        variant === "condensed" ? "py-0" : "py-0.5",
-      )}
-    >
-      {depth > 0 && (
-        <span
-          className="absolute top-0 border-l border-border pointer-events-none"
-          style={{ left: `${depth * indent - 8}px`, height: isLast ? "50%" : "100%" }}
-        />
-      )}
-      {depth > 0 && (
-        <span
-          className="absolute border-t border-border pointer-events-none"
-          style={{ left: `${depth * indent - 8}px`, width: "8px", top: "50%" }}
-        />
-      )}
-      <div
-        className={cn(
-          "flex items-center gap-1 rounded-ui-sm px-1 py-0.5 hover:bg-secondary cursor-pointer relative min-w-0",
-        )}
-        style={{ paddingLeft: `${depth * indent + 4}px` }}
-        onClick={toggle}
+function renderNodes(
+  nodes: TreeNode[],
+  depth: number,
+  ancestorLines: boolean[],
+  variant: "default" | "condensed",
+  indent: number,
+  expanded: Set<string>,
+  currentId: string | undefined,
+  onToggle: (id: string) => void,
+  replacements: UrlReplacement[] | undefined,
+): ReactNode {
+  return nodes.map((node, i) => {
+    const isLast = i === nodes.length - 1;
+    const hasChildren = !!node.children && node.children.length > 0;
+    const isExpanded = hasChildren && expanded.has(node.id);
+    return (
+      <TreeItem
+        key={node.id}
+        node={node}
+        depth={depth}
+        variant={variant}
+        indent={indent}
+        ancestorLines={ancestorLines}
+        isLast={isLast}
+        expanded={isExpanded}
+        current={node.id === currentId}
+        onToggle={onToggle}
+        replacements={replacements}
       >
-        {hasChildren ? (
-          <Chevron expanded={actuallyExpanded} />
-        ) : (
-          <span className="size-3 shrink-0" />
+        {isExpanded && (
+          <ul role="group" className="list-none m-0 p-0">
+            {renderNodes(
+              node.children!,
+              depth + 1,
+              [...ancestorLines, !isLast],
+              variant,
+              indent,
+              expanded,
+              currentId,
+              onToggle,
+              replacements,
+            )}
+          </ul>
         )}
-        {node.icon && <span className="shrink-0">{node.icon}</span>}
-        <span className="text-xs truncate flex-1 min-w-0">{node.label}</span>
-        {node.value && (
-          <span className="truncate overflow-hidden shrink min-w-0">
-            <CellValue {...node.value} replacements={replacements} />
-          </span>
-        )}
-      </div>
-      {hasChildren && actuallyExpanded && (
-        <ul role="group" className="list-none m-0 p-0">
-          {node.children!.map((child, ci) => (
-            <TreeItem
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              variant={variant}
-              indent={indent}
-              defaultExpandedDepth={defaultExpandedDepth}
-              controlledExpanded={controlledExpanded}
-              onToggle={onToggle}
-              replacements={replacements}
-              isLast={ci === node.children!.length - 1}
-            />
-          ))}
-        </ul>
-      )}
-    </li>
-  );
+      </TreeItem>
+    );
+  });
 }
 
 export function TreeView({
@@ -185,73 +138,105 @@ export function TreeView({
   replacements,
 }: TreeViewProps) {
   const treeRef = useRef<HTMLUListElement>(null);
-  const flatIds = useRef<string[]>([]);
-  flatIds.current = flattenIds(data);
-  const [focusIndex, setFocusIndex] = useState(0);
-
   const v = variant ?? "default";
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    const ids = flatIds.current;
-    if (ids.length === 0) return;
+  const [internalExpanded, setInternalExpanded] = useState(() =>
+    computeInitialExpanded(data, defaultExpandedDepth),
+  );
+  const expanded = expandedKeys ?? internalExpanded;
 
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setFocusIndex((i) => Math.min(i + 1, ids.length - 1));
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setFocusIndex((i) => Math.max(i - 1, 0));
-        break;
-      case "ArrowRight":
-        e.preventDefault();
-        onToggle?.(ids[focusIndex]);
-        break;
-      case "ArrowLeft":
-        e.preventDefault();
-        onToggle?.(ids[focusIndex]);
-        break;
-      case "Home":
-        e.preventDefault();
-        setFocusIndex(0);
-        break;
-      case "End":
-        e.preventDefault();
-        setFocusIndex(ids.length - 1);
-        break;
-    }
-  }, [focusIndex, onToggle]);
+  const toggle = useCallback(
+    (id: string) => {
+      if (expandedKeys) {
+        onToggle?.(id);
+        return;
+      }
+      setInternalExpanded((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    },
+    [expandedKeys, onToggle],
+  );
+
+  const visible = useMemo(() => flattenVisible(data, expanded, null, []), [data, expanded]);
+  const [focusIndex, setFocusIndex] = useState(0);
 
   useEffect(() => {
-    if (flatIds.current.length === 0) return;
-    const id = flatIds.current[focusIndex];
-    const el = treeRef.current?.querySelector(`[role="treeitem"][id="${id}"]`);
+    if (focusIndex > visible.length - 1) setFocusIndex(Math.max(0, visible.length - 1));
+  }, [visible, focusIndex]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (visible.length === 0) return;
+      const cur = visible[focusIndex];
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setFocusIndex((i) => Math.min(i + 1, visible.length - 1));
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setFocusIndex((i) => Math.max(i - 1, 0));
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          if (!cur) break;
+          if (cur.hasChildren && !expanded.has(cur.id)) {
+            toggle(cur.id);
+          } else if (cur.hasChildren) {
+            setFocusIndex((i) => Math.min(i + 1, visible.length - 1));
+          }
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          if (!cur) break;
+          if (cur.hasChildren && expanded.has(cur.id)) {
+            toggle(cur.id);
+          } else if (cur.parentId) {
+            const pIdx = visible.findIndex((entry) => entry.id === cur.parentId);
+            if (pIdx >= 0) setFocusIndex(pIdx);
+          }
+          break;
+        case "Home":
+          e.preventDefault();
+          setFocusIndex(0);
+          break;
+        case "End":
+          e.preventDefault();
+          setFocusIndex(visible.length - 1);
+          break;
+        case "Enter":
+        case " ":
+          e.preventDefault();
+          if (cur?.hasChildren) toggle(cur.id);
+          break;
+      }
+    },
+    [visible, focusIndex, expanded, toggle],
+  );
+
+  useEffect(() => {
+    if (visible.length === 0) return;
+    const id = visible[focusIndex]?.id;
+    if (!id) return;
+    const el = treeRef.current?.querySelector(`[role="treeitem"][id="${CSS.escape(id)}"]`);
     if (el instanceof HTMLElement) el.focus();
-  }, [focusIndex]);
+  }, [focusIndex, visible]);
+
+  const currentId = visible[focusIndex]?.id;
 
   return (
     <ul
       ref={treeRef}
       role="tree"
-      tabIndex={0}
       onKeyDown={handleKeyDown}
       className={cn(treeVariants({ variant: v }), "list-none m-0 p-0 outline-none")}
     >
-      {data.map((node, i) => (
-        <TreeItem
-          key={node.id}
-          node={node}
-          depth={0}
-          variant={v}
-          indent={indent}
-          defaultExpandedDepth={defaultExpandedDepth}
-          controlledExpanded={expandedKeys}
-          onToggle={onToggle}
-          replacements={replacements}
-          isLast={i === data.length - 1}
-        />
-      ))}
+      {renderNodes(data, 0, [], v, indent, expanded, currentId, toggle, replacements)}
     </ul>
   );
 }

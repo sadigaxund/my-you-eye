@@ -1,24 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { ConnectionLine } from ".";
-import { Port } from "../port";
-
-function Dot({ x, y, state }: { x: number; y: number; state?: "default" | "connected" | "highlighted" }) {
-  return (
-    <div style={{ position: "absolute", left: x, top: y, transform: "translate(-50%, -50%)" }}>
-      <Port state={state} />
-    </div>
-  );
-}
-
-function Label({ x, y, children }: { x: number; y: number; children: string }) {
-  return (
-    <div style={{ position: "absolute", left: x, top: y, transform: "translateX(-50%)" }} className="text-xs text-muted">
-      {children}
-    </div>
-  );
-}
-
-const W = 300;
 
 const entry: ShowcaseEntry = {
   title: "ConnectionLine",
@@ -27,45 +8,18 @@ const entry: ShowcaseEntry = {
     {
       name: "Path variants",
       render: () => (
-        <div className="flex justify-center">
-          <div className="relative" style={{ width: W, height: 288 }}>
-            <ConnectionLine from={{ x: 20, y: 40 }} to={{ x: W - 20, y: 80 }} variant="bezier" state="connected" />
-            <ConnectionLine from={{ x: 20, y: 110 }} to={{ x: W - 20, y: 150 }} variant="stepped" state="connected" />
-            <ConnectionLine from={{ x: 20, y: 185 }} to={{ x: W - 20, y: 135 }} variant="straight" state="default" />
-            <Dot x={20} y={40} state="connected" />
-            <Dot x={W - 20} y={80} state="connected" />
-            <Dot x={20} y={110} state="connected" />
-            <Dot x={W - 20} y={150} state="connected" />
-            <Dot x={20} y={185} state="default" />
-            <Dot x={W - 20} y={135} state="default" />
-            <Label x={20} y={22}>Bezier</Label>
-            <Label x={20} y={92}>Stepped</Label>
-            <Label x={20} y={167}>Straight</Label>
+        <div className="flex flex-col items-center gap-6 py-4 h-[344px]">
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 50 }} to={{ x: 290, y: 10 }} variant="bezier" state="connected" />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">bezier</span>
           </div>
-        </div>
-      ),
-    },
-    {
-      name: "States",
-      render: () => (
-        <div className="flex justify-center">
-          <div className="relative" style={{ width: W, height: 205 }}>
-            <ConnectionLine from={{ x: 20, y: 30 }} to={{ x: W - 20, y: 30 }} state="default" />
-            <ConnectionLine from={{ x: 20, y: 65 }} to={{ x: W - 20, y: 65 }} state="connected" />
-            <ConnectionLine from={{ x: 20, y: 100 }} to={{ x: W - 20, y: 100 }} state="highlighted" />
-            <ConnectionLine from={{ x: 20, y: 140 }} to={{ x: W - 20, y: 140 }} state="pending" />
-            <Dot x={20} y={30} state="default" />
-            <Dot x={W - 20} y={30} state="default" />
-            <Dot x={20} y={65} state="connected" />
-            <Dot x={W - 20} y={65} state="connected" />
-            <Dot x={20} y={100} state="highlighted" />
-            <Dot x={W - 20} y={100} state="highlighted" />
-            <Dot x={20} y={140} state="default" />
-            <Dot x={W - 20} y={140} state="default" />
-            <Label x={20} y={12}>default</Label>
-            <Label x={20} y={47}>connected</Label>
-            <Label x={20} y={82}>highlighted</Label>
-            <Label x={20} y={122}>pending</Label>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 50 }} to={{ x: 290, y: 10 }} variant="stepped" state="connected" />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">stepped</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 10 }} to={{ x: 290, y: 50 }} variant="straight" state="connected" />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">straight</span>
           </div>
         </div>
       ),

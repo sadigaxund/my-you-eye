@@ -23,6 +23,7 @@ function ToastDemo() {
 const entry: ShowcaseEntry = {
   title: "Toast",
   group: "feedback",
+  description: "A transient notification for success, danger, and default states, triggered imperatively via the useToast hook.",
   demos: [
     {
       name: "Trigger toasts",

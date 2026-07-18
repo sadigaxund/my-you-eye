@@ -4,10 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const dialogOverlay =
-  "fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
+  "fixed inset-0 z-[var(--z-overlay)] bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
 
 const dialogContentVariants = cva(
-  "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 rounded-ui bg-surface-elevated p-6 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "fixed left-1/2 top-1/2 z-[var(--z-overlay)] w-full -translate-x-1/2 -translate-y-1/2 rounded-ui bg-surface-elevated p-6 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
   {
     variants: {
       size: {

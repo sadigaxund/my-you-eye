@@ -25,8 +25,9 @@ html[data-theme="stark"].dark {
   --color-surface-hover: oklch(0.97 0 0);
   --color-surface-active: oklch(0.94 0 0);
   --color-surface-elevated: oklch(1 0 0);
+  --color-canvas-surface: oklch(1 0 0);
 
-  --color-border: oklch(0.90 0 0);
+  --color-border: oklch(0.65 0 0);
   --color-ring: oklch(0.15 0 0 / 0.3);
   --color-scrollbar: oklch(0.85 0 0);
   --color-scrollbar-hover: oklch(0.75 0 0);
@@ -44,6 +45,8 @@ html[data-theme="stark"].dark {
 
   --opacity-dim: 0.5;
   --opacity-muted: 0.3;
+  --texture-opacity: 0;
+  --texture-blend: multiply;
 }
 
 [data-theme="stark"].dark {
@@ -66,8 +69,9 @@ html[data-theme="stark"].dark {
   --color-surface-hover: oklch(0.10 0 0);
   --color-surface-active: oklch(0.15 0 0);
   --color-surface-elevated: oklch(0.08 0 0);
+  --color-canvas-surface: oklch(0.05 0 0);
 
-  --color-border: oklch(0.15 0 0);
+  --color-border: oklch(0.50 0 0);
   --color-ring: oklch(0.95 0 0 / 0.3);
   --color-scrollbar: oklch(0.20 0 0);
   --color-scrollbar-hover: oklch(0.35 0 0);

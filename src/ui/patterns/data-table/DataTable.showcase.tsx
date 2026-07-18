@@ -19,6 +19,8 @@ const statusVariants = [
 const entry: ShowcaseEntry = {
   title: "DataTable",
   group: "data",
+  parent: "Table",
+  description: "A composed table pattern that renders columns + rows through CellValue, with variant/density options and an optional sticky header.",
   demos: [
     {
       name: "Default",

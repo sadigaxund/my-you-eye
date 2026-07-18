@@ -48,7 +48,7 @@ export function Combobox({
           disabled={disabled}
           className={cn(
             "flex w-full items-center justify-between rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
             "disabled:cursor-not-allowed disabled:opacity-50",
             !selectedLabel && "text-muted",
             className,

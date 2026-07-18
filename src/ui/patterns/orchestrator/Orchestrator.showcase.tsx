@@ -79,6 +79,7 @@ function Demo() {
 const entry: ShowcaseEntry = {
   title: "Orchestrator",
   group: "canvas",
+  description: "A composed pattern combining Canvas, GraphNode, and ConnectionLine into a drag-and-drop pipeline editor.",
   demos: [{ name: "Pipeline editor (drag nodes, connect ports, delete selected)", render: () => <Demo /> }],
 };
 export default entry;

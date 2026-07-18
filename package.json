@@ -10,14 +10,19 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:lib": "tsup",
-    "validate": "tsc --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && npm run build:lib && vite build",
+    "prebuild:lib": "node scripts/gen-manifest.mjs",
+    "validate": "tsc --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build",
     "audit": "node scripts/audit.mjs",
     "preview": "vite preview",
     "prepare": "npm run build:lib",
     "manifest": "node scripts/gen-manifest.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "SKILL.md",
+    "components.json",
+    "COMPONENTS.md"
   ],
   "exports": {
     ".": {
@@ -30,6 +35,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "my-you-eye": "./bin/my-you-eye.mjs"
+  },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.2",
     "@radix-ui/react-checkbox": "^1.3.7",

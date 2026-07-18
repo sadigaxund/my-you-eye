@@ -4,10 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { ScrollArea } from "../scroll-area";
 import { cn } from "../../lib/cn";
 
-const drawerOverlay = "fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
+const drawerOverlay = "fixed inset-0 z-[var(--z-overlay)] bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
 
 const drawerContentVariants = cva(
-  "fixed z-50 flex flex-col bg-surface-elevated shadow-lg transition-transform duration-200",
+  "fixed z-[var(--z-overlay)] flex flex-col bg-surface-elevated shadow-lg transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)]",
   {
     variants: {
       side: {

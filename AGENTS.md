@@ -39,6 +39,25 @@ set of components. Your job is to keep it that way. These rules are not suggesti
     mapped as `rounded-node` utility). Themes must never override `--radius-node` — the node
     corner radius is invariant across all themes. Only `--radius-ui*` tokens (buttons, cards,
     dialogs, etc.) may be themed.
+12. **Canvas performance boundary** (see also §7 "Canvas drag performance contract"):
+    - **Never** use `background-attachment: fixed` in a theme file. It forces the background to
+      be re-evaluated as part of the document's own paint, which is exactly what
+      `backdrop-filter` has to resample on every composite — the same failure mode as
+      transforming a blurred subtree. If a theme wants a full-viewport mesh/gradient
+      background, render it on a `position: fixed; pointer-events: none;` pseudo-element
+      instead (see `html[data-theme="glass"]::before` in `glass.css`) — it never moves, so it
+      never repaints, and `backdrop-filter` can sample it cheaply.
+    - **Never** let an element with `backdrop-filter` live inside a transforming subtree (i.e.
+      inside `Canvas`'s pannable/zoomable layer). `Canvas` enforces this structurally by
+      overriding `--backdrop-blur` (and `--texture-opacity`) to `0` as inline custom properties
+      on its transforming layer — every component already reads these via `var(...)`, so the
+      override cascades to any descendant automatically. Do not reintroduce a hardcoded
+      `backdropFilter` value inside `src/ui/canvas/**` or `src/ui/graph-node/**`.
+    - **Canvas surfaces are always opaque.** `GraphNode` (and anything else rendered as a
+      canvas-space surface) uses `bg-canvas-surface` (the `--color-canvas-surface` token), never
+      `bg-surface`. Every theme must define an opaque `--color-canvas-surface` (enforced by
+      `scripts/check-themes.mjs`) so nodes render solid regardless of the active theme's surface
+      translucency.
 
 ---
 
@@ -251,6 +270,34 @@ When adding a new font family, update **both** places (they are not auto-synced)
 2. `src/lib/fonts.ts` — add an entry to the `fontOptions` array (value matches the `data-font` attribute value, label is the display name).
 
 `src/showcase/App.tsx` reads from `fonts.ts` — no separate update needed.
+
+### Canvas drag performance contract
+
+**Never** change `backgroundPosition` during drag — it triggers full repaint every frame.
+**Never** let React re-render on every mousemove — use refs + direct DOM manipulation.
+
+Pattern (see `src/ui/canvas/Canvas.tsx`):
+
+1. Store offset/zoom in refs (`offsetRef`, `zoomRef`) updated on every mousemove.
+2. Keep a ref to the children div (`childrenRef`). In the mousemove handler, directly set
+   `childrenRef.current.style.transform` — bypass React entirely during drag.
+3. Sync ref → React state only on mouseup (for children that need offset in props).
+4. **Grid layer lives INSIDE the children div** — it inherits the parent's GPU-composited
+   `transform`. The grid's `backgroundPosition` is always `0 0` (never changes). Use a
+   very large grid div (`left/right: -100vw`, `top/bottom: -100vh`) so the tiled pattern
+   always covers the viewport regardless of pan offset.
+5. Use `backgroundSize: ${gridSize}px` (not `gridSize * zoom`) because the parent's
+   `scale(zoom)` handles visual scaling.
+
+Why this is fast:
+- `transform` is GPU-composited — no repaint on position change
+- Grid is inside the transformed layer — zero style updates on it during drag
+- No React reconciliation during drag (direct DOM only)
+
+Themes with expensive backgrounds (Glass: `background-attachment: fixed` with multiple
+radial gradients; Comic: SVG `feTurbulence` noise filter) expose the drag repaint problem
+because every frame composites through the complex HTML background layer. The fix above
+eliminates repaints entirely — everything is GPU-composited.
 
 ## 8. If you are unsure
 

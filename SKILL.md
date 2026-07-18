@@ -1,22 +1,19 @@
-# my-you-eye — UI Component Library
+---
+name: my-you-eye
+description: Use the my-you-eye UI component library. Invoke before building ANY UI — buttons, inputs, cards, dialogs, tables, tree views, canvas/graph/pipeline editors — in a project that depends on this package, so you reuse an existing component instead of hand-rolling native HTML. Read the manifest first.
+---
 
-A reusable React + TypeScript component library built with Tailwind v4, Radix primitives, and CVA variants.
+# my-you-eye — UI component library
 
-## Importing
+This project ships a fixed set of themeable, accessible UI components. **Never hand-roll a
+styled `<button>`, `<input>`, `<select>`, `<table>`, `<a>`, or a bespoke card/dialog/menu.**
+There is almost certainly already a component for it.
 
-All components are exported from the package root:
+## Step 1 — find the component (always do this first)
 
-```tsx
-import { Button, Dialog, Select } from "my-you-eye";
-```
-
-Use the `cn()` utility from the library for class merging:
-
-```tsx
-import { cn } from "my-you-eye/cn";
-```
-
-## Component Groups
+Read `components.json` (or the human-readable `COMPONENTS.md`) at the package root. It is
+auto-generated from the library's showcases and lists **every** component, its group, and its
+variant props. Pick the component whose name/group matches what you need.
 
 ### inputs
 Button, Checkbox, Combobox, FileDrop, Input, Label, MultiSelect, RadioGroup, Select, Slider, Switch, Textarea
@@ -41,41 +38,6 @@ CellValue, Table, TreeView
 
 ### patterns
 ConfirmDialog, DataTable, FormField, PageShell, StatCard, Toolbar
-
-## Usage Rules
-
-- **Components use CVA variants.** Most have a `variant` and/or `size` prop. Use them instead of raw class overrides.
-- **Use semantic Tailwind classes only.** Colors come from tokens (`bg-primary`, `text-muted`, `border-border`). Never use arbitrary color values.
-- **Overlay components** (Dialog, Drawer, Popover, Tooltip, DropdownMenu, Select, Combobox) use Radix primitives. Their content areas auto-apply backdrop blur when the active theme supports it.
-- **Themes** are token-override blocks. Switch themes via `data-theme` attribute on `<html>`.
-- **Fonts** are switched via `data-font` attribute.
-=======
----
-name: my-you-eye
-description: Use the my-you-eye UI component library. Invoke before building ANY UI — buttons, inputs, cards, dialogs, tables, tree views, canvas/graph/pipeline editors — in a project that depends on this package, so you reuse an existing component instead of hand-rolling native HTML. Read the manifest first.
----
-
-# my-you-eye — UI component library
-
-This project ships a fixed set of themeable, accessible UI components. **Never hand-roll a
-styled `<button>`, `<input>`, `<select>`, `<table>`, `<a>`, or a bespoke card/dialog/menu.**
-There is almost certainly already a component for it.
-
-## Step 1 — find the component (always do this first)
-
-Read `components.json` (or the human-readable `COMPONENTS.md`) at the package root. It is
-auto-generated from the library's showcases and lists **every** component, its group, and its
-variant props. Pick the component whose name/group matches what you need.
-
-- Inputs: Button, Input, Textarea, Select, Checkbox, RadioGroup, Switch, Slider, Combobox…
-- Display: Card, Badge, Avatar, Separator, StatusDot, Kbd, EmptyState…
-- Feedback: Alert, Toast, Spinner, Skeleton, Progress…
-- Overlay: Dialog, Drawer, Popover, Tooltip, DropdownMenu, CommandPalette…
-- Navigation: Tabs, Breadcrumbs, Pagination.
-- Data: Table, CellValue, DataList, TreeView, CodeBlock, Markdown.
-- Canvas: Canvas, GraphNode, Port, Edge, ConnectionLine — plus the `Orchestrator` pattern
-  for a full drag/connect/pan/zoom pipeline editor.
-- Patterns: FormField, ConfirmDialog, PageShell, Toolbar, StatCard, Orchestrator.
 
 ## Step 2 — use it
 

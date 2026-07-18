@@ -91,7 +91,7 @@ export function Toaster({ children }: { children?: ReactNode }) {
         {toasts.map((t) => (
           <ToastItem key={t.id} {...t} />
         ))}
-        <Viewport className="fixed bottom-panel right-panel z-[100] flex flex-col gap-inline w-full max-w-sm" />
+        <Viewport className="fixed bottom-panel right-panel z-[var(--z-toast)] flex flex-col gap-inline w-full max-w-sm" />
       </Provider>
     </ToastContext.Provider>
   );

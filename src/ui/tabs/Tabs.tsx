@@ -16,7 +16,7 @@ const tabsListVariants = cva("inline-flex items-center", {
 });
 
 const tabsTriggerVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-bg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-bg transition-all focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -55,7 +55,7 @@ TabsTrigger.displayName = "TabsTrigger";
 
 const TabsContent = forwardRef<React.ComponentRef<typeof Content>, TabsContentProps>(
   ({ className, ...props }, ref) => (
-    <Content ref={ref} className={cn("mt-2 ring-offset-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", className)} {...props} />
+    <Content ref={ref} className={cn("mt-2 ring-offset-bg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring", className)} {...props} />
   ),
 );
 TabsContent.displayName = "TabsContent";

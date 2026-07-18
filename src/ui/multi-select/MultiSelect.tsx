@@ -56,7 +56,7 @@ export function MultiSelect({
           disabled={disabled}
           className={cn(
             "flex w-full items-center gap-1 flex-wrap rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg min-h-[42px]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
             "disabled:cursor-not-allowed disabled:opacity-50",
             selectedLabels.length === 0 && "text-muted",
             className,

@@ -4,7 +4,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-ui-sm px-2.5 py-0.5 text-xs font-medium",
+  // Density tokens (AGENTS.md §7 / Phase 3): min-height + vertical padding
+  // come from --density-chip-* so Badge isn't vertically cramped next to
+  // its text — was a bare `py-0.5` (2px), which reads as a sliver at
+  // default text-xs line-height.
+  "inline-flex items-center rounded-ui-sm px-2.5 py-[var(--density-chip-py)] min-h-[var(--density-chip-min-h)] text-xs font-medium",
   {
     variants: {
       variant: {

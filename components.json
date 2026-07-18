@@ -1,24 +1,16 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 53,
+  "count": 54,
   "components": [
     {
       "name": "Canvas",
       "group": "canvas",
       "folder": "ui/canvas",
-      "props": {
-        "state": [
-          "connected",
-          "default",
-          "highlighted"
-        ]
-      },
+      "props": {},
       "demos": [
         "Empty grid",
-        "Ports on grid",
-        "Edge states",
-        "Edge clickable hit area"
+        "Edge states"
       ]
     },
     {
@@ -32,15 +24,11 @@
           "straight"
         ],
         "state": [
-          "connected",
-          "default",
-          "highlighted",
-          "pending"
+          "connected"
         ]
       },
       "demos": [
-        "Path variants",
-        "States"
+        "Path variants"
       ]
     },
     {
@@ -131,7 +119,8 @@
         ]
       },
       "demos": [
-        "Default & Compact"
+        "Default & Compact",
+        "Long values"
       ]
     },
     {
@@ -184,7 +173,8 @@
       },
       "demos": [
         "Default & Condensed (depth-based expand)",
-        "Controlled expand state"
+        "Controlled expand state",
+        "Leading icons (click a row, then use arrow keys)"
       ]
     },
     {
@@ -252,10 +242,17 @@
       "name": "CodeBlock",
       "group": "display",
       "folder": "ui/code-block",
-      "props": {},
+      "props": {
+        "variant": [
+          "elevated"
+        ]
+      },
       "demos": [
         "Basic",
-        "With header"
+        "With header",
+        "Elevated",
+        "Line numbers",
+        "No wrap (horizontal scroll)"
       ]
     },
     {
@@ -780,6 +777,22 @@
       ]
     },
     {
+      "name": "TexturedSurface",
+      "group": "patterns",
+      "folder": "ui/patterns/textured-surface",
+      "props": {
+        "variant": [
+          "elevated",
+          "surface"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "Custom colors",
+        "Radii"
+      ]
+    },
+    {
       "name": "Toolbar",
       "group": "patterns",
       "folder": "ui/patterns/toolbar",
@@ -796,7 +809,10 @@
         ]
       },
       "demos": [
-        "All slots filled"
+        "All slots filled",
+        "With leading label",
+        "Result count + removable filter chips",
+        "Narrow / responsive collapse"
       ]
     },
     {

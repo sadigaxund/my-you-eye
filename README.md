@@ -74,6 +74,19 @@ files on every commit and every library build, so they never drift. An agent wor
 consuming app should read `components.json` and follow [SKILL.md](./SKILL.md) before building
 any UI.
 
+## CLI
+
+The package ships a tiny Node CLI (`my-you-eye`) for project setup:
+
+```
+my-you-eye init          Copy SKILL.md + components.json to skills/
+my-you-eye list          Print table of all components with groups and variants
+my-you-eye sync          Re-copy SKILL.md + components.json (overwrite)
+my-you-eye --help        Show usage
+```
+
+All file paths resolve from the package location, not the caller's cwd. The CLI has zero external dependencies.
+
 ## The showcase
 
 Every component and every variant renders in a live showcase with light/dark, font, and theme
@@ -102,21 +115,6 @@ npm run validate   # typecheck + lint + coverage + themes + build — the defini
 npm run audit      # non-blocking drift report
 npm run manifest   # regenerate components.json + COMPONENTS.md
 ```
-
-`npm run validate` is the definition of done for every change. See [AGENTS.md](./AGENTS.md).
-
-## CLI
-
-The package ships a tiny Node CLI (`my-you-eye`) for project setup:
-
-```
-my-you-eye init          Copy SKILL.md + components.json to skills/
-my-you-eye list          Print table of all components with groups and variants
-my-you-eye sync          Re-copy SKILL.md + components.json (overwrite)
-my-you-eye --help        Show usage
-```
-
-All file paths resolve from the package location, not the caller's cwd. The CLI has zero external dependencies.
 
 | Concern | Choice | Why |
 |---|---|---|

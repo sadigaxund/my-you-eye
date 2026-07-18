@@ -4,6 +4,7 @@ import { Button } from ".";
 const entry: ShowcaseEntry = {
   title: "Button",
   group: "inputs",
+  description: "A clickable action trigger with primary, secondary, ghost, and danger variants, three sizes, and loading/disabled states.",
   demos: [
     {
       name: "Variants",

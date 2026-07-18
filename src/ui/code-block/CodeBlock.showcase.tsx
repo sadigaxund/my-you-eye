@@ -15,6 +15,8 @@ const json = `{
   }
 }`;
 
+const longLine = `const veryLongVariableNameThatForcesHorizontalScrolling = someFunctionCall(argumentOne, argumentTwo, argumentThree, argumentFour);`;
+
 const entry: ShowcaseEntry = {
   title: "CodeBlock",
   group: "display",
@@ -32,6 +34,30 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="max-w-xl">
           <CodeBlock code={json} language="json" header="package.json" />
+        </div>
+      ),
+    },
+    {
+      name: "Elevated",
+      render: () => (
+        <div className="max-w-xl">
+          <CodeBlock code={python} language="python" header="fib.py" variant="elevated" />
+        </div>
+      ),
+    },
+    {
+      name: "Line numbers",
+      render: () => (
+        <div className="max-w-xl">
+          <CodeBlock code={python} language="python" header="fib.py" showLineNumbers />
+        </div>
+      ),
+    },
+    {
+      name: "No wrap (horizontal scroll)",
+      render: () => (
+        <div className="max-w-xl">
+          <CodeBlock code={longLine} language="ts" header="scroll.ts" wrap={false} showLineNumbers />
         </div>
       ),
     },

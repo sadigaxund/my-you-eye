@@ -1,15 +1,15 @@
 @theme {
   /* ---- Colors ---- */
-  --color-bg: oklch(1 0 0);
+  --color-bg: oklch(0.985 0 0);
   --color-fg: oklch(0.145 0 0);
   --color-muted: oklch(0.55 0.01 260);
   --color-primary: oklch(0.5 0.2 265);
   --color-primary-fg: oklch(1 0 0);
   --color-secondary: oklch(0.92 0.01 260);
   --color-secondary-fg: oklch(0.145 0 0);
-  --color-danger: oklch(0.6 0.22 25);
+  --color-danger: oklch(0.55 0.22 25);
   --color-danger-fg: oklch(1 0 0);
-  --color-success: oklch(0.55 0.18 150);
+  --color-success: oklch(0.5 0.16 150);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.7 0.18 80);
   --color-surface: oklch(1 0 0);
@@ -18,6 +18,11 @@
   --color-surface-elevated: oklch(1 0 0);
   --color-border: oklch(0.87 0.01 260);
   --color-ring: oklch(0.5 0.2 265);
+
+  /* Canvas surface boundary (Phase 1): always opaque, never blurred —
+     used by GraphNode and anything else rendered inside Canvas's
+     transforming layer, regardless of active theme. See AGENTS.md §7. */
+  --color-canvas-surface: oklch(1 0 0);
 
   /* ---- Shape / Space ---- */
   --radius-ui: 6px;
@@ -60,6 +65,45 @@
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* ---- Typography: weight / leading / tracking ---- */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.02em;
+
+  /* ---- Motion ---- */
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-slow: 300ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ---- Layering (z-index scale) ---- */
+  --z-base: 0;
+  --z-canvas-grid: 0;
+  --z-canvas-controls: 10;
+  --z-dropdown: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+
+  /* ---- Focus ring ---- */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* ---- Density (min-height + vertical padding for compact chips) ---- */
+  --density-chip-min-h: 1.375rem;
+  --density-chip-py: 0.1875rem;
 
   /* ---- Border / Backdrop ---- */
   --border-width: 1px;
@@ -72,6 +116,14 @@
   --color-scrollbar: oklch(0.87 0.01 260);
   --color-scrollbar-hover: oklch(0.55 0.01 260);
   --color-grid-dot: oklch(0.77 0.01 260);
+
+  /* ---- Texture (Phase 4): overlay-only, off by default. A theme opts in
+     by raising --texture-opacity above 0 in its own token block; the image
+     itself is shared so it rasterizes identically everywhere it's used. */
+  --texture-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  --texture-size: 150px;
+  --texture-opacity: 0;
+  --texture-blend: multiply;
 
   /* ---- Scale ---- */
   --scale: 1;

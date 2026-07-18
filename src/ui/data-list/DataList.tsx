@@ -50,11 +50,11 @@ const DataList = forwardRef<HTMLDListElement, DataListProps>(
             variant === "compact" ? "py-1 px-2" : "py-2 px-3",
           )}
         >
-          <dt className="flex items-center gap-2 text-sm text-muted">
+          <dt className="flex shrink-0 items-center gap-2 text-sm text-muted">
             {item.icon && <span className="shrink-0">{item.icon}</span>}
             {item.label}
           </dt>
-          <dd className="text-sm text-fg font-medium shrink-0">
+          <dd className="min-w-0 flex-1 overflow-hidden text-right text-sm text-fg font-medium">
             {item.value !== undefined ? (
               <CellValue
                 type={item.type ?? "text"}

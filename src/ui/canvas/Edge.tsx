@@ -8,8 +8,9 @@ const edgeVariants = cva("fill-none", {
   variants: {
     state: {
       default: "stroke-border stroke-[2px]",
-      selected: "stroke-primary stroke-[3px] drop-shadow-[0_0_4px_var(--color-primary)]",
-      animated: "stroke-primary stroke-[2px] [stroke-dasharray:6_3]",
+      connected: "stroke-primary stroke-[2px]",
+      highlighted: "stroke-primary stroke-[3px] drop-shadow-[0_0_4px_var(--color-primary)]",
+      pending: "stroke-muted stroke-[2px] opacity-60 [stroke-dasharray:6_3]",
     },
   },
   defaultVariants: {

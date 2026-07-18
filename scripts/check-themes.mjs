@@ -15,8 +15,15 @@ while ((match = tokenPattern.exec(tokensRaw)) !== null) {
   baseTokens.add(match[1]);
 }
 
-// Token categories we expect every theme to define
-const requiredPrefixes = ["color-"];
+// Token categories we expect every theme to define. "color-" covers the full
+// palette (including --color-canvas-surface, the opaque/blur-free boundary
+// used inside Canvas — see AGENTS.md §7). "texture-" covers the paper-texture
+// on/off switch (--texture-opacity, --texture-blend) so every theme must at
+// least explicitly state its texture is off, rather than silently inheriting.
+// --texture-paper/--texture-size are the shared raster asset + tile size —
+// intentionally global, not themed, so they're excluded from the check.
+const requiredPrefixes = ["color-", "texture-"];
+const excludedTokens = new Set(["texture-paper", "texture-size"]);
 
 let errors = [];
 
@@ -44,6 +51,7 @@ for (const file of themeFiles) {
   for (const prefix of requiredPrefixes) {
     for (const token of baseTokens) {
       if (!token.startsWith(prefix)) continue;
+      if (excludedTokens.has(token)) continue;
       if (!themeTokens.has(token)) {
         errors.push(`${file}: missing --${token}`);
       }

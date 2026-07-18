@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
-const barVariants = cva("h-full rounded-full transition-all duration-300", {
+const barVariants = cva("h-full rounded-full transition-all duration-[var(--duration-slow)] ease-[var(--ease-standard)]", {
   variants: {
     variant: {
       default: "bg-primary",

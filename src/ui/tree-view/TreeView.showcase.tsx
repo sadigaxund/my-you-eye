@@ -3,6 +3,23 @@ import type { ShowcaseEntry } from "../../showcase/types";
 import { TreeView } from ".";
 import type { TreeNode } from ".";
 
+function FolderIcon() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-full fill-none stroke-current">
+      <path d="M2 4a1 1 0 011-1h3l1.5 1.5H13a1 1 0 011 1V12a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function FileIcon() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-full fill-none stroke-current">
+      <path d="M4 2h5l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M9 2v3h3" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function ControlledTreeViewDemo() {
   const [expanded, setExpanded] = useState(new Set(["1", "2"]));
   return (
@@ -83,9 +100,31 @@ const sampleData: TreeNode[] = [
   { id: "4", label: "null_field", value: { type: "null" } },
 ];
 
+const iconData: TreeNode[] = [
+  {
+    id: "src",
+    label: "src",
+    icon: <FolderIcon />,
+    children: [
+      {
+        id: "ui",
+        label: "ui",
+        icon: <FolderIcon />,
+        children: [
+          { id: "button-tsx", label: "Button.tsx", icon: <FileIcon />, value: { type: "text", value: "2.1 kb" } },
+          { id: "badge-tsx", label: "Badge.tsx", icon: <FileIcon />, value: { type: "text", value: "1.4 kb" } },
+        ],
+      },
+      { id: "index-ts", label: "index.ts", icon: <FileIcon />, value: { type: "text", value: "0.3 kb" } },
+    ],
+  },
+  { id: "readme", label: "README.md", icon: <FileIcon />, value: { type: "text", value: "4.8 kb" } },
+];
+
 const entry: ShowcaseEntry = {
   title: "TreeView",
   group: "data",
+  description: "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, and typed value rendering.",
   demos: [
     {
       name: "Default & Condensed (depth-based expand)",
@@ -104,6 +143,14 @@ const entry: ShowcaseEntry = {
     {
       name: "Controlled expand state",
       render: () => <ControlledTreeViewDemo />,
+    },
+    {
+      name: "Leading icons (click a row, then use arrow keys)",
+      render: () => (
+        <div className="max-w-md px-2">
+          <TreeView data={iconData} defaultExpandedDepth={2} />
+        </div>
+      ),
     },
   ],
 };

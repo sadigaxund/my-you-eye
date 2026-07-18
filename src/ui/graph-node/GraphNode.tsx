@@ -8,7 +8,12 @@ import { Port } from "../port";
 const ROW_PORT_Y_OFFSET = HEADER * GRID;
 
 const graphNodeVariants = cva(
-  "absolute flex flex-col rounded-node border bg-surface shadow-card min-w-[160px] overflow-hidden",
+  // `bg-canvas-surface` (never `bg-surface`): nodes render an opaque,
+  // blur-free surface regardless of theme — see the "Canvas surface
+  // boundary" token set in tokens.css / AGENTS.md §7. `contain-[layout_paint]`
+  // scopes each node's layout/paint work so one node's content changes never
+  // force a reflow/repaint of its siblings while panning/zooming.
+  "absolute flex flex-col rounded-node border bg-canvas-surface shadow-card min-w-[160px] overflow-hidden contain-[layout_paint]",
   {
     variants: {
       variant: {

@@ -4,6 +4,7 @@ import { GraphNode } from ".";
 const entry: ShowcaseEntry = {
   title: "GraphNode",
   group: "canvas",
+  description: "A node block for graph/flow diagrams with a fixed grid-aligned corner radius, header/rows/footer, and left/right ports.",
   demos: [
     {
       name: "Variants",

@@ -11,7 +11,7 @@ export interface PortRef {
 }
 
 export type NodeState = "default" | "selected" | "muted";
-export type EdgeState = "default" | "selected";
+export type EdgeState = "default" | "connected" | "highlighted" | "pending";
 
 export interface EditorNode {
   id: string;

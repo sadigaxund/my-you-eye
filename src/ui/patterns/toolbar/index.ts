@@ -1,2 +1,2 @@
 export { Toolbar } from "./Toolbar";
-export type { ToolbarProps } from "./Toolbar";
+export type { ToolbarProps, ToolbarFilterChip } from "./Toolbar";
