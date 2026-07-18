@@ -14,6 +14,7 @@ const PopoverContent = forwardRef<React.ComponentRef<typeof Content>, React.Comp
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           className,
         )}
+        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         {...props}
       />
     </Portal>

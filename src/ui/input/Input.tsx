@@ -35,6 +35,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     <input
       ref={ref}
       className={cn(inputVariants({ variant, size, invalid }), className)}
+      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
       {...props}
     />
   ),

@@ -135,7 +135,7 @@ function TreeItem({
       )}
       <div
         className={cn(
-          "flex items-center gap-1 rounded-ui-sm px-1 py-0.5 hover:bg-secondary cursor-pointer relative",
+          "flex items-center gap-1 rounded-ui-sm px-1 py-0.5 hover:bg-secondary cursor-pointer relative min-w-0",
         )}
         style={{ paddingLeft: `${depth * indent + 4}px` }}
         onClick={toggle}
@@ -146,9 +146,9 @@ function TreeItem({
           <span className="size-3 shrink-0" />
         )}
         {node.icon && <span className="shrink-0">{node.icon}</span>}
-        <span className="text-xs truncate flex-1">{node.label}</span>
+        <span className="text-xs truncate flex-1 min-w-0">{node.label}</span>
         {node.value && (
-          <span>
+          <span className="truncate overflow-hidden shrink min-w-0">
             <CellValue {...node.value} replacements={replacements} />
           </span>
         )}

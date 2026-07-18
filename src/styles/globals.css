@@ -3,6 +3,8 @@
 @import "./themes/dark.css" layer(theme);
 @import "./themes/neon.css" layer(theme);
 @import "./themes/high-contrast.css" layer(theme);
+@import "./themes/glass.css" layer(theme);
+@import "./themes/comic.css" layer(theme);
 
 :root {
   color-scheme: light dark;
@@ -38,6 +40,11 @@
 [data-font="jetbrains"] {
   --font-sans: var(--font-sans);
   --font-mono: var(--font-jetbrains-nerd);
+}
+
+[data-font="comic"] {
+  --font-sans: var(--font-comic);
+  --font-mono: "Courier New", monospace;
 }
 
 html {

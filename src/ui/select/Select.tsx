@@ -37,7 +37,7 @@ export interface SelectTriggerProps
 
 const SelectTrigger = forwardRef<React.ComponentRef<typeof Trigger>, SelectTriggerProps>(
   ({ className, size, invalid, children, ...props }, ref) => (
-    <Trigger ref={ref} className={cn(triggerVariants({ size, invalid }), className)} {...props}>
+    <Trigger ref={ref} className={cn(triggerVariants({ size, invalid }), className)} style={{ backdropFilter: "blur(var(--backdrop-blur))" }} {...props}>
       {children}
       <Icon className="ml-2 shrink-0 opacity-50">
         <svg viewBox="0 0 8 8" className="size-3 fill-current">
@@ -58,6 +58,7 @@ const SelectContent = forwardRef<React.ComponentRef<typeof Content>, React.Compo
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
         className,
       )}
+      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
       {...props}
     >
       <Viewport className="p-1">{children}</Viewport>

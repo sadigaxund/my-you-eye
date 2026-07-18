@@ -21,6 +21,7 @@ const DropdownMenuContent = forwardRef<React.ComponentRef<typeof Content>, React
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           className,
         )}
+        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         {...props}
       />
     </Portal>

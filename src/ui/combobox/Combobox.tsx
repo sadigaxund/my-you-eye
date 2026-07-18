@@ -53,6 +53,7 @@ export function Combobox({
             !selectedLabel && "text-muted",
             className,
           )}
+          style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
           onClick={() => {
             setOpen(true);
             setTimeout(() => inputRef.current?.focus(), 0);

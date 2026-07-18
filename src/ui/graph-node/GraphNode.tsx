@@ -57,7 +57,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
       <div
         ref={ref}
         className={cn(graphNodeVariants({ variant }), className)}
-        style={{ left: x, top: y, height, ...style }}
+        style={{ backdropFilter: "blur(var(--backdrop-blur))", left: x, top: y, height, ...style }}
         {...props}
       >
         {header && (

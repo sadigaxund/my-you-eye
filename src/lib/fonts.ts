@@ -6,6 +6,7 @@ export const fontOptions = [
   { value: "titillium", label: "Titillium Web" },
   { value: "consolas", label: "Consolas" },
   { value: "jetbrains", label: "JetBrains Nerd" },
+  { value: "comic", label: "Comic Sans" },
 ] as const;
 
 export type FontMode = (typeof fontOptions)[number]["value"];

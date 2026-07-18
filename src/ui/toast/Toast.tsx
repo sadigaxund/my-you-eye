@@ -16,9 +16,9 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-border bg-bg text-fg",
-        success: "border-success bg-success text-bg",
-        danger: "border-danger bg-danger text-bg",
+        default: "border-border bg-surface-elevated text-fg",
+        success: "border-success bg-success text-primary-fg",
+        danger: "border-danger bg-danger text-primary-fg",
       },
     },
     defaultVariants: {
@@ -53,6 +53,7 @@ const ToastItem = forwardRef<React.ComponentRef<typeof Root>, ToastItemProps>(
     <Root
       ref={ref}
       className={cn(toastVariants({ variant }))}
+      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
       {...props}
     >
       <div className="flex flex-col gap-1">

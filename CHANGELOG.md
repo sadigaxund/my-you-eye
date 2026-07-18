@@ -2,36 +2,27 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.2.0] — 2026-07-18
 
 ### Added
 
-- **ConnectionLine component** — SVG path renderer for drawing lines between ports. Variants: `default | muted | highlighted | pending` (dashed). Exported `generatePath` utility for reuse in canvas.
-- **ScrollArea component** — custom-scrollbar wrapper (Firefox thin + webkit pseudo-elements) used across all scrollable surfaces in the project.
-- **Image component** — CVA variants for `fit`, `radius`, `aspect`, `bordered`, `shadowed`; optional `caption` renders `<figcaption>`.
-- **FileDrop component** — drag-and-drop file upload zone with drag-over/error/success states, file type/size validation, click-to-browse.
-- **Avatar showcase demos** — image grid with all sizes, fallback variants, colored ring frames (primary/success/warning), status dot overlays (online/away/offline).
-- **CellValue `image` type** — renders thumbnail (`size-8`, rounded border); click opens Dialog with full-size image preview.
-- **CellValue `audio` type** — play/pause button, seekable range slider, time display (`m:ss / m:ss`). Resets to position 0 on replay after end.
-- **CellValue `tree` type** — auto-converts objects/arrays into interactive TreeView inside a Popover. Leaf values auto-detect CellValue type (email, URL, number, boolean, etc.). Nested branches expand/collapse.
-- **Port drag-to-connect** — full interaction on Canvas: pointer down on port hit zone (`data-port` attribute), dashed preview line follows mouse via captured pointer events, drop on opposite-side port on different node creates connection. Right-click on a connection deletes it via 12px transparent hit stroke.
-- **Connection deletion (right-click)** — 12px-wide transparent hit stroke on SVG connection paths so right-click triggers deletion.
-- **Canvas real-time connection redraw** — `nodePositions` changed from `useRef` to `useState` so SVG paths update during drag.
-- **ConnectionLine `pending` variant** — dashed `stroke-dasharray:6 3` preview line shown during drag.
-
-### Added
-
+- **Glass theme** — `glass.css` profile with semi-transparent glass surfaces (15-65% opacity), 24px backdrop blur on surfaces, teal/neutral gradient background (light) / deep space with cyan-violet-magenta radial glows (dark), glass edge highlights via `inset box-shadow`. Multiple color-scheme iterations during development.
+- **Comic theme** — `comic.css` profile with cream/paper-like background (SVG noise filter texture), warm saturated colors, thick borders (`2px`), rounded corners, playful 3D drop shadows, Comic Sans font family via `--font-comic` token.
+- **Comic Sans font option** — `--font-comic` token in `tokens.css`, `[data-font="comic"]` rule in `globals.css`, selectable from the showcase header dropdown.
 - **Surface token layer** — `--color-surface`, `--color-surface-hover`, `--color-surface-active`, `--color-surface-elevated` tokens in `tokens.css` and all theme files, decoupling component surfaces from page background.
 
 ### Changed
 
+- **CellValue truncation** — all render paths (text, number, percentage, date, datetime, bytes, duration, status, tree fallback, default) now wrap text in `truncate` elements so content gets ellipsis when the column is too narrow.
+- **CellValue AudioDisplay** — replaced hardcoded pixel values `min-w-[200px]`, `w-[100px]` with Tailwind rem equivalents (`min-w-48`, `w-24`) so they respect user zoom.
+- **Toast variants** — default variant uses `bg-surface-elevated` instead of `bg-bg` (fixes invisible toast on transparent glass backgrounds); success/danger variants use `text-primary-fg` instead of `text-bg` for the same reason.
+- **Glass theme opacity** — `--color-surface-elevated` bumped from 30% → 65% opacity (light) and 25% → 55% opacity (dark) for readable overlay content while preserving frosted glass feel.
 - **Card** — background migrated from `bg-bg` to `bg-surface` (base surface token).
 - **Dialog, Drawer, Popover** — backgrounds migrated from `bg-bg` to `bg-surface-elevated` (elevated surface token).
 - **GraphNode** — background migrated from `bg-bg` to `bg-surface`.
-
-### Changed
-
-- **Single-source font list** — `src/lib/fonts.ts` is the canonical source; Typography showcase and header font picker consume it. Removed Meslo Nerd font and `--font-meslo-nerd` token.
+- **Glass theme** — multiple color scheme iterations (warm → cool blue → teal+neutral) based on feedback.
+- **Font selector priority** — `[data-font]` rules remain unlayered so font dropdown always overrides theme default fonts.
+- **Theme data attributes** — `[data-font]` selectors placed after theme `@import` statements so font selector takes priority.
 - **Typography showcase** — now programmatic: iterates `fontOptions`, uses inline `fontFamily: "var(--font-<name>)"` to bypass header `data-font` cascade.
 - **Toast backgrounds** — success/danger variants changed from translucent (`bg-success/10`) to solid (`bg-success text-bg`, `bg-danger text-bg`).
 - **GraphNode footer text** — changed from `"table"` to `"source"` in all variant demos.

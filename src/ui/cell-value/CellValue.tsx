@@ -63,13 +63,13 @@ function applyReplacements(str: string, replacements?: UrlReplacement[]) {
 function NumberDisplay({ value }: { value: unknown }) {
   const n = Number(value);
   if (isNaN(n)) return <span className="text-muted">—</span>;
-  return <span className="font-mono tabular-nums text-right block">{Intl.NumberFormat().format(n)}</span>;
+  return <span className="font-mono tabular-nums text-right block truncate">{Intl.NumberFormat().format(n)}</span>;
 }
 
 function PercentageDisplay({ value }: { value: unknown }) {
   const n = Number(value);
   if (isNaN(n)) return <span className="text-muted">—</span>;
-  return <span className="font-mono tabular-nums text-right block">{(n * 100).toFixed(1)}%</span>;
+  return <span className="font-mono tabular-nums text-right block truncate">{(n * 100).toFixed(1)}%</span>;
 }
 
 function DateDisplay({ value, showTime }: { value: unknown; showTime?: boolean }) {
@@ -78,7 +78,7 @@ function DateDisplay({ value, showTime }: { value: unknown; showTime?: boolean }
   const abs = showTime ? d.toLocaleString() : d.toLocaleDateString();
   const diff = Date.now() - d.getTime();
   const rel = diff < 60000 ? "just now" : diff < 3600000 ? `${Math.round(diff / 60000)}m ago` : diff < 86400000 ? `${Math.round(diff / 3600000)}h ago` : `${Math.round(diff / 86400000)}d ago`;
-  return <span title={abs} className="cursor-help">{rel}</span>;
+  return <span title={abs} className="cursor-help truncate inline-block max-w-full align-middle">{rel}</span>;
 }
 
 function BytesDisplay({ value }: { value: unknown }) {
@@ -87,7 +87,7 @@ function BytesDisplay({ value }: { value: unknown }) {
   const units = ["B", "KB", "MB", "GB", "TB"];
   let i = 0, s = n;
   while (s >= 1024 && i < units.length - 1) { s /= 1024; i++; }
-  return <span className="font-mono tabular-nums">{s.toFixed(1)} {units[i]}</span>;
+  return <span className="font-mono tabular-nums truncate inline-block max-w-full align-middle">{s.toFixed(1)} {units[i]}</span>;
 }
 
 function DurationDisplay({ value }: { value: unknown }) {
@@ -98,7 +98,7 @@ function DurationDisplay({ value }: { value: unknown }) {
   if (h > 0) parts.push(`${h}h`);
   if (m > 0) parts.push(`${m}m`);
   if (s > 0 || parts.length === 0) parts.push(`${s}s`);
-  return <span className="font-mono tabular-nums">{parts.join(" ")}</span>;
+  return <span className="font-mono tabular-nums truncate inline-block max-w-full align-middle">{parts.join(" ")}</span>;
 }
 
 function ImageDisplay({ value }: { value: unknown }) {
@@ -136,7 +136,7 @@ function AudioDisplay({ value }: { value: unknown }) {
   }, []);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
   return (
-    <span className="inline-flex items-center gap-2 text-xs min-w-[200px]" onClick={(e) => e.stopPropagation()}>
+    <span className="inline-flex items-center gap-2 text-xs min-w-48" onClick={(e) => e.stopPropagation()}>
       <audio ref={r} src={src} onTimeUpdate={() => setT(r.current?.currentTime ?? 0)} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
       <button type="button" onClick={toggle}
         className="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-fg cursor-pointer hover:opacity-80 transition-opacity">
@@ -145,7 +145,7 @@ function AudioDisplay({ value }: { value: unknown }) {
       </button>
       <input type="range" min={0} max={d || 1} step={0.1} value={t} onChange={seek}
         className="flex-1 h-1 accent-primary cursor-pointer" />
-      <span className="font-mono tabular-nums text-muted shrink-0 w-[100px] text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
+      <span className="font-mono tabular-nums text-muted shrink-0 w-24 text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
     </span>
   );
 }
@@ -190,7 +190,7 @@ function objToTreeNodes(obj: unknown, path = ""): TreeNode[] {
 }
 
 function TreeDisplay({ value, replacements }: { value: unknown; replacements?: UrlReplacement[] }) {
-  if (typeof value !== "object" || value === null) return <span>{String(value)}</span>;
+  if (typeof value !== "object" || value === null) return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
   const nodes = objToTreeNodes(value);
   const isArray = Array.isArray(value);
   const count = isArray ? value.length : Object.keys(value as object).length;
@@ -216,12 +216,13 @@ export function CellValue({
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
     case "boolean": return <BooleanDisplay value={value} />;
-    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline">{String(value)}</a>;
-    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline">
-      {applyReplacements(String(value), replacements)}<svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim"><path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" /></svg></a>;
+    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline inline-flex min-w-0"><span className="truncate">{String(value)}</span></a>;
+    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline min-w-0">
+      <span className="truncate">{applyReplacements(String(value), replacements)}</span>
+      <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim"><path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" /></svg></a>;
     case "json": return <JsonDisplay value={value} />;
     case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
-    case "status": return <span className="inline-flex items-center gap-1.5"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><span>{String(value)}</span></span>;
+    case "status": return <span className="inline-flex items-center gap-1.5 min-w-0"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><span className="truncate">{String(value)}</span></span>;
     case "number": return <NumberDisplay value={value} />;
     case "percentage": return <PercentageDisplay value={value} />;
     case "date": return <DateDisplay value={value} />;
@@ -232,6 +233,6 @@ export function CellValue({
     case "audio": return <AudioDisplay value={value} />;
     case "array": return <ArrayDisplay value={value} />;
     case "tree": return <TreeDisplay value={value} replacements={replacements} />;
-    default: return <span>{String(value)}</span>;
+    default: return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
   }
 }

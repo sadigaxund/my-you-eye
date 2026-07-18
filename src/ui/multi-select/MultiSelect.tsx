@@ -61,6 +61,7 @@ export function MultiSelect({
             selectedLabels.length === 0 && "text-muted",
             className,
           )}
+          style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         >
           {selectedLabels.length === 0 ? (
             placeholder

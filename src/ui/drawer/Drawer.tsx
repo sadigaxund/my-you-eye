@@ -35,7 +35,7 @@ const DrawerContent = forwardRef<React.ComponentRef<typeof Content>, DrawerConte
   ({ className, side, size, children, ...props }, ref) => (
     <Portal>
       <Overlay className={drawerOverlay} />
-      <Content ref={ref} className={cn(drawerContentVariants({ side, size }), className)} {...props}>
+      <Content ref={ref} className={cn(drawerContentVariants({ side, size }), className)} style={{ backdropFilter: "blur(var(--backdrop-blur))" }} {...props}>
         {children}
         <Close className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100">
           <svg viewBox="0 0 15 15" className="size-4 fill-current">

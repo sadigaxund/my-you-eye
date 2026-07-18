@@ -13,7 +13,7 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="flex justify-center">
         <Toolbar
-          search={<Input placeholder="Search orders..." size="sm" className="min-w-[220px]" />}
+          search={<Input placeholder="Search orders..." size="sm" className="min-w-56" />}
           filters={
             <>
               <Button size="sm" variant="secondary">Status</Button>

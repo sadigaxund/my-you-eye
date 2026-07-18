@@ -25,7 +25,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(cardVariants({ variant }), className)}
-      style={{ borderWidth: "var(--border-width)", ...style }}
+      style={{ backdropFilter: "blur(var(--backdrop-blur))", borderWidth: "var(--border-width)", ...style }}
       {...props}
     />
   ),

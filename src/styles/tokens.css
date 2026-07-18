@@ -49,6 +49,7 @@
   --font-titillium: "Titillium Web", "system-ui", sans-serif;
   --font-consolas: "Consolas", "Courier New", monospace;
   --font-jetbrains-nerd: "JetBrainsMono NF", "JetBrains Mono", monospace;
+  --font-comic: "Comic Sans MS", "Chalkboard SE", "Patrick Hand", "Marker Felt", cursive, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
