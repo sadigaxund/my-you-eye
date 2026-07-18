@@ -32,14 +32,14 @@ html[data-theme="glass"].dark {
 
 [data-theme="glass"] {
   /* Colors - Core & Text */
-  --color-bg: oklch(0.95 0.02 280 / 0.8);
+  --color-bg: oklch(0.92 0.03 280 / 0.8);
   --color-fg: oklch(0.20 0.04 290);
   --color-muted: oklch(0.45 0.04 290);
 
   /* Colors - Accents */
   --color-primary: oklch(0.55 0.22 290);
   --color-primary-fg: oklch(0.98 0 0);
-  --color-secondary: oklch(1 0 0 / 0.5);
+  --color-secondary: oklch(0.25 0.05 290 / 0.08);
   --color-secondary-fg: oklch(0.25 0.04 290);
 
   /* Colors - Semantic states */
@@ -50,10 +50,10 @@ html[data-theme="glass"].dark {
   --color-warning: oklch(0.75 0.18 75);
 
   /* Colors - Glass Surfaces */
-  --color-surface: oklch(1 0 0 / 0.65);
-  --color-surface-hover: oklch(1 0 0 / 0.75);
-  --color-surface-active: oklch(1 0 0 / 0.85);
-  --color-surface-elevated: oklch(1 0 0 / 0.80);
+  --color-surface: oklch(1 0 0 / 0.70);
+  --color-surface-hover: oklch(1 0 0 / 0.80);
+  --color-surface-active: oklch(1 0 0 / 0.90);
+  --color-surface-elevated: oklch(1 0 0 / 0.85);
 
   /* Colors - Utilities */
   --color-border: oklch(1 0 0 / 0.6);
@@ -82,28 +82,28 @@ html[data-theme="glass"].dark {
 
 [data-theme="glass"].dark {
   /* Colors - Core & Text */
-  --color-bg: oklch(0.12 0.03 290 / 0.8);
+  --color-bg: oklch(0.08 0.03 290 / 0.8);
   --color-fg: oklch(0.98 0 0);
   --color-muted: oklch(0.75 0.04 290);
 
   /* Colors - Accents */
-  --color-primary: oklch(0.70 0.18 290);
-  --color-primary-fg: oklch(0.1 0 0);
-  --color-secondary: oklch(0 0 0 / 0.4);
+  --color-primary: oklch(0.48 0.22 290);
+  --color-primary-fg: oklch(0.98 0 0);
+  --color-secondary: oklch(0.85 0.05 290 / 0.15);
   --color-secondary-fg: oklch(0.98 0 0);
 
   /* Colors - Semantic states */
   --color-danger: oklch(0.65 0.22 25);
-  --color-danger-fg: oklch(0.1 0 0);
+  --color-danger-fg: oklch(0.98 0 0);
   --color-success: oklch(0.70 0.20 150);
-  --color-success-fg: oklch(0.1 0 0);
+  --color-success-fg: oklch(0.98 0 0);
   --color-warning: oklch(0.80 0.20 75);
 
   /* Colors - Glass Surfaces */
-  --color-surface: oklch(0.15 0.05 290 / 0.50);
-  --color-surface-hover: oklch(0.15 0.05 290 / 0.65);
-  --color-surface-active: oklch(0.15 0.05 290 / 0.80);
-  --color-surface-elevated: oklch(0.15 0.05 290 / 0.65);
+  --color-surface: oklch(0.22 0.05 290 / 0.65);
+  --color-surface-hover: oklch(0.28 0.06 290 / 0.75);
+  --color-surface-active: oklch(0.35 0.06 290 / 0.85);
+  --color-surface-elevated: oklch(0.25 0.05 290 / 0.80);
 
   /* Colors - Utilities */
   --color-border: oklch(1 0 0 / 0.12);
