@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 54,
+  "count": 55,
   "components": [
     {
       "name": "Canvas",
@@ -84,8 +84,9 @@
           "badge",
           "boolean",
           "bytes",
-          "date",
-          "datetime",
+          "date-human",
+          "date-system",
+          "datetime-tz",
           "duration",
           "email",
           "image",
@@ -738,6 +739,17 @@
       ]
     },
     {
+      "name": "FilingTabs",
+      "group": "patterns",
+      "folder": "ui/patterns/filing-tabs",
+      "props": {},
+      "demos": [
+        "Default",
+        "Many tabs",
+        "First tab active"
+      ]
+    },
+    {
       "name": "FormField",
       "group": "patterns",
       "folder": "ui/patterns/form-field",
@@ -782,18 +794,24 @@
       "props": {
         "variant": [
           "elevated",
-          "neutral",
+          "ghost",
+          "primary",
           "surface"
         ],
-        "style": [
-          "soft"
+        "size": [
+          "sm"
         ]
       },
       "demos": [
         "Tuner",
-        "Material × Strength",
-        "Applied",
-        "Theme-driven"
+        "Paper grain",
+        "Frosted glass",
+        "Brushed aluminium",
+        "Paper grain — full matrix",
+        "Frosted glass — full matrix",
+        "Brushed aluminium — full matrix",
+        "Theme-driven",
+        "Composed"
       ]
     },
     {

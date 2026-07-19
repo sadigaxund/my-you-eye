@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**54 components** across 9 groups.
+**55 components** across 9 groups.
 
 ## canvas
 
@@ -25,7 +25,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `CellValue` | type: array / audio / badge / boolean / bytes / date / datetime / duration / email / image / json / null / number / percentage / status / text / tree / url | Data types in a table, foo, Project X, Numeric types |
+| `CellValue` | type: array / audio / badge / boolean / bytes / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / status / text / tree / url | Data types in a table, foo, Project X, Numeric types |
 | `DataList` | variant: compact | Default & Compact, Long values |
 | `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Default, Status variants, Striped + compact |
 | `Table` | align: right | Row ${i + 1}, Sticky header (scroll down) |
@@ -98,10 +98,11 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `ConfirmDialog` | variant: danger / secondary | Variants |
+| `FilingTabs` | — | Default, Many tabs, First tab active |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
 | `StatCard` | — | Default |
-| `TexturedSurface` | variant: elevated / neutral / surface<br>style: soft | Tuner, Material × Strength, Applied, Theme-driven |
+| `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 
 ## typography
