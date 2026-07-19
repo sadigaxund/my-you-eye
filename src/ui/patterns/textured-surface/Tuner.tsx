@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
-import type { TextureKey, SubMode } from "./svg-utils";
+import type { TextureKey } from "./svg-utils";
 import {
-  DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_FROSTED_GRAD, DEFAULT_METALLIC,
+  DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_METALLIC,
 } from "./svg-utils";
-import { PaperGrain, BrushedAluminium, FrostedGlassNoise, FrostedGlassGradient } from "./texture-factory";
+import { PaperGrain, BrushedAluminium, FrostedGlassNoise } from "./texture-factory";
 import type { Texture } from "./texture-factory";
 import { Preview } from "./Tuner.Preview";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../select";
@@ -52,41 +52,33 @@ function buildCode(texture: Texture, opacity: number): string {
 export function Tuner() {
   const [mode, setMode] = useState<"preview" | "code">("preview");
   const [activeTexture, setActiveTexture] = useState<TextureKey>("paper-grain");
-  const [subMode, setSubMode] = useState<SubMode>("blur");
   const [paper, setPaper] = useState<PaperState>(DEFAULT_PAPER);
   const [frostedBlur, setFrostedBlur] = useState<FrostedBlurState>(DEFAULT_FROSTED_BLUR);
-  const [frostedGrad, setFrostedGrad] = useState<FrostedGradState>(DEFAULT_FROSTED_GRAD);
   const [metallic, setMetallic] = useState<MetallicState>(DEFAULT_METALLIC);
 
   const texture = useMemo<Texture>(() => {
     switch (activeTexture) {
       case "paper-grain": return new PaperGrain(paper);
       case "brushed-aluminium": return new BrushedAluminium(metallic);
-      case "frosted-glass": return subMode === "blur" ? new FrostedGlassNoise(frostedBlur) : new FrostedGlassGradient(frostedGrad);
+      case "frosted-glass": return new FrostedGlassNoise(frostedBlur);
     }
-  }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
+  }, [activeTexture, paper, frostedBlur, metallic]);
 
   const stateOpacity = useMemo(() => {
     switch (activeTexture) {
       case "paper-grain": return paper.opacity;
       case "brushed-aluminium": return metallic.opacity;
-      case "frosted-glass": {
-        const s = subMode === "blur" ? frostedBlur : frostedGrad;
-        return s.opacity;
-      }
+      case "frosted-glass": return frostedBlur.opacity;
     }
-  }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
+  }, [activeTexture, paper, frostedBlur, metallic]);
 
   const stateTile = useMemo(() => {
     switch (activeTexture) {
       case "paper-grain": return paper.tile;
       case "brushed-aluminium": return metallic.tile;
-      case "frosted-glass": {
-        const s = subMode === "blur" ? frostedBlur : frostedGrad;
-        return s.tile;
-      }
+      case "frosted-glass": return frostedBlur.tile;
     }
-  }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
+  }, [activeTexture, paper, frostedBlur, metallic]);
 
   const tsxCode = useMemo(() =>
     buildCode(texture, stateOpacity), [texture, stateOpacity]);
@@ -131,52 +123,28 @@ export function Tuner() {
               onChange={updater(setMetallic, "stretch")} format={v => v.toFixed(1)} />
           </>}
           {activeTexture === "frosted-glass" && <>
-            <div className="flex gap-2 mb-3">
-              {(["blur", "gradient"] as SubMode[]).map(m => (
-                <button key={m} onClick={() => setSubMode(m)}
-                  className={`flex-1 px-2 py-1 text-xs rounded-ui border border-border
-                    ${subMode === m ? "bg-fg text-bg" : "bg-bg text-fg"}`}>
-                  {m === "blur" ? "Noise" : "Gradient"}
-                </button>
-              ))}
-            </div>
-            {subMode === "blur" ? <>
-              <Slider label="Noise frequency" value={frostedBlur.freq} min={0.003} max={0.05} step={0.001}
-                onChange={updater(setFrostedBlur, "freq")} format={v => v.toFixed(3)} />
-              <Slider label="Octaves" value={frostedBlur.octaves} min={1} max={4} step={1}
-                onChange={updater(setFrostedBlur, "octaves")} />
-              <Slider label="Contrast stretch" value={frostedBlur.stretch} min={1} max={6} step={0.1}
-                onChange={updater(setFrostedBlur, "stretch")} format={v => v.toFixed(1)} />
-            </> : <>
-              <Slider label="Feather (%)" value={frostedGrad.feather} min={20} max={90} step={1}
-                onChange={updater(setFrostedGrad, "feather")} />
-              <Slider label="Blob intensity" value={frostedGrad.blobOpacity} min={0.2} max={1} step={0.05}
-                onChange={updater(setFrostedGrad, "blobOpacity")} format={v => v.toFixed(2)} />
-            </>}
+            <Slider label="Noise frequency" value={frostedBlur.freq} min={0.003} max={0.05} step={0.001}
+              onChange={updater(setFrostedBlur, "freq")} format={v => v.toFixed(3)} />
+            <Slider label="Octaves" value={frostedBlur.octaves} min={1} max={4} step={1}
+              onChange={updater(setFrostedBlur, "octaves")} />
+            <Slider label="Contrast stretch" value={frostedBlur.stretch} min={1} max={6} step={0.1}
+              onChange={updater(setFrostedBlur, "stretch")} format={v => v.toFixed(1)} />
           </>}
           <hr className="border-border my-3" />
-          <Slider label="Tile size (px)" value={stateTile} min={60} max={500} step={10}
-            onChange={v => {
-              switch (activeTexture) {
-                case "paper-grain": setPaper(p => ({ ...p, tile: v })); break;
-                case "brushed-aluminium": setMetallic(p => ({ ...p, tile: v })); break;
-                case "frosted-glass": {
-                  if (subMode === "blur") setFrostedBlur(p => ({ ...p, tile: v }));
-                  else setFrostedGrad(p => ({ ...p, tile: v }));
-                  break;
+            <Slider label="Tile size (px)" value={stateTile} min={60} max={500} step={10}
+              onChange={v => {
+                switch (activeTexture) {
+                  case "paper-grain": setPaper(p => ({ ...p, tile: v })); break;
+                  case "brushed-aluminium": setMetallic(p => ({ ...p, tile: v })); break;
+                  case "frosted-glass": setFrostedBlur(p => ({ ...p, tile: v })); break;
                 }
-              }
-            }} />
+              }} />
           <Slider label="Layer opacity" value={stateOpacity} min={0.03} max={0.7} step={0.01}
             onChange={v => {
               switch (activeTexture) {
                 case "paper-grain": setPaper(p => ({ ...p, opacity: v })); break;
                 case "brushed-aluminium": setMetallic(p => ({ ...p, opacity: v })); break;
-                case "frosted-glass": {
-                  if (subMode === "blur") setFrostedBlur(p => ({ ...p, opacity: v }));
-                  else setFrostedGrad(p => ({ ...p, opacity: v }));
-                  break;
-                }
+                case "frosted-glass": setFrostedBlur(p => ({ ...p, opacity: v })); break;
               }
             }} format={v => v.toFixed(2)} />
         </div>

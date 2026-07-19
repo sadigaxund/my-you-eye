@@ -1,9 +1,9 @@
 import type { CSSProperties } from "react";
 import type {
-  PaperState, FrostedBlurState, FrostedGradState, MetallicState,
+  PaperState, FrostedBlurState, MetallicState,
 } from "./svg-utils";
 import {
-  paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg,
+  paperSvg, metallicSvg, frostedBlurSvg,
   tileableMetallicSvg, dataUri,
 } from "./svg-utils";
 
@@ -121,30 +121,5 @@ export class FrostedGlassNoise extends Texture {
   codeStyle(opacity: number): string {
     const json = JSON.stringify({ freq: this.p.freq, octaves: this.p.octaves, stretch: this.p.stretch, tile: this.tile });
     return `new FrostedGlassNoise(${json}).style(${opacity})`;
-  }
-}
-
-export class FrostedGlassGradient extends Texture {
-  readonly tile: number;
-  readonly uri: string;
-  readonly label = "Frosted Glass (Gradient)";
-  private svg: string;
-  private s: FrostedGradState;
-
-  constructor(s: FrostedGradState) {
-    super();
-    this.s = s;
-    this.tile = s.tile;
-    this.svg = frostedGradSvg(s);
-    this.uri = dataUri(this.svg);
-  }
-
-  style(opacity: number): LayerStyle {
-    return this.makeStyle(this.svg, this.tile, opacity);
-  }
-
-  codeStyle(opacity: number): string {
-    const json = JSON.stringify({ feather: this.s.feather, blobOpacity: this.s.blobOpacity, tile: this.tile });
-    return `new FrostedGlassGradient(${json}).style(${opacity})`;
   }
 }
