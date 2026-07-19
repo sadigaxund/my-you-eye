@@ -3,7 +3,7 @@ import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
-import { PAGE_MEDIUM_URI } from "../ui/patterns/textured-surface/svg-utils";
+import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_URI } from "../ui/patterns/textured-surface/svg-utils";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
@@ -49,6 +49,8 @@ export default function App() {
       el.dataset.theme = val;
       if (val === "comic") {
         el.style.setProperty("--texture-paper", `url("${PAGE_MEDIUM_URI}")`);
+      } else if (val === "glass") {
+        el.style.setProperty("--texture-paper", `url("${PAGE_MEDIUM_FROSTED_URI}")`);
       } else {
         el.style.removeProperty("--texture-paper");
       }
@@ -62,7 +64,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh text-fg">
-      <TexturedSurface texture="theme" layer="foreground" strength="subtle" color="--color-surface-elevated" variant="elevated" className="sticky top-0 z-50 flex items-center justify-between gap-inline border-b border-border px-panel py-3">
+      <TexturedSurface texture="theme" layer="foreground" strength="subtle" color="--color-surface-elevated" variant="elevated" className="flex items-center justify-between gap-inline border-b border-border px-panel py-3">
         <div className="flex items-center gap-inline">
           <button
             type="button"

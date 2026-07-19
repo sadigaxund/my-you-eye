@@ -29,7 +29,7 @@ export function Sidebar({ activeSlug, onSelect, mobileOpen, onCloseMobile }: Sid
       className={cn(
         "shrink-0 border-0 lg:sticky lg:top-0 lg:block lg:h-dvh lg:w-64 lg:border-r lg:border-border",
         mobileOpen
-          ? "block fixed inset-x-0 top-[57px] bottom-0 z-40 border-b border-border"
+          ? "block fixed inset-x-0 top-0 bottom-0 z-40 border-b border-border"
           : "hidden",
       )}
     >

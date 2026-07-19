@@ -1,23 +1,15 @@
 /* =========================================
    HTML Background Gradients (Mesh Effect)
    ========================================= */
-/* Rendered on a fixed-position, pointer-events:none, NON-transforming
-   pseudo-element rather than `background-attachment: fixed` on html. A
-   fixed-attachment background is re-evaluated as part of html's own paint,
-   which is exactly what backdrop-filter has to resample every time anything
-   composites nearby (e.g. Canvas panning) — see AGENTS.md §7 "Canvas drag
-   performance contract" and the "never background-attachment: fixed" rule
-   in §0. A `position: fixed` pseudo-element is its own composited layer: it
-   never moves, never repaints on scroll/drag, and backdrop-filter can
-   sample it cheaply. */
+/* The mesh gradient sits on the `html` element itself as a plain background
+   (never `background-attachment: fixed` — see AGENTS.md §0/§7). The frosted
+   glass texture overlay is rendered on a fixed-position, pointer-events:none
+   `::before` pseudo-element at z-index:-1, which composites on top of the
+   mesh but behind the body content — same pattern as the comic theme's
+   paper-grain page overlay. */
 
 /* Light Mode Mesh Background */
-html[data-theme="glass"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+html[data-theme="glass"] {
   background-color: oklch(0.95 0.02 280);
   background-image:
     radial-gradient(circle at 0% 0%, oklch(0.88 0.12 230) 0px, transparent 50%),
@@ -28,7 +20,7 @@ html[data-theme="glass"]::before {
 }
 
 /* Dark Mode Mesh Background */
-html[data-theme="glass"].dark::before {
+html[data-theme="glass"].dark {
   background-color: oklch(0.12 0.03 290);
   background-image:
     radial-gradient(circle at 0% 0%, oklch(0.35 0.15 280) 0px, transparent 50%),
@@ -37,6 +29,26 @@ html[data-theme="glass"].dark::before {
     radial-gradient(circle at 0% 100%, oklch(0.20 0.10 350) 0px, transparent 50%);
   background-size: cover;
 }
+
+/* Frosted glass texture overlay — sits between the mesh background and body
+   content. Uses the shared --texture-paper / --texture-size / --texture-opacity
+   / --texture-blend tokens so the showcase sets the SVG via JS (same factory
+   pattern as the comic theme). */
+html[data-theme="glass"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--texture-paper);
+  background-size: var(--texture-size);
+  background-repeat: repeat;
+  opacity: var(--texture-opacity);
+  mix-blend-mode: var(--texture-blend);
+}
+
+/* No ::before dark variant needed — the texture overlay is the same in both
+   modes; only the html background changes. */
 
 /* =========================================
    Theme Tokens
@@ -96,9 +108,10 @@ html[data-theme="glass"].dark::before {
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
 
-  --texture-opacity: 0;
-  --texture-opacity-surface: 0;
-  --texture-blend: multiply;
+  --texture-size: 400px;
+  --texture-opacity: 0.22;
+  --texture-opacity-surface: 0.15;
+  --texture-blend: hard-light;
 }
 
 [data-theme="glass"].dark {

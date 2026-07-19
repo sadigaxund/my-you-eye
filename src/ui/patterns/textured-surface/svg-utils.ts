@@ -208,6 +208,10 @@ function fAssets(freq: number, octaves: number, stretch: number, tile: number, s
     this via JS rather than hardcoding SVG strings in CSS. */
 export const PAGE_MEDIUM_URI = pAssets(0.12, 3, 2.4, 170, 111).primary;
 
+/** Pre-generated page.medium frosted-glass SVG data URI — tileable low-frequency
+    noise for a subtle frosted page overlay. Used by the glass theme. */
+export const PAGE_MEDIUM_FROSTED_URI = dataUri(frostedBlurSvg({ freq: 0.003, octaves: 2, stretch: 2.6, tile: 400, opacity: 0 }));
+
 const layerPaper: LayerMap = {
   page: {
     subtle:  pAssets(0.16, 4, 2.0, 140, 91),

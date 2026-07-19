@@ -28,14 +28,25 @@ function parseDate(value: unknown): Date | null {
 export function DateHumanDisplay({ value }: { value: unknown }) {
   const d = parseDate(value);
   if (!d) return <span className="text-muted">—</span>;
-  return <span title={d.toLocaleString()} className="cursor-help truncate inline-block max-w-full align-middle">{relativeTime(d)}</span>;
+  return <span title={d.toLocaleString()} className="cursor-help truncate inline-block max-w-full align-middle font-medium text-primary">{relativeTime(d)}</span>;
 }
 
 export function DateSystemDisplay({ value, dateFormat }: { value: unknown; dateFormat?: Intl.DateTimeFormatOptions }) {
   const d = parseDate(value);
   if (!d) return <span className="text-muted">—</span>;
   const fmt = dateFormat ?? { year: "numeric", month: "short", day: "numeric" };
-  return <span className="truncate inline-block max-w-full align-middle">{d.toLocaleDateString(undefined, fmt)}</span>;
+  const parts = new Intl.DateTimeFormat(undefined, fmt).formatToParts(d);
+  return (
+    <span className="truncate inline-block max-w-full align-middle tabular-nums">
+      {parts.map((part, i) => {
+        if (part.type === "year" || part.type === "weekday")
+          return <span key={i} className="text-muted text-xs">{part.value}</span>;
+        if (part.type === "literal")
+          return <span key={i}>{part.value}</span>;
+        return <span key={i} className="font-medium">{part.value}</span>;
+      })}
+    </span>
+  );
 }
 
 function tzOffset(d: Date): string {
@@ -51,10 +62,22 @@ export function DateTimeTzDisplay({ value }: { value: unknown }) {
   const iso = d.toISOString();
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const offset = tzOffset(d);
-  const compact = d.toLocaleString(undefined, {
-    month: "short", day: "numeric", year: "numeric",
-    hour: "numeric", minute: "2-digit",
-  }) + ` ${offset}`;
   const meta = `${iso}\n${tzName} (${offset})\n${relativeTime(d)}`;
-  return <span title={meta} className="cursor-help truncate inline-block max-w-full align-middle">{compact}</span>;
+  const dateParts = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).formatToParts(d);
+  const timeStr = d.toLocaleString(undefined, { hour: "numeric", minute: "2-digit" });
+  return (
+    <span title={meta} className="cursor-help truncate inline-flex items-center gap-1.5 max-w-full tabular-nums align-middle">
+      <span className="text-muted text-xs/none">
+        {dateParts.map((part, i) => {
+          if (part.type === "year")
+            return <span key={i} className="text-muted">{part.value}</span>;
+          if (part.type === "literal")
+            return <span key={i}>{part.value}</span>;
+          return <span key={i} className="font-medium">{part.value}</span>;
+        })}
+      </span>
+      <span className="font-semibold">{timeStr}</span>
+      <span className="inline-flex items-center rounded-sm px-1 py-0.5 text-xs/none leading-none bg-muted/10 text-muted font-mono">{offset}</span>
+    </span>
+  );
 }

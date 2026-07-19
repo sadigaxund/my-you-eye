@@ -4,7 +4,21 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **CellValue date display visual hierarchy** — three date subcomponents redesigned for scanability:
+  - `DateSystemDisplay` now uses `Intl.DateTimeFormat.formatToParts()` to style month+day at `font-medium` with the year/wkday at `text-muted text-xs` — the comma stays, but hierarchy comes from weight/color not separators. `tabular-nums` on all digits.
+  - `DateTimeTzDisplay` splits into three visually distinct zones: compact muted date (same treatment as DateSystem), `font-semibold` time as the anchor, and the timezone offset in a small `bg-muted/10` pill badge.
+  - `DateHumanDisplay` relative string now renders at `font-medium text-primary` so it has presence in the column.
+
+### Fixed
+
+- **Showcase header overlap** — removed `sticky top-0 z-50` from the header so it stays in normal flow instead of floating over sidebar/main content when scrolling. Mobile sidebar `top-[57px]` → `top-0` since the header is no longer fixed.
+
 ### Added
+
+- **`PAGE_MEDIUM_FROSTED_URI`** — new export in `svg-utils.ts` providing a tileable frosted-glass SVG data URI for page-level overlay, parallel to `PAGE_MEDIUM_URI`.
+- **Glass theme frosted page texture** — mesh gradient moved from `::before` to `html[data-theme="glass"]` background; a new `::before` overlays frosted-glass noise using the `--texture-*` token system (same pattern as comic). Tokens: `--texture-opacity: 0.22`, `--texture-opacity-surface: 0.15`, `--texture-blend: hard-light`, `--texture-size: 400px`.
 
 - **`TexturedSurface.ParamTable`** — static subcomponent that renders a 3×3 layer×strength matrix for any texture. Each cell shows the combination as a small textured badge. Enables copyable one-liner showcase demos (`<TexturedSurface.ParamTable texture="paper-grain" />`) instead of loops in the code view.
 - **`TexturedSurface` showcase redesigned** — single-instance demos per texture (paper-grain, frosted-glass, brushed-aluminium) with literal JSX for direct copy-paste. `render: () => <Tuner />` fix so the code extractor sees JSX, not a named function reference.
