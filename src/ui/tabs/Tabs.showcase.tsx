@@ -35,6 +35,21 @@ const entry: ShowcaseEntry = {
         </Tabs>
       ),
     },
+    {
+      name: "Filing",
+      render: () => (
+        <Tabs defaultValue="tab2" variant="filing">
+          <TabsList>
+            <TabsTrigger value="tab1">Account</TabsTrigger>
+            <TabsTrigger value="tab2">Billing</TabsTrigger>
+            <TabsTrigger value="tab3">Notifications</TabsTrigger>
+          </TabsList>
+          <TabsContent value="tab1"><p className="text-sm text-muted">Account settings here.</p></TabsContent>
+          <TabsContent value="tab2"><p className="text-sm text-muted">Billing settings — active tab merges seamlessly into this panel.</p></TabsContent>
+          <TabsContent value="tab3"><p className="text-sm text-muted">Notification preferences here.</p></TabsContent>
+        </Tabs>
+      ),
+    },
   ],
 };
 export default entry;

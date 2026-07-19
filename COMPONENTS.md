@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**55 components** across 9 groups.
+**54 components** across 9 groups.
 
 ## canvas
 
@@ -25,7 +25,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `CellValue` | type: array / audio / badge / boolean / bytes / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / status / text / tree / url | Data types in a table, foo, Project X, Numeric types |
+| `CellValue` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data types in a table, foo, Project X, Numeric types |
 | `DataList` | variant: compact | Default & Compact, Long values |
 | `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Default, Status variants, Striped + compact |
 | `Table` | align: right | Row ${i + 1}, Sticky header (scroll down) |
@@ -80,7 +80,7 @@ import "my-you-eye/styles.css";
 |---|---|---|
 | `Breadcrumbs` | — | Default, Custom separator |
 | `Pagination` | — | Default (10 pages), Few pages |
-| `Tabs` | variant: pills / underline | Underline, Pills |
+| `Tabs` | variant: filing / pills / underline | Underline, Pills, Filing |
 
 ## overlay
 
@@ -98,7 +98,6 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `ConfirmDialog` | variant: danger / secondary | Variants |
-| `FilingTabs` | — | Default, Many tabs, First tab active |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
 | `StatCard` | — | Default |

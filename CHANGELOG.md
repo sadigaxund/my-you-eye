@@ -24,7 +24,15 @@ All notable changes to this project are documented here.
 
 - **Showcase header overlap** — removed `sticky top-0 z-50` from the header so it stays in normal flow instead of floating over sidebar/main content when scrolling. Mobile sidebar `top-[57px]` → `top-0` since the header is no longer fixed.
 
+### Removed
+
+- **`FilingTabs` standalone component** — deleted `src/ui/patterns/filing-tabs/`. Filing tab visual is now a variant of `Tabs` (`variant="filing"`), not a separate component tree.
+
 ### Changed
+
+- **`Tabs` now threads `variant` via context** — `Tabs` (Root) accepts a `variant` prop that propagates to `TabsList`, `TabsTrigger`, and `TabsContent` via React context. Sub-components still accept an explicit `variant` prop that overrides the context value. Existing `"underline"` and `"pills"` variants are unchanged.
+- **New `Tabs variant="filing"`** — file-folder-style tabs with seamless active-tab-to-panel merge via background-match + `-mt-px` overlap. Tab bar is `width: fit-content; max-width: 100%` (content-width, no full-width stretch) with `overflow-x: auto` for many-tab scrolling. Inactive triggers use `translate-y-[2px]` to sit behind the active tab. `scrollIntoView` on focus ensures keyboard-navigated tabs are visible. Replaces the former `FilingTabs` component.
+- **`Tabs.showcase.tsx`** — adds single "Filing" demo (replaces three identical FilingTabs demos from the deleted component).
 
 - **CellValue JSON and Tree previews** — both types rewritten for meaningful scanability:
   - `json` no longer shows a raw 50-char `JSON.stringify()` slice. Instead, renders first 3 key:value pairs (or array items) with syntax-colored tokens via a hand-rolled tokenizer: keys in `text-secondary`, string/number/boolean values in `text-primary font-medium` (anchor), nulls in `text-muted italic`, punctuation in `text-muted`, nested objects/arrays collapsed to `{N}`/`[N]` pills. A `Badge` pill shows `N keys` or `N items`. Empty objects/arrays show `empty` in muted italic. Circular references and BigInt handled safely via a `WeakSet`-tracking replacer.

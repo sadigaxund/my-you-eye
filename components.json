@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 55,
+  "count": 54,
   "components": [
     {
       "name": "Canvas",
@@ -84,6 +84,7 @@
           "badge",
           "boolean",
           "bytes",
+          "currency",
           "date-human",
           "date-system",
           "datetime-tz",
@@ -94,6 +95,7 @@
           "null",
           "number",
           "percentage",
+          "signed",
           "status",
           "text",
           "tree",
@@ -613,13 +615,15 @@
       "folder": "ui/tabs",
       "props": {
         "variant": [
+          "filing",
           "pills",
           "underline"
         ]
       },
       "demos": [
         "Underline",
-        "Pills"
+        "Pills",
+        "Filing"
       ]
     },
     {
@@ -736,17 +740,6 @@
       },
       "demos": [
         "Variants"
-      ]
-    },
-    {
-      "name": "FilingTabs",
-      "group": "patterns",
-      "folder": "ui/patterns/filing-tabs",
-      "props": {},
-      "demos": [
-        "Default",
-        "Many tabs",
-        "First tab active"
       ]
     },
     {
