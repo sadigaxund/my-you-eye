@@ -13,14 +13,14 @@ export function DemoSection({ demo }: { demo: RegistryDemo }) {
   };
 
   return (
-    <section className="mb-10">
-      <div className="flex items-center justify-between gap-inline mb-3">
-        <div>
-          <h3 className="text-sm font-medium text-fg">{demo.name}</h3>
-          {demo.description && (
-            <p className="text-sm text-muted mt-1">{demo.description}</p>
-          )}
-        </div>
+    <section className="mb-12">
+      <div className="mb-2">
+        <h3 className="inline-flex flex-col text-xs uppercase tracking-widest font-semibold text-fg before:content-[''] before:w-full before:h-px before:bg-border before:mb-1.5">
+          {demo.name}
+        </h3>
+        {demo.description && (
+          <p className="text-xs text-muted mt-1 max-w-[36ch]">{demo.description}</p>
+        )}
       </div>
 
       {hasSource ? (

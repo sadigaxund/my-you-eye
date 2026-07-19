@@ -58,12 +58,21 @@ export function metallicSvg(s: MetallicState): string {
 </svg>`.trim();
 }
 
+function cmRow(stretch: number, offset: string): string {
+  return `${stretch} 0 0 0 ${offset}`;
+}
+
 export function frostedBlurSvg(s: FrostedBlurState): string {
   const o = offset(s.stretch);
+  const row = cmRow(s.stretch, o);
+  const fineFreq = s.freq * 3;
+  const fineOctaves = 2;
   return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
-<filter id='f' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
-<feColorMatrix type='matrix' values='${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} 1 0 0 0 0'/>
+<filter id='f' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'/>
+<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'/>
+<feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
+<feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
 </filter>
 <rect width='100%' height='100%' filter='url(#f)'/>
 </svg>`.trim();
@@ -121,10 +130,15 @@ ${blobs.map(b => wrappedBlobRects(b.id, t)).join("")}
 
 export function fullFrostedSvg(s: FrostedBlurState): string {
   const o = offset(s.stretch);
+  const row = cmRow(s.stretch, o);
+  const fineFreq = s.freq * 3;
+  const fineOctaves = 2;
   return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
-<filter id='ff' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}'/>
-<feColorMatrix type='matrix' values='${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} 1 0 0 0 0'/>
+<filter id='ff' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'/>
+<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'/>
+<feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
+<feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
 </filter>
 <rect width='100%' height='100%' filter='url(#ff)'/>
 </svg>`.trim();
