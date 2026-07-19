@@ -790,10 +790,10 @@
         ]
       },
       "demos": [
-        "Theme-driven (default)",
-        "Texture × Strength matrix",
-        "Custom colors + paper texture",
-        "Radii"
+        "Tuner",
+        "Material × Strength",
+        "Applied",
+        "Theme-driven"
       ]
     },
     {

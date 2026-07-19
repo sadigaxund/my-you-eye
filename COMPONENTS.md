@@ -101,7 +101,7 @@ import "my-you-eye/styles.css";
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
 | `StatCard` | — | Default |
-| `TexturedSurface` | variant: elevated / neutral / surface<br>style: soft | Theme-driven (default), Texture × Strength matrix, Custom colors + paper texture, Radii |
+| `TexturedSurface` | variant: elevated / neutral / surface<br>style: soft | Tuner, Material × Strength, Applied, Theme-driven |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 
 ## typography

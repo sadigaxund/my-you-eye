@@ -2,20 +2,20 @@ import { forwardRef, useMemo, type HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/cn";
 
-const SVG_PAPER = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E";
-const SVG_FROSTED = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E";
-const SVG_METALLIC = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6 0.006' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E";
+const SVG_PAPER = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E";
+const SVG_FROSTED = "data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E";
+const SVG_METALLIC = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='m' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6 0.01' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E";
 
 const TEXTURE_PROPS: Record<string, { url: string; size: string; blend: string }> = {
-  paper:    { url: SVG_PAPER,    size: "150px", blend: "normal" },
-  frosted:  { url: SVG_FROSTED,  size: "200px", blend: "normal" },
-  metallic: { url: SVG_METALLIC, size: "200px", blend: "normal" },
+  paper:    { url: SVG_PAPER,    size: "150px", blend: "hard-light" },
+  frosted:  { url: SVG_FROSTED,  size: "300px", blend: "hard-light" },
+  metallic: { url: SVG_METALLIC, size: "200px", blend: "hard-light" },
 };
 
 const TEXTURE_STRENGTHS: Record<string, Record<string, number>> = {
-  paper:    { subtle: 0.35, medium: 0.60, strong: 0.90 },
-  frosted:  { subtle: 0.20, medium: 0.35, strong: 0.50 },
-  metallic: { subtle: 0.25, medium: 0.45, strong: 0.70 },
+  paper:    { subtle: 0.30, medium: 0.50, strong: 0.75 },
+  frosted:  { subtle: 0.18, medium: 0.30, strong: 0.48 },
+  metallic: { subtle: 0.15, medium: 0.28, strong: 0.45 },
 };
 
 const texturedSurfaceVariants = cva(
@@ -80,7 +80,7 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
               backgroundImage: `url("${explicitTexture.url}")`,
               backgroundSize: explicitTexture.size,
               opacity: explicitTexture.opacity,
-              mixBlendMode: explicitTexture.blend as React.CSSProperties["mixBlendMode"],
+              ...(explicitTexture.blend !== "normal" ? { mixBlendMode: explicitTexture.blend as React.CSSProperties["mixBlendMode"] } : {}),
             }}
           />
           <div className="relative">{children}</div>
