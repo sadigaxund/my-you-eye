@@ -6,7 +6,7 @@ const items = [
   { label: "Email", value: "john@example.com", type: "email" as const },
   { label: "Active", value: true, type: "boolean" as const },
   { label: "Role", value: "Admin", type: "badge" as const, badgeVariant: "primary" as const },
-  { label: "Status", value: "Online", type: "badge" as const, badgeVariant: "success" as const },
+  { label: "Status", value: "Online", type: "status" as const, statusVariant: "success" as const, statusPulse: true },
   { label: "Website", value: "https://example.com/john", type: "url" as const, replacements: [{ pattern: "john", label: "..." }] },
 ];
 

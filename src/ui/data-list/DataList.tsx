@@ -46,11 +46,11 @@ const DataList = forwardRef<HTMLDListElement, DataListProps>(
         <div
           key={i}
           className={cn(
-            "flex items-center justify-between gap-4 min-w-0",
+            "flex items-center gap-4 min-w-0",
             variant === "compact" ? "py-1 px-2" : "py-2 px-3",
           )}
         >
-          <dt className="flex shrink-0 items-center gap-2 text-sm text-muted">
+          <dt className="flex w-36 shrink-0 items-center gap-2 text-sm text-muted">
             {item.icon && <span className="shrink-0">{item.icon}</span>}
             {item.label}
           </dt>

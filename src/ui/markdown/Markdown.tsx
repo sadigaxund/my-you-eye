@@ -11,7 +11,8 @@ type Block =
   | { type: "heading"; level: number; text: string }
   | { type: "paragraph"; text: string }
   | { type: "list"; items: string[] }
-  | { type: "code"; code: string }
+  | { type: "code"; code: string; language?: string }
+  | { type: "table"; headers: string[]; rows: string[][] }
   | { type: "empty" };
 
 function escapeHtml(text: string): string {
@@ -68,6 +69,7 @@ function parseBlocks(content: string): Block[] {
     }
 
     if (line.startsWith("```")) {
+      const language = line.slice(3).trim() || undefined;
       const codeLines: string[] = [];
       i++;
       while (i < lines.length && !lines[i].startsWith("```")) {
@@ -75,7 +77,23 @@ function parseBlocks(content: string): Block[] {
         i++;
       }
       i++;
-      blocks.push({ type: "code", code: codeLines.join("\n") });
+      blocks.push({ type: "code", code: codeLines.join("\n"), language });
+      continue;
+    }
+
+    if (line.startsWith("|")) {
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].startsWith("|")) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      if (tableLines.length >= 2 && /^[\s|:-]+$/.test(tableLines[1])) {
+        const parseRow = (row: string) =>
+          row.split("|").slice(1, -1).map((c) => c.trim());
+        const headers = parseRow(tableLines[0]);
+        const rows = tableLines.slice(2).map(parseRow);
+        blocks.push({ type: "table", headers, rows });
+      }
       continue;
     }
 
@@ -133,7 +151,32 @@ export function Markdown({ content, className, ...props }: MarkdownProps) {
               </ul>
             );
           case "code":
-            return <CodeBlock key={i} code={block.code} />;
+            return <CodeBlock key={i} code={block.code} language={block.language} />;
+          case "table":
+            return (
+              <div key={i} className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  {block.headers.length > 0 && (
+                    <thead>
+                      <tr>
+                        {block.headers.map((h, j) => (
+                          <th key={j} className="border border-border px-3 py-2 text-left font-semibold text-fg text-xs uppercase tracking-wider">{renderInline(h)}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                  )}
+                  <tbody>
+                    {block.rows.map((row, j) => (
+                      <tr key={j}>
+                        {row.map((c, k) => (
+                          <td key={k} className="border border-border px-3 py-1.5 text-fg">{renderInline(c)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
           default:
             return null;
         }
