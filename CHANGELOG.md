@@ -6,6 +6,15 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- **CellValue numeric display visual hierarchy** — all numeric types refactored to use `Intl.NumberFormat.formatToParts()` with per-part styling via a `styledParts` helper:
+  - `number` — integer at `font-medium`, decimal/fraction at `text-muted text-xs`, grouping commas dimmed.
+  - `percentage` — uses `style: "percent"` (locale-aware `%` placement), value anchored, `%` sign at `text-muted text-xs`.
+  - `bytes` — auto-selects unit (B/KB/MB/GB/TB) then renders value at `font-medium` with unit at `text-muted text-xs` via `style: "unit"`.
+  - `duration` — coarsest unit at `font-medium`, finer units at `text-muted text-xs` with muted spacing between.
+  - `currency` — new type using `style: "currency"` (default USD), amount anchored, currency symbol at `text-muted text-xs`. Fraction and grouping also dimmed.
+  - `signed` — new type with up-arrow icon + `text-success` for positive, down-arrow + `text-danger` for negative, value anchored at `font-semibold`.
+  - `compact` — new opt-in prop on `number`, `bytes`, and `currency` types: passes `notation: "compact"` to `Intl.NumberFormat` (e.g. `1.2M`). The compact suffix renders at `text-muted text-xs`.
+
 - **CellValue date display visual hierarchy** — three date subcomponents redesigned for scanability:
   - `DateSystemDisplay` now uses `Intl.DateTimeFormat.formatToParts()` to style month+day at `font-medium` with the year/wkday at `text-muted text-xs` — the comma stays, but hierarchy comes from weight/color not separators. `tabular-nums` on all digits.
   - `DateTimeTzDisplay` splits into three visually distinct zones: compact muted date (same treatment as DateSystem), `font-semibold` time as the anchor, and the timezone offset in a small `bg-muted/10` pill badge.

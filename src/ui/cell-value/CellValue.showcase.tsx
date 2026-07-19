@@ -56,6 +56,12 @@ const entry: ShowcaseEntry = {
             <TableRow><TableCell>Date (System)</TableCell><TableCell><CellValue type="date-system" value="2026-07-17" /></TableCell></TableRow>
             <TableRow><TableCell>Date (System - custom)</TableCell><TableCell><CellValue type="date-system" value="2026-07-17" dateFormat={{ weekday: "long", year: "numeric", month: "long", day: "numeric" }} /></TableCell></TableRow>
             <TableRow><TableCell>DateTime TZ</TableCell><TableCell><CellValue type="datetime-tz" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
+            <TableRow><TableCell>Currency</TableCell><TableCell><CellValue type="currency" value={1234.56} /></TableCell></TableRow>
+            <TableRow><TableCell>Currency (compact)</TableCell><TableCell><CellValue type="currency" value={1234567.89} compact /></TableCell></TableRow>
+            <TableRow><TableCell>Signed</TableCell><TableCell><CellValue type="signed" value={42.5} /></TableCell></TableRow>
+            <TableRow><TableCell>Signed negative</TableCell><TableCell><CellValue type="signed" value={-17.3} /></TableCell></TableRow>
+            <TableRow><TableCell>Number (compact)</TableCell><TableCell><CellValue type="number" value={1234567} compact /></TableCell></TableRow>
+            <TableRow><TableCell>Bytes (compact)</TableCell><TableCell><CellValue type="bytes" value={1073741824} compact /></TableCell></TableRow>
             <TableRow><TableCell>Array</TableCell><TableCell><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
           </TableBody>
         </Table>
