@@ -5,7 +5,7 @@ export interface FrostedBlurState {
   freq: number; octaves: number; stretch: number; tile: number; opacity: number; seed?: number;
 }
 export interface FrostedGradState {
-  feather: number; blobOpacity: number; tile: number; opacity: number;
+  feather: number; blobOpacity: number; tile: number; opacity: number; seed?: number;
 }
 export interface MetallicState {
   freqX: number; freqY: number; angle: number; octaves: number; stretch: number; tile: number; opacity: number;
@@ -16,7 +16,7 @@ export type SubMode = "blur" | "gradient";
 
 export const DEFAULT_PAPER: PaperState = { freq: 0.35, octaves: 3, stretch: 2.6, tile: 200, opacity: 0.18 };
 export const DEFAULT_FROSTED_BLUR: FrostedBlurState = { freq: 0.01, octaves: 2, stretch: 2.2, tile: 300, opacity: 0.30 };
-export const DEFAULT_FROSTED_GRAD: FrostedGradState = { feather: 55, blobOpacity: 0.8, tile: 280, opacity: 0.30 };
+export const DEFAULT_FROSTED_GRAD: FrostedGradState = { feather: 55, blobOpacity: 0.8, tile: 280, opacity: 0.30, seed: 1 };
 export const DEFAULT_METALLIC: MetallicState = { freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0.22 };
 
 export const MIN_FROSTED_CYCLES = 10;
@@ -26,13 +26,7 @@ export function genFrostedTile(tile: number, freq: number): number {
 }
 
 export function dataUri(svg: string): string {
-  return `data:image/svg+xml,${encodeSvg(svg)}`;
-}
-
-function encodeSvg(svg: string): string {
-  return svg.trim().replace(/\s+/g, " ")
-    .replace(/"/g, "'").replace(/%/g, "%25")
-    .replace(/#/g, "%23").replace(/</g, "%3C").replace(/>/g, "%3E");
+  return `data:image/svg+xml,${svg.trim().replace(/\s+/g, " ").replace(/"/g, "'").replace(/%/g, "%25").replace(/#/g, "%23").replace(/</g, "%3C").replace(/>/g, "%3E")}`;
 }
 
 function offset(stretch: number): string {
@@ -64,13 +58,9 @@ export function metallicSvg(s: MetallicState): string {
 </svg>`.trim();
 }
 
-function cmRow(stretch: number, offset: string): string {
-  return `${stretch} 0 0 0 ${offset}`;
-}
-
 function frostedSvgBody(fid: string, s: FrostedBlurState): string {
   const o = offset(s.stretch);
-  const row = cmRow(s.stretch, o);
+  const row = `${s.stretch} 0 0 0 ${o}`;
   const fineFreq = s.freq * 3;
   const seedAttr = s.seed != null ? ` seed='${s.seed}'` : "";
   const gt = genFrostedTile(s.tile, s.freq);
@@ -121,16 +111,27 @@ function wrappedBlobRects(id: string, t: number): string {
 
 export function frostedGradSvg(s: FrostedGradState): string {
   const f = s.feather, op = s.blobOpacity, t = s.tile;
-  const blobs: BlobSpec[] = [
-    { id: "g1", cx: 0.28, cy: 0.24, r: 0.55, color: "white",
-      stops: [{ offset: 0, opacity: op }, { offset: f, opacity: +(op * 0.4).toFixed(2) }, { offset: 100, opacity: 0 }] },
-    { id: "g2", cx: 0.78, cy: 0.68, r: 0.60, color: "black",
-      stops: [{ offset: 0, opacity: op }, { offset: f, opacity: +(op * 0.4).toFixed(2) }, { offset: 100, opacity: 0 }] },
-    { id: "g3", cx: 0.65, cy: 0.15, r: 0.40, color: "white",
-      stops: [{ offset: 0, opacity: +(op * 0.7).toFixed(2) }, { offset: 100, opacity: 0 }] },
-    { id: "g4", cx: 0.15, cy: 0.80, r: 0.45, color: "black",
-      stops: [{ offset: 0, opacity: +(op * 0.7).toFixed(2) }, { offset: 100, opacity: 0 }] },
-  ];
+  let blobs: BlobSpec[];
+  if (s.seed != null) {
+    let sd = s.seed;
+    const rand = () => { sd |= 0; sd = (sd + 0x6D2B79F5) | 0; let tm = Math.imul(sd ^ (sd >>> 15), 1 | sd); tm = (tm + Math.imul(tm ^ (tm >>> 7), 61 | tm)) ^ tm; return ((tm ^ (tm >>> 14)) >>> 0) / 4294967296; };
+    blobs = Array.from({ length: 10 }, (_, i) => ({
+      id: `g${i}`, cx: rand(), cy: rand(), r: 0.3 + rand() * 0.35,
+      color: rand() > 0.5 ? "white" : "black",
+      stops: [{ offset: 0, opacity: op }, { offset: f, opacity: +(op * 0.4).toFixed(2) }, { offset: 100, opacity: 0 }],
+    }));
+  } else {
+    blobs = [
+      { id: "g1", cx: 0.28, cy: 0.24, r: 0.55, color: "white",
+        stops: [{ offset: 0, opacity: op }, { offset: f, opacity: +(op * 0.4).toFixed(2) }, { offset: 100, opacity: 0 }] },
+      { id: "g2", cx: 0.78, cy: 0.68, r: 0.60, color: "black",
+        stops: [{ offset: 0, opacity: op }, { offset: f, opacity: +(op * 0.4).toFixed(2) }, { offset: 100, opacity: 0 }] },
+      { id: "g3", cx: 0.65, cy: 0.15, r: 0.40, color: "white",
+        stops: [{ offset: 0, opacity: +(op * 0.7).toFixed(2) }, { offset: 100, opacity: 0 }] },
+      { id: "g4", cx: 0.15, cy: 0.80, r: 0.45, color: "black",
+        stops: [{ offset: 0, opacity: +(op * 0.7).toFixed(2) }, { offset: 100, opacity: 0 }] },
+    ];
+  }
   return `<svg viewBox='0 0 ${t} ${t}' xmlns='http://www.w3.org/2000/svg'>
 <defs>${blobs.map(b => wrappedBlobDefs(b, t)).join("")}</defs>
 ${blobs.map(b => wrappedBlobRects(b.id, t)).join("")}

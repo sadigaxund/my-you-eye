@@ -4,7 +4,7 @@ import type {
 } from "./svg-utils";
 import {
   paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg,
-  tileableMetallicSvg, dataUri, genFrostedTile,
+  tileableMetallicSvg, dataUri,
 } from "./svg-utils";
 
 export interface LayerStyle {
@@ -101,7 +101,6 @@ export class BrushedAluminium extends Texture {
 
 export class FrostedGlassNoise extends Texture {
   readonly tile: number;
-  readonly displayTile: number;
   readonly uri: string;
   readonly label = "Frosted Glass (Noise)";
   private svg: string;
@@ -110,7 +109,7 @@ export class FrostedGlassNoise extends Texture {
   constructor(p: FrostedBlurState) {
     super();
     this.p = p;
-    this.tile = genFrostedTile(p.tile, p.freq);
+    this.tile = p.tile;
     this.svg = frostedBlurSvg(p);
     this.uri = dataUri(this.svg);
   }
