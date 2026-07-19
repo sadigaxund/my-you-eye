@@ -48,30 +48,20 @@ function jsonPreview(value: unknown): { tokens: JsonToken[]; full: string } | nu
   if (isArray) {
     const arr = value as unknown[];
     tokens.push({ type: "punctuation", value: "[" });
-    const show = arr.slice(0, 3);
-    show.forEach((item, i) => {
+    arr.forEach((item, i) => {
       if (i > 0) tokens.push({ type: "punctuation", value: ", " });
       tokens.push(...valPreview(item));
     });
-    if (arr.length > 3) {
-      tokens.push({ type: "punctuation", value: ", " });
-      tokens.push({ type: "ellipsis", value: "…" });
-    }
     tokens.push({ type: "punctuation", value: "]" });
   } else {
     const obj = value as Record<string, unknown>;
     tokens.push({ type: "punctuation", value: "{" });
-    const entries = Object.entries(obj).slice(0, 3);
-    entries.forEach(([key, val], i) => {
+    Object.entries(obj).forEach(([key, val], i) => {
       if (i > 0) tokens.push({ type: "punctuation", value: ", " });
       tokens.push({ type: "key", value: key });
       tokens.push({ type: "punctuation", value: ": " });
       tokens.push(...valPreview(val));
     });
-    if (Object.keys(obj).length > 3) {
-      tokens.push({ type: "punctuation", value: ", " });
-      tokens.push({ type: "ellipsis", value: "…" });
-    }
     tokens.push({ type: "punctuation", value: "}" });
   }
   return { tokens, full };
@@ -97,7 +87,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
   if (!preview) return <span className="text-muted">—</span>;
   return (
     <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-60 inline-flex items-center gap-1.5 truncate align-middle">
+      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
         {count === 0 ? (
           <span className="text-muted italic">empty</span>
         ) : (
@@ -105,16 +95,22 @@ export function JsonDisplay({ value }: { value: unknown }) {
             <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
               {count} {Array.isArray(value) ? "items" : "keys"}
             </Badge>
-            <span className="truncate">
+            <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap">
               {preview.tokens.map((t, i) => (
                 <span key={i} className={tokenStyles[t.type]}>{t.value}</span>
               ))}
             </span>
+            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
-        <CodeBlock code={preview.full} />
+      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
+        <div className="flex items-center justify-between px-3 pt-2">
+          <span className="text-xs text-muted">JSON</span>
+        </div>
+        <ScrollArea className="max-h-[300px]">
+          <CodeBlock code={preview.full} />
+        </ScrollArea>
       </PopoverContent>
     </Popover>
   );
@@ -161,38 +157,73 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
   const count = isArray ? value.length : Object.keys(value as Record<string, unknown>).length;
   const keys = isArray
     ? []
-    : Object.keys(value as Record<string, unknown>).slice(0, 4);
+    : Object.keys(value as Record<string, unknown>);
 
   return (
     <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-60 inline-flex items-center gap-1.5 truncate align-middle">
+      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
         {count === 0 ? (
           <span className="text-muted italic">empty</span>
         ) : (
           <>
             <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
-              {count}
+              {count} {isArray ? "items" : "keys"}
             </Badge>
             {keys.length > 0 && (
-              <span className="truncate text-secondary">
+              <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-secondary-fg">
                 {keys.map((k, i) => (
                   <span key={k}>{i > 0 && <span className="text-muted">, </span>}{k}</span>
                 ))}
-                {Object.keys(value as Record<string, unknown>).length > 4 && <span className="text-muted">…</span>}
               </span>
             )}
-            {isArray && count > 0 && (
-              <span className="text-muted">{count} items</span>
-            )}
+            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
+      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">Tree</span>
         </div>
         <ScrollArea className="max-h-[300px] p-2">
           <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+export function ArrayDisplay({ value }: { value: unknown }) {
+  const arr = Array.isArray(value) ? value : [];
+  const count = arr.length;
+  return (
+    <Popover>
+      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
+        {count === 0 ? (
+          <span className="text-muted italic">empty</span>
+        ) : (
+          <>
+            <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
+              {count} items
+            </Badge>
+            <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-secondary-fg">
+              {arr.map((item, i) => (
+                <span key={i}>{i > 0 && <span className="text-muted">, </span>}{String(item)}</span>
+              ))}
+            </span>
+            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+          </>
+        )}
+      </PopoverTrigger>
+      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
+        <div className="flex items-center justify-between px-3 pt-2">
+          <span className="text-xs text-muted">List ({count})</span>
+        </div>
+        <ScrollArea className="max-h-[300px] p-2">
+          <div className="flex flex-col gap-1">
+            {arr.map((item, i) => (
+              <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>
+            ))}
+          </div>
         </ScrollArea>
       </PopoverContent>
     </Popover>

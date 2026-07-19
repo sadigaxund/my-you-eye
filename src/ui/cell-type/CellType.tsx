@@ -1,16 +1,17 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useLayoutEffect } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
 import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
 import { Dialog, DialogContent, DialogTitle } from "../dialog";
-import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellValue.date-displays";
+import { Popover, PopoverTrigger, PopoverContent } from "../popover";
+import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellType.date-displays";
 import {
   NumberDisplay, PercentageDisplay, BytesDisplay, DurationDisplay,
   CurrencyDisplay, SignedDisplay,
-} from "./CellValue.numeric-displays";
-import { JsonDisplay, TreeDisplay } from "./CellValue.complex-displays";
+} from "./CellType.numeric-displays";
+import { JsonDisplay, TreeDisplay, ArrayDisplay } from "./CellType.complex-displays";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
@@ -20,7 +21,7 @@ export type CellValueType =
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
 
-export interface CellValueProps {
+export interface CellTypeProps {
   type?: CellValueType;
   value?: unknown;
   badgeVariant?: BadgeProps["variant"];
@@ -100,24 +101,70 @@ function AudioDisplay({ value }: { value: unknown }) {
   );
 }
 
-function ArrayDisplay({ value }: { value: unknown }) {
-  const arr = Array.isArray(value) ? value : [String(value)];
-  return <span className="inline-flex flex-wrap gap-1">{arr.map((item, i) => <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>)}</span>;
+function TruncatedCellValue({ value, className }: { value: string; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [value]);
+
+  useLayoutEffect(() => {
+    if (!isTruncated) setOpen(false);
+  }, [isTruncated]);
+
+  return (
+    <Popover open={open} onOpenChange={(next) => isTruncated && setOpen(next)}>
+      <PopoverTrigger asChild disabled={!isTruncated}>
+        <span
+          className={cn("flex w-full max-w-full min-w-0 items-center", isTruncated && "cursor-pointer")}
+          tabIndex={isTruncated ? undefined : -1}
+          aria-disabled={!isTruncated}
+        >
+          <span
+            ref={ref}
+            className={cn(
+              "block min-w-0 flex-1 overflow-hidden whitespace-nowrap",
+              !isTruncated && "text-ellipsis",
+              className,
+            )}
+          >
+            {value}
+          </span>
+          {isTruncated && (
+            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">
+              …
+            </span>
+          )}
+        </span>
+      </PopoverTrigger>
+      <PopoverContent className="max-w-sm p-3 text-sm whitespace-pre-wrap break-words">
+        {value}
+      </PopoverContent>
+    </Popover>
+  );
 }
 
-export function CellValue({
+export function CellType({
   type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements, dateFormat, compact,
-}: CellValueProps) {
+}: CellTypeProps) {
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
     case "boolean": return <BooleanDisplay value={value} />;
-    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline inline-flex min-w-0"><span className="truncate">{String(value)}</span></a>;
-    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline min-w-0">
+    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline inline-flex min-w-0 w-full"><span className="truncate">{String(value)}</span></a>;
+    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full">
       <span className="truncate">{applyReplacements(String(value), replacements)}</span>
       <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim"><path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" /></svg></a>;
     case "json": return <JsonDisplay value={value} />;
     case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
-    case "status": return <span className="inline-flex items-center gap-1.5 min-w-0"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><span className="truncate">{String(value)}</span></span>;
+    case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
     case "number": return <NumberDisplay value={value} compact={compact} />;
     case "percentage": return <PercentageDisplay value={value} />;
     case "date-human": return <DateHumanDisplay value={value} />;
@@ -131,6 +178,6 @@ export function CellValue({
     case "audio": return <AudioDisplay value={value} />;
     case "array": return <ArrayDisplay value={value} />;
     case "tree": return <TreeDisplay value={value} replacements={replacements} />;
-    default: return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
+    default: return <TruncatedCellValue value={String(value)} />;
   }
 }

@@ -1,8 +1,8 @@
 import { forwardRef, useCallback } from "react";
 import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
-import { CellValue } from "../cell-value";
-import type { UrlReplacement } from "../cell-value";
+import { CellType } from "../cell-type";
+import type { UrlReplacement } from "../cell-type";
 import type { TreeNode } from "./TreeView";
 
 function Chevron({ expanded }: { expanded: boolean }) {
@@ -129,7 +129,7 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
             )}>{node.label}</span>
             {node.value && (
               <span className="truncate overflow-hidden shrink min-w-0 text-right">
-                <CellValue {...node.value} replacements={replacements} />
+                <CellType {...node.value} replacements={replacements} />
               </span>
             )}
           </div>

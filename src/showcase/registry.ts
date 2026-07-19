@@ -21,6 +21,7 @@ export interface RegistryDemo {
   /** Extracted JSX source, or null if extraction wasn't confident. */
   source: string | null;
   layout?: "fill" | "center";
+  overflow?: "visible" | "auto" | "hidden";
 }
 
 export interface RegistryEntry {
@@ -83,6 +84,7 @@ export const entries: RegistryEntry[] = Object.entries(modules)
         render: demo.render,
         source: raw ? extractDemoSource(raw, demo.name) : null,
         layout: demo.layout,
+        overflow: demo.overflow,
       })),
     };
   })

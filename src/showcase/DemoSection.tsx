@@ -1,15 +1,20 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { CodeBlock } from "../ui/code-block";
+import { cn } from "../lib/cn";
 import type { RegistryDemo } from "./registry";
+
+const overflowClass = (v: NonNullable<RegistryDemo["overflow"]>) =>
+  v === "auto" ? "overflow-auto" : v === "hidden" ? "overflow-hidden" : "overflow-visible";
 
 export function DemoSection({ demo }: { demo: RegistryDemo }) {
   const hasSource = Boolean(demo.source);
+  const ov = demo.overflow ?? "visible";
 
   const renderDemo = () => {
     if (demo.layout === "center") {
-      return <div className="flex items-center justify-center overflow-visible">{demo.render()}</div>;
+      return <div className={cn("flex items-center justify-center", overflowClass(ov))}>{demo.render()}</div>;
     }
-    return <div className="overflow-visible">{demo.render()}</div>;
+    return <div className={overflowClass(ov)}>{demo.render()}</div>;
   };
 
   return (
@@ -35,7 +40,7 @@ export function DemoSection({ demo }: { demo: RegistryDemo }) {
           </TabsContent>
         </Tabs>
       ) : (
-        <div className="border border-border rounded-ui bg-surface-elevated p-panel overflow-visible">
+        <div className={cn("border border-border rounded-ui bg-surface-elevated p-panel", overflowClass(ov))}>
           {renderDemo()}
         </div>
       )}

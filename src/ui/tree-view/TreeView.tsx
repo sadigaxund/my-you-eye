@@ -3,7 +3,7 @@ import type { ReactNode, KeyboardEvent } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { TreeItem } from "./TreeItem";
-import type { CellValueType, UrlReplacement } from "../cell-value";
+import type { CellValueType, UrlReplacement } from "../cell-type";
 
 export interface TreeNodeValue {
   type: CellValueType;

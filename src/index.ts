@@ -50,7 +50,7 @@ export { Separator } from "./ui/separator";
 export { Progress } from "./ui/progress";
 export { StatusDot } from "./ui/status-dot";
 export { Kbd } from "./ui/kbd";
-export { CellValue } from "./ui/cell-value";
+export { CellType } from "./ui/cell-type";
 export { Canvas } from "./ui/canvas";
 export { GraphNode } from "./ui/graph-node";
 export { Port } from "./ui/port";

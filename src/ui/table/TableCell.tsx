@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
-const cellVariants = cva("", {
+const cellVariants = cva("overflow-hidden min-w-0", {
   variants: {
     density: {
       compact: "p-2 text-xs",

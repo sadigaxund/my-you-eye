@@ -4,7 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`TableCell`**: added `overflow-hidden`/`min-w-0` so cell content correctly truncates at the cell boundary under `table-layout: fixed` instead of visually spilling into adjacent cells.
+
+### Added
+
+- **`DataTable`**: `columns[].width` hint (`xs`–`xl`) for proportional column sizing under fixed layout, rendered via `<colgroup>`.
+- **`DataTable`**: `layout` prop (`"fixed" | "auto"`) — `"auto"` sizes columns to content with horizontal scroll, for rows with divergent content widths.
+- **`TruncatedCellValue`** — universal popover for truncated text. Uses `useLayoutEffect` + `useRef` to detect `scrollWidth > clientWidth` (fires after layout, so dimensions are accurate). Only shows the badge and Popover when actually truncated. Uses `overflow-hidden whitespace-nowrap` (no CSS `text-overflow: ellipsis`) in truncated state to avoid double "…". Applied to `text` (default) and `status` CellType variants.
+
 ### Changed
+
+- **`DataTable.showcase`**: restructured to 4 focused demos — Default, Striped, Scrolling + sticky header, Truncation. 20 users → 10. "Compact & striped" replaced with "Striped" (same 6 columns as Default, just striped). Truncation split into sub-tables (Text & Links, Complex) with `<hr>` separators.
+- **`Table.showcase`**: removed "Variants & density" demo (empty demos array — kept file for check-showcase).
+- **`DataList.showcase`**: renamed from "DataList" to "List". Added "Striped" demo (via `[&>div:nth-child(odd)]`) and "Scrolling" demo (bounded container with 20 items). Removed "Long values".
+- **`DataList`**: added `overflow-hidden` to root `<dl>` and `min-w-0` to each flex row, matching the TableCell width-containment fix.
 
 - **CellValue numeric display visual hierarchy** — all numeric types refactored to use `Intl.NumberFormat.formatToParts()` with per-part styling via a `styledParts` helper:
   - `number` — integer at `font-medium`, decimal/fraction at `text-muted text-xs`, grouping commas dimmed.

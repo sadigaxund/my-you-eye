@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const codeBlockVariants = cva(
-  "group relative overflow-hidden rounded-ui border border-border bg-code-bg text-sm flex flex-col",
+  "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
   {
     variants: {
       variant: {
@@ -80,7 +80,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
 
     return (
       <div className={cn(codeBlockVariants({ variant }), className)}>
-        {hasHeader ? (
+        {hasHeader && (
           <div className="flex items-center justify-between gap-2 h-9 pl-panel pr-1.5 border-b border-border">
             <div className="flex items-center gap-2 min-w-0">
               {header && <span className="text-xs font-medium text-code-fg truncate">{header}</span>}
@@ -92,22 +92,21 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             </div>
             <CopyButton copied={copied} onCopy={copy} />
           </div>
-        ) : (
-          language && (
-            <div className="absolute top-1 right-1 z-10 flex items-center gap-1">
-              <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
-                {language}
-              </span>
-              <CopyButton copied={copied} onCopy={copy} />
+        )}
+        <div className="flex flex-col flex-1 min-h-0">
+          {!hasHeader && (
+            <div className="sticky top-0 z-10 flex justify-end pr-1 -mb-7">
+              <div className="flex items-center gap-1 pt-1">
+                {language && (
+                  <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
+                    {language}
+                  </span>
+                )}
+                <CopyButton copied={copied} onCopy={copy} />
+              </div>
             </div>
-          )
-        )}
-        {!hasHeader && !language && (
-          <div className="absolute top-1 right-1 z-10">
-            <CopyButton copied={copied} onCopy={copy} />
-          </div>
-        )}
-        <div className="flex flex-1 min-h-0">
+          )}
+          <div className="flex flex-1 min-h-0">
           {showLineNumbers && (
             <div
               aria-hidden
@@ -129,6 +128,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             <code>{code}</code>
           </pre>
         </div>
+      </div>
       </div>
     );
   },

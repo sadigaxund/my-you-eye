@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**54 components** across 9 groups.
+**53 components** across 9 groups.
 
 ## canvas
 
@@ -25,11 +25,10 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `CellValue` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data types in a table, foo, Project X, Numeric types |
-| `DataList` | variant: compact | Default & Compact, Long values |
-| `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Default, Status variants, Striped + compact |
-| `Table` | align: right | Row ${i + 1}, Sticky header (scroll down) |
-| `TreeView` | type: button<br>variant: condensed | Default & Condensed (depth-based expand), Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
+| `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data types in a table, Project X, Project X, Numeric types |
+| `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Eve, Frank, Grace, Ivy, Leo, Olivia, Default, Striped, Scrolling + sticky header, Truncation |
+| `List` | variant: compact | Default & Compact, Striped, Scrolling |
+| `TreeView` | type: button<br>variant: condensed | Default vs Condensed, Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
 ## display
 

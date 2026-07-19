@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 54,
+  "count": 53,
   "components": [
     {
       "name": "Canvas",
@@ -74,9 +74,9 @@
       ]
     },
     {
-      "name": "CellValue",
+      "name": "CellType",
       "group": "data",
-      "folder": "ui/cell-value",
+      "folder": "ui/cell-type",
       "props": {
         "type": [
           "array",
@@ -104,23 +104,9 @@
       },
       "demos": [
         "Data types in a table",
-        "foo",
+        "Project X",
         "Project X",
         "Numeric types"
-      ]
-    },
-    {
-      "name": "DataList",
-      "group": "data",
-      "folder": "ui/data-list",
-      "props": {
-        "variant": [
-          "compact"
-        ]
-      },
-      "demos": [
-        "Default & Compact",
-        "Long values"
       ]
     },
     {
@@ -140,23 +126,31 @@
         "Bob",
         "Charlie",
         "Diana",
+        "Eve",
+        "Frank",
+        "Grace",
+        "Ivy",
+        "Leo",
+        "Olivia",
         "Default",
-        "Status variants",
-        "Striped + compact"
+        "Striped",
+        "Scrolling + sticky header",
+        "Truncation"
       ]
     },
     {
-      "name": "Table",
+      "name": "List",
       "group": "data",
-      "folder": "ui/table",
+      "folder": "ui/data-list",
       "props": {
-        "align": [
-          "right"
+        "variant": [
+          "compact"
         ]
       },
       "demos": [
-        "Row ${i + 1}",
-        "Sticky header (scroll down)"
+        "Default & Compact",
+        "Striped",
+        "Scrolling"
       ]
     },
     {
@@ -172,7 +166,8 @@
         ]
       },
       "demos": [
-        "Default & Condensed (depth-based expand)",
+        "Default vs Condensed",
+        "Depth-based expand",
         "Controlled expand state",
         "Leading icons (click a row, then use arrow keys)",
         "Messy nested payload (hover to trace depth guides)"

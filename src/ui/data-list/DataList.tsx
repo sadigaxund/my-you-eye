@@ -2,8 +2,8 @@ import { forwardRef } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { CellValue } from "../cell-value";
-import type { CellValueType, UrlReplacement } from "../cell-value";
+import { CellType } from "../cell-type";
+import type { CellValueType, UrlReplacement } from "../cell-type";
 
 export interface DataListItem {
   label: string;
@@ -16,7 +16,7 @@ export interface DataListItem {
   icon?: ReactNode;
 }
 
-const dataListVariants = cva("divide-y divide-border", {
+const dataListVariants = cva("overflow-hidden divide-y divide-border", {
   variants: {
     variant: {
       default: "",
@@ -46,7 +46,7 @@ const DataList = forwardRef<HTMLDListElement, DataListProps>(
         <div
           key={i}
           className={cn(
-            "flex items-center justify-between gap-4",
+            "flex items-center justify-between gap-4 min-w-0",
             variant === "compact" ? "py-1 px-2" : "py-2 px-3",
           )}
         >
@@ -54,9 +54,9 @@ const DataList = forwardRef<HTMLDListElement, DataListProps>(
             {item.icon && <span className="shrink-0">{item.icon}</span>}
             {item.label}
           </dt>
-          <dd className="min-w-0 flex-1 overflow-hidden text-right text-sm text-fg font-medium">
+          <dd className="min-w-0 flex-1 overflow-hidden text-sm text-fg font-medium">
             {item.value !== undefined ? (
-              <CellValue
+              <CellType
                 type={item.type ?? "text"}
                 value={item.value}
                 badgeVariant={item.badgeVariant}

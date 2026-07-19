@@ -23,7 +23,7 @@ function FileIcon() {
 function ControlledTreeViewDemo() {
   const [expanded, setExpanded] = useState(new Set(["1", "2"]));
   return (
-    <div className="max-w-xl">
+    <div>
       <div className="flex gap-2 mb-3 px-2">
         <button
           type="button"
@@ -40,7 +40,7 @@ function ControlledTreeViewDemo() {
           Collapse all
         </button>
       </div>
-      <div className="h-[440px] px-2">
+      <div className="max-h-[27.5rem] overflow-y-auto overscroll-contain px-2 py-1">
         <TreeView
           data={sampleData}
           expandedKeys={expanded}
@@ -191,11 +191,11 @@ const entry: ShowcaseEntry = {
   description: "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, and typed value rendering.",
   demos: [
     {
-      name: "Default & Condensed (depth-based expand)",
+      name: "Default vs Condensed",
       render: () => (
-        <div className="flex gap-6 max-w-2xl">
+        <div className="flex items-stretch gap-6">
           <div className="flex-1 min-w-0 px-2">
-            <TreeView data={sampleData} defaultExpandedDepth={1} />
+            <TreeView data={sampleData} defaultExpandedDepth={2} />
           </div>
           <div className="w-px bg-border shrink-0" />
           <div className="flex-1 min-w-0 px-2">
@@ -205,13 +205,29 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Depth-based expand",
+      render: () => (
+        <div className="flex items-start gap-6">
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">depth: 1</p>
+            <TreeView data={sampleData} defaultExpandedDepth={1} />
+          </div>
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">depth: 2</p>
+            <TreeView data={sampleData} defaultExpandedDepth={2} />
+          </div>
+        </div>
+      ),
+    },
+    {
       name: "Controlled expand state",
+      overflow: "auto",
       render: () => <ControlledTreeViewDemo />,
     },
     {
       name: "Leading icons (click a row, then use arrow keys)",
       render: () => (
-        <div className="max-w-md px-2">
+        <div className="px-2">
           <TreeView data={iconData} defaultExpandedDepth={2} />
         </div>
       ),
@@ -219,7 +235,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Messy nested payload (hover to trace depth guides)",
       render: () => (
-        <div className="max-w-lg px-2">
+        <div className="px-2">
           <TreeView data={messyPayload} defaultExpandedDepth={1} />
         </div>
       ),
