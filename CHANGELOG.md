@@ -41,8 +41,11 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- **`PAGE_MEDIUM_FROSTED_URI`** — new export in `svg-utils.ts` providing a tileable frosted-glass SVG data URI for page-level overlay, parallel to `PAGE_MEDIUM_URI`.
-- **Glass theme frosted page texture** — mesh gradient moved from `::before` to `html[data-theme="glass"]` background; a new `::before` overlays frosted-glass noise using the `--texture-*` token system (same pattern as comic). Tokens: `--texture-opacity: 0.22`, `--texture-opacity-surface: 0.15`, `--texture-blend: hard-light`, `--texture-size: 400px`.
+- **`feTurbulence seed` support** — `FrostedBlurState` now accepts optional `seed?: number`, threaded through `frostedBlurSvg` and `fullFrostedSvg`. Enables multiple independent noise fields for layered/wang-tiled compositing.
+- **`PAGE_MEDIUM_FROSTED_LAYERS`** — new export in `svg-utils.ts`: comma-separated list of 3 frosted-glass SVG data URIs at different randomness seeds for layered page overlay. Replaces single-URI `PAGE_MEDIUM_FROSTED_URI`.
+- **Layered offset compositing for glass theme** — `html::before` now stacks 3 copies of the frosted noise at coprime sizes (1×, 0.667×, 0.5×) with offset positions and per-layer blend modes (overlay/screen/normal). Combined with seed diversity, eliminates visible tile periodicity.
+- **Glass theme frosted page texture** — mesh gradient moved from `::before` to `html[data-theme="glass"]` background; a new `::before` overlays frosted-glass noise using the `--texture-*` token system (same pattern as comic). Tokens: `--texture-opacity: 0.22`, `--texture-opacity-surface: 0.15`, `--texture-blend: hard-light`, `--texture-size: 3334px`.
+- **Frosted glass presets retiled for ≥10 cycles** — all 9 layerFrosted presets updated: `tile = ceil(10 / freq)` to guarantee minimum cycle density. Page layer tiles now 2000–5000px (prev 350–500), surface 667–1250px (prev 250–350), foreground 250–500px (prev 140–200). Eliminates visible periodic repetition at any viewport size.
 
 - **`TexturedSurface.ParamTable`** — static subcomponent that renders a 3×3 layer×strength matrix for any texture. Each cell shows the combination as a small textured badge. Enables copyable one-liner showcase demos (`<TexturedSurface.ParamTable texture="paper-grain" />`) instead of loops in the code view.
 - **`TexturedSurface` showcase redesigned** — single-instance demos per texture (paper-grain, frosted-glass, brushed-aluminium) with literal JSX for direct copy-paste. `render: () => <Tuner />` fix so the code extractor sees JSX, not a named function reference.
