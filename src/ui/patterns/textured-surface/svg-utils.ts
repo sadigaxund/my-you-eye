@@ -162,3 +162,114 @@ export function ditherSvg(): string {
 <rect width='100%' height='100%' filter='url(#d)'/>
 </svg>`.trim();
 }
+
+/* ---- Per-layer × strength noise presets ---- */
+/* Each (layer, strength) pair gets distinct SVG parameters so every
+   combination has a qualitatively different texture, not just scaled
+   opacity. See AGENTS.md §1 decision tree. */
+
+export type TextureStrength = "subtle" | "medium" | "strong";
+
+interface LayerSvgAssets {
+  primary: string;
+  secondary: string;
+  tileSize: number;
+}
+
+type StrengthMap = Record<TextureStrength, LayerSvgAssets>;
+type LayerMap = Record<string, StrengthMap>;
+
+function pAssets(freq: number, octaves: number, stretch: number, tile: number, secTile: number): LayerSvgAssets {
+  return {
+    primary: dataUri(paperSvg({ freq, octaves, stretch, tile, opacity: 0 })),
+    secondary: dataUri(paperSvg({ freq, octaves, stretch, tile: secTile, opacity: 0 })),
+    tileSize: tile,
+  };
+}
+
+function mAssets(freqX: number, freqY: number, octaves: number, stretch: number, tile: number, secTile: number): LayerSvgAssets {
+  return {
+    primary: dataUri(metallicSvg({ freqX, freqY, angle: 0, octaves, stretch, tile, opacity: 0 })),
+    secondary: dataUri(metallicSvg({ freqX, freqY, angle: 0, octaves, stretch, tile: secTile, opacity: 0 })),
+    tileSize: tile,
+  };
+}
+
+function fAssets(freq: number, octaves: number, stretch: number, tile: number, secTile: number): LayerSvgAssets {
+  return {
+    primary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile, opacity: 0 })),
+    secondary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile: secTile, opacity: 0 })),
+    tileSize: tile,
+  };
+}
+
+/** Pre-generated page.medium paper-grain SVG data URI — single source of truth
+    for the page-level texture. Themes that want a page texture should reference
+    this via JS rather than hardcoding SVG strings in CSS. */
+export const PAGE_MEDIUM_URI = pAssets(0.12, 3, 2.4, 170, 111).primary;
+
+const layerPaper: LayerMap = {
+  page: {
+    subtle:  pAssets(0.16, 4, 2.0, 140, 91),
+    medium:  pAssets(0.12, 3, 2.4, 170, 111),
+    strong:  pAssets(0.09, 3, 2.8, 200, 130),
+  },
+  surface: {
+    subtle:  pAssets(0.16, 4, 1.8, 110, 72),
+    medium:  pAssets(0.14, 3, 2.0, 130, 85),
+    strong:  pAssets(0.11, 3, 2.2, 150, 98),
+  },
+  foreground: {
+    subtle:  pAssets(0.24, 5, 1.4, 65, 42),
+    medium:  pAssets(0.20, 4, 1.5, 80, 52),
+    strong:  pAssets(0.18, 4, 1.6, 100, 65),
+  },
+};
+
+const layerMetallic: LayerMap = {
+  page: {
+    subtle:  mAssets(0.50, 0.010, 3, 2.4, 220, 143),
+    medium:  mAssets(0.60, 0.010, 4, 2.6, 200, 127),
+    strong:  mAssets(0.40, 0.008, 3, 3.0, 300, 195),
+  },
+  surface: {
+    subtle:  mAssets(0.70, 0.015, 4, 2.2, 160, 104),
+    medium:  mAssets(0.60, 0.010, 4, 2.6, 200, 127),
+    strong:  mAssets(0.50, 0.010, 3, 3.0, 250, 163),
+  },
+  foreground: {
+    subtle:  mAssets(0.90, 0.025, 5, 1.8, 100, 65),
+    medium:  mAssets(0.80, 0.020, 5, 2.0, 120, 78),
+    strong:  mAssets(0.70, 0.015, 4, 2.4, 140, 91),
+  },
+};
+
+export const FROSTED_DITHER = dataUri(ditherSvg());
+
+const layerFrosted: LayerMap = {
+  page: {
+    subtle:  fAssets(0.005, 2, 2.4, 350, 228),
+    medium:  fAssets(0.003, 2, 2.6, 400, 260),
+    strong:  fAssets(0.002, 2, 3.0, 500, 325),
+  },
+  surface: {
+    subtle:  fAssets(0.015, 2, 2.0, 250, 163),
+    medium:  fAssets(0.010, 2, 2.2, 300, 195),
+    strong:  fAssets(0.008, 2, 2.4, 350, 228),
+  },
+  foreground: {
+    subtle:  fAssets(0.040, 3, 1.6, 140, 91),
+    medium:  fAssets(0.030, 3, 1.8, 160, 104),
+    strong:  fAssets(0.020, 3, 2.0, 200, 130),
+  },
+};
+
+export type TextureLayer = keyof typeof layerPaper;
+
+export type TextureLayerStrengthMap = Record<string, Record<string, LayerSvgAssets>>;
+
+export const LAYER_SVGS: Record<string, TextureLayerStrengthMap> = {
+  "paper-grain": layerPaper,
+  "brushed-aluminium": layerMetallic,
+  "frosted-glass": layerFrosted,
+} as const;
