@@ -1,4 +1,4 @@
-[data-theme="high-contrast"] {
+[data-theme="contrast"] {
   --color-bg: oklch(1 0 0);
   --color-fg: oklch(0 0 0);
   --color-muted: oklch(0.3 0 0);
@@ -33,7 +33,7 @@
   --texture-blend: multiply;
 }
 
-[data-theme="high-contrast"].dark {
+[data-theme="contrast"].dark {
   --color-bg: oklch(0 0 0);
   --color-fg: oklch(1 0 0);
   --color-muted: oklch(0.7 0 0);

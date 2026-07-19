@@ -189,19 +189,19 @@ const layerPaper: LayerMap = {
 
 const layerMetallic: LayerMap = {
   page: {
-    subtle:  mAssets(0.50, 0.010, 3, 2.4, 220, 143),
-    medium:  mAssets(0.60, 0.010, 4, 2.6, 200, 127),
-    strong:  mAssets(0.40, 0.008, 3, 3.0, 300, 195),
+    subtle:  mAssets(1.56, 0.0036, 2, 2.2, 228, 149),
+    medium:  mAssets(1.44, 0.0024, 1, 2.3, 264, 172),
+    strong:  mAssets(1.38, 0.0012, 1, 2.4, 300, 196),
   },
   surface: {
-    subtle:  mAssets(0.70, 0.015, 4, 2.2, 160, 104),
-    medium:  mAssets(0.60, 0.010, 4, 2.6, 200, 127),
-    strong:  mAssets(0.50, 0.010, 3, 3.0, 250, 163),
+    subtle:  mAssets(1.80, 0.0096, 2, 2.0, 168, 109),
+    medium:  mAssets(1.68, 0.0060, 2, 2.2, 204, 133),
+    strong:  mAssets(1.56, 0.0036, 2, 2.3, 240, 156),
   },
   foreground: {
-    subtle:  mAssets(0.90, 0.025, 5, 1.8, 100, 65),
-    medium:  mAssets(0.80, 0.020, 5, 2.0, 120, 78),
-    strong:  mAssets(0.70, 0.015, 4, 2.4, 140, 91),
+    subtle:  mAssets(2.04, 0.0144, 3, 1.9, 108, 71),
+    medium:  mAssets(1.92, 0.0096, 2, 2.0, 132, 86),
+    strong:  mAssets(1.80, 0.0060, 2, 2.2, 156, 102),
   },
 };
 

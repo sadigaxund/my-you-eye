@@ -152,7 +152,7 @@ Check items off (`[x]`) as they complete.
 - [x] **A — Showcase masonry layout** — CSS columns (masonry) replacing grid, column-rule divider, `break-inside-avoid` sections. 3 columns on xl.
 - [x] **B — Grid-locked GraphNode** — `--grid-unit: 16px`, height derived from row count, row-anchored ports via `portLeft`/`portRight` on each row, port overlap fixed.
 - [x] **C — Snapping + drag on Canvas** — `snap()`/`useSnap` helper, draggable node demo with 16px grid snap.
-- [x] **D — Theme/profile system** — `src/styles/themes/*.css` for dark/neon/high-contrast profiles, `--border-width`/`--backdrop-blur` tokens wired to Card/Dialog, profile switcher in header, `check-themes.mjs` validation script.
+- [x] **D — Theme/profile system** — `src/styles/themes/*.css` for dark/neon/contrast profiles, `--border-width`/`--backdrop-blur` tokens wired to Card/Dialog, profile switcher in header, `check-themes.mjs` validation script.
 - [x] **E1 — CellValue upgrades** — `number` (monospace, right-align, Intl.NumberFormat), `date`/`datetime` (relative + absolute), `bytes`, `duration`, `array` (chips via Badge). Copy button on JSON popover.
 - [x] **E2 — Table upgrades** — `align` prop on TableCell/TableHead, `sticky` prop on TableHeader.
 - [x] **E3 — DataTable pattern** — auto-renders rows via CellValue from column definitions.

@@ -136,7 +136,7 @@ src/
   lib/cn.ts            # clsx + tailwind-merge helper
   styles/
     tokens.css         # ALL base design tokens
-    themes/*.css       # per-theme token overrides (dark, neon, high-contrast, …)
+    themes/*.css       # per-theme token overrides (dark, neon, contrast, …)
     globals.css        # tailwind entry, global scrollbar, base styles
   ui/<component>/      # Component.tsx + Component.showcase.tsx + index.ts
   ui/patterns/         # compositions built FROM primitives (FormField, Orchestrator, …)

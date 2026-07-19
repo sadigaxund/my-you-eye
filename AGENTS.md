@@ -370,6 +370,18 @@ When adding a new font family, update **both** places (they are not auto-synced)
 
 `src/showcase/App.tsx` reads from `fonts.ts` — no separate update needed.
 
+### Rotated page texture oversize rule (Comic/Metallic etc.)
+
+When a page-level texture (`html::before`) uses a CSS `transform: rotate(…)` to apply directional grain (brushed aluminium, paper grain, etc.), the pseudo-element must be **oversized** so the rotated rectangle's bounding box still covers the entire viewport. The diagonal (corner-to-corner) of the rotated element grows with rotation:
+
+```
+extent = s/2 · (|cos θ| + |sin θ|)   // half-bounding-box from center
+```
+
+A `top:-100%; left:-100%; width:300%; height:300%` element (3× viewport, centered) covers every viewport corner for any rotation angle up to 45°. For 60° (Metallic), 300% is safe — the bounding box half-extent is `150% · (0.5 + 0.866) ≈ 205%`, far beyond the viewport's 50% half-extent. Without oversizing, the rotated element's clipped corners leave empty triangles at the viewport edges.
+
+**Do not** use `inset:0` with a rotated page texture — it guarantees empty corners. Always use the `top:-100%; left:-100%; width:300%; height:300%` pattern (or larger for extreme angles >60°).
+
 ### Canvas drag performance contract
 
 **Never** change `backgroundPosition` during drag — it triggers full repaint every frame.

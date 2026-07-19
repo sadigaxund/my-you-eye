@@ -130,7 +130,7 @@ All notable changes to this project are documented here.
 
 - **Brutal theme** (`brutal.css`) — neo-brutalism with stark warm off-white bg, punchy orange primary, bright yellow secondary, thick 3px black borders, solid block offset shadows (4px/8px), sharp radii (4px/0px).
 - **Stark theme** (`stark.css`) — strict monochrome with pure white/black backgrounds, zero saturation, micro-contrast surfaces, black/white primary buttons, ultra-thin borders.
-- **`--color-success-fg` and `--color-danger-fg` tokens** — new token layer across all themes (tokens.css, dark.css, neon.css, high-contrast.css, comic.css, glass.css). Each theme defines appropriate foreground colors for success and danger semantic backgrounds, matching each theme's primary-fg pattern. Toast uses `text-success-fg` / `text-danger-fg` instead of `text-primary-fg`, giving every theme independent control over toast variant text colors.
+- **`--color-success-fg` and `--color-danger-fg` tokens** — new token layer across all themes (tokens.css, dark.css, neon.css, contrast.css, comic.css, glass.css). Each theme defines appropriate foreground colors for success and danger semantic backgrounds, matching each theme's primary-fg pattern. Toast uses `text-success-fg` / `text-danger-fg` instead of `text-primary-fg`, giving every theme independent control over toast variant text colors.
 - **GraphNode radius** — `rounded-ui` → `rounded-node` so node corner radius (`--radius-node: 6px`) is fixed and invariant across all themes. Only `--radius-ui*` tokens are themeable.
 - **Glass theme contrast fix** — darkened bg (light `0.95→0.92`, dark `0.12→0.08`), secondary changed to dark low-opacity wash (light) / bright low-opacity wash (dark), surfaces bumped 5-10% opacity, dark mode primary darkened (`0.70→0.48`) for white primary-fg universally, all semantic fg tokens unified to white.
 - **Glass theme redesign** — complete color token overhaul for true glassmorphism. Mesh gradient backgrounds (light: blue-violet-amber-cyan radial spots; dark: deep indigo-violet-cyan-teal glows). Surfaces at 50-85% opacity with 24px backdrop blur. Vibrant indigo primary (`oklch 0.55 0.22 290`). Expanded radii (16px/10px/24px). Tinted shadows. Improved contrast ratios on frosted surfaces.
@@ -214,13 +214,13 @@ All notable changes to this project are documented here.
 - **TreeView depth-based expand** — `defaultExpandedDepth` (default 1) replaces all-collapsed default.
 - **Select `showIndicator` prop** — suppress the checkmark indicator on SelectItem.
 - **Showcase masonry layout** — CSS columns (columns-1/2/3), column-rule divider. Short and tall components pack without ragged gaps.
-- **Showcase profile switcher** — dropdown in header to toggle between light/dark/neon/high-contrast profiles.
+- **Showcase profile switcher** — dropdown in header to toggle between light/dark/neon/contrast profiles.
 - **Showcase font switcher** — dropdown to toggle between Sans, Serif, Mono across the entire showcase.
 - **Showcase token reference** — color swatches, spacing bars, radius samples, text sizes under the `typography` tab.
 - **Showcase `canvas` group** — new tab for Canvas, GraphNode, Port components.
 - **Theme/profile system** — profiles defined in `src/styles/themes/*.css` as complete token-override blocks. `--border-width`, `--backdrop-blur` tokens wired to Card and Dialog.
 - **Theme validation** — `scripts/check-themes.mjs` asserts every profile defines the full color token set; wired into `npm run validate`.
-- **Sample profiles** — neon (frosted, cyan glow) and high-contrast (bold borders, no shadows) shipped.
+- **Sample profiles** — neon (frosted, cyan glow) and contrast (bold borders, no shadows) shipped.
 - **Snapping helper** — `snap()`/`useSnap` in canvas folder for 16px grid snapping.
 - **URL replacements** — `replacements` prop on CellValue for pattern-based label display on URLs.
 - **Global scale CSS hook** — `html { font-size: calc(1rem * var(--scale, 1)) }` ready for a scale slider.

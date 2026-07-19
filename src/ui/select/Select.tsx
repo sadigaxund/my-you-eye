@@ -4,6 +4,7 @@ import {
   Trigger,
   Value,
   Icon,
+  Portal,
   Content,
   Viewport,
   Item,
@@ -51,18 +52,20 @@ SelectTrigger.displayName = "SelectTrigger";
 
 const SelectContent = forwardRef<React.ComponentRef<typeof Content>, React.ComponentPropsWithoutRef<typeof Content>>(
   ({ className, children, position = "popper", ...props }, ref) => (
-    <Content
-      ref={ref}
-      position={position}
-      className={cn(
-        "relative z-[var(--z-overlay)] max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
-        className,
-      )}
-      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
-      {...props}
-    >
-      <Viewport className="p-1">{children}</Viewport>
-    </Content>
+    <Portal>
+      <Content
+        ref={ref}
+        position={position}
+        className={cn(
+          "relative z-[var(--z-overlay)] max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
+          className,
+        )}
+        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
+        {...props}
+      >
+        <Viewport className="p-1">{children}</Viewport>
+      </Content>
+    </Portal>
   ),
 );
 SelectContent.displayName = "SelectContent";
