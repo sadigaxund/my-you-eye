@@ -29,6 +29,7 @@
   --shadow-card: none;
   --shadow-elevated: none;
   --texture-opacity: 0;
+  --texture-opacity-surface: 0;
   --texture-blend: multiply;
 }
 

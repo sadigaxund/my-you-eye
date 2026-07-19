@@ -97,6 +97,7 @@ html[data-theme="glass"].dark::before {
   --opacity-muted: 0.4;
 
   --texture-opacity: 0;
+  --texture-opacity-surface: 0;
   --texture-blend: multiply;
 }
 

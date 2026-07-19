@@ -95,7 +95,8 @@ html[data-theme="metallic"].dark::before {
      the streak direction reads clearly as horizontal brushing. */
   --texture-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='brush'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23brush)' opacity='0.5'/%3E%3C/svg%3E");
   --texture-size: 320px 48px;
-  --texture-opacity: 0.35;
+  --texture-opacity: 0;
+  --texture-opacity-surface: 0.35;
   --texture-blend: overlay;
 }
 

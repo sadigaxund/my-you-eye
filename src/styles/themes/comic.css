@@ -4,10 +4,27 @@ html[data-theme="comic"] {
     repeating-linear-gradient(
       0deg, transparent, transparent 2px,
       oklch(0 0 0 / 0.025) 2px, oklch(0 0 0 / 0.025) 3px
-    ),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.14'/%3E%3C/svg%3E");
-  background-repeat: repeat, repeat;
-  background-size: auto, 400px 400px;
+    );
+  background-repeat: repeat;
+  background-size: auto;
+}
+
+html[data-theme="comic"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--texture-paper);
+  background-size: var(--texture-size);
+  background-repeat: repeat;
+  opacity: var(--texture-opacity);
+  mix-blend-mode: var(--texture-blend);
+}
+
+/* Transparent body so html background + ::before noise show through as page layer */
+html[data-theme="comic"] body {
+  background-color: transparent;
 }
 
 html[data-theme="comic"].dark {
@@ -16,10 +33,9 @@ html[data-theme="comic"].dark {
     repeating-linear-gradient(
       0deg, transparent, transparent 2px,
       oklch(0 0 0 / 0.045) 2px, oklch(0 0 0 / 0.045) 3px
-    ),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='0.17'/%3E%3C/svg%3E");
-  background-repeat: repeat, repeat;
-  background-size: auto, 400px 400px;
+    );
+  background-repeat: repeat;
+  background-size: auto;
 }
 
 [data-theme="comic"] {
@@ -35,10 +51,10 @@ html[data-theme="comic"].dark {
   --color-success: oklch(0.52 0.22 138);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.72 0.24 68);
-  --color-surface: oklch(1 0 0 / 0.55);
-  --color-surface-hover: oklch(1 0 0 / 0.72);
-  --color-surface-active: oklch(0.95 0.02 70);
-  --color-surface-elevated: oklch(1 0 0 / 0.85);
+  --color-surface: oklch(1 0 0);
+  --color-surface-hover: oklch(0.96 0.02 70);
+  --color-surface-active: oklch(0.94 0.02 70);
+  --color-surface-elevated: oklch(1 0 0);
   --color-canvas-surface: oklch(0.98 0.01 70);
   --color-border: oklch(0.18 0.04 50);
   --color-ring: oklch(0.55 0.24 30 / 0.5);
@@ -57,10 +73,9 @@ html[data-theme="comic"].dark {
   --font-mono: "Courier New", var(--font-comic), monospace;
   --shadow-card: 3px 3px 0 oklch(0.18 0.04 50 / 0.15);
   --shadow-elevated: 5px 5px 0 oklch(0.18 0.04 50 / 0.2);
-  /* Paper texture (Phase 4): this is the one theme that wants it. Applied
-     as an overlay by TexturedSurface (::after, pointer-events:none), never
-     baked into a transforming element. */
-  --texture-opacity: 0.7;
+  --texture-size: 170px;
+  --texture-opacity: 0.5;
+  --texture-opacity-surface: 0.35;
   --texture-blend: multiply;
 }
 
@@ -77,11 +92,11 @@ html[data-theme="comic"].dark {
   --color-success: oklch(0.62 0.22 138);
   --color-success-fg: oklch(0 0 0);
   --color-warning: oklch(0.78 0.22 68);
-  --color-surface: oklch(0.2 0.03 50 / 0.65);
-  --color-surface-hover: oklch(0.24 0.03 50 / 0.78);
+  --color-surface: oklch(0.22 0.03 50);
+  --color-surface-hover: oklch(0.25 0.03 50);
   --color-surface-active: oklch(0.28 0.03 50);
-  --color-surface-elevated: oklch(0.22 0.03 50 / 0.82);
-  --color-canvas-surface: oklch(0.20 0.02 50);
+  --color-surface-elevated: oklch(0.25 0.03 50);
+  --color-canvas-surface: oklch(0.22 0.03 50);
   --color-border: oklch(0.72 0.03 60);
   --color-ring: oklch(0.68 0.24 30 / 0.5);
   --color-scrollbar: oklch(0.72 0.03 60 / 0.25);

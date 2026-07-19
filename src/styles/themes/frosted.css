@@ -94,7 +94,8 @@ html[data-theme="frosted"].dark::before {
      opacity, "overlay" blend for an etched/sandblasted feel rather than
      comic's inked "multiply" look. Uses the shared --texture-paper asset
      (see tokens.css) — only opacity/size/blend are themed. */
-  --texture-opacity: 0.28;
+  --texture-opacity: 0;
+  --texture-opacity-surface: 0.28;
   --texture-blend: overlay;
   --texture-size: 60px;
 }

@@ -49,6 +49,7 @@ html[data-theme="brutal"].dark {
   --opacity-dim: 1;
   --opacity-muted: 1;
   --texture-opacity: 0;
+  --texture-opacity-surface: 0;
   --texture-blend: multiply;
 }
 
