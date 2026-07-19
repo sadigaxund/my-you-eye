@@ -47,14 +47,14 @@ const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(
     const hasMeta = (chips && chips.length > 0) || resultCount != null;
 
     return (
-      <div ref={ref} className={cn("flex flex-col gap-inline", className)} {...props}>
-        <div className="flex flex-col gap-inline sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-inline sm:flex-row sm:flex-wrap sm:items-center sm:gap-stack">
+      <div ref={ref} className={cn("@container/toolbar flex w-full flex-col gap-inline", className)} {...props}>
+        <div className="flex flex-col gap-inline @lg/toolbar:flex-row @lg/toolbar:items-center @lg/toolbar:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-inline @lg/toolbar:flex-row @lg/toolbar:flex-wrap @lg/toolbar:items-center @lg/toolbar:gap-stack">
             {leading && <div className="flex shrink-0 items-center gap-inline">{leading}</div>}
-            {search && <div className="w-full sm:w-auto sm:min-w-56">{search}</div>}
+            {search && <div className="w-full @lg/toolbar:w-auto @lg/toolbar:min-w-56">{search}</div>}
             {filters && <div className="flex flex-wrap items-center gap-inline">{filters}</div>}
           </div>
-          {actions && <div className="flex w-full sm:w-auto shrink-0 items-center gap-inline">{actions}</div>}
+          {actions && <div className="flex w-full shrink-0 items-center gap-inline @lg/toolbar:w-auto">{actions}</div>}
         </div>
         {hasMeta && (
           <div className="flex flex-wrap items-center gap-inline border-t border-border pt-inline">

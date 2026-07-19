@@ -96,8 +96,8 @@ const entry: ShowcaseEntry = {
         <div className="flex justify-center">
           <div className="w-72 border border-dashed border-muted/40 rounded-ui p-2 space-y-1">
             <div className="flex items-center justify-between gap-1 mb-1">
-              <span className="text-xs text-muted font-mono">320px viewport</span>
-              <svg viewBox="0 0 10 14" className="size-3 fill-muted"><rect x="0.5" y="0.5" width="9" height="13" rx="1.5" stroke="currentColor" strokeWidth="0.5" fill="none" /><path d="M3 11h4" stroke="currentColor" strokeWidth="0.5" fill="none" /></svg>
+              <span className="text-xs text-muted font-mono">288px container</span>
+              <svg viewBox="0 0 12 12" className="size-3 stroke-muted" fill="none"><path d="M1 1v10M11 1v10" strokeWidth="1.3" strokeLinecap="round" /><path d="M4 1v10M8 1v10" strokeWidth="0.5" strokeLinecap="round" opacity="0.4" /></svg>
             </div>
             <Toolbar
               search={<Input placeholder="Search files..." size="sm" />}
