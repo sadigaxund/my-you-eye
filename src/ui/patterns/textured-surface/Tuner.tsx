@@ -1,13 +1,10 @@
 import { useState, useCallback, useMemo } from "react";
-import type {
-  PaperState, FrostedBlurState, FrostedGradState, MetallicState,
-  TextureKey, SubMode,
-} from "./svg-utils";
+import type { TextureKey, SubMode } from "./svg-utils";
 import {
   DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_FROSTED_GRAD, DEFAULT_METALLIC,
-  paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg,
-  tileableMetallicSvg, dataUri,
 } from "./svg-utils";
+import { PaperGrain, BrushedAluminium, FrostedGlassNoise, FrostedGlassGradient } from "./texture-factory";
+import type { Texture } from "./texture-factory";
 import { Preview } from "./Tuner.Preview";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../select";
 import { CodeBlock } from "../../code-block";
@@ -39,35 +36,16 @@ function Slider({ label, value, min, max, step, onChange, format }: {
   );
 }
 
-function generateTsx(uri: string, tile: number, opacity: number, angle?: number): string {
-  const indent = "  ";
-  if (angle && Math.abs(angle) > 0.5) {
-    return `{/* rotated · ${tile}px · ${Math.round(opacity * 100)}% · hard-light */}
-<div${indent}
-${indent}aria-hidden
-${indent}className="absolute pointer-events-none"
-${indent}style={{
-${indent}${indent}top: "50%", left: "50%",
-${indent}${indent}width: "var(--layer-sz,600px)", height: "var(--layer-sz,600px)",
-${indent}${indent}transform: "translate(-50%,-50%) rotate(${angle}deg)",
-${indent}${indent}backgroundImage: \`url("${uri}")\`,
-${indent}${indent}backgroundSize: "${tile}px",
-${indent}${indent}backgroundRepeat: "repeat",
-${indent}${indent}opacity: ${opacity},
-${indent}${indent}mixBlendMode: "hard-light" as const,
-${indent}}}
-/>`;
-  }
-  return `{/* tiled · ${tile}px · ${Math.round(opacity * 100)}% · hard-light */}
-<div${indent}
-${indent}aria-hidden
-${indent}className="absolute inset-0 pointer-events-none"
-${indent}style={{
-${indent}${indent}backgroundImage: \`url("${uri}")\`,
-${indent}${indent}backgroundSize: "${tile}px",
-${indent}${indent}opacity: ${opacity},
-${indent}${indent}mixBlendMode: "hard-light" as const,
-${indent}}}
+function buildCode(texture: Texture, opacity: number): string {
+  const pct = Math.round(opacity * 100);
+  const expr = texture.codeStyle(opacity);
+  return `import { ${texture.constructor.name} } from "./texture-factory";
+
+{/* ${texture.label} · ${texture.tile}px · ${pct}% · hard-light */}
+<div
+  aria-hidden
+  className="absolute inset-0 pointer-events-none"
+  style={${expr}}
 />`;
 }
 
@@ -80,29 +58,38 @@ export function Tuner() {
   const [frostedGrad, setFrostedGrad] = useState<FrostedGradState>(DEFAULT_FROSTED_GRAD);
   const [metallic, setMetallic] = useState<MetallicState>(DEFAULT_METALLIC);
 
-  const currentSvg = useMemo(() => {
+  const texture = useMemo<Texture>(() => {
     switch (activeTexture) {
-      case "paper-grain": return paperSvg(paper);
-      case "brushed-aluminium":
-        return metallic.angle > 0.5 ? tileableMetallicSvg(metallic) : metallicSvg(metallic);
-      case "frosted-glass": return subMode === "blur" ? frostedBlurSvg(frostedBlur) : frostedGradSvg(frostedGrad);
+      case "paper-grain": return new PaperGrain(paper);
+      case "brushed-aluminium": return new BrushedAluminium(metallic);
+      case "frosted-glass": return subMode === "blur" ? new FrostedGlassNoise(frostedBlur) : new FrostedGlassGradient(frostedGrad);
     }
   }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
 
-  const state = useMemo(() => {
+  const stateOpacity = useMemo(() => {
     switch (activeTexture) {
-      case "paper-grain": return { tile: paper.tile, opacity: paper.opacity, angle: 0 };
-      case "brushed-aluminium": return { tile: metallic.tile, opacity: metallic.opacity, angle: metallic.angle };
+      case "paper-grain": return paper.opacity;
+      case "brushed-aluminium": return metallic.opacity;
       case "frosted-glass": {
         const s = subMode === "blur" ? frostedBlur : frostedGrad;
-        return { tile: s.tile, opacity: s.opacity, angle: 0 };
+        return s.opacity;
       }
     }
   }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
 
-  const uri = useMemo(() => dataUri(currentSvg), [currentSvg]);
+  const stateTile = useMemo(() => {
+    switch (activeTexture) {
+      case "paper-grain": return paper.tile;
+      case "brushed-aluminium": return metallic.tile;
+      case "frosted-glass": {
+        const s = subMode === "blur" ? frostedBlur : frostedGrad;
+        return s.tile;
+      }
+    }
+  }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
+
   const tsxCode = useMemo(() =>
-    generateTsx(uri, state.tile, state.opacity, state.angle), [uri, state]);
+    buildCode(texture, stateOpacity), [texture, stateOpacity]);
 
   const updater = useCallback(<T,>(setter: React.Dispatch<React.SetStateAction<T>>, key: keyof T) =>
     (v: number) => setter(prev => ({ ...prev, [key]: v })), []);
@@ -168,7 +155,7 @@ export function Tuner() {
             </>}
           </>}
           <hr className="border-border my-3" />
-          <Slider label="Tile size (px)" value={state.tile} min={60} max={500} step={10}
+          <Slider label="Tile size (px)" value={stateTile} min={60} max={500} step={10}
             onChange={v => {
               switch (activeTexture) {
                 case "paper-grain": setPaper(p => ({ ...p, tile: v })); break;
@@ -180,7 +167,7 @@ export function Tuner() {
                 }
               }
             }} />
-          <Slider label="Layer opacity" value={state.opacity} min={0.03} max={0.7} step={0.01}
+          <Slider label="Layer opacity" value={stateOpacity} min={0.03} max={0.7} step={0.01}
             onChange={v => {
               switch (activeTexture) {
                 case "paper-grain": setPaper(p => ({ ...p, opacity: v })); break;
@@ -205,12 +192,12 @@ export function Tuner() {
           </div>
           {mode === "preview" ? (
             <div className="flex gap-4 h-[440px] min-w-0">
-              <Preview bg="oklch(0.99 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
-                angle={activeTexture === "brushed-aluminium" ? metallic.angle : 0}
-                seamBlend={activeTexture === "brushed-aluminium" && Math.abs(metallic.angle) > 0.5} />
-              <Preview bg="oklch(0.12 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
-                angle={activeTexture === "brushed-aluminium" ? metallic.angle : 0}
-                seamBlend={activeTexture === "brushed-aluminium" && Math.abs(metallic.angle) > 0.5} />
+              <Preview bg="oklch(0.99 0 0)" uri={texture.uri} tile={stateTile} opacity={stateOpacity}
+                angle={texture instanceof BrushedAluminium ? (texture as BrushedAluminium).angle : 0}
+                seamBlend={texture instanceof BrushedAluminium && Math.abs((texture as BrushedAluminium).angle) > 0.5} />
+              <Preview bg="oklch(0.12 0 0)" uri={texture.uri} tile={stateTile} opacity={stateOpacity}
+                angle={texture instanceof BrushedAluminium ? (texture as BrushedAluminium).angle : 0}
+                seamBlend={texture instanceof BrushedAluminium && Math.abs((texture as BrushedAluminium).angle) > 0.5} />
             </div>
           ) : (
             <div className="flex gap-4 h-[440px] min-w-0">

@@ -1,17 +1,7 @@
 import type { ShowcaseEntry } from "../../../showcase/types";
 import { TexturedSurface } from ".";
-import { Badge } from "../../badge";
+import { Button } from "../../button";
 import { Tuner } from "./Tuner";
-
-function renderTuner() { return <Tuner />; }
-
-const TEXTURES = ["paper-grain", "frosted-glass", "brushed-aluminium"] as const;
-const TEXTURE_LABELS: Record<string, string> = {
-  "paper-grain": "Paper Grain",
-  "frosted-glass": "Frosted Glass",
-  "brushed-aluminium": "Brushed Aluminium",
-};
-const STRENGTHS = ["subtle", "medium", "strong"] as const;
 
 const entry: ShowcaseEntry = {
   title: "TexturedSurface",
@@ -19,61 +9,46 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Tuner",
-      render: renderTuner,
+      render: () => <Tuner />,
     },
     {
-      name: "Material × Strength",
+      name: "Paper grain",
+      description: "Single TexturedSurface with default paper-grain at medium strength on the surface layer.",
       render: () => (
-        <div className="flex flex-col gap-6">
-          {TEXTURES.map((tex) => (
-            <div key={tex}>
-              <h4 className="text-sm font-medium text-fg mb-2">{TEXTURE_LABELS[tex]}</h4>
-              <div className="flex gap-3">
-                {STRENGTHS.map((s) => (
-                  <div key={s} className="flex-1">
-                    <TexturedSurface texture={tex} strength={s} className="p-3 h-24 flex flex-col items-center justify-center">
-                      <Badge variant="neutral" style="soft">{s}</Badge>
-                    </TexturedSurface>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <TexturedSurface texture="paper-grain" strength="medium" layer="surface" className="p-4">
+          <p className="text-sm text-fg">paper-grain · medium · surface</p>
+        </TexturedSurface>
       ),
     },
     {
-      name: "Applied",
+      name: "Frosted glass",
+      description: "Single TexturedSurface with frosted-glass at medium strength on the surface layer.",
       render: () => (
-        <div className="flex flex-col gap-4">
-          <TexturedSurface texture="paper-grain" strength="medium" className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-1 h-10 rounded-full bg-primary shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-fg">Note card</p>
-                <p className="text-xs text-muted mt-1">Paper grain adds tactile warmth to content surfaces.</p>
-              </div>
-            </div>
-          </TexturedSurface>
-          <TexturedSurface texture="brushed-aluminium" strength="subtle" color="--color-surface-elevated" variant="elevated" className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="size-2 rounded-full bg-fg/40" />
-              <span className="text-xs font-medium text-fg">Brushed aluminium panel</span>
-            </div>
-            <p className="text-sm text-fg">Directional streaks read as brushed aluminium.</p>
-          </TexturedSurface>
-          <div className="relative rounded-ui overflow-hidden bg-secondary">
-            <TexturedSurface texture="frosted-glass" strength="medium" color="--color-surface-elevated" variant="elevated" className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="size-2 rounded-full bg-primary" />
-                <span className="text-xs font-medium text-fg">Frosted glass</span>
-              </div>
-              <p className="text-sm text-fg">Etched haze sits above a solid secondary backdrop.</p>
-              <p className="text-xs text-muted mt-1">Switch to the Glass theme for translucency.</p>
-            </TexturedSurface>
-          </div>
-        </div>
+        <TexturedSurface texture="frosted-glass" strength="medium" layer="surface" className="p-4">
+          <p className="text-sm text-fg">frosted-glass · medium · surface</p>
+        </TexturedSurface>
       ),
+    },
+    {
+      name: "Brushed aluminium",
+      description: "Single TexturedSurface with brushed-aluminium at subtle strength on the elevated variant.",
+      render: () => (
+        <TexturedSurface texture="brushed-aluminium" strength="subtle" variant="elevated" className="p-4">
+          <p className="text-sm text-fg">brushed-aluminium · subtle · elevated</p>
+        </TexturedSurface>
+      ),
+    },
+    {
+      name: "Paper grain — full matrix",
+      render: () => <TexturedSurface.ParamTable texture="paper-grain" />,
+    },
+    {
+      name: "Frosted glass — full matrix",
+      render: () => <TexturedSurface.ParamTable texture="frosted-glass" />,
+    },
+    {
+      name: "Brushed aluminium — full matrix",
+      render: () => <TexturedSurface.ParamTable texture="brushed-aluminium" />,
     },
     {
       name: "Theme-driven",
@@ -86,6 +61,26 @@ const entry: ShowcaseEntry = {
             <p className="text-fg">Elevated — same texture with shadow.</p>
           </TexturedSurface>
         </div>
+      ),
+    },
+    {
+      name: "Composed",
+      description: "Nested TexturedSurface: page background, surface container, foreground card.",
+      render: () => (
+        <TexturedSurface texture="paper-grain" strength="medium" layer="page" className="p-6">
+          <div className="flex flex-col gap-4">
+            <TexturedSurface texture="paper-grain" strength="medium" layer="surface" variant="elevated" className="p-4">
+              <TexturedSurface texture="paper-grain" strength="medium" layer="foreground" variant="elevated" className="p-4 max-w-sm">
+                <h4 className="text-sm font-semibold text-fg">Note Card</h4>
+                <p className="text-xs text-muted mt-1">Card lightest, container medium, page heaviest.</p>
+                <div className="flex gap-2 mt-3">
+                  <Button size="sm" variant="primary">Action</Button>
+                  <Button size="sm" variant="ghost">Cancel</Button>
+                </div>
+              </TexturedSurface>
+            </TexturedSurface>
+          </div>
+        </TexturedSurface>
       ),
     },
   ],
