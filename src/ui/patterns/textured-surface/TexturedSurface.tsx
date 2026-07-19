@@ -105,13 +105,17 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
       return TEXTURE_CONFS[texture]?.(baseOp * layerOp, layer, strength) ?? null;
     }, [texture, strength, layer]);
 
+    const textureType = (typeof document !== 'undefined'
+      ? getComputedStyle(document.documentElement).getPropertyValue('--texture-type').trim()
+      : '') || 'paper-grain';
+
     const rootStyle = useMemo(() => {
       if (conf) {
         return { "--texture-opacity": "0", "--texture-opacity-surface": "0", ...style } as CSSProperties;
       }
       const lo = LAYER_OPACITY[layer];
       const overrides: Record<string, string> = {};
-      const svgs = LAYER_SVGS["paper-grain"]?.[layer]?.[strength];
+      const svgs = LAYER_SVGS[textureType]?.[layer]?.[strength];
       if (svgs) {
         overrides["--texture-paper-resolved"] = `url("${svgs.primary}")`;
         overrides["--texture-size-resolved"] = `${svgs.tileSize}px`;
@@ -120,7 +124,7 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
         overrides["--texture-opacity-resolved"] = `calc(var(--texture-opacity-surface) * ${lo})`;
       }
       return { ...overrides, ...style } as CSSProperties;
-    }, [conf, layer, style]);
+    }, [conf, layer, style, textureType]);
 
     if (conf) {
       const tileLayers = conf.layers.filter(l => l.tileSize);

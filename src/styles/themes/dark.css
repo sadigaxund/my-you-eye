@@ -27,4 +27,5 @@
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
   --texture-blend: multiply;
+  --texture-type: paper-grain;
 }

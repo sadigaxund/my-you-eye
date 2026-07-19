@@ -1,12 +1,12 @@
 /* =========================================
    Metallic — brushed aluminium.
    =========================================
-   Neutral silver-grey palette,    60° diagonal brush-grain page texture,
+   Cool silver-blue grey palette,  60° diagonal brush-grain page texture,
    hard-edged zero-blur offset shadows (indented/depressed feel).
    No backdrop blur: metal is opaque. */
 
 html[data-theme="metallic"] {
-  background-color: oklch(0.90 0.003 0);
+  background-color: oklch(0.90 0.018 255);
   background-image: linear-gradient(
     180deg,
     oklch(1 0 0 / 0.4) 0%,
@@ -36,7 +36,7 @@ html[data-theme="metallic"] body {
 }
 
 html[data-theme="metallic"].dark {
-  background-color: oklch(0.20 0.005 0);
+  background-color: oklch(0.20 0.025 255);
   background-image: linear-gradient(
     180deg,
     oklch(1 0 0 / 0.06) 0%,
@@ -45,14 +45,14 @@ html[data-theme="metallic"].dark {
 }
 
 [data-theme="metallic"] {
-  --color-bg: oklch(0.90 0.003 0);
-  --color-fg: oklch(0.15 0.005 0);
-  --color-muted: oklch(0.48 0.005 0);
+  --color-bg: oklch(0.90 0.018 255);
+  --color-fg: oklch(0.15 0.005 255);
+  --color-muted: oklch(0.48 0.005 255);
 
-  --color-primary: oklch(0.35 0.01 0);
+  --color-primary: oklch(0.40 0.04 255);
   --color-primary-fg: oklch(1 0 0);
-  --color-secondary: oklch(0.82 0.004 0);
-  --color-secondary-fg: oklch(0.15 0.005 0);
+  --color-secondary: oklch(0.82 0.025 255);
+  --color-secondary-fg: oklch(0.15 0.005 255);
 
   --color-danger: oklch(0.50 0.20 25);
   --color-danger-fg: oklch(1 0 0);
@@ -60,20 +60,20 @@ html[data-theme="metallic"].dark {
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.70 0.18 80);
 
-  --color-surface: oklch(0.95 0.002 0);
-  --color-surface-hover: oklch(0.92 0.003 0);
-  --color-surface-active: oklch(0.88 0.004 0);
-  --color-surface-elevated: oklch(0.97 0.002 0);
-  --color-canvas-surface: oklch(0.90 0.003 0);
+  --color-surface: oklch(0.95 0.012 255);
+  --color-surface-hover: oklch(0.92 0.015 255);
+  --color-surface-active: oklch(0.88 0.018 255);
+  --color-surface-elevated: oklch(0.97 0.01 255);
+  --color-canvas-surface: oklch(0.90 0.018 255);
 
-  --color-border: oklch(0.55 0.005 0);
-  --color-ring: oklch(0.35 0.01 0 / 0.35);
-  --color-scrollbar: oklch(0.55 0.005 0);
-  --color-scrollbar-hover: oklch(0.40 0.005 0);
+  --color-border: oklch(0.55 0.02 255);
+  --color-ring: oklch(0.40 0.04 255 / 0.35);
+  --color-scrollbar: oklch(0.55 0.02 255);
+  --color-scrollbar-hover: oklch(0.40 0.02 255);
   --color-grid-dot: oklch(0 0 0 / 0.06);
-  --color-code-bg: oklch(0.93 0.003 0);
-  --color-code-fg: oklch(0.15 0.005 0);
-  --color-code-muted: oklch(0.45 0.005 0);
+  --color-code-bg: oklch(0.93 0.015 255);
+  --color-code-fg: oklch(0.15 0.005 255);
+  --color-code-muted: oklch(0.45 0.005 255);
 
   --border-width: 1px;
   --backdrop-blur: 0px;
@@ -93,17 +93,18 @@ html[data-theme="metallic"].dark {
   --texture-opacity: 0.35;
   --texture-opacity-surface: 0.35;
   --texture-blend: multiply;
+  --texture-type: brushed-aluminium;
 }
 
 [data-theme="metallic"].dark {
-  --color-bg: oklch(0.20 0.005 0);
-  --color-fg: oklch(0.93 0.003 0);
-  --color-muted: oklch(0.62 0.005 0);
+  --color-bg: oklch(0.20 0.025 255);
+  --color-fg: oklch(0.93 0.003 255);
+  --color-muted: oklch(0.62 0.005 255);
 
-  --color-primary: oklch(0.72 0.008 0);
-  --color-primary-fg: oklch(0.10 0.005 0);
-  --color-secondary: oklch(0.28 0.006 0);
-  --color-secondary-fg: oklch(0.93 0.003 0);
+  --color-primary: oklch(0.68 0.06 255);
+  --color-primary-fg: oklch(0.10 0.005 255);
+  --color-secondary: oklch(0.28 0.03 255);
+  --color-secondary-fg: oklch(0.93 0.003 255);
 
   --color-danger: oklch(0.62 0.20 25);
   --color-danger-fg: oklch(0 0 0);
@@ -111,20 +112,20 @@ html[data-theme="metallic"].dark {
   --color-success-fg: oklch(0 0 0);
   --color-warning: oklch(0.80 0.18 80);
 
-  --color-surface: oklch(0.24 0.005 0);
-  --color-surface-hover: oklch(0.28 0.005 0);
-  --color-surface-active: oklch(0.32 0.006 0);
-  --color-surface-elevated: oklch(0.22 0.005 0);
-  --color-canvas-surface: oklch(0.24 0.005 0);
+  --color-surface: oklch(0.24 0.02 255);
+  --color-surface-hover: oklch(0.28 0.022 255);
+  --color-surface-active: oklch(0.32 0.025 255);
+  --color-surface-elevated: oklch(0.22 0.018 255);
+  --color-canvas-surface: oklch(0.24 0.02 255);
 
-  --color-border: oklch(0.50 0.005 0);
-  --color-ring: oklch(0.72 0.008 0 / 0.35);
-  --color-scrollbar: oklch(0.45 0.005 0);
-  --color-scrollbar-hover: oklch(0.60 0.005 0);
+  --color-border: oklch(0.50 0.025 255);
+  --color-ring: oklch(0.68 0.06 255 / 0.35);
+  --color-scrollbar: oklch(0.45 0.025 255);
+  --color-scrollbar-hover: oklch(0.60 0.025 255);
   --color-grid-dot: oklch(1 1 1 / 0.05);
-  --color-code-bg: oklch(0.16 0.005 0);
-  --color-code-fg: oklch(0.92 0.003 0);
-  --color-code-muted: oklch(0.55 0.005 0);
+  --color-code-bg: oklch(0.16 0.02 255);
+  --color-code-fg: oklch(0.92 0.003 255);
+  --color-code-muted: oklch(0.55 0.005 255);
 
   --shadow-card: 1px 2px 0 0 oklch(0 0 0 / 0.4);
   --shadow-elevated: 3px 4px 0 0 oklch(0 0 0 / 0.5);

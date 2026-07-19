@@ -114,6 +114,7 @@ html[data-theme="glass"]::before {
   --texture-opacity: 0.22;
   --texture-opacity-surface: 0.15;
   --texture-blend: hard-light;
+  --texture-type: frosted-glass;
 }
 
 [data-theme="glass"].dark {

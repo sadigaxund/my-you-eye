@@ -97,6 +97,7 @@ html[data-theme="frosted"].dark::before {
   --texture-opacity: 0;
   --texture-opacity-surface: 0.28;
   --texture-blend: overlay;
+  --texture-type: paper-grain;
   --texture-size: 60px;
 }
 

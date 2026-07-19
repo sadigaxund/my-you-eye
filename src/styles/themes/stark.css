@@ -51,6 +51,7 @@ html[data-theme="stark"].dark {
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
   --texture-blend: multiply;
+  --texture-type: paper-grain;
 }
 
 [data-theme="stark"].dark {
