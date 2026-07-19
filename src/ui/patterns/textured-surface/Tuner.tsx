@@ -1,11 +1,12 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type {
   PaperState, FrostedBlurState, FrostedGradState, MetallicState,
   TextureKey, SubMode,
 } from "./svg-utils";
 import {
   DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_FROSTED_GRAD, DEFAULT_METALLIC,
-  paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg, dataUri,
+  paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg,
+  tileableMetallicSvg, dataUri,
 } from "./svg-utils";
 
 function clamp(v: number, min: number, max: number) {
@@ -29,20 +30,65 @@ function Slider({ label, value, min, max, step, onChange, format }: {
   );
 }
 
-function Preview({ bg, uri, tile, opacity }: { bg: string; uri: string; tile: number; opacity: number }) {
+function Preview({ bg, uri, tile, opacity, angle }: {
+  bg: string; uri: string; tile: number; opacity: number; angle?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [sz, setSz] = useState(0);
+  const rotated = !!angle && Math.abs(angle) > 0.5;
+
+  useEffect(() => {
+    if (!rotated) return;
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setSz(2 * Math.max(el.offsetWidth, el.offsetHeight));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [rotated]);
+
+  const half = rotated ? sz / 2 || 0 : 0;
+  const layerStyle: React.CSSProperties = rotated
+    ? { top: "50%", left: "50%", width: sz || 1, height: sz || 1, marginLeft: -half, marginTop: -half, transform: `rotate(${angle}deg)`, transformOrigin: "center" }
+    : { inset: "0" };
+
   return (
-    <div className="flex-1 rounded-ui overflow-hidden relative border border-border">
+    <div ref={ref} className="flex-1 rounded-ui overflow-hidden relative border border-border">
       <div className="absolute inset-0" style={{ background: bg }} />
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: `url("${uri}")`, backgroundSize: `${tile}px`, opacity, mixBlendMode: "hard-light" }} />
+      <div aria-hidden className="absolute pointer-events-none"
+        style={{
+          ...layerStyle,
+          backgroundImage: `url("${uri}")`,
+          backgroundSize: `${tile}px`,
+          backgroundRepeat: "repeat",
+          opacity,
+          mixBlendMode: "hard-light" as const,
+        }} />
     </div>
   );
 }
 
-function generateTsx(texture: string, subMode: string, uri: string, tile: number, opacity: number): string {
-  const label = texture === "frosted" ? `frosted (${subMode})` : texture;
+function generateTsx(uri: string, tile: number, opacity: number, angle?: number): string {
   const indent = "  ";
-  return `{/* ${label} \u00b7 tile ${tile}px \u00b7 ${Math.round(opacity * 100)}% opacity \u00b7 hard-light */}
+  if (angle && Math.abs(angle) > 0.5) {
+    return `{/* rotated · ${tile}px · ${Math.round(opacity * 100)}% · hard-light */}
+<div${indent}
+${indent}aria-hidden
+${indent}className="absolute pointer-events-none"
+${indent}style={{
+${indent}${indent}top: "50%", left: "50%",
+${indent}${indent}width: "var(--layer-sz,600px)", height: "var(--layer-sz,600px)",
+${indent}${indent}transform: "translate(-50%,-50%) rotate(${angle}deg)",
+${indent}${indent}backgroundImage: \`url("${uri}")\`,
+${indent}${indent}backgroundSize: "${tile}px",
+${indent}${indent}backgroundRepeat: "repeat",
+${indent}${indent}opacity: ${opacity},
+${indent}${indent}mixBlendMode: "hard-light" as const,
+${indent}}}
+/>`;
+  }
+  return `{/* tiled · ${tile}px · ${Math.round(opacity * 100)}% · hard-light */}
 <div${indent}
 ${indent}aria-hidden
 ${indent}className="absolute inset-0 pointer-events-none"
@@ -67,30 +113,29 @@ export function Tuner() {
   const currentSvg = useMemo(() => {
     switch (activeTexture) {
       case "paper": return paperSvg(paper);
-      case "metallic": return metallicSvg(metallic);
+      case "metallic":
+        return metallic.angle > 0.5 ? tileableMetallicSvg(metallic) : metallicSvg(metallic);
       case "frosted": return subMode === "blur" ? frostedBlurSvg(frostedBlur) : frostedGradSvg(frostedGrad);
     }
   }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
 
-  const currentState = useMemo(() => {
+  const state = useMemo(() => {
     switch (activeTexture) {
-      case "paper": return { tile: paper.tile, opacity: paper.opacity };
-      case "metallic": return { tile: metallic.tile, opacity: metallic.opacity };
-      case "frosted": return subMode === "blur"
-        ? { tile: frostedBlur.tile, opacity: frostedBlur.opacity }
-        : { tile: frostedGrad.tile, opacity: frostedGrad.opacity };
+      case "paper": return { tile: paper.tile, opacity: paper.opacity, angle: 0 };
+      case "metallic": return { tile: metallic.tile, opacity: metallic.opacity, angle: metallic.angle };
+      case "frosted": {
+        const s = subMode === "blur" ? frostedBlur : frostedGrad;
+        return { tile: s.tile, opacity: s.opacity, angle: 0 };
+      }
     }
   }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
 
   const uri = useMemo(() => dataUri(currentSvg), [currentSvg]);
-
   const tsxCode = useMemo(() =>
-    generateTsx(activeTexture, subMode, uri, currentState.tile, currentState.opacity),
-    [activeTexture, subMode, uri, currentState]);
+    generateTsx(uri, state.tile, state.opacity, state.angle), [uri, state]);
 
   const updater = useCallback(<T,>(setter: React.Dispatch<React.SetStateAction<T>>, key: keyof T) =>
-    (v: number) => setter(prev => ({ ...prev, [key]: v })),
-  []);
+    (v: number) => setter(prev => ({ ...prev, [key]: v })), []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -150,7 +195,7 @@ export function Tuner() {
             </>}
           </>}
           <hr className="border-border my-3" />
-          <Slider label="Tile size (px)" value={currentState.tile} min={60} max={500} step={10}
+          <Slider label="Tile size (px)" value={state.tile} min={60} max={500} step={10}
             onChange={v => {
               switch (activeTexture) {
                 case "paper": setPaper(p => ({ ...p, tile: v })); break;
@@ -162,7 +207,7 @@ export function Tuner() {
                 }
               }
             }} />
-          <Slider label="Layer opacity" value={currentState.opacity} min={0.03} max={0.7} step={0.01}
+          <Slider label="Layer opacity" value={state.opacity} min={0.03} max={0.7} step={0.01}
             onChange={v => {
               switch (activeTexture) {
                 case "paper": setPaper(p => ({ ...p, opacity: v })); break;
@@ -187,8 +232,10 @@ export function Tuner() {
           </div>
           {tab === "preview" ? (
             <div className="flex gap-4 flex-1 min-h-[420px]">
-              <Preview bg="oklch(0.99 0 0)" uri={uri} tile={currentState.tile} opacity={currentState.opacity} />
-              <Preview bg="oklch(0.12 0 0)" uri={uri} tile={currentState.tile} opacity={currentState.opacity} />
+              <Preview bg="oklch(0.99 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
+                angle={activeTexture === "metallic" ? metallic.angle : 0} />
+              <Preview bg="oklch(0.12 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
+                angle={activeTexture === "metallic" ? metallic.angle : 0} />
             </div>
           ) : (
             <pre className="flex-1 min-h-[420px] font-mono text-xs p-3 bg-bg border border-border rounded-ui overflow-auto whitespace-pre">{tsxCode}</pre>

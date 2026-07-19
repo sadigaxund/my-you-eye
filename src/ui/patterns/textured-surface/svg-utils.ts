@@ -98,3 +98,49 @@ export function frostedGradSvg(s: FrostedGradState): string {
 <rect width='100%' height='100%' fill='url(#g4)'/>
 </svg>`.trim();
 }
+
+/* ---- Element-sized (non-tiling) generators ---- */
+
+export function fullFrostedSvg(s: FrostedBlurState): string {
+  const o = offset(s.stretch);
+  return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
+<filter id='ff' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}'/>
+<feColorMatrix type='matrix' values='${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} 1 0 0 0 0'/>
+</filter>
+<rect width='100%' height='100%' filter='url(#ff)'/>
+</svg>`.trim();
+}
+
+export function fullMetallicNoiseSvg(s: MetallicState): string {
+  const o = offset(s.stretch);
+  return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
+<filter id='fm' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freqX} ${s.freqY}' numOctaves='${s.octaves}'/>
+<feColorMatrix type='matrix' values='${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} 1 0 0 0 0'/>
+</filter>
+<rect width='100%' height='100%' filter='url(#fm)'/>
+</svg>`.trim();
+}
+
+/* Tileable anisotropic noise at 0° — for CSS-rotated tiling. Identical
+   to fullMetallicNoiseSvg but with stitchTiles for seamless repeat. */
+export function tileableMetallicSvg(s: MetallicState): string {
+  const o = offset(s.stretch);
+  return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
+<filter id='tm' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freqX} ${s.freqY}' numOctaves='${s.octaves}' stitchTiles='stitch'/>
+<feColorMatrix type='matrix' values='${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} ${s.stretch} 0 0 0 ${o} 1 0 0 0 0'/>
+</filter>
+<rect width='100%' height='100%' filter='url(#tm)'/>
+</svg>`.trim();
+}
+
+export function ditherSvg(): string {
+  return `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>
+<filter id='d'>
+<feTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='1'/>
+</filter>
+<rect width='100%' height='100%' filter='url(#d)'/>
+</svg>`.trim();
+}

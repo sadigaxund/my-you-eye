@@ -1,21 +1,58 @@
-import { forwardRef, useMemo, type HTMLAttributes } from "react";
+import { forwardRef, useMemo, type CSSProperties, type HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/cn";
-
-const SVG_PAPER = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E";
-const SVG_FROSTED = "data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E";
-const SVG_METALLIC = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='m' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6 0.01' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1.6 0 0 0 -0.3 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E";
-
-const TEXTURE_PROPS: Record<string, { url: string; size: string; blend: string }> = {
-  paper:    { url: SVG_PAPER,    size: "150px", blend: "hard-light" },
-  frosted:  { url: SVG_FROSTED,  size: "300px", blend: "hard-light" },
-  metallic: { url: SVG_METALLIC, size: "200px", blend: "hard-light" },
-};
+import {
+  paperSvg, fullFrostedSvg, metallicSvg, ditherSvg, dataUri,
+} from "./svg-utils";
 
 const TEXTURE_STRENGTHS: Record<string, Record<string, number>> = {
   paper:    { subtle: 0.30, medium: 0.50, strong: 0.75 },
   frosted:  { subtle: 0.18, medium: 0.30, strong: 0.48 },
   metallic: { subtle: 0.15, medium: 0.28, strong: 0.45 },
+};
+
+/* Pre‑generated SVGs (fixed per material, not per‑instance) */
+const PAPER_PRIMARY = dataUri(paperSvg({ freq: 0.85, octaves: 3, stretch: 2.6, tile: 150, opacity: 0 }));
+const PAPER_SECONDARY = dataUri(paperSvg({ freq: 0.85, octaves: 3, stretch: 2.6, tile: 97, opacity: 0 }));
+const METALLIC_PRIMARY = dataUri(metallicSvg({ freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0 }));
+const METALLIC_SECONDARY = dataUri(metallicSvg({ freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 127, opacity: 0 }));
+const FROSTED_MAIN = dataUri(fullFrostedSvg({ freq: 0.01, octaves: 2, stretch: 2.2, tile: 300, opacity: 0 }));
+const FROSTED_DITHER = dataUri(ditherSvg());
+
+interface LayerConf {
+  uri: string;
+  opacity: number;
+  blend: string;
+  tileSize?: number;
+}
+
+interface TextureConf {
+  mode: "tiled" | "full";
+  layers: LayerConf[];
+}
+
+const TEXTURE_CONFS: Record<string, (opacity: number) => TextureConf> = {
+  paper: (op) => ({
+    mode: "tiled",
+    layers: [
+      { uri: PAPER_PRIMARY,   opacity: op,               blend: "hard-light", tileSize: 150 },
+      { uri: PAPER_SECONDARY, opacity: op * 0.15,         blend: "hard-light", tileSize: 97 },
+    ],
+  }),
+  metallic: (op) => ({
+    mode: "tiled",
+    layers: [
+      { uri: METALLIC_PRIMARY,   opacity: op,               blend: "hard-light", tileSize: 200 },
+      { uri: METALLIC_SECONDARY, opacity: op * 0.15,        blend: "hard-light", tileSize: 127 },
+    ],
+  }),
+  frosted: (op) => ({
+    mode: "full",
+    layers: [
+      { uri: FROSTED_MAIN,   opacity: op,     blend: "hard-light" },
+      { uri: FROSTED_DITHER, opacity: 0.03,   blend: "hard-light", tileSize: 64 },
+    ],
+  }),
 };
 
 const texturedSurfaceVariants = cva(
@@ -52,37 +89,96 @@ export interface TexturedSurfaceProps
 
 const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
   ({ className, variant, radius, color = "--color-surface", texture = "theme", strength = "medium", style, children, ...props }, ref) => {
-    const explicitTexture = useMemo(() => {
+    const conf = useMemo<TextureConf | null>(() => {
       if (texture === "theme") return null;
-      const t = TEXTURE_PROPS[texture];
-      if (!t) return null;
-      return {
-        url: t.url,
-        size: t.size,
-        blend: t.blend,
-        opacity: (TEXTURE_STRENGTHS[texture] ?? { subtle: 0.35, medium: 0.6, strong: 0.9 })[strength] ?? 0.6,
-      };
+      const baseOp = TEXTURE_STRENGTHS[texture]?.[strength] ?? 0.5;
+      return TEXTURE_CONFS[texture]?.(baseOp) ?? null;
     }, [texture, strength]);
 
-    if (explicitTexture) {
+    const rootStyle = conf
+      ? { "--texture-opacity": "0", ...style } as CSSProperties
+      : style;
+
+    if (conf?.mode === "tiled") {
       return (
         <div
           ref={ref}
           className={cn("relative overflow-hidden border border-border", texturedSurfaceVariants({ variant, radius }), className)}
-          style={style}
+          style={rootStyle}
           {...props}
         >
           <div className="absolute inset-0" style={{ backgroundColor: `var(${color})` }} />
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url("${explicitTexture.url}")`,
-              backgroundSize: explicitTexture.size,
-              opacity: explicitTexture.opacity,
-              ...(explicitTexture.blend !== "normal" ? { mixBlendMode: explicitTexture.blend as React.CSSProperties["mixBlendMode"] } : {}),
-            }}
-          />
+          {conf.layers.map((l, i) => (
+            <div
+              key={i}
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `url("${l.uri}")`,
+                backgroundSize: `${l.tileSize}px`,
+                backgroundRepeat: "repeat",
+                opacity: l.opacity,
+                mixBlendMode: l.blend as CSSProperties["mixBlendMode"],
+              }}
+            />
+          ))}
+          <div className="relative">{children}</div>
+        </div>
+      );
+    }
+
+    if (conf?.mode === "full") {
+      const tileLayers = conf.layers.filter(l => l.tileSize);
+      const coverLayers = conf.layers.filter(l => !l.tileSize);
+      return (
+        <div
+          ref={ref}
+          className={cn("relative overflow-hidden border border-border", texturedSurfaceVariants({ variant, radius }), className)}
+          style={rootStyle}
+          {...props}
+        >
+          <div className="absolute inset-0" style={{ backgroundColor: `var(${color})` }} />
+
+          {tileLayers.map((l, i) => (
+            <div
+              key={`t${i}`}
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `url("${l.uri}")`,
+                backgroundSize: `${l.tileSize}px`,
+                backgroundRepeat: "repeat",
+                opacity: l.opacity,
+                mixBlendMode: l.blend as CSSProperties["mixBlendMode"],
+              }}
+            />
+          ))}
+
+          {coverLayers.length > 0 && (
+            <div className="absolute inset-0" style={{ containerType: "size" }}>
+              {coverLayers.map((l, i) => (
+                <div
+                  key={`c${i}`}
+                  aria-hidden
+                  className="absolute pointer-events-none"
+                  style={{
+                    top: "50%",
+                    left: "50%",
+                    width: "calc(100cqw + 100cqh)",
+                    height: "calc(100cqw + 100cqh)",
+                    transform: "translate(-50%, -50%)",
+                    transformOrigin: "center",
+                    backgroundImage: `url("${l.uri}")`,
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                    opacity: l.opacity,
+                    mixBlendMode: l.blend as CSSProperties["mixBlendMode"],
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
           <div className="relative">{children}</div>
         </div>
       );

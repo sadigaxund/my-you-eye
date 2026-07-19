@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **`tileableMetallicSvg` in svg-utils** — anisotropic noise with `stitchTiles='stitch'` for seamless tiling; no SVG-level rotation wrapper. Used by Tuner when metallic angle > 0.5°.
+
+### Changed
+
+- **Tuner metallic preview (rotated path)** — now renders a centered square layer sized to `2 × max(w, h)` via ResizeObserver, applying CSS `transform: rotate(angle)`. Container `overflow: hidden` clips the excess. Non-rotated path keeps `absolute inset-0` tiled.
+- **Presets "Heavy brush"** — uses `tileableMetallicSvg` with same oversized square + CSS `rotate(45deg)` approach.
+- **TexturedSurface rendering strategy per material** — Frosted and rotated materials now use an element-sized (non-tiled) SVG layer sized by container-query formula (`calc(100cqw + 100cqh)`), provably covering the element at any rotation angle. Paper and 0° metallic keep tiling but add a second grain pass at a coprime tile size (97px for paper, 127px for metallic) at 15% opacity to break residual periodicity. Frosted receives a fine dither noise overlay at 3% opacity to suppress colour banding.
+
 ### Fixed
 
 - **DemoSection width squeeze** — replaced `flex items-center justify-center` default layout with a plain block container. Added `layout?: "fill" | "center"` to demo entries (default `fill`) so wide components (Combobox, MultiSelect, Progress, CodeBlock, Textarea) fill available width, while small inline components can opt into centered layout.
