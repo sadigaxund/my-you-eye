@@ -12,7 +12,7 @@ const entry: ShowcaseEntry = {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Column</TableHead>
+              <TableHead className="w-0 whitespace-nowrap">Column</TableHead>
               <TableHead>Value</TableHead>
             </TableRow>
           </TableHeader>
@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Type</TableHead>
+              <TableHead className="w-0 whitespace-nowrap">Type</TableHead>
               <TableHead>Value</TableHead>
             </TableRow>
           </TableHeader>

@@ -78,7 +78,7 @@ function jsonPreview(value: unknown): { tokens: JsonToken[]; full: string } | nu
 }
 
 const tokenStyles: Record<JsonToken["type"], string> = {
-  key: "text-secondary",
+  key: "text-secondary-fg",
   string: "text-primary font-medium",
   number: "text-primary font-medium",
   boolean: "text-primary font-medium",
