@@ -114,7 +114,7 @@ const sampleData: TreeNode[] = [
   { id: "4", label: "enabled", value: { type: "boolean", value: true } },
   { id: "5", label: "ratio", value: { type: "percentage", value: 0.75 } },
   { id: "6", label: "null_field", value: { type: "null" } },
-  { id: "7", label: "lastLogin", value: { type: "date", value: 1710000000000 } },
+  { id: "7", label: "lastLogin", value: { type: "date-human", value: 1710000000000 } },
   { id: "8", label: "avatar", value: { type: "url", value: "https://example.com/avatar.png" } },
 ];
 

@@ -51,9 +51,11 @@ const entry: ShowcaseEntry = {
             <TableRow><TableCell>Bytes (large)</TableCell><TableCell><CellValue type="bytes" value={1073741824} /></TableCell></TableRow>
             <TableRow><TableCell>Duration</TableCell><TableCell><CellValue type="duration" value={3661} /></TableCell></TableRow>
             <TableRow><TableCell>Duration (seconds)</TableCell><TableCell><CellValue type="duration" value={45} /></TableCell></TableRow>
-            <TableRow><TableCell>Date (old)</TableCell><TableCell><CellValue type="date" value="2026-06-01" /></TableCell></TableRow>
-            <TableRow><TableCell>Date (today)</TableCell><TableCell><CellValue type="date" value="2026-07-17" /></TableCell></TableRow>
-            <TableRow><TableCell>Datetime</TableCell><TableCell><CellValue type="datetime" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
+            <TableRow><TableCell>Date (Human)</TableCell><TableCell><CellValue type="date-human" value="2026-06-01" /></TableCell></TableRow>
+            <TableRow><TableCell>Date (Human - now)</TableCell><TableCell><CellValue type="date-human" value={new Date().toISOString()} /></TableCell></TableRow>
+            <TableRow><TableCell>Date (System)</TableCell><TableCell><CellValue type="date-system" value="2026-07-17" /></TableCell></TableRow>
+            <TableRow><TableCell>Date (System - custom)</TableCell><TableCell><CellValue type="date-system" value="2026-07-17" dateFormat={{ weekday: "long", year: "numeric", month: "long", day: "numeric" }} /></TableCell></TableRow>
+            <TableRow><TableCell>DateTime TZ</TableCell><TableCell><CellValue type="datetime-tz" value="2026-07-17T12:00:00Z" /></TableCell></TableRow>
             <TableRow><TableCell>Array</TableCell><TableCell><CellValue type="array" value={["admin", "editor", "viewer"]} /></TableCell></TableRow>
           </TableBody>
         </Table>

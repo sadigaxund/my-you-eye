@@ -10,10 +10,12 @@ import { Dialog, DialogContent, DialogTitle } from "../dialog";
 import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
+import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellValue.date-displays";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
-  | "number" | "percentage" | "date" | "datetime" | "bytes" | "duration" | "array"
+  | "number" | "percentage" | "date-human" | "date-system" | "datetime-tz"
+  | "bytes" | "duration" | "array"
   | "image" | "audio" | "tree";
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
@@ -26,6 +28,7 @@ export interface CellValueProps {
   statusVariant?: StatusDotProps["variant"];
   statusPulse?: boolean;
   replacements?: UrlReplacement[];
+  dateFormat?: Intl.DateTimeFormatOptions;
 }
 
 function BooleanDisplay({ value }: { value: unknown }) {
@@ -63,22 +66,13 @@ function applyReplacements(str: string, replacements?: UrlReplacement[]) {
 function NumberDisplay({ value }: { value: unknown }) {
   const n = Number(value);
   if (isNaN(n)) return <span className="text-muted">—</span>;
-  return <span className="font-mono tabular-nums text-right block truncate">{Intl.NumberFormat().format(n)}</span>;
+  return <span className="font-mono tabular-nums truncate inline-block max-w-full align-middle">{Intl.NumberFormat().format(n)}</span>;
 }
 
 function PercentageDisplay({ value }: { value: unknown }) {
   const n = Number(value);
   if (isNaN(n)) return <span className="text-muted">—</span>;
-  return <span className="font-mono tabular-nums text-right block truncate">{(n * 100).toFixed(1)}%</span>;
-}
-
-function DateDisplay({ value, showTime }: { value: unknown; showTime?: boolean }) {
-  const d = new Date(String(value));
-  if (isNaN(d.getTime())) return <span className="text-muted">—</span>;
-  const abs = showTime ? d.toLocaleString() : d.toLocaleDateString();
-  const diff = Date.now() - d.getTime();
-  const rel = diff < 60000 ? "just now" : diff < 3600000 ? `${Math.round(diff / 60000)}m ago` : diff < 86400000 ? `${Math.round(diff / 3600000)}h ago` : `${Math.round(diff / 86400000)}d ago`;
-  return <span title={abs} className="cursor-help truncate inline-block max-w-full align-middle">{rel}</span>;
+  return <span className="font-mono tabular-nums truncate inline-block max-w-full align-middle">{(n * 100).toFixed(1)}%</span>;
 }
 
 function BytesDisplay({ value }: { value: unknown }) {
@@ -211,7 +205,7 @@ function TreeDisplay({ value, replacements }: { value: unknown; replacements?: U
 }
 
 export function CellValue({
-  type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements,
+  type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements, dateFormat,
 }: CellValueProps) {
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
@@ -225,8 +219,9 @@ export function CellValue({
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><span className="truncate">{String(value)}</span></span>;
     case "number": return <NumberDisplay value={value} />;
     case "percentage": return <PercentageDisplay value={value} />;
-    case "date": return <DateDisplay value={value} />;
-    case "datetime": return <DateDisplay value={value} showTime />;
+    case "date-human": return <DateHumanDisplay value={value} />;
+    case "date-system": return <DateSystemDisplay value={value} dateFormat={dateFormat} />;
+    case "datetime-tz": return <DateTimeTzDisplay value={value} />;
     case "bytes": return <BytesDisplay value={value} />;
     case "duration": return <DurationDisplay value={value} />;
     case "image": return <ImageDisplay value={value} />;
