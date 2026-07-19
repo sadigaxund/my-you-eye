@@ -24,6 +24,13 @@ All notable changes to this project are documented here.
 
 - **Showcase header overlap** — removed `sticky top-0 z-50` from the header so it stays in normal flow instead of floating over sidebar/main content when scrolling. Mobile sidebar `top-[57px]` → `top-0` since the header is no longer fixed.
 
+### Changed
+
+- **CellValue JSON and Tree previews** — both types rewritten for meaningful scanability:
+  - `json` no longer shows a raw 50-char `JSON.stringify()` slice. Instead, renders first 3 key:value pairs (or array items) with syntax-colored tokens via a hand-rolled tokenizer: keys in `text-secondary`, string/number/boolean values in `text-primary font-medium` (anchor), nulls in `text-muted italic`, punctuation in `text-muted`, nested objects/arrays collapsed to `{N}`/`[N]` pills. A `Badge` pill shows `N keys` or `N items`. Empty objects/arrays show `empty` in muted italic. Circular references and BigInt handled safely via a `WeakSet`-tracking replacer.
+  - `tree` no longer shows only `{N}`. For objects, renders the first 4 key names after a count badge (e.g. `3 keys id, name, score…`). For arrays, shows a `N items` label. Empty trees show `empty`.
+  - Both keep the existing popover-on-click interaction (full `CodeBlock` / `TreeView`).
+
 ### Added
 
 - **`PAGE_MEDIUM_FROSTED_URI`** — new export in `svg-utils.ts` providing a tileable frosted-glass SVG data URI for page-level overlay, parallel to `PAGE_MEDIUM_URI`.

@@ -4,17 +4,13 @@ import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
 import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
-import { CodeBlock } from "../code-block";
-import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Dialog, DialogContent, DialogTitle } from "../dialog";
-import { ScrollArea } from "../scroll-area";
-import { TreeView } from "../tree-view";
-import type { TreeNode } from "../tree-view";
 import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellValue.date-displays";
 import {
   NumberDisplay, PercentageDisplay, BytesDisplay, DurationDisplay,
   CurrencyDisplay, SignedDisplay,
 } from "./CellValue.numeric-displays";
+import { JsonDisplay, TreeDisplay } from "./CellValue.complex-displays";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
@@ -45,19 +41,6 @@ function BooleanDisplay({ value }: { value: unknown }) {
           : <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" strokeWidth="1.5" fill="none" />}
       </svg>
     </span>
-  );
-}
-
-function JsonDisplay({ value }: { value: unknown }) {
-  const str = JSON.stringify(value, null, 2);
-  const preview = str.length > 50 ? str.slice(0, 50) + "…" : str;
-  return (
-    <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors max-w-60 inline-block truncate align-middle">{preview}</PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
-        <CodeBlock code={str} />
-      </PopoverContent>
-    </Popover>
   );
 }
 
@@ -120,61 +103,6 @@ function AudioDisplay({ value }: { value: unknown }) {
 function ArrayDisplay({ value }: { value: unknown }) {
   const arr = Array.isArray(value) ? value : [String(value)];
   return <span className="inline-flex flex-wrap gap-1">{arr.map((item, i) => <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>)}</span>;
-}
-
-function detectType(val: unknown): CellValueType {
-  if (val === null || val === undefined) return "null";
-  if (typeof val === "boolean") return "boolean";
-  if (typeof val === "number") return "number";
-  if (typeof val === "string") {
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return "email";
-    if (/^https?:\/\//.test(val)) return "url";
-    return "text";
-  }
-  return "text";
-}
-
-function objToTreeNodes(obj: unknown, path = ""): TreeNode[] {
-  if (obj === null || obj === undefined) return [{ id: `${path}_null`, label: "null", value: { type: "null", value: null } }];
-  if (Array.isArray(obj)) {
-    if (obj.length === 0) return [{ id: `${path}_empty`, label: "[]", value: { type: "text", value: "[]" } }];
-    return obj.map((item, i) => {
-      const id = `${path}_${i}`;
-      if (typeof item === "object" && item !== null) return { id, label: `[${i}]`, children: objToTreeNodes(item, id), kind: "array" as const };
-      return { id, label: `[${i}]`, value: { type: detectType(item), value: item } };
-    });
-  }
-  if (typeof obj === "object") {
-    const entries = Object.entries(obj as Record<string, unknown>);
-    if (entries.length === 0) return [{ id: `${path}_empty`, label: "{}", value: { type: "text", value: "{}" } }];
-    return entries.map(([key, val]) => {
-      const id = `${path}_${key}`;
-      if (typeof val === "object" && val !== null) return { id, label: key, children: objToTreeNodes(val, id), kind: "object" as const };
-      return { id, label: key, value: { type: detectType(val), value: val } };
-    });
-  }
-  return [{ id: `${path}_val`, label: String(obj), value: { type: detectType(obj), value: obj } }];
-}
-
-function TreeDisplay({ value, replacements }: { value: unknown; replacements?: UrlReplacement[] }) {
-  if (typeof value !== "object" || value === null) return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
-  const nodes = objToTreeNodes(value);
-  const isArray = Array.isArray(value);
-  const count = isArray ? value.length : Object.keys(value as object).length;
-  const summary = isArray ? `[${count}]` : `{${count}}`;
-  return (
-    <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors">{summary}</PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="max-w-md p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-xs text-muted">Tree</span>
-        </div>
-        <ScrollArea className="max-h-[300px] p-2">
-          <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
-        </ScrollArea>
-      </PopoverContent>
-    </Popover>
-  );
 }
 
 export function CellValue({
