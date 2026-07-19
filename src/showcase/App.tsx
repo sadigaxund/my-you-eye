@@ -3,7 +3,7 @@ import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
-import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_URI } from "../ui/patterns/textured-surface/svg-utils";
+import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/patterns/textured-surface/svg-utils";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
@@ -50,7 +50,7 @@ export default function App() {
       if (val === "comic") {
         el.style.setProperty("--texture-paper", `url("${PAGE_MEDIUM_URI}")`);
       } else if (val === "glass") {
-        el.style.setProperty("--texture-paper", `url("${PAGE_MEDIUM_FROSTED_URI}")`);
+        el.style.setProperty("--texture-paper", PAGE_MEDIUM_FROSTED_LAYERS);
       } else {
         el.style.removeProperty("--texture-paper");
       }

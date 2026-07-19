@@ -2,7 +2,7 @@ export interface PaperState {
   freq: number; octaves: number; stretch: number; tile: number; opacity: number;
 }
 export interface FrostedBlurState {
-  freq: number; octaves: number; stretch: number; tile: number; opacity: number;
+  freq: number; octaves: number; stretch: number; tile: number; opacity: number; seed?: number;
 }
 export interface FrostedGradState {
   feather: number; blobOpacity: number; tile: number; opacity: number;
@@ -67,10 +67,11 @@ export function frostedBlurSvg(s: FrostedBlurState): string {
   const row = cmRow(s.stretch, o);
   const fineFreq = s.freq * 3;
   const fineOctaves = 2;
+  const seedAttr = s.seed != null ? ` seed='${s.seed}'` : "";
   return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
 <filter id='f' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'/>
-<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'/>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'${seedAttr}/>
+<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'${seedAttr}/>
 <feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
 <feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
 </filter>
@@ -133,10 +134,11 @@ export function fullFrostedSvg(s: FrostedBlurState): string {
   const row = cmRow(s.stretch, o);
   const fineFreq = s.freq * 3;
   const fineOctaves = 2;
+  const seedAttr = s.seed != null ? ` seed='${s.seed}'` : "";
   return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
 <filter id='ff' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'/>
-<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'/>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'${seedAttr}/>
+<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'${seedAttr}/>
 <feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
 <feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
 </filter>
@@ -223,8 +225,13 @@ function fAssets(freq: number, octaves: number, stretch: number, tile: number, s
 export const PAGE_MEDIUM_URI = pAssets(0.12, 3, 2.4, 170, 111).primary;
 
 /** Pre-generated page.medium frosted-glass SVG data URI — tileable low-frequency
-    noise for a subtle frosted page overlay. Used by the glass theme. */
-export const PAGE_MEDIUM_FROSTED_URI = dataUri(frostedBlurSvg({ freq: 0.003, octaves: 2, stretch: 2.6, tile: 400, opacity: 0 }));
+    noise for a subtle frosted page overlay. Used by the glass theme.
+    Comma-separated list of 3 URIs at different seeds for layered page overlay.
+    Use `background-image: var(--texture-paper)` with 3-entry
+    `background-size` and `background-position`. */
+export const PAGE_MEDIUM_FROSTED_LAYERS = [1, 7, 13]
+  .map(s => `url("${dataUri(frostedBlurSvg({ freq: 0.003, octaves: 2, stretch: 2.6, tile: 3334, opacity: 0, seed: s }))}")`)
+  .join(", ");
 
 const layerPaper: LayerMap = {
   page: {
@@ -266,19 +273,19 @@ export const FROSTED_DITHER = dataUri(ditherSvg());
 
 const layerFrosted: LayerMap = {
   page: {
-    subtle:  fAssets(0.005, 2, 2.4, 350, 228),
-    medium:  fAssets(0.003, 2, 2.6, 400, 260),
-    strong:  fAssets(0.002, 2, 3.0, 500, 325),
+    subtle:  fAssets(0.005, 2, 2.4, 2000, 1300),
+    medium:  fAssets(0.003, 2, 2.6, 3334, 2167),
+    strong:  fAssets(0.002, 2, 3.0, 5000, 3250),
   },
   surface: {
-    subtle:  fAssets(0.015, 2, 2.0, 250, 163),
-    medium:  fAssets(0.010, 2, 2.2, 300, 195),
-    strong:  fAssets(0.008, 2, 2.4, 350, 228),
+    subtle:  fAssets(0.015, 2, 2.0, 667, 434),
+    medium:  fAssets(0.010, 2, 2.2, 1000, 650),
+    strong:  fAssets(0.008, 2, 2.4, 1250, 813),
   },
   foreground: {
-    subtle:  fAssets(0.040, 3, 1.6, 140, 91),
-    medium:  fAssets(0.030, 3, 1.8, 160, 104),
-    strong:  fAssets(0.020, 3, 2.0, 200, 130),
+    subtle:  fAssets(0.040, 3, 1.6, 250, 163),
+    medium:  fAssets(0.030, 3, 1.8, 334, 217),
+    strong:  fAssets(0.020, 3, 2.0, 500, 325),
   },
 };
 

@@ -41,7 +41,9 @@ html[data-theme="glass"]::before {
   z-index: -1;
   pointer-events: none;
   background-image: var(--texture-paper);
-  background-size: var(--texture-size);
+  background-size: var(--texture-size), calc(var(--texture-size) * 0.667), calc(var(--texture-size) * 0.5);
+  background-position: 0 0, calc(var(--texture-size) * 0.25) calc(var(--texture-size) * 0.334), calc(var(--texture-size) * 0.5) calc(var(--texture-size) * 0.167);
+  background-blend-mode: overlay, screen, normal;
   background-repeat: repeat;
   opacity: var(--texture-opacity);
   mix-blend-mode: var(--texture-blend);
@@ -108,7 +110,7 @@ html[data-theme="glass"]::before {
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
 
-  --texture-size: 400px;
+  --texture-size: 3334px;
   --texture-opacity: 0.22;
   --texture-opacity-surface: 0.15;
   --texture-blend: hard-light;
