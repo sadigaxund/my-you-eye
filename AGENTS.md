@@ -263,6 +263,105 @@ Every profile must define the complete color token set (enforced by `scripts/che
 
 Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-*`, `--text-*`, `--border-width`, `--backdrop-blur`, `--grid-unit`.
 
+### TexturedSurface — layer × strength system
+
+**Files:** `src/ui/patterns/textured-surface/TexturedSurface.tsx`, `svg-utils.ts`, `ParamTable.tsx`, `texture-factory.ts`
+
+**Three-tier hierarchy** — every textured surface belongs to one of three layers, each with distinct SVG noise parameters (frequency, octaves, contrast stretch, tile size):
+
+| Layer | Noise character | Tile size | Opacity multiplier (`LAYER_OPACITY`) |
+|---|---|---|---|
+| `page` | Coarsest, highest contrast (low freq, few octaves, high stretch) | 160–240px | 1.0× |
+| `surface` | Medium grain | 110–150px | 0.55× |
+| `foreground` | Finest, subtle (high freq, more octaves, low stretch) | 65–100px | 0.25× |
+
+**Current paper-grain params (do not change without cross-checking all themes):**
+
+```
+page.subtle:     freq=0.16, octaves=4, stretch=2.0, tile=140
+page.medium:     freq=0.12, octaves=3, stretch=2.4, tile=170
+page.strong:     freq=0.09, octaves=3, stretch=2.8, tile=200
+
+surface.subtle:  freq=0.16, octaves=4, stretch=1.8, tile=110
+surface.medium:  freq=0.14, octaves=3, stretch=2.0, tile=130
+surface.strong:  freq=0.11, octaves=3, stretch=2.2, tile=150
+
+foreground.subtle:   freq=0.24, octaves=5, stretch=1.4, tile=65
+foreground.medium:   freq=0.20, octaves=4, stretch=1.5, tile=80
+foreground.strong:   freq=0.18, octaves=4, stretch=1.6, tile=100
+```
+
+**Strength within each layer** — each strength selects both the SVG preset (from the 9-combo matrix above) AND the CSS opacity:
+
+| Strength | `TEXTURE_STRENGTHS` values (paper / frosted / metallic) | SVG character |
+|---|---|---|
+| `strong` | 0.75 / 0.55 / 0.45 | Coarser freq, higher stretch within the layer |
+| `medium` | 0.50 / 0.35 / 0.28 | Default params |
+| `subtle` | 0.30 / 0.22 / 0.15 | Finer freq, lower stretch within the layer |
+
+**Opacity formula** (read this before adjusting any value):
+```
+FINAL = TEXTURE_STRENGTHS[texture][strength] × LAYER_OPACITY[layer]
+```
+Example: `<TexturedSurface texture="paper-grain" strength="subtle" layer="foreground">` = `0.30 × 0.25 = 0.075`.
+
+When layering textures (nested TexturedSurfaces), the cumulative effect is multiplicative. A foreground card inside a surface panel inside a page-backed view: the card's own texture at 0.075 compounds with the panel's texture at its opacity. The values are chosen so foreground textures are noticeably lighter — never override `LAYER_OPACITY` or `TEXTURE_STRENGTHS` to flatten this hierarchy.
+
+**SVG preset matrix** — defined in `svg-utils.ts` as `LAYER_SVGS[texture][layer][strength]`, returning `{ primary, secondary, tileSize }`. Each material defines 9 presets (3 layers × 3 strengths). Presets are pre-generated at module level via helper functions (`pAssets`, `mAssets`, `fAssets`) that call `dataUri(paperSvg(...))` etc. — no runtime SVG generation.
+
+**Two rendering paths:**
+- **Inline textures** (`texture="paper-grain" | "brushed-aluminium" | "frosted-glass"`): React-rendered `<div>` overlays with `backgroundImage: url("${svg}")`. Theme-independent. Conf is built by `TEXTURE_CONFS[texture](opacity, layer, strength)`.
+- **Theme-driven** (`texture="theme"`): `::after` pseudo-element reads `--texture-paper-resolved` / `--texture-opacity-resolved` (with fallback to `--texture-paper` / `--texture-opacity-surface`). Component writes `--texture-paper-resolved` from `LAYER_SVGS["paper-grain"][layer][strength]` and `--texture-opacity-resolved` from `calc(var(--texture-opacity-surface) * layerOpacity)`.
+
+**ParamTable subcomponent** — `<TexturedSurface.ParamTable texture="paper-grain" />` renders a 3×3 grid (layers × strengths) for any texture, filling container width with aspect-square cells. No labels inside cells — just bare texture swatches. Always use literal JSX in showcase files (no `.map()` loops) so the code extractor produces copyable output.
+
+**CRITICAL — no self-reference cycles in CSS custom properties:**
+- Never write to the same CSS custom property that the `::after` reads. The CVA reads `--texture-paper-resolved` (fallback to `--texture-paper`), and the component writes to `--texture-paper-resolved` — never to `--texture-paper`. Same for `--texture-size-resolved` and `--texture-opacity-resolved`.
+- Self-reference example (DO NOT DO): setting `--texture-opacity-surface: calc(var(--texture-opacity-surface) * 0.5)` creates a dependency cycle → guaranteed-invalid → property falls back to initial value (opacity: 1).
+- The `html::before` page texture (Comic theme) uses `--texture-paper` directly — this is fine because the component never writes to the base `--texture-paper` token. The indirection only exists for the `::after` path.
+
+**Theme tokens for texture:**
+```
+--texture-paper          CSS url() data URI — used by html::before (page overlay), NOT by TexturedSurface's ::after
+--texture-size           Tile size for the page overlay
+--texture-opacity        Opacity for the page overlay (html::before). Comic: 0.7.
+--texture-opacity-surface Opacity for surface-level ::after. Comic: 0.35.
+--texture-blend          mix-blend-mode for both page overlay and surface ::after
+```
+The `--texture-paper-surface` / `--texture-paper-foreground` tokens (per-layer SVG data URIs in CSS) are REMNANTS — do not add them. Use the JS-side `LAYER_SVGS` factory pattern instead.
+
+**Comic theme page texture stacking:**
+- `html[data-theme="comic"]` sets the background color + repeating line pattern.
+- `html[data-theme="comic"]::before` overlays the SVG noise texture at `z-index: -1` with `--texture-opacity: 0.5` — sits behind body content but in front of the html background.
+- The page SVG (`--texture-paper`) comes from the DS factory (`PAGE_MEDIUM_URI` in `svg-utils.ts`), **not** from a hardcoded string in CSS. The showcase's `handleThemeChange` sets it via JS on `document.documentElement.style`. This ensures the page texture always matches the `LAYER_SVGS["paper-grain"]["page"]["medium"]` preset — single source of truth.
+- `html[data-theme="comic"] body { background-color: transparent; }` ensures the page texture shows through.
+- The showcase root `<div>` must NOT have `bg-bg` (or must be overridden per theme) — it blocks the html background.
+
+**Showcase layering hierarchy (App.tsx):**
+- **Sidebar** — wrapped in `<TexturedSurface texture="theme" layer="surface" strength="subtle">` so the navigation panel appears as a surface-level textured panel beside the page background.
+- **Header** — wrapped in `<TexturedSurface texture="theme" layer="foreground" strength="subtle">` — interactive controls get the lightest texture.
+- **Main content** — transparent, shows the page texture from `html::before`.
+- **Demo panels** — already wrapped via `DemoSection.tsx` in `<TexturedSurface texture="theme" layer="surface">`.
+
+This creates a visual depth gradient: page (heaviest behind content) → surface sidebar/panels (medium) → foreground header (lightest).
+
+**The texture-factory.ts pattern** — the `PaperGrain`, `BrushedAluminium`, `FrostedGlassNoise` classes take a `PaperState` / `MetallicState` / `FrostedBlurState` object and expose:
+- `.uri`: the SVG data URI
+- `.tile`: tile size
+- `.style(opacity)`: a `LayerStyle` object `{ backgroundImage, backgroundSize, opacity, mixBlendMode }`
+- `.codeStyle(opacity)`: a JS code string for copy-paste (`new PaperGrain({...}).style(0.5)`)
+
+The `LAYER_SVGS` presets in `svg-utils.ts` are the module-level factory output — they call `paperSvg()` + `dataUri()` at module evaluation time. This is equivalent to `new PaperGrain(params).uri` but avoids class instantiation for the 9 pre-generated assets per material.
+
+**Extending with a new texture type** (e.g., "linen", "denim"):
+1. Add SVG generator to `svg-utils.ts` (or use existing `paperSvg` with different params).
+2. Add 9 presets to `LAYER_SVGS` (3 layers × 3 strengths) using the helper function pattern (`pAssets`, `mAssets`, `fAssets`).
+3. Add the texture name to the `texture` prop union type in `TexturedSurfaceProps`.
+4. Add entry to `TEXTURE_CONFS` and `TEXTURE_STRENGTHS`.
+5. Add `ParamTable` support by updating the texture key (it reads from `LAYER_SVGS` automatically).
+6. Add single-instance demo + `<TexturedSurface.ParamTable texture="..." />` to showcase file. Never use `.map()` loops in `render` — literal JSX only.
+7. `npm run validate` must pass.
+
 ### Font maintenance contract
 
 When adding a new font family, update **both** places (they are not auto-synced):
