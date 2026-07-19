@@ -2,6 +2,8 @@ import { useState } from "react";
 import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
+import { TexturedSurface } from "../ui/patterns/textured-surface";
+import { PAGE_MEDIUM_URI } from "../ui/patterns/textured-surface/svg-utils";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
@@ -39,10 +41,17 @@ export default function App() {
 
   const handleThemeChange = (val: ThemeProfile) => {
     setTheme(val);
+    const el = document.documentElement;
     if (val === "default") {
-      document.documentElement.removeAttribute("data-theme");
+      el.removeAttribute("data-theme");
+      el.style.removeProperty("--texture-paper");
     } else {
-      document.documentElement.dataset.theme = val;
+      el.dataset.theme = val;
+      if (val === "comic") {
+        el.style.setProperty("--texture-paper", `url("${PAGE_MEDIUM_URI}")`);
+      } else {
+        el.style.removeProperty("--texture-paper");
+      }
     }
   };
 
@@ -52,8 +61,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-dvh bg-bg text-fg">
-      <header className="sticky top-0 z-50 flex items-center justify-between gap-inline border-b border-border bg-bg px-panel py-3">
+    <div className="min-h-dvh text-fg">
+      <TexturedSurface texture="theme" layer="foreground" strength="subtle" color="--color-surface-elevated" variant="elevated" className="sticky top-0 z-50 flex items-center justify-between gap-inline border-b border-border px-panel py-3">
         <div className="flex items-center gap-inline">
           <button
             type="button"
@@ -100,7 +109,7 @@ export default function App() {
             {dark ? "☀️ Light" : "🌙 Dark"}
           </button>
         </div>
-      </header>
+      </TexturedSurface>
 
       <div className="flex">
         <Sidebar

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { cn } from "../lib/cn";
+import { TexturedSurface } from "../ui/patterns/textured-surface";
 import { GROUPS, pages } from "./registry";
 
 interface SidebarProps {
@@ -20,15 +21,19 @@ export function Sidebar({ activeSlug, onSelect, mobileOpen, onCloseMobile }: Sid
   }, [filter]);
 
   return (
-    <aside
+    <TexturedSurface
+      texture="theme"
+      layer="surface"
+      strength="subtle"
+      color="--color-surface"
       className={cn(
-        "shrink-0 border-border lg:sticky lg:top-0 lg:block lg:h-dvh lg:w-64 lg:border-r",
+        "shrink-0 border-0 lg:sticky lg:top-0 lg:block lg:h-dvh lg:w-64 lg:border-r lg:border-border",
         mobileOpen
-          ? "block fixed inset-x-0 top-[57px] bottom-0 z-40 bg-bg border-b"
+          ? "block fixed inset-x-0 top-[57px] bottom-0 z-40 border-b border-border"
           : "hidden",
       )}
     >
-      <div className="flex h-full flex-col gap-4 overflow-hidden p-panel">
+      <div className="flex h-full flex-col gap-4 p-panel">
         <Input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -73,6 +78,6 @@ export function Sidebar({ activeSlug, onSelect, mobileOpen, onCloseMobile }: Sid
           )}
         </nav>
       </div>
-    </aside>
+    </TexturedSurface>
   );
 }
