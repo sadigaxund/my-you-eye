@@ -16,53 +16,59 @@ interface PresetDef {
   rotated?: number;
 }
 
+const TEXTURE_LABELS: Record<string, string> = {
+  "paper-grain": "Paper Grain",
+  "frosted-glass": "Frosted Glass",
+  "brushed-aluminium": "Brushed Aluminium",
+};
+
 const PRESETS: PresetDef[] = [
   {
     name: "Fine grain",
-    texture: "paper",
+    texture: "paper-grain",
     mode: "tiled",
     ...(() => { const s = paperSvg({ freq: 1.2, octaves: 3, stretch: 2.6, tile: 150, opacity: 0 }); return { svg: s, tileSize: 150, opacity: 0.25 }; })(),
   },
   {
     name: "Coarse grain",
-    texture: "paper",
+    texture: "paper-grain",
     mode: "tiled",
     ...(() => { const s = paperSvg({ freq: 0.3, octaves: 2, stretch: 3.0, tile: 200, opacity: 0 }); return { svg: s, tileSize: 200, opacity: 0.20 }; })(),
   },
   {
     name: "Soft haze",
-    texture: "frosted",
+    texture: "frosted-glass",
     mode: "full",
     ...(() => { const s = fullFrostedSvg({ freq: 0.012, octaves: 2, stretch: 2.5, tile: 300, opacity: 0 }); return { svg: s, opacity: 0.35 }; })(),
   },
   {
     name: "Mist",
-    texture: "frosted",
+    texture: "frosted-glass",
     mode: "full",
     ...(() => { const s = fullFrostedSvg({ freq: 0.008, octaves: 2, stretch: 3.0, tile: 350, opacity: 0 }); return { svg: s, opacity: 0.45 }; })(),
   },
   {
     name: "Brushed aluminum",
-    texture: "metallic",
+    texture: "brushed-aluminium",
     mode: "tiled",
     ...(() => { const s = metallicSvg({ freqX: 0.6, freqY: 0.006, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0 }); return { svg: s, tileSize: 200, opacity: 0.22 }; })(),
   },
   {
     name: "Heavy brush",
-    texture: "metallic",
+    texture: "brushed-aluminium",
     mode: "tiled",
     rotated: 45,
     ...(() => { const s = tileableMetallicSvg({ freqX: 0.3, freqY: 0.003, octaves: 3, stretch: 3.0, tile: 250, opacity: 0 }); return { svg: s, tileSize: 250, opacity: 0.30 }; })(),
   },
   {
     name: "Micro texture",
-    texture: "paper",
+    texture: "paper-grain",
     mode: "tiled",
     ...(() => { const s = paperSvg({ freq: 2.0, octaves: 4, stretch: 2.0, tile: 100, opacity: 0 }); return { svg: s, tileSize: 100, opacity: 0.15 }; })(),
   },
   {
     name: "Frosted thin",
-    texture: "frosted",
+    texture: "frosted-glass",
     mode: "full",
     ...(() => { const s = fullFrostedSvg({ freq: 0.02, octaves: 2, stretch: 2.0, tile: 200, opacity: 0 }); return { svg: s, opacity: 0.18 }; })(),
   },
@@ -84,9 +90,10 @@ function PresetCard({ preset }: { preset: PresetDef }) {
     return () => ro.disconnect();
   }, [preset.rotated]);
 
+  const label = TEXTURE_LABELS[preset.texture] ?? preset.texture;
   const details = preset.mode === "tiled"
-    ? `${preset.texture} · tile ${preset.tileSize}px · ${Math.round(preset.opacity * 100)}%`
-    : `${preset.texture} · full · ${Math.round(preset.opacity * 100)}%`;
+    ? `${label} · tile ${preset.tileSize}px · ${Math.round(preset.opacity * 100)}%`
+    : `${label} · full · ${Math.round(preset.opacity * 100)}%`;
 
   const rotated = preset.rotated;
   if (rotated) {

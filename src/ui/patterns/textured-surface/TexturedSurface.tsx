@@ -6,9 +6,9 @@ import {
 } from "./svg-utils";
 
 const TEXTURE_STRENGTHS: Record<string, Record<string, number>> = {
-  paper:    { subtle: 0.30, medium: 0.50, strong: 0.75 },
-  frosted:  { subtle: 0.18, medium: 0.30, strong: 0.48 },
-  metallic: { subtle: 0.15, medium: 0.28, strong: 0.45 },
+  "paper-grain":    { subtle: 0.30, medium: 0.50, strong: 0.75 },
+  "frosted-glass":  { subtle: 0.18, medium: 0.30, strong: 0.48 },
+  "brushed-aluminium": { subtle: 0.15, medium: 0.28, strong: 0.45 },
 };
 
 /* Pre‑generated SVGs (fixed per material, not per‑instance) */
@@ -32,21 +32,21 @@ interface TextureConf {
 }
 
 const TEXTURE_CONFS: Record<string, (opacity: number) => TextureConf> = {
-  paper: (op) => ({
+  "paper-grain": (op) => ({
     mode: "tiled",
     layers: [
       { uri: PAPER_PRIMARY,   opacity: op,               blend: "hard-light", tileSize: 150 },
       { uri: PAPER_SECONDARY, opacity: op * 0.15,         blend: "hard-light", tileSize: 97 },
     ],
   }),
-  metallic: (op) => ({
+  "brushed-aluminium": (op) => ({
     mode: "tiled",
     layers: [
       { uri: METALLIC_PRIMARY,   opacity: op,               blend: "hard-light", tileSize: 200 },
       { uri: METALLIC_SECONDARY, opacity: op * 0.15,        blend: "hard-light", tileSize: 127 },
     ],
   }),
-  frosted: (op) => ({
+  "frosted-glass": (op) => ({
     mode: "full",
     layers: [
       { uri: FROSTED_MAIN,   opacity: op,     blend: "hard-light" },
@@ -83,7 +83,7 @@ export interface TexturedSurfaceProps
   extends VariantProps<typeof texturedSurfaceVariants>,
     Omit<HTMLAttributes<HTMLDivElement>, "color"> {
   color?: string;
-  texture?: "paper" | "frosted" | "metallic" | "theme";
+  texture?: "paper-grain" | "frosted-glass" | "brushed-aluminium" | "theme";
   strength?: "subtle" | "medium" | "strong";
 }
 

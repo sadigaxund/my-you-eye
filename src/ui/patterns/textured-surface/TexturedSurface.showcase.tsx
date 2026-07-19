@@ -3,7 +3,14 @@ import { TexturedSurface } from ".";
 import { Badge } from "../../badge";
 import { Tuner } from "./Tuner";
 
-const TEXTURES = ["paper", "frosted", "metallic"] as const;
+function renderTuner() { return <Tuner />; }
+
+const TEXTURES = ["paper-grain", "frosted-glass", "brushed-aluminium"] as const;
+const TEXTURE_LABELS: Record<string, string> = {
+  "paper-grain": "Paper Grain",
+  "frosted-glass": "Frosted Glass",
+  "brushed-aluminium": "Brushed Aluminium",
+};
 const STRENGTHS = ["subtle", "medium", "strong"] as const;
 
 const entry: ShowcaseEntry = {
@@ -12,7 +19,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Tuner",
-      render: () => <Tuner />,
+      render: renderTuner,
     },
     {
       name: "Material × Strength",
@@ -20,7 +27,7 @@ const entry: ShowcaseEntry = {
         <div className="flex flex-col gap-6">
           {TEXTURES.map((tex) => (
             <div key={tex}>
-              <h4 className="text-sm font-medium text-fg capitalize mb-2">{tex}</h4>
+              <h4 className="text-sm font-medium text-fg mb-2">{TEXTURE_LABELS[tex]}</h4>
               <div className="flex gap-3">
                 {STRENGTHS.map((s) => (
                   <div key={s} className="flex-1">
@@ -39,7 +46,7 @@ const entry: ShowcaseEntry = {
       name: "Applied",
       render: () => (
         <div className="flex flex-col gap-4">
-          <TexturedSurface texture="paper" strength="medium" className="p-4">
+          <TexturedSurface texture="paper-grain" strength="medium" className="p-4">
             <div className="flex items-start gap-3">
               <div className="w-1 h-10 rounded-full bg-primary shrink-0 mt-0.5" />
               <div>
@@ -48,15 +55,15 @@ const entry: ShowcaseEntry = {
               </div>
             </div>
           </TexturedSurface>
-          <TexturedSurface texture="metallic" strength="subtle" color="--color-surface-elevated" variant="elevated" className="p-4">
+          <TexturedSurface texture="brushed-aluminium" strength="subtle" color="--color-surface-elevated" variant="elevated" className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="size-2 rounded-full bg-fg/40" />
-              <span className="text-xs font-medium text-fg">Brushed metal panel</span>
+              <span className="text-xs font-medium text-fg">Brushed aluminium panel</span>
             </div>
-            <p className="text-sm text-fg">Directional streaks read as brushed aluminum.</p>
+            <p className="text-sm text-fg">Directional streaks read as brushed aluminium.</p>
           </TexturedSurface>
           <div className="relative rounded-ui overflow-hidden bg-secondary">
-            <TexturedSurface texture="frosted" strength="medium" color="--color-surface-elevated" variant="elevated" className="p-4">
+            <TexturedSurface texture="frosted-glass" strength="medium" color="--color-surface-elevated" variant="elevated" className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="size-2 rounded-full bg-primary" />
                 <span className="text-xs font-medium text-fg">Frosted glass</span>

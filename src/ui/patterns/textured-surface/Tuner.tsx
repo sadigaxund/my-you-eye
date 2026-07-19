@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type {
   PaperState, FrostedBlurState, FrostedGradState, MetallicState,
   TextureKey, SubMode,
@@ -8,6 +8,15 @@ import {
   paperSvg, metallicSvg, frostedBlurSvg, frostedGradSvg,
   tileableMetallicSvg, dataUri,
 } from "./svg-utils";
+import { Preview } from "./Tuner.Preview";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../select";
+import { CodeBlock } from "../../code-block";
+
+const TEXTURE_LABELS: Record<TextureKey, string> = {
+  "paper-grain": "Paper Grain",
+  "frosted-glass": "Frosted Glass",
+  "brushed-aluminium": "Brushed Aluminium",
+};
 
 function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v));
@@ -26,45 +35,6 @@ function Slider({ label, value, min, max, step, onChange, format }: {
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => onChange(clamp(parseFloat(e.target.value), min, max))}
         className="w-full" />
-    </div>
-  );
-}
-
-function Preview({ bg, uri, tile, opacity, angle }: {
-  bg: string; uri: string; tile: number; opacity: number; angle?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [sz, setSz] = useState(0);
-  const rotated = !!angle && Math.abs(angle) > 0.5;
-
-  useEffect(() => {
-    if (!rotated) return;
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setSz(2 * Math.max(el.offsetWidth, el.offsetHeight));
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [rotated]);
-
-  const half = rotated ? sz / 2 || 0 : 0;
-  const layerStyle: React.CSSProperties = rotated
-    ? { top: "50%", left: "50%", width: sz || 1, height: sz || 1, marginLeft: -half, marginTop: -half, transform: `rotate(${angle}deg)`, transformOrigin: "center" }
-    : { inset: "0" };
-
-  return (
-    <div ref={ref} className="flex-1 rounded-ui overflow-hidden relative border border-border">
-      <div className="absolute inset-0" style={{ background: bg }} />
-      <div aria-hidden className="absolute pointer-events-none"
-        style={{
-          ...layerStyle,
-          backgroundImage: `url("${uri}")`,
-          backgroundSize: `${tile}px`,
-          backgroundRepeat: "repeat",
-          opacity,
-          mixBlendMode: "hard-light" as const,
-        }} />
     </div>
   );
 }
@@ -102,8 +72,8 @@ ${indent}}}
 }
 
 export function Tuner() {
-  const [tab, setTab] = useState<"preview" | "code">("preview");
-  const [activeTexture, setActiveTexture] = useState<TextureKey>("paper");
+  const [mode, setMode] = useState<"preview" | "code">("preview");
+  const [activeTexture, setActiveTexture] = useState<TextureKey>("paper-grain");
   const [subMode, setSubMode] = useState<SubMode>("blur");
   const [paper, setPaper] = useState<PaperState>(DEFAULT_PAPER);
   const [frostedBlur, setFrostedBlur] = useState<FrostedBlurState>(DEFAULT_FROSTED_BLUR);
@@ -112,18 +82,18 @@ export function Tuner() {
 
   const currentSvg = useMemo(() => {
     switch (activeTexture) {
-      case "paper": return paperSvg(paper);
-      case "metallic":
+      case "paper-grain": return paperSvg(paper);
+      case "brushed-aluminium":
         return metallic.angle > 0.5 ? tileableMetallicSvg(metallic) : metallicSvg(metallic);
-      case "frosted": return subMode === "blur" ? frostedBlurSvg(frostedBlur) : frostedGradSvg(frostedGrad);
+      case "frosted-glass": return subMode === "blur" ? frostedBlurSvg(frostedBlur) : frostedGradSvg(frostedGrad);
     }
   }, [activeTexture, subMode, paper, frostedBlur, frostedGrad, metallic]);
 
   const state = useMemo(() => {
     switch (activeTexture) {
-      case "paper": return { tile: paper.tile, opacity: paper.opacity, angle: 0 };
-      case "metallic": return { tile: metallic.tile, opacity: metallic.opacity, angle: metallic.angle };
-      case "frosted": {
+      case "paper-grain": return { tile: paper.tile, opacity: paper.opacity, angle: 0 };
+      case "brushed-aluminium": return { tile: metallic.tile, opacity: metallic.opacity, angle: metallic.angle };
+      case "frosted-glass": {
         const s = subMode === "blur" ? frostedBlur : frostedGrad;
         return { tile: s.tile, opacity: s.opacity, angle: 0 };
       }
@@ -140,17 +110,20 @@ export function Tuner() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-[320px_1fr] gap-6 items-start max-lg:grid-cols-1">
-        <div className="bg-bg border border-border rounded-ui p-4 sticky top-4">
-          <div className="flex gap-2 mb-3">
-            {(["paper", "frosted", "metallic"] as TextureKey[]).map(k => (
-              <button key={k} onClick={() => setActiveTexture(k)}
-                className={`flex-1 px-3 py-1.5 text-xs rounded-ui border border-border capitalize
-                  ${activeTexture === k ? "bg-fg text-bg" : "bg-bg text-fg"}`}>
-                {k}
-              </button>
-            ))}
+        <div className="bg-bg border border-border rounded-ui p-4 sticky top-4 h-[480px] overflow-y-auto min-w-0">
+          <div className="mb-3">
+            <Select value={activeTexture} onValueChange={v => setActiveTexture(v as TextureKey)}>
+              <SelectTrigger size="sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(["paper-grain", "frosted-glass", "brushed-aluminium"] as TextureKey[]).map(k => (
+                  <SelectItem key={k} value={k}>{TEXTURE_LABELS[k]}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          {activeTexture === "paper" && <>
+          {activeTexture === "paper-grain" && <>
             <Slider label="Grain frequency" value={paper.freq} min={0.1} max={2} step={0.01}
               onChange={updater(setPaper, "freq")} format={v => v.toFixed(2)} />
             <Slider label="Octaves" value={paper.octaves} min={1} max={5} step={1}
@@ -158,7 +131,7 @@ export function Tuner() {
             <Slider label="Contrast stretch" value={paper.stretch} min={1} max={6} step={0.1}
               onChange={updater(setPaper, "stretch")} format={v => v.toFixed(1)} />
           </>}
-          {activeTexture === "metallic" && <>
+          {activeTexture === "brushed-aluminium" && <>
             <Slider label="Streak freq (along)" value={metallic.freqX} min={0.1} max={1.5} step={0.01}
               onChange={updater(setMetallic, "freqX")} format={v => v.toFixed(2)} />
             <Slider label="Cross-grain freq" value={metallic.freqY} min={0.001} max={0.05} step={0.001}
@@ -170,7 +143,7 @@ export function Tuner() {
             <Slider label="Contrast stretch" value={metallic.stretch} min={1} max={6} step={0.1}
               onChange={updater(setMetallic, "stretch")} format={v => v.toFixed(1)} />
           </>}
-          {activeTexture === "frosted" && <>
+          {activeTexture === "frosted-glass" && <>
             <div className="flex gap-2 mb-3">
               {(["blur", "gradient"] as SubMode[]).map(m => (
                 <button key={m} onClick={() => setSubMode(m)}
@@ -198,9 +171,9 @@ export function Tuner() {
           <Slider label="Tile size (px)" value={state.tile} min={60} max={500} step={10}
             onChange={v => {
               switch (activeTexture) {
-                case "paper": setPaper(p => ({ ...p, tile: v })); break;
-                case "metallic": setMetallic(p => ({ ...p, tile: v })); break;
-                case "frosted": {
+                case "paper-grain": setPaper(p => ({ ...p, tile: v })); break;
+                case "brushed-aluminium": setMetallic(p => ({ ...p, tile: v })); break;
+                case "frosted-glass": {
                   if (subMode === "blur") setFrostedBlur(p => ({ ...p, tile: v }));
                   else setFrostedGrad(p => ({ ...p, tile: v }));
                   break;
@@ -210,9 +183,9 @@ export function Tuner() {
           <Slider label="Layer opacity" value={state.opacity} min={0.03} max={0.7} step={0.01}
             onChange={v => {
               switch (activeTexture) {
-                case "paper": setPaper(p => ({ ...p, opacity: v })); break;
-                case "metallic": setMetallic(p => ({ ...p, opacity: v })); break;
-                case "frosted": {
+                case "paper-grain": setPaper(p => ({ ...p, opacity: v })); break;
+                case "brushed-aluminium": setMetallic(p => ({ ...p, opacity: v })); break;
+                case "frosted-glass": {
                   if (subMode === "blur") setFrostedBlur(p => ({ ...p, opacity: v }));
                   else setFrostedGrad(p => ({ ...p, opacity: v }));
                   break;
@@ -220,25 +193,34 @@ export function Tuner() {
               }
             }} format={v => v.toFixed(2)} />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 min-w-0">
           <div className="flex gap-2">
-            {(["preview", "code"] as const).map(t => (
-              <button key={t} onClick={() => setTab(t)}
+            {(["preview", "code"] as const).map(m => (
+              <button key={m} onClick={() => setMode(m)}
                 className={`px-3 py-1 text-xs rounded-ui border border-border capitalize
-                  ${tab === t ? "bg-fg text-bg" : "bg-bg text-fg"}`}>
-                {t}
+                  ${mode === m ? "bg-fg text-bg" : "bg-bg text-fg"}`}>
+                {m}
               </button>
             ))}
           </div>
-          {tab === "preview" ? (
-            <div className="flex gap-4 flex-1 min-h-[420px]">
+          {mode === "preview" ? (
+            <div className="flex gap-4 h-[440px] min-w-0">
               <Preview bg="oklch(0.99 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
-                angle={activeTexture === "metallic" ? metallic.angle : 0} />
+                angle={activeTexture === "brushed-aluminium" ? metallic.angle : 0}
+                seamBlend={activeTexture === "brushed-aluminium" && Math.abs(metallic.angle) > 0.5} />
               <Preview bg="oklch(0.12 0 0)" uri={uri} tile={state.tile} opacity={state.opacity}
-                angle={activeTexture === "metallic" ? metallic.angle : 0} />
+                angle={activeTexture === "brushed-aluminium" ? metallic.angle : 0}
+                seamBlend={activeTexture === "brushed-aluminium" && Math.abs(metallic.angle) > 0.5} />
             </div>
           ) : (
-            <pre className="flex-1 min-h-[420px] font-mono text-xs p-3 bg-bg border border-border rounded-ui overflow-auto whitespace-pre">{tsxCode}</pre>
+            <div className="flex gap-4 h-[440px] min-w-0">
+              <div className="flex-1 min-w-0">
+                <CodeBlock code={tsxCode} language="tsx" header="Light" className="h-full" wrap={false} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <CodeBlock code={tsxCode} language="tsx" header="Dark" className="h-full" wrap={false} />
+              </div>
+            </div>
           )}
         </div>
       </div>

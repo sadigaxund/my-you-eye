@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const codeBlockVariants = cva(
-  "group relative overflow-hidden rounded-ui border border-border bg-code-bg text-sm",
+  "group relative overflow-hidden rounded-ui border border-border bg-code-bg text-sm flex flex-col",
   {
     variants: {
       variant: {
@@ -107,7 +107,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             <CopyButton copied={copied} onCopy={copy} />
           </div>
         )}
-        <div className="flex">
+        <div className="flex flex-1 min-h-0">
           {showLineNumbers && (
             <div
               aria-hidden

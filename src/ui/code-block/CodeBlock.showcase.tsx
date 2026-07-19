@@ -24,49 +24,37 @@ const entry: ShowcaseEntry = {
     {
       name: "Bare (no header, no language)",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={python} />
-        </div>
+        <CodeBlock code={python} />
       ),
     },
     {
       name: "Language-only (badge overlay, no header bar)",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={python} language="python" />
-        </div>
+        <CodeBlock code={python} language="python" />
       ),
     },
     {
       name: "With header + language",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={json} language="json" header="package.json" />
-        </div>
+        <CodeBlock code={json} language="json" header="package.json" />
       ),
     },
     {
       name: "Elevated",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={python} language="python" header="fib.py" variant="elevated" />
-        </div>
+        <CodeBlock code={python} language="python" header="fib.py" variant="elevated" />
       ),
     },
     {
       name: "Line numbers",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={python} language="python" header="fib.py" showLineNumbers />
-        </div>
+        <CodeBlock code={python} language="python" header="fib.py" showLineNumbers />
       ),
     },
     {
       name: "No wrap (horizontal scroll)",
       render: () => (
-        <div className="max-w-xl">
-          <CodeBlock code={longLine} language="ts" header="scroll.ts" wrap={false} showLineNumbers />
-        </div>
+        <CodeBlock code={longLine} language="ts" header="scroll.ts" wrap={false} showLineNumbers />
       ),
     },
   ],

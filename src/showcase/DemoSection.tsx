@@ -47,7 +47,7 @@ export function DemoSection({ demo }: { demo: RegistryDemo }) {
             </PreviewContainer>
           </TabsContent>
           <TabsContent value="code">
-            <CodeBlock code={demo.source ?? ""} language="tsx" />
+            <CodeBlock code={demo.source ?? ""} language="tsx" wrap={false} />
           </TabsContent>
         </Tabs>
       ) : (
