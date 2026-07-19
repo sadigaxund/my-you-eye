@@ -19,6 +19,12 @@ export const DEFAULT_FROSTED_BLUR: FrostedBlurState = { freq: 0.01, octaves: 2, 
 export const DEFAULT_FROSTED_GRAD: FrostedGradState = { feather: 55, blobOpacity: 0.8, tile: 280, opacity: 0.30 };
 export const DEFAULT_METALLIC: MetallicState = { freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0.22 };
 
+export const MIN_FROSTED_CYCLES = 10;
+
+export function genFrostedTile(tile: number, freq: number): number {
+  return Math.max(tile, Math.ceil(MIN_FROSTED_CYCLES / freq));
+}
+
 export function dataUri(svg: string): string {
   return `data:image/svg+xml,${encodeSvg(svg)}`;
 }
@@ -62,21 +68,25 @@ function cmRow(stretch: number, offset: string): string {
   return `${stretch} 0 0 0 ${offset}`;
 }
 
-export function frostedBlurSvg(s: FrostedBlurState): string {
+function frostedSvgBody(fid: string, s: FrostedBlurState): string {
   const o = offset(s.stretch);
   const row = cmRow(s.stretch, o);
   const fineFreq = s.freq * 3;
-  const fineOctaves = 2;
   const seedAttr = s.seed != null ? ` seed='${s.seed}'` : "";
-  return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
-<filter id='f' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'${seedAttr}/>
-<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'${seedAttr}/>
-<feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
-<feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
+  const gt = genFrostedTile(s.tile, s.freq);
+  return `<svg viewBox='0 0 ${gt} ${gt}' xmlns='http://www.w3.org/2000/svg'>
+<filter id='${fid}' x='0' y='0' width='${gt}' height='${gt}' color-interpolation-filters='sRGB'>
+<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${gt}' height='${gt}' result='cRaw'${seedAttr}/>
+<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='2' stitchTiles='stitch' x='0' y='0' width='${gt}' height='${gt}' result='fRaw'${seedAttr}/>
+<feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${gt}' height='${gt}' result='mixedRaw'/>
+<feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${gt}' height='${gt}'/>
 </filter>
-<rect width='100%' height='100%' filter='url(#f)'/>
+<rect width='100%' height='100%' filter='url(#${fid})'/>
 </svg>`.trim();
+}
+
+export function frostedBlurSvg(s: FrostedBlurState): string {
+  return frostedSvgBody("f", s);
 }
 
 interface BlobSpec {
@@ -130,20 +140,7 @@ ${blobs.map(b => wrappedBlobRects(b.id, t)).join("")}
 /* ---- Element-sized (non-tiling) generators ---- */
 
 export function fullFrostedSvg(s: FrostedBlurState): string {
-  const o = offset(s.stretch);
-  const row = cmRow(s.stretch, o);
-  const fineFreq = s.freq * 3;
-  const fineOctaves = 2;
-  const seedAttr = s.seed != null ? ` seed='${s.seed}'` : "";
-  return `<svg viewBox='0 0 ${s.tile} ${s.tile}' xmlns='http://www.w3.org/2000/svg'>
-<filter id='ff' x='0' y='0' width='${s.tile}' height='${s.tile}' color-interpolation-filters='sRGB'>
-<feTurbulence type='fractalNoise' baseFrequency='${s.freq}' numOctaves='${s.octaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='cRaw'${seedAttr}/>
-<feTurbulence type='fractalNoise' baseFrequency='${fineFreq}' numOctaves='${fineOctaves}' stitchTiles='stitch' x='0' y='0' width='${s.tile}' height='${s.tile}' result='fRaw'${seedAttr}/>
-<feComposite in='cRaw' in2='fRaw' operator='arithmetic' k1='0' k2='0.5' k3='0.5' k4='0' x='0' y='0' width='${s.tile}' height='${s.tile}' result='mixedRaw'/>
-<feColorMatrix in='mixedRaw' type='matrix' values='${row} ${row} ${row} 1 0 0 0 0' x='0' y='0' width='${s.tile}' height='${s.tile}'/>
-</filter>
-<rect width='100%' height='100%' filter='url(#ff)'/>
-</svg>`.trim();
+  return frostedSvgBody("ff", s);
 }
 
 export function fullMetallicNoiseSvg(s: MetallicState): string {
@@ -212,10 +209,12 @@ function mAssets(freqX: number, freqY: number, octaves: number, stretch: number,
 }
 
 function fAssets(freq: number, octaves: number, stretch: number, tile: number, secTile: number): LayerSvgAssets {
+  const genTile = genFrostedTile(tile, freq);
+  const genSecTile = genFrostedTile(secTile, freq);
   return {
-    primary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile, opacity: 0 })),
-    secondary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile: secTile, opacity: 0 })),
-    tileSize: tile,
+    primary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile: genTile, opacity: 0 })),
+    secondary: dataUri(fullFrostedSvg({ freq, octaves, stretch, tile: genSecTile, opacity: 0 })),
+    tileSize: genTile,
   };
 }
 
