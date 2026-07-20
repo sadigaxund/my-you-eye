@@ -33,23 +33,24 @@ Good, precise pushback — this is exactly the kind of thing worth resolving bef
 
 ### Phase 1 — Remotion PoC
 
-- [ ] Create `apps/video` as sibling Remotion project (Vite-based).
-- [ ] One static composition: renders a `Button` from `my-you-eye`.
-- [ ] Confirm `pnpm -F video dev` opens Studio and `pnpm -F video render` produces MP4.
+- [x] Create `apps/video` as sibling Remotion project.
+- [x] One static composition: renders a `Button` + `Card` from `my-you-eye`.
+- [x] Confirm `remotion render` produces MP4 with correct styling.
+- [x] Compiled CSS pipeline (dist/styles.compiled.css) for Remotion consumption.
 
-**Acceptance:** Valid MP4 file on disk showing the static component with correct styling.
+**Acceptance:** Valid MP4 on disk showing styled components. ✅
 
 ### Phase 2 — `packages/motion` (5 animation primitives)
 
-- [ ] **Reveal** — fade + translate on entrance (direction prop).
-- [ ] **Stagger** — sequential delay for list children.
-- [ ] **TypeText** — character-by-character text reveal.
-- [ ] **Highlight** — animate opacity/scale of a highlight overlay.
-- [ ] **SlideTransition** — slide-in/out for scene transitions.
+- [x] **Reveal** — fade + translate on entrance (direction prop).
+- [x] **Stagger** — sequential delay for list children.
+- [x] **TypeText** — character-by-character text reveal.
+- [x] **Highlight** — animate opacity/scale of a highlight overlay.
+- [x] **SlideTransition** — slide-in/out for scene transitions.
 
-Each gets: typed props, Remotion composition smoke-test, no ui dependency.
+Code in `packages/motion/src/`. Smoke-test compositions in `apps/video/src/compositions/`. All 5 render to MP4 confirmed.
 
-**Acceptance:** All 5 primitives render in Remotion Studio and to MP4.
+**Acceptance:** All 5 primitives render in Remotion Studio and to MP4. ✅
 
 ### Phase 3 — `packages/scenes` (composed scene templates)
 

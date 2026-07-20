@@ -9,6 +9,7 @@
     "render": "remotion render SmokeTest out.mp4"
   },
   "dependencies": {
+    "@lib/motion": "file:../../packages/motion",
     "@remotion/cli": "^4.0.0",
     "@remotion/renderer": "^4.0.0",
     "@tailwindcss/postcss": "^4.3.3",
