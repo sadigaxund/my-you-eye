@@ -164,6 +164,26 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Substring highlights",
+      render: () => {
+        const sample = `function process(order: Order): Result {\n  if (!order.valid) throw new Error("Bad order");\n  const total = order.items.reduce((s, i) => s + i.price, 0);\n  return { id: order.id, total, status: "done" };\n}`;
+        return (
+          <CodeBlock
+            code={sample}
+            language="typescript"
+            header="process.ts"
+            showLineNumbers
+            highlight
+            highlightRanges={[
+              { line: 2, start: 6, end: 18, color: "danger" },
+              { line: 3, start: 15, end: 45, color: "warning" },
+              { line: 4, start: 13, end: 33, color: "success" },
+            ]}
+          />
+        );
+      },
+    },
+    {
       name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
       render: () => (
         <div className="flex flex-col gap-4">

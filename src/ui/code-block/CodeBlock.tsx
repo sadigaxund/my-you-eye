@@ -1,5 +1,5 @@
 import { forwardRef, useState, useCallback, useMemo } from "react";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
@@ -24,6 +24,13 @@ export interface CodeBlockHighlightGroup {
   color?: "primary" | "warning" | "success" | "danger";
 }
 
+export interface HighlightRangeDef {
+  line: number;
+  start: number;
+  end: number;
+  color?: "primary" | "warning" | "success" | "danger";
+}
+
 export interface CodeBlockProps
   extends HTMLAttributes<HTMLPreElement>,
     VariantProps<typeof codeBlockVariants> {
@@ -40,6 +47,8 @@ export interface CodeBlockProps
   highlightColor?: CodeBlockHighlightGroup["color"];
   /** Multi-color highlight groups. When provided, takes precedence over highlightLines. */
   highlightGroups?: CodeBlockHighlightGroup[];
+  /** Substring-level highlight ranges (0-indexed char positions within each line). */
+  highlightRanges?: HighlightRangeDef[];
 }
 
 function CopyIcon() {
@@ -80,7 +89,7 @@ function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void })
 }
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, ...props }, ref) => {
     const [copied, setCopied] = useState(false);
     const copy = useCallback(() => {
       navigator.clipboard.writeText(code).then(() => {
@@ -93,7 +102,8 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
     const hasHeader = Boolean(header || language);
     const showGutter = showLineNumbers
       || (highlightLines != null && highlightLines.length > 0)
-      || (highlightGroups != null && highlightGroups.length > 0);
+      || (highlightGroups != null && highlightGroups.length > 0)
+      || (highlightRanges != null && highlightRanges.length > 0);
 
     const highlighted = useMemo(() => {
       if (!highlight) return null;
@@ -125,6 +135,49 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       if (!highlighted) return null;
       return splitTokensByLine(highlighted);
     }, [highlighted]);
+
+    const SUBSTR_BG: Record<string, string> = {
+      primary: "bg-primary/15",
+      warning: "bg-warning/20",
+      success: "bg-success/15",
+      danger: "bg-danger/15",
+    };
+
+    const lineRanges = useMemo(() => {
+      const map = new Map<number, { start: number; end: number; color: string }[]>();
+      if (!highlightRanges) return map;
+      for (const r of highlightRanges) {
+        const line = r.line;
+        if (!map.has(line)) map.set(line, []);
+        map.get(line)!.push({ start: r.start, end: r.end, color: r.color ?? "primary" });
+      }
+      return map;
+    }, [highlightRanges]);
+
+    function segmentedLine(line: string, ranges: { start: number; end: number; color: string }[]) {
+      const sorted = [...ranges].sort((a, b) => a.start - b.start);
+      const parts: ReactNode[] = [];
+      let pos = 0;
+      for (let i = 0; i < sorted.length; i++) {
+        const r = sorted[i];
+        const s = Math.max(r.start, 0);
+        const e = Math.min(r.end, line.length);
+        if (s > pos) parts.push(<span key={`t${i}`}>{line.slice(pos, s)}</span>);
+        if (e > s) {
+          const bg = SUBSTR_BG[r.color] ?? SUBSTR_BG.primary;
+          parts.push(
+            <span key={`h${i}`} className={cn(bg, "rounded-sm px-0.5 -mx-0.5")}>
+              {line.slice(s, e)}
+            </span>,
+          );
+          pos = e;
+        }
+        while (i + 1 < sorted.length && sorted[i + 1].start < pos) i++;
+      }
+      if (pos < line.length) parts.push(<span key="end">{line.slice(pos)}</span>);
+      if (parts.length === 0) parts.push(<span key="e">&nbsp;</span>);
+      return <>{parts}</>;
+    }
 
     return (
       <div className={cn(codeBlockVariants({ variant }), className)}>
@@ -175,11 +228,14 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               {...props}
             >
               <code>
-                {perLineTokens.map((lineTokens, i) => (
-                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
-                    {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
-                  </div>
-                ))}
+                {perLineTokens.map((lineTokens, i) => {
+                  const r = lineRanges.get(i + 1);
+                  return (
+                    <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
+                      {r ? segmentedLine(lines[i], r) : lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
+                    </div>
+                  );
+                })}
               </code>
             </pre>
           ) : (
@@ -192,9 +248,14 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               {...props}
             >
               <code>
-                {lines.map((line, i) => (
-                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>{line || " "}</div>
-                ))}
+                {lines.map((line, i) => {
+                  const r = lineRanges.get(i + 1);
+                  return (
+                    <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
+                      {r ? segmentedLine(line, r) : line || " "}
+                    </div>
+                  );
+                })}
               </code>
             </pre>
           )}

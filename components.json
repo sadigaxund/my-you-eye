@@ -257,6 +257,7 @@
         "Line highlights",
         "Line highlights (implicit gutter)",
         "Multi-color highlights",
+        "Substring highlights",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },
