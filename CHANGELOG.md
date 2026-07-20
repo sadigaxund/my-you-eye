@@ -6,6 +6,27 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- **`TexturedSurface`**: inline texture path no longer wraps children in a `relative` div (fixes flex `justify-between` layout for header). Decorative elements use `-z-10` and `pointer-events-none` so non-positioned children stack above naturally.
+- **`DateTimeTzDisplay`**: timezone badge no longer clipped — date+time merged into a `min-w-0 flex-1 truncate` group that absorbs space deficit before the `flex-shrink-0` badge is ever touched.
+- **`DataTable`**: sticky header restructured to render outside ScrollArea — scrollbar no longer covers the top-right rounded corner.
+
+### Added
+
+- **`--texture-type` CSS token** — themes declare their texture type (`paper-grain`, `frosted-glass`, `brushed-aluminium`), used by `TexturedSurface`'s `texture="theme"` path.
+- **`--theme-font` CSS token** — themes declare their preferred font; showcase auto-syncs font picker.
+
+### Changed
+
+- **`comic` theme**: recolored from warm cream/red to pulp newsprint (`oklch 0.92 0.025 65`) with CMYK cyan-blue primary, golden yellow secondary, near-black ink borders.
+- **`metallic` theme**: shifted from warm (hue 0) to cool gray-blue (hue 255) palette; dark mode uses `screen` blend for texture visibility.
+- **Paper grain & frosted glass presets**: SVG noise params updated across all layers (higher frequency, more octaves, larger tiles).
+- **Page ↔ surface presets swapped** for all three materials — page (background) now has coarser noise at `LAYER_OPACITY 0.55`, surface is finer at 0.30.
+- **`DateTimeTzDisplay`**: zero-padded day (`2-digit`) and hour (`2-digit`) for aligned table cells.
+- **`DataTable.showcase`**: `lastLogin` column widened to `"lg"` (26%) for datetime-tz breathing room.
+- **Version bump**: 0.2.1 → 0.2.2
+
+### Fixed
+
 - **`TableCell`**: added `overflow-hidden`/`min-w-0` so cell content correctly truncates at the cell boundary under `table-layout: fixed` instead of visually spilling into adjacent cells.
 
 ### Added
