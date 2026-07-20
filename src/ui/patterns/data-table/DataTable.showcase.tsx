@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
             { key: "role", header: "Role", type: "badge", badgeVariant: "primary", width: "xs" },
             { key: "status", header: "Status", type: "status", statusVariant: statusFromRole, width: "sm" },
             { key: "sessions", header: "Sessions", type: "number", align: "right", width: "xs" },
-            { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "md" },
+            { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "lg" },
           ]}
           rows={users}
         />
@@ -50,7 +50,7 @@ const entry: ShowcaseEntry = {
             { key: "role", header: "Role", type: "badge", badgeVariant: "primary", width: "xs" },
             { key: "status", header: "Status", type: "status", statusVariant: statusFromRole, width: "sm" },
             { key: "sessions", header: "Sessions", type: "number", align: "right", width: "xs" },
-            { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "md" },
+            { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "lg" },
           ]}
           rows={users}
         />
@@ -59,17 +59,17 @@ const entry: ShowcaseEntry = {
     {
       name: "Scrolling + sticky header",
       render: () => (
-        <div className="rounded-ui border border-border">
+        <div className="rounded-ui border border-border overflow-hidden">
           <DataTable
             stickyHeader
             className="max-h-72"
             columns={[
               { key: "name", header: "Name", width: "sm" },
-              { key: "email", header: "Email", type: "email", width: "lg" },
-              { key: "role", header: "Role", type: "badge", badgeVariant: "primary", width: "xs" },
-              { key: "status", header: "Status", type: "status", statusVariant: statusFromRole, width: "sm" },
-              { key: "sessions", header: "Sessions", type: "number", align: "right", width: "xs" },
-              { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "md" },
+            { key: "email", header: "Email", type: "email", width: "lg" },
+            { key: "role", header: "Role", type: "badge", badgeVariant: "primary", width: "xs" },
+            { key: "status", header: "Status", type: "status", statusVariant: statusFromRole, width: "sm" },
+            { key: "sessions", header: "Sessions", type: "number", align: "right", width: "xs" },
+            { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "lg" },
             ]}
             rows={users}
           />

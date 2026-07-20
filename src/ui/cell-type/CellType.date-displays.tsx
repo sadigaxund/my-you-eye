@@ -63,21 +63,25 @@ export function DateTimeTzDisplay({ value }: { value: unknown }) {
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const offset = tzOffset(d);
   const meta = `${iso}\n${tzName} (${offset})\n${relativeTime(d)}`;
-  const dateParts = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).formatToParts(d);
-  const timeStr = d.toLocaleString(undefined, { hour: "numeric", minute: "2-digit" });
+  const dateParts = new Intl.DateTimeFormat(undefined, { month: "short", day: "2-digit", year: "numeric" }).formatToParts(d);
+  const timeStr = d.toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" });
   return (
-    <span title={meta} className="cursor-help truncate inline-flex items-center gap-1.5 max-w-full tabular-nums align-middle">
-      <span className="text-muted text-xs/none">
-        {dateParts.map((part, i) => {
-          if (part.type === "year")
-            return <span key={i} className="text-muted">{part.value}</span>;
-          if (part.type === "literal")
-            return <span key={i}>{part.value}</span>;
-          return <span key={i} className="font-medium">{part.value}</span>;
-        })}
+    <span title={meta} className="cursor-help whitespace-nowrap inline-flex items-center gap-1.5 max-w-full min-w-0 tabular-nums align-middle">
+      <span className="min-w-0 flex-1 truncate text-xs/none">
+        <span className="text-muted">
+          {dateParts.map((part, i) => {
+            if (part.type === "year")
+              return <span key={i} className="text-muted">{part.value}</span>;
+            if (part.type === "literal")
+              return <span key={i}>{part.value}</span>;
+            return <span key={i} className="font-medium">{part.value}</span>;
+          })}
+        </span>
+        <span className="ml-1.5 font-semibold">{timeStr}</span>
       </span>
-      <span className="font-semibold">{timeStr}</span>
-      <span className="inline-flex items-center rounded-sm px-1 py-0.5 text-xs/none leading-none bg-muted/10 text-muted font-mono">{offset}</span>
+      <span className="inline-flex flex-shrink-0 items-center rounded-sm px-1 py-0.5 text-xs/none leading-none bg-muted/10 text-muted font-mono">
+        {offset}
+      </span>
     </span>
   );
 }
