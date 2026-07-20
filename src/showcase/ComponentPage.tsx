@@ -1,7 +1,7 @@
 import { DemoSection } from "./DemoSection";
 import type { RegistryPage } from "./registry";
 
-export function ComponentPage({ page }: { page: RegistryPage | undefined }) {
+export function ComponentPage({ texture, page }: { texture: string; page: RegistryPage | undefined }) {
   if (!page) {
     return (
       <p className="text-muted text-sm">
@@ -31,7 +31,7 @@ export function ComponentPage({ page }: { page: RegistryPage | undefined }) {
             <p className="text-muted text-sm mb-4 max-w-[36ch] leading-relaxed">{entry.description}</p>
           )}
           {entry.demos.map((demo) => (
-            <DemoSection key={demo.name} demo={demo} />
+            <DemoSection key={demo.name} demo={demo} texture={texture} />
           ))}
         </section>
       ))}

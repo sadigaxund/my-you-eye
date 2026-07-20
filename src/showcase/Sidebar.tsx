@@ -26,7 +26,7 @@ export function Sidebar({ texture, activeSlug, onSelect, mobileOpen, onCloseMobi
       texture={texture}
       layer="surface"
       strength="subtle"
-      color="--color-surface"
+      color="--color-canvas-surface"
       className={cn(
         "shrink-0 border-0 lg:sticky lg:top-0 lg:block lg:h-dvh lg:w-64 lg:border-r lg:border-border",
         mobileOpen

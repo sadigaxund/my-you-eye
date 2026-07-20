@@ -136,12 +136,12 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
           style={rootStyle}
           {...props}
         >
-          <div className="absolute inset-0" style={{ backgroundColor: `var(${color})` }} />
+          <div className="absolute inset-0 pointer-events-none -z-10" style={{ backgroundColor: `var(${color})` }} />
           {tileLayers.map((l, i) => (
             <div
               key={i}
               aria-hidden
-              className="absolute inset-0 pointer-events-none"
+              className="absolute inset-0 pointer-events-none -z-10"
               style={{
                 backgroundImage: `url("${l.uri}")`,
                 backgroundSize: `${l.tileSize}px`,
@@ -153,7 +153,7 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
             />
           ))}
           {coverLayers.length > 0 && (
-            <div className="absolute inset-0" style={{ containerType: "size" }}>
+            <div className="absolute inset-0 pointer-events-none -z-10" style={{ containerType: "size" }}>
               {coverLayers.map((l, i) => (
                 <div
                   key={i}

@@ -1,12 +1,13 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { CodeBlock } from "../ui/code-block";
+import { TexturedSurface } from "../ui/patterns/textured-surface";
 import { cn } from "../lib/cn";
 import type { RegistryDemo } from "./registry";
 
 const overflowClass = (v: NonNullable<RegistryDemo["overflow"]>) =>
   v === "auto" ? "overflow-auto" : v === "hidden" ? "overflow-hidden" : "overflow-visible";
 
-export function DemoSection({ demo }: { demo: RegistryDemo }) {
+export function DemoSection({ demo, texture }: { demo: RegistryDemo; texture: string }) {
   const hasSource = Boolean(demo.source);
   const ov = demo.overflow ?? "visible";
 
@@ -40,9 +41,11 @@ export function DemoSection({ demo }: { demo: RegistryDemo }) {
           </TabsContent>
         </Tabs>
       ) : (
-        <div className={cn("border border-border rounded-ui bg-surface-elevated p-panel", overflowClass(ov))}>
-          {renderDemo()}
-        </div>
+        <TexturedSurface texture={texture} layer="surface" strength="subtle" color="--color-surface-elevated" radius="lg">
+          <div className={cn("p-panel", overflowClass(ov))}>
+            {renderDemo()}
+          </div>
+        </TexturedSurface>
       )}
     </section>
   );

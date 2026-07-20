@@ -148,7 +148,7 @@ export default function App() {
           onCloseMobile={() => setMobileNavOpen(false)}
         />
         <main className="min-w-0 flex-1 px-panel py-8">
-          <ComponentPage page={findPage(activeSlug ?? "")} />
+          <ComponentPage texture={texture} page={findPage(activeSlug ?? "")} />
         </main>
       </div>
     </div>
