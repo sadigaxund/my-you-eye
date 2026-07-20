@@ -1,5 +1,6 @@
 import { Composition } from "remotion";
 import { SmokeTest } from "./SmokeTest";
+import "my-you-eye/styles.compiled.css";
 
 export const RemotionRoot = () => (
   <>

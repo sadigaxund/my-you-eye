@@ -11,9 +11,14 @@
   "dependencies": {
     "@remotion/cli": "^4.0.0",
     "@remotion/renderer": "^4.0.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "css-loader": "^7.1.4",
+    "my-you-eye": "file:../..",
+    "postcss-loader": "^8.2.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "remotion": "^4.0.0",
-    "my-you-eye": "file:../.."
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^4.3.3"
   }
 }
