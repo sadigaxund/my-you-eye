@@ -67,6 +67,29 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Label positions",
+      render: () => (
+        <div className="flex flex-col items-center gap-6 py-4 h-auto">
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead label="25%" labelPosition={25} />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">label at 25%</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead label="center" labelPosition={50} />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">label at 50% (default)</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead label="75%" labelPosition={75} />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">label at 75%</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead label="flat" labelElevated={false} />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">no elevation</span>
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

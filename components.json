@@ -31,7 +31,8 @@
       "demos": [
         "Path variants",
         "Edge states",
-        "Decorations (arrowheads + labels)"
+        "Decorations (arrowheads + labels)",
+        "Label positions"
       ]
     },
     {

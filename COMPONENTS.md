@@ -16,7 +16,7 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `Canvas` | — | Empty grid |
-| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels) |
+| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
 | `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Free-form body |
 | `Port` | state: connected / default / highlighted | States |
