@@ -2,7 +2,6 @@ import React from "react";
 import { Highlight } from "@lib/motion";
 
 const layerStyle: React.CSSProperties = {
-  position: "relative",
   padding: "24px 48px",
   margin: "12px 0",
   fontSize: 42,
@@ -37,39 +36,19 @@ export const HighlightDemo: React.FC = () => (
     <h1 style={{ fontSize: 56, margin: "0 0 48px 0" }}>
       Architecture Overview
     </h1>
-    <Highlight
-      activeFrame={0}
-      duration={20}
-      color="var(--color-primary)"
-      opacity={0.15}
-    >
+    <Highlight activeFrame={0} duration={30} color="#7f77dd" opacity={0.3}>
       <div style={layerStyle}>Frontend</div>
     </Highlight>
     <div style={arrowStyle}>&darr;</div>
-    <Highlight
-      activeFrame={30}
-      duration={20}
-      color="var(--color-primary)"
-      opacity={0.15}
-    >
+    <Highlight activeFrame={40} duration={30} color="#50d890" opacity={0.3}>
       <div style={layerStyle}>API Gateway</div>
     </Highlight>
     <div style={arrowStyle}>&darr;</div>
-    <Highlight
-      activeFrame={60}
-      duration={20}
-      color="var(--color-primary)"
-      opacity={0.15}
-    >
+    <Highlight activeFrame={80} duration={30} color="#f5a623" opacity={0.3}>
       <div style={layerStyle}>Microservices</div>
     </Highlight>
     <div style={arrowStyle}>&darr;</div>
-    <Highlight
-      activeFrame={90}
-      duration={20}
-      color="var(--color-primary)"
-      opacity={0.15}
-    >
+    <Highlight activeFrame={120} duration={30} color="#e04f5f" opacity={0.3}>
       <div style={layerStyle}>Database</div>
     </Highlight>
   </div>

@@ -36,7 +36,6 @@ export function Highlight({
           backgroundColor: color,
           opacity: progress * opacity,
           borderRadius: "inherit",
-          zIndex: -1,
         }}
       />
       {children}
