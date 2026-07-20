@@ -1,6 +1,6 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { CodeBlock } from ".";
-import { cn } from "../../lib/cn";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../tabs";
 
 const python = `def fibonacci(n):
     a, b = 0, 1
@@ -173,19 +173,24 @@ const entry: ShowcaseEntry = {
           { line: 3, start: 15, end: 45, color: "warning" },
           { line: 4, start: 13, end: 33, color: "success" },
         ];
-        const BG = { primary: "bg-primary/15", warning: "bg-warning/20", success: "bg-success/15", danger: "bg-danger/15" };
         return (
-          <div className="flex flex-col gap-3">
-            <CodeBlock code={sample} language="typescript" header="process.ts" showLineNumbers highlight highlightRanges={ranges} />
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted font-medium">Ranges:</span>
-              {ranges.map((r, i) => (
-                <span key={i} className={cn("inline-flex items-center rounded-sm px-1.5 py-0.5 text-xs font-mono", BG[r.color], i > 0 ? "" : "")}>
-                  L{r.line} {sample.split("\n")[r.line - 1].slice(r.start, r.end)}
-                </span>
-              ))}
-            </div>
-          </div>
+          <Tabs variant="filing" defaultValue="preview">
+            <TabsList>
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+              <TabsTrigger value="code">Code</TabsTrigger>
+            </TabsList>
+            <TabsContent value="preview">
+              <CodeBlock code={sample} language="typescript" header="process.ts" showLineNumbers highlight highlightRanges={ranges} />
+            </TabsContent>
+            <TabsContent value="code">
+              <CodeBlock
+                code={JSON.stringify({ highlightRanges: ranges }, null, 2)}
+                language="json"
+                header="props"
+                highlight
+              />
+            </TabsContent>
+          </Tabs>
         );
       },
     },

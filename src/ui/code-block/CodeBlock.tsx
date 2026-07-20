@@ -154,7 +154,31 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       return map;
     }, [highlightRanges]);
 
-    function segmentedLine(line: string, ranges: { start: number; end: number; color: string }[]) {
+    const highlightBlocks = useMemo(() => {
+      if (!highlightRanges || highlightRanges.length === 0) return [];
+      const sorted = [...highlightRanges].sort((a, b) => a.line - b.line || a.start - b.start);
+      const blocks: { startLine: number; endLine: number; minCol: number; maxCol: number; color: string }[] = [];
+      for (const r of sorted) {
+        const last = blocks[blocks.length - 1];
+        if (last && r.line <= last.endLine + 1 && r.start < last.maxCol && r.end > last.minCol) {
+          last.endLine = Math.max(last.endLine, r.line);
+          last.minCol = Math.min(last.minCol, r.start);
+          last.maxCol = Math.max(last.maxCol, r.end);
+        } else {
+          blocks.push({ startLine: r.line, endLine: r.line, minCol: r.start, maxCol: r.end, color: r.color ?? "primary" });
+        }
+      }
+      return blocks;
+    }, [highlightRanges]);
+
+    const BLOCK_BORDER: Record<string, string> = {
+      primary: "border-primary/25",
+      warning: "border-warning/30",
+      success: "border-success/25",
+      danger: "border-danger/30",
+    };
+
+    function segmentedLine(line: string, ranges: { start: number; end: number; color: string }[], isBlock: "first" | "mid" | "last" | "single" | null) {
       const sorted = [...ranges].sort((a, b) => a.start - b.start);
       const parts: ReactNode[] = [];
       let pos = 0;
@@ -165,8 +189,12 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
         if (s > pos) parts.push(<span key={`t${i}`}>{line.slice(pos, s)}</span>);
         if (e > s) {
           const bg = SUBSTR_BG[r.color] ?? SUBSTR_BG.primary;
+          let radius = "rounded-sm";
+          if (isBlock === "first") radius = "rounded-t-sm";
+          else if (isBlock === "mid") radius = "rounded-none";
+          else if (isBlock === "last") radius = "rounded-b-sm";
           parts.push(
-            <span key={`h${i}`} className={cn(bg, "rounded-sm px-0.5 -mx-0.5")}>
+            <span key={`h${i}`} className={cn(bg, radius, "px-0.5 -mx-0.5 py-px -my-px")}>
               {line.slice(s, e)}
             </span>,
           );
@@ -177,6 +205,15 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       if (pos < line.length) parts.push(<span key="end">{line.slice(pos)}</span>);
       if (parts.length === 0) parts.push(<span key="e">&nbsp;</span>);
       return <>{parts}</>;
+    }
+
+    function blockPosition(line: number): "first" | "mid" | "last" | "single" | null {
+      const b = highlightBlocks.find(bb => line >= bb.startLine && line <= bb.endLine);
+      if (!b) return null;
+      if (b.startLine === b.endLine) return "single";
+      if (line === b.startLine) return "first";
+      if (line === b.endLine) return "last";
+      return "mid";
     }
 
     return (
@@ -228,14 +265,45 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               {...props}
             >
               <code>
-                {perLineTokens.map((lineTokens, i) => {
-                  const r = lineRanges.get(i + 1);
-                  return (
-                    <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
-                      {r ? segmentedLine(lines[i], r) : lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const els: ReactNode[] = [];
+                  let i = 0;
+                  while (i < lines.length) {
+                    const ln = i + 1;
+                    const block = highlightBlocks.find(b => ln >= b.startLine && ln <= b.endLine);
+                    if (block && ln === block.startLine) {
+                      for (let j = block.startLine; j <= block.endLine; j++) {
+                        const bln = j;
+                        const r = lineRanges.get(bln);
+                        const lineText = lines[bln - 1];
+                        const bp = blockPosition(bln);
+                        const borderCls = cn(
+                          BLOCK_BORDER[block.color],
+                          bp === "first" || bp === "single" ? "border-t" : "",
+                          bp === "first" ? "rounded-t-sm" : bp === "last" ? "rounded-b-sm" : bp === "mid" ? "" : "rounded-sm",
+                          bp !== "mid" ? "border-l border-r" : "border-l border-r",
+                        );
+                        els.push(
+                          <div key={`bl${bln}`} className={cn(SUBSTR_BG[block.color], borderCls, "px-panel", lineColor.get(bln))}>
+                            {r ? segmentedLine(lineText, r, bp) : perLineTokens[bln - 1] && perLineTokens[bln - 1].length > 0 ? renderHighlightedLine(perLineTokens[bln - 1]) : lineText || " "}
+                          </div>,
+                        );
+                      }
+                      i = block.endLine;
+                    } else if (!block) {
+                      const r = lineRanges.get(ln);
+                      els.push(
+                        <div key={`ln${i}`} className={cn("px-panel", lineColor.get(i + 1))}>
+                          {r ? segmentedLine(lines[i], r, null) : perLineTokens[i] && perLineTokens[i].length > 0 ? renderHighlightedLine(perLineTokens[i]) : lines[i] || " "}
+                        </div>,
+                      );
+                      i++;
+                    } else {
+                      i++;
+                    }
+                  }
+                  return els;
+                })()}
               </code>
             </pre>
           ) : (
@@ -248,14 +316,45 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               {...props}
             >
               <code>
-                {lines.map((line, i) => {
-                  const r = lineRanges.get(i + 1);
-                  return (
-                    <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
-                      {r ? segmentedLine(line, r) : line || " "}
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const els: ReactNode[] = [];
+                  let i = 0;
+                  while (i < lines.length) {
+                    const ln = i + 1;
+                    const block = highlightBlocks.find(b => ln >= b.startLine && ln <= b.endLine);
+                    if (block && ln === block.startLine) {
+                      for (let j = block.startLine; j <= block.endLine; j++) {
+                        const bln = j;
+                        const r = lineRanges.get(bln);
+                        const lineText = lines[bln - 1];
+                        const bp = blockPosition(bln);
+                        const borderCls = cn(
+                          BLOCK_BORDER[block.color],
+                          bp === "first" || bp === "single" ? "border-t" : "",
+                          bp === "first" ? "rounded-t-sm" : bp === "last" ? "rounded-b-sm" : bp === "mid" ? "" : "rounded-sm",
+                          bp !== "mid" ? "border-l border-r" : "border-l border-r",
+                        );
+                        els.push(
+                          <div key={`bl${bln}`} className={cn(SUBSTR_BG[block.color], borderCls, "px-panel", lineColor.get(bln))}>
+                            {r ? segmentedLine(lineText, r, bp) : lineText || " "}
+                          </div>,
+                        );
+                      }
+                      i = block.endLine;
+                    } else if (!block) {
+                      const r = lineRanges.get(ln);
+                      els.push(
+                        <div key={`ln${i}`} className={cn("px-panel", lineColor.get(i + 1))}>
+                          {r ? segmentedLine(lines[i], r, null) : lines[i] || " "}
+                        </div>,
+                      );
+                      i++;
+                    } else {
+                      i++;
+                    }
+                  }
+                  return els;
+                })()}
               </code>
             </pre>
           )}

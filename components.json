@@ -244,7 +244,8 @@
       "folder": "ui/code-block",
       "props": {
         "variant": [
-          "elevated"
+          "elevated",
+          "filing"
         ]
       },
       "demos": [
