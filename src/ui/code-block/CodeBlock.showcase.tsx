@@ -1,6 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { CodeBlock } from ".";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../tabs";
 
 const python = `def fibonacci(n):
     a, b = 0, 1
@@ -168,38 +167,42 @@ const entry: ShowcaseEntry = {
       name: "Substring highlights",
       render: () => {
         const sample = `function process(order: Order): Result {\n  if (!order.valid) throw new Error("Bad order");\n  const total = order.items.reduce((s, i) => s + i.price, 0);\n  return { id: order.id, total, status: "done" };\n}`;
-        const ranges: Array<{ line: number; start: number; end: number; color: "primary" | "warning" | "success" | "danger" }> = [
-          { line: 2, start: 6, end: 18, color: "danger" },
-          { line: 3, start: 15, end: 45, color: "warning" },
-          { line: 4, start: 13, end: 33, color: "success" },
-        ];
-        const tsxCode = `<CodeBlock
-  code={sample}
-  language="typescript"
-  header="process.ts"
-  showLineNumbers
-  highlight
-  highlightRanges={[
-    { line: 2, start: 6, end: 18, color: "danger" },
-    { line: 3, start: 15, end: 45, color: "warning" },
-    { line: 4, start: 13, end: 33, color: "success" },
-  ]}
-/>`;
         return (
-          <Tabs variant="filing" defaultValue="preview">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-            <TabsContent value="preview">
-              <CodeBlock code={sample} language="typescript" header="process.ts" showLineNumbers highlight highlightRanges={ranges} />
-            </TabsContent>
-            <TabsContent value="code">
-              <CodeBlock code={tsxCode} language="tsx" header="usage" highlight />
-            </TabsContent>
-          </Tabs>
+          <CodeBlock
+            code={sample}
+            language="typescript"
+            header="process.ts"
+            showLineNumbers
+            highlight
+            highlightRanges={[
+              { line: 2, start: 6, end: 18, color: "danger" },
+              { line: 3, start: 15, end: 45, color: "warning" },
+              { line: 4, start: 13, end: 33, color: "success" },
+            ]}
+          />
         );
       },
+    },
+    {
+      name: "Merged highlights",
+      render: () => (
+        <CodeBlock
+          code={`class OrderService {\n  async submit(order: Order) {\n    if (order.items.length === 0) {\n      throw new ValidationError(\n        "Order must have items"\n      );\n    }\n    const total = order.items\n      .map((i) => i.price * i.qty)\n      .reduce((s, v) => s + v, 0);\n    return this.repo.save({ ...order, total });\n  }\n}`}
+          language="typescript"
+          header="order.ts"
+          showLineNumbers
+          highlight
+          highlightRanges={[
+            { line: 2, start: 16, end: 41, color: "primary" },
+            { line: 3, start: 8, end: 34, color: "primary" },
+            { line: 4, start: 6, end: 28, color: "primary" },
+            { line: 5, start: 8, end: 30, color: "primary" },
+            { line: 7, start: 16, end: 36, color: "primary" },
+            { line: 8, start: 6, end: 36, color: "primary" },
+            { line: 9, start: 6, end: 44, color: "primary" },
+          ]}
+        />
+      ),
     },
     {
       name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",

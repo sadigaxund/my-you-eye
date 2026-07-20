@@ -244,8 +244,7 @@
       "folder": "ui/code-block",
       "props": {
         "variant": [
-          "elevated",
-          "filing"
+          "elevated"
         ]
       },
       "demos": [
@@ -260,6 +259,7 @@
         "Line highlights (implicit gutter)",
         "Multi-color highlights",
         "Substring highlights",
+        "Merged highlights",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },
