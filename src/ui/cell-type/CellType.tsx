@@ -31,6 +31,12 @@ export interface CellTypeProps {
   replacements?: UrlReplacement[];
   dateFormat?: Intl.DateTimeFormatOptions;
   compact?: boolean;
+  /** Fraction digits (0-20). Controls minimumFractionDigits and maximumFractionDigits. */
+  fractionDigits?: number;
+  /** ISO 4217 currency code for "currency" type (default "USD"). */
+  currency?: string;
+  /** Force a byte unit (e.g. "GB"). Overrides auto-scaling for "bytes" type. */
+  displayUnit?: string;
 }
 
 function BooleanDisplay({ value }: { value: unknown }) {
@@ -139,7 +145,7 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
             {value}
           </span>
           {isTruncated && (
-            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">
+            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">
               …
             </span>
           )}
@@ -154,6 +160,7 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
 
 export function CellType({
   type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements, dateFormat, compact,
+  fractionDigits, currency, displayUnit,
 }: CellTypeProps) {
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
@@ -165,14 +172,14 @@ export function CellType({
     case "json": return <JsonDisplay value={value} />;
     case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
-    case "number": return <NumberDisplay value={value} compact={compact} />;
-    case "percentage": return <PercentageDisplay value={value} />;
+    case "number": return <NumberDisplay value={value} compact={compact} fractionDigits={fractionDigits} />;
+    case "percentage": return <PercentageDisplay value={value} fractionDigits={fractionDigits} />;
     case "date-human": return <DateHumanDisplay value={value} />;
     case "date-system": return <DateSystemDisplay value={value} dateFormat={dateFormat} />;
     case "datetime-tz": return <DateTimeTzDisplay value={value} />;
-    case "bytes": return <BytesDisplay value={value} compact={compact} />;
+    case "bytes": return <BytesDisplay value={value} compact={compact} displayUnit={displayUnit} />;
     case "duration": return <DurationDisplay value={value} />;
-    case "currency": return <CurrencyDisplay value={value} compact={compact} />;
+    case "currency": return <CurrencyDisplay value={value} compact={compact} fractionDigits={fractionDigits} currency={currency} />;
     case "signed": return <SignedDisplay value={value} />;
     case "image": return <ImageDisplay value={value} />;
     case "audio": return <AudioDisplay value={value} />;

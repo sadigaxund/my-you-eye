@@ -1,7 +1,7 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 
 const entry: ShowcaseEntry = {
-  title: "",
+  title: "Table",
   group: "data",
   parent: "Table",
   demos: [],

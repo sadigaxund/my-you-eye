@@ -93,7 +93,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} {Array.isArray(value) ? "items" : "keys"}
             </Badge>
             <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap">
@@ -101,7 +101,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
                 <span key={i} className={tokenStyles[t.type]}>{t.value}</span>
               ))}
             </span>
-            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
           </>
         )}
       </PopoverTrigger>
@@ -109,7 +109,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">JSON</span>
         </div>
-        <ScrollArea className="max-h-[300px]">
+        <ScrollArea className="max-h-72">
           <CodeBlock code={preview.full} />
         </ScrollArea>
       </PopoverContent>
@@ -180,7 +180,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} {isArray ? "items" : "keys"}
             </Badge>
             {keys.length > 0 && (
@@ -194,7 +194,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
               </span>
             )}
             {isTruncated && (
-              <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
             )}
           </>
         )}
@@ -203,7 +203,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">Tree</span>
         </div>
-        <ScrollArea className="max-h-[300px] p-2">
+        <ScrollArea className="max-h-72 p-2">
           <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
         </ScrollArea>
       </PopoverContent>
@@ -235,7 +235,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} items
             </Badge>
             <span
@@ -247,7 +247,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
               ))}
             </span>
             {isTruncated && (
-              <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
             )}
           </>
         )}
@@ -256,7 +256,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">List ({count})</span>
         </div>
-        <ScrollArea className="max-h-[300px] p-2">
+        <ScrollArea className="max-h-72 p-2">
           <div className="flex flex-col gap-1">
             {arr.map((item, i) => (
               <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>

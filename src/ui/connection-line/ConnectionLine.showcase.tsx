@@ -3,7 +3,7 @@ import { ConnectionLine } from ".";
 import { Edge } from "../canvas";
 
 const entry: ShowcaseEntry = {
-  title: "Edge",
+  title: "ConnectionLine",
   group: "canvas",
   demos: [
     {

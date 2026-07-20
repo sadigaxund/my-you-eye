@@ -19,7 +19,7 @@ export function GraphNodeRenderer({
   }, [node.id, node.x, node.y, onSelect, onDragStart]);
 
   return (
-    <div className="absolute relative" style={{ left: node.x, top: node.y, width: NODE_WIDTH }} onMouseDown={onDown}>
+    <div className="absolute" style={{ left: node.x, top: node.y, width: NODE_WIDTH }} onMouseDown={onDown}>
       <GraphNode
         x={0} y={0}
         header={node.header}
@@ -27,7 +27,7 @@ export function GraphNodeRenderer({
         accent={node.accent}
         footer={node.footer}
         rows={node.rows}
-        className="max-w-[160px]"
+        className="max-w-40"
       />
       {node.rows.flatMap((row, i) =>
         (["left", "right"] as const)

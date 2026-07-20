@@ -51,9 +51,9 @@ function isArrayIndex(label: string): boolean {
 function Sigil({ kind, count }: { kind: "object" | "array"; count: number }) {
   const glyph = kind === "object" ? "{}" : "[]";
   return (
-    <span className="flex items-center gap-0.5 shrink-0 font-mono text-[11px] text-muted">
+    <span className="flex items-center gap-0.5 shrink-0 font-mono text-xs text-muted">
       <span>{glyph}</span>
-      <span className="text-[10px]">{count}</span>
+      <span className="text-xs">{count}</span>
     </span>
   );
 }

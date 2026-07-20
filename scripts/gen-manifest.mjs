@@ -26,12 +26,19 @@ function walk(dir) {
 
 function parseShowcase(file) {
   const src = readFileSync(file, "utf-8");
-  const title = src.match(/title:\s*["'`]([^"'`]+)["'`]/)?.[1];
-  const group = src.match(/group:\s*["'`]([^"'`]+)["'`]/)?.[1];
+
+  // Restrict title/group extraction to after the `const entry:` declaration
+  // to avoid matching JSX props (e.g. toast({ title: "Saved" })).
+  const entryIdx = src.search(/\bconst entry:/);
+  const afterEntry = entryIdx >= 0 ? src.slice(entryIdx) : src;
+
+  const title = afterEntry.match(/title:\s*["'`]([^"'`]+)["'`]/)?.[1];
+  const group = afterEntry.match(/group:\s*["'`]([^"'`]+)["'`]/)?.[1];
   if (!title || !group) return null;
 
-  const demos = [...src.matchAll(/name:\s*["'`]([^"'`]+)["'`]/g)].map((m) => m[1]);
+  const demos = [...afterEntry.matchAll(/name:\s*["'`]([^"'`]+)["'`]/g)].map((m) => m[1]);
 
+  // Scan the full file for UI component props (CVA variant values).
   const props = {};
   for (const m of src.matchAll(/(\w+)=["']([\w-]+)["']/g)) {
     const [, attr, value] = m;

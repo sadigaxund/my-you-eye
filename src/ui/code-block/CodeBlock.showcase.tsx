@@ -17,6 +17,77 @@ const json = `{
 
 const longLine = `const veryLongVariableNameThatForcesHorizontalScrolling = someFunctionCall(argumentOne, argumentTwo, argumentThree, argumentFour);`;
 
+const typescript = `interface User {
+  id: number;
+  name: string;
+  email: string;
+  active: boolean;
+}
+
+async function fetchUser(id: number): Promise<User | null> {
+  const res = await fetch(\`/api/users/\${id}\`);
+  if (!res.ok) return null;
+  return res.json();
+}
+
+// Usage
+const user = await fetchUser(42);
+console.log(user?.name ?? "Unknown");`;
+
+const cssSample = `.card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-ui);
+  background: var(--color-surface);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card { background: var(--color-bg); }
+}`;
+
+const htmlSample = `<article class="post">
+  <header>
+    <h2><a href="/post/42">Hello World</a></h2>
+    <time datetime="2026-07-17">July 17, 2026</time>
+  </header>
+  <p>Welcome to my blog.</p>
+  <footer><a href="/tags">#tech</a></footer>
+</article>`;
+
+const sqlSample = `SELECT u.id, u.name, COUNT(o.id) AS orders
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE u.active = TRUE
+  AND u.created_at > '2026-01-01'
+GROUP BY u.id, u.name
+ORDER BY orders DESC
+LIMIT 10;`;
+
+const yamlSample = `# GitHub Actions workflow
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: npm ci
+      - name: Test
+        run: npm test`;
+
+
 const entry: ShowcaseEntry = {
   title: "CodeBlock",
   group: "display",
@@ -55,6 +126,24 @@ const entry: ShowcaseEntry = {
       name: "No wrap (horizontal scroll)",
       render: () => (
         <CodeBlock code={longLine} language="ts" header="scroll.ts" wrap={false} showLineNumbers />
+      ),
+    },
+    {
+      name: "Syntax highlighting (TS)",
+      render: () => (
+        <CodeBlock code={typescript} language="typescript" header="api.ts" showLineNumbers highlight />
+      ),
+    },
+    {
+      name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
+      render: () => (
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={cssSample} language="css" header="card.css" highlight />
+          <CodeBlock code={htmlSample} language="html" header="post.html" highlight />
+          <CodeBlock code={sqlSample} language="sql" header="query.sql" highlight />
+          <CodeBlock code={yamlSample} language="yaml" header="ci.yml" highlight />
+          <CodeBlock code={python} language="python" header="fib.py" highlight />
+        </div>
       ),
     },
   ],

@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { forwardRef, useState, useMemo, useRef } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Input } from "../input";
 import { ScrollArea } from "../scroll-area";
@@ -19,15 +19,11 @@ export interface ComboboxProps {
   disabled?: boolean;
 }
 
-export function Combobox({
-  options,
-  value,
-  onChange,
-  placeholder = "Search...",
-  emptyText = "No results found",
-  className,
-  disabled,
-}: ComboboxProps) {
+export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
+  function Combobox(
+    { options, value, onChange, placeholder = "Search...", emptyText = "No results found", className, disabled },
+    ref,
+  ) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +39,7 @@ export function Combobox({
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setQuery(""); }}>
       <PopoverTrigger asChild>
         <button
+          ref={ref}
           type="button"
           role="combobox"
           disabled={disabled}
@@ -53,7 +50,6 @@ export function Combobox({
             !selectedLabel && "text-muted",
             className,
           )}
-          style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
           onClick={() => {
             setOpen(true);
             setTimeout(() => inputRef.current?.focus(), 0);
@@ -108,4 +104,6 @@ export function Combobox({
       </PopoverContent>
     </Popover>
   );
-}
+},
+);
+Combobox.displayName = "Combobox";

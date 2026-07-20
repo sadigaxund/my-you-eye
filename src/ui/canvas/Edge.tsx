@@ -33,10 +33,10 @@ function Edge({ from, to, state, className, hitStrokeWidth = HIT_STROKE, onClick
     <g onMouseDown={(e) => e.stopPropagation()}>
       {onClick || onContextMenu ? (
         <path d={d} fill="none" stroke="transparent" strokeWidth={hitStrokeWidth}
-          className="cursor-pointer" style={{ pointerEvents: "auto" }}
+          className="cursor-pointer pointer-events-auto"
           onClick={onClick} onContextMenu={onContextMenu} />
       ) : null}
-      <path d={d} className={cn(edgeVariants({ state }), className)} style={{ pointerEvents: "none" }} {...props} />
+      <path d={d} className={cn(edgeVariants({ state }), "pointer-events-none", className)} {...props} />
     </g>
   );
 }

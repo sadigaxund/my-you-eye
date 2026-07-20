@@ -54,14 +54,14 @@ function cmdList() {
     (groups[c.group] ??= []).push(c);
   }
 
-  const groupOrder = ["inputs", "display", "feedback", "overlay", "navigation", "canvas", "data", "patterns"];
+  const groupOrder = ["inputs", "display", "feedback", "overlay", "navigation", "canvas", "data", "patterns", "typography"];
 
   for (const group of groupOrder) {
     if (!groups[group]) continue;
     console.log(`\n  ${group}`);
     console.log(`  ${"-".repeat(group.length)}`);
     for (const c of groups[group]) {
-      const variants = Object.entries(c.variants)
+      const variants = Object.entries(c.props)
         .map(([k, v]) => `${k}: ${v.join(" | ")}`)
         .join(", ");
       console.log(`    ${c.name}${variants ? `  (${variants})` : ""}`);

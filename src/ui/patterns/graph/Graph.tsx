@@ -202,7 +202,7 @@ const Graph: FC<GraphProps> = ({
       onBackgroundClick={() => dispatch({ type: "DESELECT_ALL" })}
       controls={controls}
     >
-      <svg className="absolute inset-0" style={{ overflow: "visible", width: "100%", height: "100%", pointerEvents: "none" }}>
+      <svg className="absolute inset-0 overflow-visible w-full h-full pointer-events-none">
         {edges.map((edge) => {
           const fn = nodes.find((n) => n.id === edge.from.nodeId);
           const tn = nodes.find((n) => n.id === edge.to.nodeId);

@@ -17,7 +17,7 @@ const manyItems = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const entry: ShowcaseEntry = {
-  title: "List",
+  title: "DataList",
   group: "data",
   parent: "Table",
   description: "A label/value list (definition list) for record-detail views — the non-tabular counterpart to Table/DataTable.",

@@ -101,7 +101,7 @@ function PresetCard({ preset }: { preset: PresetDef }) {
     return (
       <div className="rounded-ui overflow-hidden border border-border">
         <div ref={ref} className="h-28 relative">
-          <div className="absolute inset-0" style={{ background: "var(--color-surface)" }} />
+          <div className="absolute inset-0 bg-surface" />
           <div
             className="absolute pointer-events-none"
             style={{
@@ -133,7 +133,7 @@ function PresetCard({ preset }: { preset: PresetDef }) {
   return (
     <div className="rounded-ui overflow-hidden border border-border">
       <div className="h-28 relative">
-        <div className="absolute inset-0" style={{ background: "var(--color-surface)" }} />
+        <div className="absolute inset-0 bg-surface" />
         <div className="absolute inset-0 pointer-events-none"
           style={{ ...bgStyle, opacity: preset.opacity, mixBlendMode: "hard-light" }} />
       </div>

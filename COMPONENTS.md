@@ -9,14 +9,14 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**53 components** across 9 groups.
+**54 components** across 9 groups.
 
 ## canvas
 
 | Component | Variants | Demos |
 |---|---|---|
 | `Canvas` | — | Empty grid |
-| `Edge` | variant: bezier / stepped / straight<br>state: connected | Path variants, Edge states |
+| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected | Path variants, Edge states |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
 | `GraphNode` | variant: muted / selected | Variants |
 | `Port` | state: connected / default / highlighted | States |
@@ -26,8 +26,9 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data Types, Project X, Project X, Numeric types |
-| `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Eve, Frank, Grace, Ivy, Leo, Olivia, Default, Striped, Scrolling + sticky header, Truncation |
-| `List` | variant: compact | Default & Compact, Striped, Scrolling |
+| `DataList` | variant: compact | Default & Compact, Striped, Scrolling |
+| `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Truncation |
+| `Table` | — |  |
 | `TreeView` | type: button<br>variant: condensed | Default vs Condensed, Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
 ## display
@@ -37,7 +38,7 @@ import "my-you-eye/styles.css";
 | `Avatar` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | variant: danger / default / elevated / ghost / outlined<br>size: sm | Variants, With footer actions |
-| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll) |
+| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `EmptyState` | variant: secondary | Default, With icon and action |
 | `Image` | — | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | — | Default, Combinations |
@@ -52,9 +53,9 @@ import "my-you-eye/styles.css";
 |---|---|---|
 | `Alert` | variant: danger / info / success / warning | Variants, With title, With icon |
 | `Progress` | variant: danger / default / success / warning | Variants, No label |
-| `Saved` | variant: danger / secondary | Trigger toasts |
 | `Skeleton` | shape: circle / rect / text | Shapes |
 | `Spinner` | size: lg / md / sm | Sizes |
+| `Toast` | variant: danger / secondary | Trigger toasts |
 
 ## inputs
 

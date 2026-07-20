@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
@@ -44,30 +44,27 @@ function generatePath(from: { x: number; y: number }, to: { x: number; y: number
   }
 }
 
-function ConnectionLine({
-  className,
-  variant = "bezier",
-  state = "connected",
-  from,
-  to,
-}: ConnectionLineProps) {
-  const d = useMemo(() => generatePath(from, to, variant ?? "bezier"), [from, to, variant]);
+const ConnectionLine = forwardRef<SVGSVGElement, ConnectionLineProps>(
+  function ConnectionLine(
+    { className, variant = "bezier", state = "connected", from, to },
+    ref,
+  ) {
+    const d = useMemo(() => generatePath(from, to, variant ?? "bezier"), [from, to, variant]);
 
-  return (
-    <svg
-      className={cn(lineVariants({ variant, state }), className)}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        overflow: "visible",
-      }}
-    >
-      <path d={d} />
-    </svg>
-  );
-}
+    return (
+      <svg
+        ref={ref}
+        className={cn(
+          lineVariants({ variant, state }),
+          "absolute inset-0 w-full h-full pointer-events-none overflow-visible",
+          className,
+        )}
+      >
+        <path d={d} />
+      </svg>
+    );
+  },
+);
+ConnectionLine.displayName = "ConnectionLine";
 
 export { ConnectionLine, lineVariants, generatePath };

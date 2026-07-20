@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { forwardRef, useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { Dialog, DialogContent } from "../dialog";
 import { ScrollArea } from "../scroll-area";
 import { cn } from "../../lib/cn";
@@ -21,15 +21,11 @@ export interface CommandPaletteProps {
   groups?: { label: string; actionIds: string[] }[];
 }
 
-export function CommandPalette({
-  open,
-  onOpenChange,
-  actions,
-  onSelect,
-  placeholder = "Search commands...",
-  emptyText = "No results found",
-  groups,
-}: CommandPaletteProps) {
+export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
+  function CommandPalette(
+    { open, onOpenChange, actions, onSelect, placeholder = "Search commands...", emptyText = "No results found", groups },
+    ref,
+  ) {
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,6 +88,7 @@ export function CommandPalette({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <div ref={ref}>
       <DialogContent size="lg" className="p-0 overflow-hidden gap-0">
         <div className="border-b border-border">
           <input
@@ -147,9 +144,12 @@ export function CommandPalette({
         </div>
         </ScrollArea>
       </DialogContent>
+    </div>
     </Dialog>
   );
-}
+},
+);
+CommandPalette.displayName = "CommandPalette";
 
 function CommandItem({
   action,

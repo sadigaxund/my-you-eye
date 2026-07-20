@@ -2,6 +2,7 @@ import { forwardRef, useState, useCallback, useMemo } from "react";
 import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
+import { tokenize, renderHighlighted } from "./CodeBlock.highlight";
 
 const codeBlockVariants = cva(
   "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
@@ -26,6 +27,8 @@ export interface CodeBlockProps
   header?: string;
   wrap?: boolean;
   showLineNumbers?: boolean;
+  /** Enable syntax highlighting for supported languages (js, ts, tsx, json, bash). */
+  highlight?: boolean;
 }
 
 function CopyIcon() {
@@ -66,7 +69,7 @@ function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void })
 }
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, ...props }, ref) => {
     const [copied, setCopied] = useState(false);
     const copy = useCallback(() => {
       navigator.clipboard.writeText(code).then(() => {
@@ -77,6 +80,16 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
 
     const lines = useMemo(() => code.split("\n"), [code]);
     const hasHeader = Boolean(header || language);
+
+    const highlighted = useMemo(() => {
+      if (!highlight) return null;
+      return tokenize(code, language);
+    }, [code, language, highlight]);
+
+    const renderCode = () => {
+      if (highlighted) return renderHighlighted(highlighted);
+      return code;
+    };
 
     return (
       <div className={cn(codeBlockVariants({ variant }), className)}>
@@ -98,7 +111,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             <div className="sticky top-0 z-10 flex justify-end pr-1 -mb-7">
               <div className="flex items-center gap-1 pt-1">
                 {language && (
-                  <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
+                  <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
                     {language}
                   </span>
                 )}
@@ -125,7 +138,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             )}
             {...props}
           >
-            <code>{code}</code>
+            <code>{renderCode()}</code>
           </pre>
         </div>
       </div>

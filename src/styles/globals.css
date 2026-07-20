@@ -110,3 +110,14 @@ html {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
 }
+
+/* Syntax highlighting (CodeBlock) */
+.hl-keyword { color: var(--color-primary); font-weight: var(--font-weight-medium); }
+.hl-string { color: var(--color-success); }
+.hl-number { color: var(--color-warning); }
+.hl-comment { color: var(--color-code-muted); font-style: italic; }
+.hl-type { color: oklch(0.55 0.18 320); }
+.hl-tag { color: var(--color-primary); }
+.hl-operator { color: var(--color-danger); }
+.hl-key { color: var(--color-primary); }
+.hl-identifier { color: var(--color-code-fg); }

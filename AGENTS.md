@@ -129,9 +129,9 @@ Work through every step. Do not skip. Do not reorder.
    in its group with all variants, in both light and dark mode (toggle in showcase header).
 8. **Update TODO.md:** check the component off the backlog list.
 
-A file exceeding **250 lines** fails lint. If a component legitimately needs more,
-split subparts into additional files **inside the same folder** (e.g. `Table.Row.tsx`)
-— never into a shared file elsewhere.
+A file exceeding **250 lines** is flagged by lint (warning). If a component
+legitimately needs more, split subparts into additional files **inside the same
+folder** (e.g. `Table.Row.tsx`) — never into a shared file elsewhere.
 
 ## 3. Modifying an existing component — checklist
 
@@ -198,8 +198,11 @@ Runs, in order — ALL must pass:
 |---|---|---|
 | Types | `tsc --noEmit` | type errors |
 | Lint | `eslint .` | native elements outside `src/ui/`, files >250 lines, restricted imports, arbitrary Tailwind color values |
-| Showcase coverage | `node scripts/check-showcase.mjs` | any `src/ui/**` component folder missing a `*.showcase.tsx`, any showcase entry with an invalid group, any `ui/` folder not exported from `src/index.ts` |
-| Build | `tsup && vite build` | broken exports, unresolvable imports |
+| Showcase coverage | `node scripts/check-showcase.mjs` | any `src/ui/**` component folder missing a `*.showcase.tsx`, any `ui/` folder not exported from `src/index.ts` |
+| Contrast | `node scripts/check-contrast.mjs` | WCAG AA contrast ratio failures |
+| Theme tokens | `node scripts/check-themes.mjs` | theme files missing required token set |
+| Manifest | `node scripts/gen-manifest.mjs` (prebuild hook) | stale components.json / COMPONENTS.md |
+| Build | `npm run build:lib && vite build` | broken exports, unresolvable imports |
 
 Rules about validation itself:
 
@@ -261,7 +264,7 @@ Every profile must define the complete color token set (enforced by `scripts/che
 1. Become a base token in `src/styles/tokens.css` inside `@theme`
 2. Be defined in every theme file
 
-Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-*`, `--text-*`, `--border-width`, `--backdrop-blur`, `--grid-unit`.
+Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--shadow-*`, `--font-*`, `--font-weight-*`, `--text-*`, `--leading-*`, `--tracking-*`, `--border-width`, `--backdrop-blur`, `--grid-unit`, `--duration-*`, `--ease-*`, `--z-*`, `--focus-ring-*`, `--density-*`, `--texture-*`, `--texture-type`, `--scale`.
 
 ### TexturedSurface — layer × strength system
 
@@ -328,11 +331,11 @@ When layering textures (nested TexturedSurfaces), the cumulative effect is multi
 ```
 --texture-paper          CSS url() data URI — used by html::before (page overlay), NOT by TexturedSurface's ::after
 --texture-size           Tile size for the page overlay
---texture-opacity        Opacity for the page overlay (html::before). Comic: 0.7.
+--texture-opacity        Opacity for the page overlay (html::before). Comic: 0.5.
 --texture-opacity-surface Opacity for surface-level ::after. Comic: 0.35.
 --texture-blend          mix-blend-mode for both page overlay and surface ::after
 ```
-The `--texture-paper-surface` / `--texture-paper-foreground` tokens (per-layer SVG data URIs in CSS) are REMNANTS — do not add them. Use the JS-side `LAYER_SVGS` factory pattern instead.
+All per-layer SVG textures use the JS-side `LAYER_SVGS` factory pattern (see TexturedSurface — layer × strength system). Never define per-layer texture SVG data URIs in CSS theme files.
 
 **Comic theme page texture stacking:**
 - `html[data-theme="comic"]` sets the background color + repeating line pattern.

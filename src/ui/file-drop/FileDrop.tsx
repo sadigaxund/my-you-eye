@@ -14,9 +14,9 @@ const fileDropVariants = cva(
         success: "border-success bg-success/5",
       },
       size: {
-        sm: "min-h-[80px] p-4 text-xs",
-        md: "min-h-[120px] p-8 text-sm",
-        lg: "min-h-[160px] p-10 text-base",
+        sm: "min-h-20 p-4 text-xs",
+        md: "min-h-28 p-8 text-sm",
+        lg: "min-h-40 p-10 text-base",
       },
     },
     defaultVariants: {

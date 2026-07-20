@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 53,
+  "count": 54,
   "components": [
     {
       "name": "Canvas",
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "name": "Edge",
+      "name": "ConnectionLine",
       "group": "canvas",
       "folder": "ui/connection-line",
       "props": {
@@ -110,36 +110,7 @@
       ]
     },
     {
-      "name": "DataTable",
-      "group": "data",
-      "folder": "ui/patterns/data-table",
-      "props": {
-        "variant": [
-          "striped"
-        ],
-        "density": [
-          "compact"
-        ]
-      },
-      "demos": [
-        "Alice",
-        "Bob",
-        "Charlie",
-        "Diana",
-        "Eve",
-        "Frank",
-        "Grace",
-        "Ivy",
-        "Leo",
-        "Olivia",
-        "Default",
-        "Striped",
-        "Scrolling + sticky header",
-        "Truncation"
-      ]
-    },
-    {
-      "name": "List",
+      "name": "DataList",
       "group": "data",
       "folder": "ui/data-list",
       "props": {
@@ -152,6 +123,32 @@
         "Striped",
         "Scrolling"
       ]
+    },
+    {
+      "name": "DataTable",
+      "group": "data",
+      "folder": "ui/patterns/data-table",
+      "props": {
+        "variant": [
+          "striped"
+        ],
+        "density": [
+          "compact"
+        ]
+      },
+      "demos": [
+        "Default",
+        "Striped",
+        "Scrolling + sticky header",
+        "Truncation"
+      ]
+    },
+    {
+      "name": "Table",
+      "group": "data",
+      "folder": "ui/table",
+      "props": {},
+      "demos": []
     },
     {
       "name": "TreeView",
@@ -249,7 +246,9 @@
         "With header + language",
         "Elevated",
         "Line numbers",
-        "No wrap (horizontal scroll)"
+        "No wrap (horizontal scroll)",
+        "Syntax highlighting (TS)",
+        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },
     {
@@ -381,20 +380,6 @@
       ]
     },
     {
-      "name": "Saved",
-      "group": "feedback",
-      "folder": "ui/toast",
-      "props": {
-        "variant": [
-          "danger",
-          "secondary"
-        ]
-      },
-      "demos": [
-        "Trigger toasts"
-      ]
-    },
-    {
       "name": "Skeleton",
       "group": "feedback",
       "folder": "ui/skeleton",
@@ -422,6 +407,20 @@
       },
       "demos": [
         "Sizes"
+      ]
+    },
+    {
+      "name": "Toast",
+      "group": "feedback",
+      "folder": "ui/toast",
+      "props": {
+        "variant": [
+          "danger",
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Trigger toasts"
       ]
     },
     {

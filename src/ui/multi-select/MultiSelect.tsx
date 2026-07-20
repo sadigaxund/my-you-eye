@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { forwardRef, useState, useMemo, useRef } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Input } from "../input";
 import { ScrollArea } from "../scroll-area";
@@ -21,15 +21,11 @@ export interface MultiSelectProps {
   disabled?: boolean;
 }
 
-export function MultiSelect({
-  options,
-  value = [],
-  onChange,
-  placeholder = "Select...",
-  emptyText = "No results found",
-  className,
-  disabled,
-}: MultiSelectProps) {
+export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
+  function MultiSelect(
+    { options, value = [], onChange, placeholder = "Select...", emptyText = "No results found", className, disabled },
+    ref,
+  ) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,14 +50,14 @@ export function MultiSelect({
         <button
           type="button"
           disabled={disabled}
+          ref={ref}
           className={cn(
-            "flex w-full items-center gap-1 flex-wrap rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg min-h-[42px]",
+            "flex w-full items-center gap-1 flex-wrap rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg min-h-10",
             "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
             "disabled:cursor-not-allowed disabled:opacity-50",
             selectedLabels.length === 0 && "text-muted",
             className,
           )}
-          style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         >
           {selectedLabels.length === 0 ? (
             placeholder
@@ -119,4 +115,6 @@ export function MultiSelect({
       </PopoverContent>
     </Popover>
   );
-}
+},
+);
+MultiSelect.displayName = "MultiSelect";

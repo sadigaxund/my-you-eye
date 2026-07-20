@@ -17,7 +17,7 @@ const drawerContentVariants = cva(
       size: {
         sm: "w-72",
         md: "w-96",
-        lg: "w-[480px]",
+        lg: "w-120",
       },
     },
     defaultVariants: {

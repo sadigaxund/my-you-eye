@@ -67,7 +67,7 @@ export function DateTimeTzDisplay({ value }: { value: unknown }) {
   const timeStr = d.toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" });
   return (
     <span title={meta} className="cursor-help whitespace-nowrap inline-flex items-center gap-1.5 max-w-full min-w-0 tabular-nums align-middle">
-      <span className="min-w-0 flex-1 truncate text-xs/none">
+      <span className="min-w-0 truncate text-xs/none">
         <span className="text-muted">
           {dateParts.map((part, i) => {
             if (part.type === "year")
@@ -79,7 +79,7 @@ export function DateTimeTzDisplay({ value }: { value: unknown }) {
         </span>
         <span className="ml-1.5 font-semibold">{timeStr}</span>
       </span>
-      <span className="inline-flex flex-shrink-0 items-center rounded-sm px-1 py-0.5 text-xs/none leading-none bg-muted/10 text-muted font-mono">
+      <span className="inline-flex shrink-0 items-center rounded-sm px-1 py-0.5 text-xs/none leading-none bg-muted/10 text-muted font-mono">
         {offset}
       </span>
     </span>

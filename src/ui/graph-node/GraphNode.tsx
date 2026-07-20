@@ -13,7 +13,7 @@ const graphNodeVariants = cva(
   // boundary" token set in tokens.css / AGENTS.md §7. `contain-[layout_paint]`
   // scopes each node's layout/paint work so one node's content changes never
   // force a reflow/repaint of its siblings while panning/zooming.
-  "absolute flex flex-col rounded-node border bg-canvas-surface shadow-card min-w-[160px] overflow-hidden contain-[layout_paint]",
+  "absolute flex flex-col rounded-node border bg-canvas-surface shadow-card min-w-40 overflow-hidden contain-[layout_paint]",
   {
     variants: {
       variant: {
