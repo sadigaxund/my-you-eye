@@ -170,6 +170,75 @@ Check items off (`[x]`) as they complete.
 
 ---
 
+## Phase 14 — Animation / video system (Remotion-based)
+
+> Governed by AGENTS.md §9. Each phase has its own acceptance check — do not start
+> the next phase until the current one passes.
+
+### Phase 0 — Pre-requisites (additive changes to existing `src/ui`)
+
+- [x] **0a. CodeBlock `highlightLines`** — prop `highlightLines?: number[]` (1-indexed).
+  Renders `bg-primary/10` behind specified line numbers. Add showcase demo.
+- [x] **0b. GraphNode `variant="simple"`** — new CVA variant. Hides ports, footer,
+  accent bar. Keeps header + body. Add showcase demo.
+- [x] **0c. ConnectionLine `arrowhead` + `label`** — `arrowhead?: boolean` renders SVG
+  arrowhead at `to` point. `label?: string` renders centered text. Add showcase demo.
+
+**Acceptance:** `npm run validate` green. No visual change to existing defaults.
+
+### Phase 1 — Remotion PoC
+
+- [ ] Create `apps/video` as sibling Remotion project (Vite-based).
+- [ ] One static composition: renders a `Button` from `my-you-eye`.
+- [ ] Confirm `pnpm -F video dev` opens Studio and `pnpm -F video render` produces MP4.
+
+**Acceptance:** Valid MP4 file on disk showing the static component with correct styling.
+
+### Phase 2 — `packages/motion` (5 animation primitives)
+
+- [ ] **Reveal** — fade + translate on entrance (direction prop).
+- [ ] **Stagger** — sequential delay for list children.
+- [ ] **TypeText** — character-by-character text reveal.
+- [ ] **Highlight** — animate opacity/scale of a highlight overlay.
+- [ ] **SlideTransition** — slide-in/out for scene transitions.
+
+Each gets: typed props, Remotion composition smoke-test, no ui dependency.
+
+**Acceptance:** All 5 primitives render in Remotion Studio and to MP4.
+
+### Phase 3 — `packages/scenes` (composed scene templates)
+
+- [ ] **CodeWalkthrough** — title + code block + highlight steps.
+- [ ] **Diagram** — nodes (GraphNode variant="simple") + edges (ConnectionLine) from data.
+
+**Acceptance:** Both scenes render animated from sample JSON data.
+
+### Phase 4 — Monorepo migration
+
+- [ ] Move existing code to `packages/ui/`.
+- [ ] Add `pnpm-workspace.yaml`, root `turbo.json`.
+- [ ] Update package names (`@lib/ui`, `@lib/motion`, `@lib/scenes`).
+- [ ] Update all import paths.
+
+**Acceptance:** `pnpm -F ui build` + `pnpm -F video render smoke-test` pass.
+
+### Phase 5 — Video composition + transitions
+
+- [ ] Video data definitions (JSON) driving scene selection/ordering.
+- [ ] `@remotion/transitions` `<TransitionSeries>` chaining scenes.
+- [ ] One end-to-end example video: CodeWalkthrough → Diagram.
+
+**Acceptance:** Full MP4 renders with animated scenes + working transitions.
+
+### Deferred (not in any phase)
+
+- `packages/present` (interactive click-to-advance) — separate runtime
+- Storybook / `apps/docs`
+- Additional animation types: Pulse, DrawLine, CameraPan, CursorMove, CountUp, Morph
+- Additional components: Callout, Cursor, ComparisonTable, Terminal, Avatar/speaker
+
+---
+
 ## How to start (for the human)
 
 1. Give the agent Phase 0 only. Verify guardrails via task 0.12 before any component work.

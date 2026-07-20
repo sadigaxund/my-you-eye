@@ -20,6 +20,7 @@ const graphNodeVariants = cva(
         default: "border-border",
         selected: "border-primary ring-2 ring-primary/20",
         muted: "border-border opacity-dim",
+        simple: "border-border",
       },
     },
     defaultVariants: {
@@ -55,8 +56,9 @@ export interface GraphNodeProps
 
 const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
   ({ className, variant, x, y, header, accent, ports, footer, rows, children, style, ...props }, ref) => {
+    const isSimple = variant === "simple";
     const hasRows = rows && rows.length > 0;
-    const height = hasRows ? nodeHeightPx(rows!.length, !!footer) : undefined;
+    const height = hasRows ? nodeHeightPx(rows!.length, !!footer && !isSimple) : undefined;
 
     return (
       <div
@@ -66,14 +68,16 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
         {...props}
       >
         {header && (
-          <div className={cn("flex flex-col shrink-0", accent && "border-t-2 border-primary")} style={{ height: HEADER * GRID }}>
+          <div className={cn("flex flex-col shrink-0", accent && !isSimple && "border-t-2 border-primary")} style={{ height: HEADER * GRID }}>
             <div className="flex items-center px-3 border-b border-border flex-1 min-h-0">
-              <div className="flex items-center gap-inline flex-1 min-w-0">
-                <div className="flex gap-0.5">
-                  <span className="size-1.5 rounded-full bg-danger" />
-                  <span className="size-1.5 rounded-full bg-warning" />
-                  <span className="size-1.5 rounded-full bg-success" />
-                </div>
+              <div className={cn("flex items-center gap-inline flex-1 min-w-0", isSimple && "justify-center")}>
+                {!isSimple && (
+                  <div className="flex gap-0.5">
+                    <span className="size-1.5 rounded-full bg-danger" />
+                    <span className="size-1.5 rounded-full bg-warning" />
+                    <span className="size-1.5 rounded-full bg-success" />
+                  </div>
+                )}
                 <span className="text-xs font-semibold truncate">{header}</span>
               </div>
             </div>
@@ -91,33 +95,35 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                 <span className="text-fg text-right">{row.value}</span>
               </div>
             ))}
-            <div className="absolute inset-0 pointer-events-none">
-              {rows!.map((row, i) => (
-                <div key={`ports-${i}`}>
-                  {row.portLeft && (
-                    <div
-                      className="absolute pointer-events-auto"
-                      style={{ left: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(-50%, -50%)" }}
-                    >
-                      <Port state={row.portLeft.state} side="in" />
-                    </div>
-                  )}
-                  {row.portRight && (
-                    <div
-                      className="absolute pointer-events-auto"
-                      style={{ right: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(50%, -50%)" }}
-                    >
-                      <Port state={row.portRight.state} side="out" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            {!isSimple && (
+              <div className="absolute inset-0 pointer-events-none">
+                {rows!.map((row, i) => (
+                  <div key={`ports-${i}`}>
+                    {row.portLeft && (
+                      <div
+                        className="absolute pointer-events-auto"
+                        style={{ left: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(-50%, -50%)" }}
+                      >
+                        <Port state={row.portLeft.state} side="in" />
+                      </div>
+                    )}
+                    {row.portRight && (
+                      <div
+                        className="absolute pointer-events-auto"
+                        style={{ right: "0px", top: portY(i) - ROW_PORT_Y_OFFSET, transform: "translate(50%, -50%)" }}
+                      >
+                        <Port state={row.portRight.state} side="out" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           children && <div className="px-3 py-2 text-xs flex-1">{children}</div>
         )}
-        {ports && ports.length > 0 && !hasRows && (
+        {ports && ports.length > 0 && !hasRows && !isSimple && (
           <div className="absolute inset-0 pointer-events-none">
             {ports.map((p, i) => {
               const leftPorts = ports.filter((x) => x.side === "left");
@@ -142,7 +148,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
             })}
           </div>
         )}
-        {footer && (
+        {footer && !isSimple && (
           <div
             className="px-3 border-t border-border text-xs text-muted flex items-center gap-1.5 shrink-0 bg-muted/5"
             style={{ height: FOOTER * GRID }}

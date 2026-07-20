@@ -135,6 +135,35 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Line highlights",
+      render: () => (
+        <CodeBlock code={typescript} language="typescript" header="api.ts" highlightLines={[1, 2, 3, 4, 5]} showLineNumbers highlight />
+      ),
+    },
+    {
+      name: "Line highlights (implicit gutter)",
+      render: () => (
+        <CodeBlock code={python} language="python" header="fib.py" highlightLines={[1, 3, 5]} />
+      ),
+    },
+    {
+      name: "Multi-color highlights",
+      render: () => (
+        <CodeBlock
+          code={typescript}
+          language="typescript"
+          header="api.ts"
+          showLineNumbers
+          highlight
+          highlightGroups={[
+            { lines: [1, 2, 3, 5], color: "primary" },
+            { lines: [10, 11, 12], color: "warning" },
+            { lines: [14], color: "success" },
+          ]}
+        />
+      ),
+    },
+    {
       name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
       render: () => (
         <div className="flex flex-col gap-4">

@@ -421,3 +421,89 @@ eliminates repaints entirely — everything is GPU-composited.
 
 Stop. Say exactly what you were trying to do, which rule blocks you, and what options you
 see. A question costs nothing; silent rule-bending costs the repo its integrity.
+
+---
+
+## 9. Animation / motion / video system
+
+This section governs the emerging Remotion-based animation layer. It extends — not replaces
+— all rules in §0–§8. When a motion rule and a base rule conflict, the stricter one wins.
+
+### 9a. Package architecture
+
+```
+repo/
+  src/ui/          # EXISTING — static primitives ($0–§8 rules apply unchanged)
+  src/ui/patterns/ # EXISTING — composed patterns
+  apps/
+    video/         # NEW — Remotion project, compositions, MP4 rendering
+  packages/
+    motion/        # NEW — frame-driven animation wrappers (pure, no ui deps)
+    scenes/        # NEW — composed scene templates (ui + motion)
+```
+
+### 9b. Tier separation — NEVER cross the streams
+
+| Tier | Can import from | Must NOT |
+|---|---|---|
+| `src/ui/` (static) | `src/lib/`, Radix, CVA | motion, scenes, remotion |
+| `packages/motion/` | remotion, react | `src/ui/` components (no dependency) |
+| `packages/scenes/` | `src/ui/`, `packages/motion/`, remotion | nothing restricted |
+| `apps/video/` | ui, motion, scenes, remotion | nothing restricted |
+
+**The ui package is the design-system source of truth.** Motion never imports from it.
+Scenes composes both. Video is the runtime.
+
+### 9c. Hard rules for animation code
+
+1. **Frame-driven only.** Every animation must use `useCurrentFrame()`, `interpolate()`,
+   `spring()` from `remotion` — never CSS `transition`, `@keyframes`, `animation-delay`,
+   or `setTimeout()` with wall-clock time. Remotion captures frame-by-frame; wall-clock
+   animation will NOT render deterministically in the mp4 output.
+
+2. **No side effects in render.** `useCurrentFrame()` is a React hook — call it at the
+   top level of a component, never inside event handlers, `useEffect`, loops, or
+   conditionals that depend on user interaction.
+
+3. **Every animation primitive is a wrapper around `React.ReactNode`.** It must not know
+   or care what children it receives. No `import { Button } from "@lib/ui"` inside
+   `packages/motion/`.
+
+4. **Every prop has a TypeScript interface.** No `any`, no implicit return types, no
+   `PropsWithChildren` used alone without a named interface.
+
+5. **Packages are workspace-scoped.** No relative cross-package imports like
+   `"../../src/ui/button"`. Use `"my-you-eye"` (pre-monorepo) or `"@lib/ui"` (post-monorepo).
+
+### 9d. Phased rollout — do not skip ahead
+
+| Phase | What | Depends on |
+|---|---|---|
+| 0 | Pre-requisite additions to existing `src/ui` (CodeBlock `highlightLines`, GraphNode `variant="simple"`, ConnectionLine `arrowhead` + `label`) | — |
+| 1 | Remotion PoC in `apps/video` — import existing components, render one static composition to MP4 | Phase 0 |
+| 2 | `packages/motion` — 5 animation primitives (Reveal, Stagger, TypeText, Highlight, SlideTransition) | Phase 1 |
+| 3 | `packages/scenes` — CodeWalkthrough, Diagram scene templates | Phase 0 + Phase 2 |
+| 4 | Monorepo migration (pnpm workspaces, Turborepo) — mechanical only | Phase 3 proven |
+| 5 | Video composition + transitions (`@remotion/transitions`), end-to-end example video | Phase 3 + Phase 4 |
+
+**Do not start a phase until the previous phase's acceptance check passes.** Stop and
+report back after each phase with a short summary: what was done, verification results,
+and how to visually confirm it works.
+
+### 9e. Phase 0 specific rules
+
+Phase 0 makes three additive changes to the existing static component library:
+- `CodeBlock.highlightLines?: number[]` — renders `bg-primary/10` behind specified line numbers
+- `GraphNode variant="simple"` — new CVA variant, hides ports/footer/accent-bar, keeps header+body
+- `ConnectionLine arrowhead?: boolean` + `label?: string` — SVG arrowhead at `to`, centered text label
+
+**These must not change any existing visual output.** Default props render identically.
+Every change is opt-in. `npm run validate` must stay green. Add showcase demos for each
+new feature.
+
+### 9f. What is NOT in scope yet
+
+- Interactive click-to-advance presentation mode (`packages/present/`) — separate runtime
+- Storybook / `apps/docs` — nice-to-have, not blocking
+- Remaining animation types: Pulse, DrawLine, CameraPan, CursorMove, CountUp, Morph
+- Remaining components: Callout, Cursor, ComparisonTable, Terminal, Avatar/speaker

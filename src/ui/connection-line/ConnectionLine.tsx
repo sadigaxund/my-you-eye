@@ -25,6 +25,8 @@ const lineVariants = cva("fill-none", {
 export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
   from: { x: number; y: number };
   to: { x: number; y: number };
+  arrowhead?: boolean;
+  label?: string;
   className?: string;
 }
 
@@ -44,12 +46,35 @@ function generatePath(from: { x: number; y: number }, to: { x: number; y: number
   }
 }
 
+function getArrowAngle(from: { x: number; y: number }, to: { x: number; y: number }, variant: string): number {
+  switch (variant) {
+    case "stepped": {
+      const midX = (from.x + to.x) / 2;
+      return to.x >= midX ? 0 : 180;
+    }
+    case "straight":
+      return Math.atan2(to.y - from.y, to.x - from.x) * (180 / Math.PI);
+    default:
+      return 0;
+  }
+}
+
+const ARROWHEAD_COLOR: Record<string, string> = {
+  connected: "text-primary",
+  highlighted: "text-primary",
+  default: "text-muted",
+  pending: "text-muted",
+};
+
 const ConnectionLine = forwardRef<SVGSVGElement, ConnectionLineProps>(
   function ConnectionLine(
-    { className, variant = "bezier", state = "connected", from, to },
+    { className, variant = "bezier", state = "connected", from, to, arrowhead, label },
     ref,
   ) {
     const d = useMemo(() => generatePath(from, to, variant ?? "bezier"), [from, to, variant]);
+    const arrowAngle = useMemo(() => getArrowAngle(from, to, variant ?? "bezier"), [from, to, variant]);
+    const midX = (from.x + to.x) / 2;
+    const midY = (from.y + to.y) / 2;
 
     return (
       <svg
@@ -61,6 +86,30 @@ const ConnectionLine = forwardRef<SVGSVGElement, ConnectionLineProps>(
         )}
       >
         <path d={d} />
+        {arrowhead && (
+          <polygon
+            points="0,-4 8,0 0,4"
+            fill="currentColor"
+            className={ARROWHEAD_COLOR[state ?? "connected"]}
+            transform={`translate(${to.x},${to.y}) rotate(${arrowAngle})`}
+          />
+        )}
+        {label && (
+          <foreignObject
+            x={midX - label.length * 3.5 - 6}
+            y={midY - 10}
+            width={label.length * 7 + 12}
+            height={20}
+            className="overflow-visible pointer-events-none"
+          >
+            <span
+              className="inline-flex items-center rounded-sm px-1.5 py-0.5 text-xs text-fg font-mono bg-canvas-surface border border-border/60 shadow-sm whitespace-nowrap leading-none"
+              style={{ backdropFilter: "blur(2px)" }}
+            >
+              {label}
+            </span>
+          </foreignObject>
+        )}
       </svg>
     );
   },

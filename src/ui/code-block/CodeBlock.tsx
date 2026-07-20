@@ -2,7 +2,7 @@ import { forwardRef, useState, useCallback, useMemo } from "react";
 import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { tokenize, renderHighlighted } from "./CodeBlock.highlight";
+import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
 
 const codeBlockVariants = cva(
   "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
@@ -19,6 +19,11 @@ const codeBlockVariants = cva(
   },
 );
 
+export interface CodeBlockHighlightGroup {
+  lines: number[];
+  color?: "primary" | "warning" | "success" | "danger";
+}
+
 export interface CodeBlockProps
   extends HTMLAttributes<HTMLPreElement>,
     VariantProps<typeof codeBlockVariants> {
@@ -29,6 +34,12 @@ export interface CodeBlockProps
   showLineNumbers?: boolean;
   /** Enable syntax highlighting for supported languages (js, ts, tsx, json, bash). */
   highlight?: boolean;
+  /** 1-indexed line numbers to highlight. Implicitly enables line numbers. */
+  highlightLines?: number[];
+  /** Color for highlightLines (default "primary"). */
+  highlightColor?: CodeBlockHighlightGroup["color"];
+  /** Multi-color highlight groups. When provided, takes precedence over highlightLines. */
+  highlightGroups?: CodeBlockHighlightGroup[];
 }
 
 function CopyIcon() {
@@ -69,7 +80,7 @@ function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void })
 }
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, ...props }, ref) => {
     const [copied, setCopied] = useState(false);
     const copy = useCallback(() => {
       navigator.clipboard.writeText(code).then(() => {
@@ -80,16 +91,40 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
 
     const lines = useMemo(() => code.split("\n"), [code]);
     const hasHeader = Boolean(header || language);
+    const showGutter = showLineNumbers
+      || (highlightLines != null && highlightLines.length > 0)
+      || (highlightGroups != null && highlightGroups.length > 0);
 
     const highlighted = useMemo(() => {
       if (!highlight) return null;
       return tokenize(code, language);
     }, [code, language, highlight]);
 
-    const renderCode = () => {
-      if (highlighted) return renderHighlighted(highlighted);
-      return code;
+    const HIGHLIGHT_BG: Record<string, string> = {
+      primary: "bg-primary/10",
+      warning: "bg-warning/15",
+      success: "bg-success/10",
+      danger: "bg-danger/10",
     };
+
+    const lineColor = useMemo(() => {
+      const map = new Map<number, string>();
+      if (highlightGroups) {
+        for (const g of highlightGroups) {
+          const cls = HIGHLIGHT_BG[g.color ?? "primary"] ?? HIGHLIGHT_BG.primary;
+          for (const ln of g.lines) map.set(ln, cls);
+        }
+      } else if (highlightLines) {
+        const cls = HIGHLIGHT_BG[highlightColor ?? "primary"] ?? HIGHLIGHT_BG.primary;
+        for (const ln of highlightLines) map.set(ln, cls);
+      }
+      return map;
+    }, [highlightLines, highlightColor, highlightGroups]);
+
+    const perLineTokens = useMemo(() => {
+      if (!highlighted) return null;
+      return splitTokensByLine(highlighted);
+    }, [highlighted]);
 
     return (
       <div className={cn(codeBlockVariants({ variant }), className)}>
@@ -119,27 +154,50 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               </div>
             </div>
           )}
-          <div className="flex flex-1 min-h-0">
-          {showLineNumbers && (
+          <div className="flex flex-1 min-h-0 overflow-x-auto">
+          {showGutter && (
             <div
               aria-hidden
-              className="select-none shrink-0 py-panel pl-compact-x pr-compact-x text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
+              className="select-none shrink-0 py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
             >
               {lines.map((_, i) => (
-                <div key={i}>{i + 1}</div>
+                <div key={i} className={cn("pl-compact-x pr-compact-x", lineColor.get(i + 1))}>{i + 1}</div>
               ))}
             </div>
           )}
-          <pre
-            ref={ref}
-            className={cn(
-              "flex-1 min-w-0 p-panel font-mono text-xs leading-relaxed overflow-x-auto text-code-fg",
-              wrap && "whitespace-pre-wrap break-words",
-            )}
-            {...props}
-          >
-            <code>{renderCode()}</code>
-          </pre>
+          {perLineTokens ? (
+            <pre
+              ref={ref}
+              className={cn(
+                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg",
+                wrap && "whitespace-pre-wrap break-words",
+              )}
+              {...props}
+            >
+              <code>
+                {perLineTokens.map((lineTokens, i) => (
+                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
+                    {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
+                  </div>
+                ))}
+              </code>
+            </pre>
+          ) : (
+            <pre
+              ref={ref}
+              className={cn(
+                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg",
+                wrap && "whitespace-pre-wrap break-words",
+              )}
+              {...props}
+            >
+              <code>
+                {lines.map((line, i) => (
+                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>{line || " "}</div>
+                ))}
+              </code>
+            </pre>
+          )}
         </div>
       </div>
       </div>

@@ -282,3 +282,34 @@ export function renderHighlighted(tokens: Token[]): JSX.Element {
     </>
   );
 }
+
+/** Split flat tokens into per-line arrays, removing newline whitespace. */
+export function splitTokensByLine(tokens: Token[]): Token[][] {
+  const result: Token[][] = [];
+  let current: Token[] = [];
+  for (const t of tokens) {
+    if (t.text === "\n") { result.push(current); current = []; continue; }
+    if (t.text.includes("\n")) {
+      const parts = t.text.split("\n");
+      for (let i = 0; i < parts.length; i++) {
+        if (i > 0) { result.push(current); current = []; }
+        if (parts[i]) current.push({ text: parts[i], className: t.className });
+      }
+    } else {
+      current.push(t);
+    }
+  }
+  if (current.length > 0) result.push(current);
+  return result;
+}
+
+/** Render a single line of tokens. */
+export function renderHighlightedLine(tokens: Token[]): JSX.Element {
+  return (
+    <>
+      {tokens.map((t, i) => (
+        <span key={i} className={t.className === "whitespace" ? undefined : `hl-${t.className}`}>{t.text}</span>
+      ))}
+    </>
+  );
+}

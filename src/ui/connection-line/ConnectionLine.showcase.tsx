@@ -40,6 +40,33 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Decorations (arrowheads + labels)",
+      render: () => (
+        <div className="flex flex-col items-center gap-6 py-4 h-auto">
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">arrowhead</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" label="HTTP" />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">label</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" arrowhead label="RPC" />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">both</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="pending" arrowhead />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">dashed + arrowhead</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="highlighted" arrowhead label="sync" />
+            <span className="absolute -bottom-1 right-0 text-xs text-muted">highlighted + both</span>
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

@@ -16,9 +16,9 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `Canvas` | — | Empty grid |
-| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected | Path variants, Edge states |
+| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels) |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
-| `GraphNode` | variant: muted / selected | Variants |
+| `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Free-form body |
 | `Port` | state: connected / default / highlighted | States |
 
 ## data
@@ -38,7 +38,7 @@ import "my-you-eye/styles.css";
 | `Avatar` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | variant: danger / default / elevated / ghost / outlined<br>size: sm | Variants, With footer actions |
-| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `EmptyState` | variant: secondary | Default, With icon and action |
 | `Image` | — | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | — | Default, Combinations |

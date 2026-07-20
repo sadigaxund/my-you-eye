@@ -23,12 +23,15 @@
           "straight"
         ],
         "state": [
-          "connected"
+          "connected",
+          "highlighted",
+          "pending"
         ]
       },
       "demos": [
         "Path variants",
-        "Edge states"
+        "Edge states",
+        "Decorations (arrowheads + labels)"
       ]
     },
     {
@@ -51,11 +54,14 @@
       "props": {
         "variant": [
           "muted",
-          "selected"
+          "selected",
+          "simple"
         ]
       },
       "demos": [
-        "Variants"
+        "Variants",
+        "Simple variant",
+        "Free-form body"
       ]
     },
     {
@@ -248,6 +254,9 @@
         "Line numbers",
         "No wrap (horizontal scroll)",
         "Syntax highlighting (TS)",
+        "Line highlights",
+        "Line highlights (implicit gutter)",
+        "Multi-color highlights",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },
