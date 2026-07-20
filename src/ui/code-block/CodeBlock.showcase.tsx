@@ -173,6 +173,18 @@ const entry: ShowcaseEntry = {
           { line: 3, start: 15, end: 45, color: "warning" },
           { line: 4, start: 13, end: 33, color: "success" },
         ];
+        const tsxCode = `<CodeBlock
+  code={sample}
+  language="typescript"
+  header="process.ts"
+  showLineNumbers
+  highlight
+  highlightRanges={[
+    { line: 2, start: 6, end: 18, color: "danger" },
+    { line: 3, start: 15, end: 45, color: "warning" },
+    { line: 4, start: 13, end: 33, color: "success" },
+  ]}
+/>`;
         return (
           <Tabs variant="filing" defaultValue="preview">
             <TabsList>
@@ -183,12 +195,7 @@ const entry: ShowcaseEntry = {
               <CodeBlock code={sample} language="typescript" header="process.ts" showLineNumbers highlight highlightRanges={ranges} />
             </TabsContent>
             <TabsContent value="code">
-              <CodeBlock
-                code={JSON.stringify({ highlightRanges: ranges }, null, 2)}
-                language="json"
-                header="props"
-                highlight
-              />
+              <CodeBlock code={tsxCode} language="tsx" header="usage" highlight />
             </TabsContent>
           </Tabs>
         );

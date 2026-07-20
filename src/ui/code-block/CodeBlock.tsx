@@ -1,8 +1,10 @@
 import { forwardRef, useState, useCallback, useMemo } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
+import { MergedHighlight } from "./CodeBlock.merged-highlight";
+import type { Rect } from "./CodeBlock.merged-outline";
 
 const codeBlockVariants = cva(
   "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
@@ -136,85 +138,31 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       return splitTokensByLine(highlighted);
     }, [highlighted]);
 
-    const SUBSTR_BG: Record<string, string> = {
-      primary: "bg-primary/15",
-      warning: "bg-warning/20",
-      success: "bg-success/15",
-      danger: "bg-danger/15",
-    };
-
-    const lineRanges = useMemo(() => {
-      const map = new Map<number, { start: number; end: number; color: string }[]>();
-      if (!highlightRanges) return map;
+    const overlayRectsByColor = useMemo(() => {
+      if (!highlightRanges || highlightRanges.length === 0) return new Map<string, Rect[]>();
+      const CHAR_W = 7.2;
+      const LINE_H = 19.5;
+      const PAD = 16;
+      const map = new Map<string, Rect[]>();
       for (const r of highlightRanges) {
-        const line = r.line;
-        if (!map.has(line)) map.set(line, []);
-        map.get(line)!.push({ start: r.start, end: r.end, color: r.color ?? "primary" });
+        const color = r.color ?? "primary";
+        if (!map.has(color)) map.set(color, []);
+        map.get(color)!.push({
+          x: PAD + r.start * CHAR_W,
+          y: PAD + (r.line - 1) * LINE_H,
+          width: (r.end - r.start) * CHAR_W,
+          height: LINE_H,
+        });
       }
       return map;
     }, [highlightRanges]);
 
-    const highlightBlocks = useMemo(() => {
-      if (!highlightRanges || highlightRanges.length === 0) return [];
-      const sorted = [...highlightRanges].sort((a, b) => a.line - b.line || a.start - b.start);
-      const blocks: { startLine: number; endLine: number; minCol: number; maxCol: number; color: string }[] = [];
-      for (const r of sorted) {
-        const last = blocks[blocks.length - 1];
-        if (last && r.line <= last.endLine + 1 && r.start < last.maxCol && r.end > last.minCol) {
-          last.endLine = Math.max(last.endLine, r.line);
-          last.minCol = Math.min(last.minCol, r.start);
-          last.maxCol = Math.max(last.maxCol, r.end);
-        } else {
-          blocks.push({ startLine: r.line, endLine: r.line, minCol: r.start, maxCol: r.end, color: r.color ?? "primary" });
-        }
-      }
-      return blocks;
-    }, [highlightRanges]);
-
-    const BLOCK_BORDER: Record<string, string> = {
-      primary: "border-primary/25",
-      warning: "border-warning/30",
-      success: "border-success/25",
-      danger: "border-danger/30",
+    const COLOR_VARS: Record<string, string> = {
+      primary: "var(--color-primary)",
+      warning: "var(--color-warning)",
+      success: "var(--color-success)",
+      danger: "var(--color-danger)",
     };
-
-    function segmentedLine(line: string, ranges: { start: number; end: number; color: string }[], isBlock: "first" | "mid" | "last" | "single" | null) {
-      const sorted = [...ranges].sort((a, b) => a.start - b.start);
-      const parts: ReactNode[] = [];
-      let pos = 0;
-      for (let i = 0; i < sorted.length; i++) {
-        const r = sorted[i];
-        const s = Math.max(r.start, 0);
-        const e = Math.min(r.end, line.length);
-        if (s > pos) parts.push(<span key={`t${i}`}>{line.slice(pos, s)}</span>);
-        if (e > s) {
-          const bg = SUBSTR_BG[r.color] ?? SUBSTR_BG.primary;
-          let radius = "rounded-sm";
-          if (isBlock === "first") radius = "rounded-t-sm";
-          else if (isBlock === "mid") radius = "rounded-none";
-          else if (isBlock === "last") radius = "rounded-b-sm";
-          parts.push(
-            <span key={`h${i}`} className={cn(bg, radius, "px-0.5 -mx-0.5 py-px -my-px")}>
-              {line.slice(s, e)}
-            </span>,
-          );
-          pos = e;
-        }
-        while (i + 1 < sorted.length && sorted[i + 1].start < pos) i++;
-      }
-      if (pos < line.length) parts.push(<span key="end">{line.slice(pos)}</span>);
-      if (parts.length === 0) parts.push(<span key="e">&nbsp;</span>);
-      return <>{parts}</>;
-    }
-
-    function blockPosition(line: number): "first" | "mid" | "last" | "single" | null {
-      const b = highlightBlocks.find(bb => line >= bb.startLine && line <= bb.endLine);
-      if (!b) return null;
-      if (b.startLine === b.endLine) return "single";
-      if (line === b.startLine) return "first";
-      if (line === b.endLine) return "last";
-      return "mid";
-    }
 
     return (
       <div className={cn(codeBlockVariants({ variant }), className)}>
@@ -259,103 +207,49 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             <pre
               ref={ref}
               className={cn(
-                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg",
+                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
                 wrap && "whitespace-pre-wrap break-words",
               )}
               {...props}
             >
               <code>
-                {(() => {
-                  const els: ReactNode[] = [];
-                  let i = 0;
-                  while (i < lines.length) {
-                    const ln = i + 1;
-                    const block = highlightBlocks.find(b => ln >= b.startLine && ln <= b.endLine);
-                    if (block && ln === block.startLine) {
-                      for (let j = block.startLine; j <= block.endLine; j++) {
-                        const bln = j;
-                        const r = lineRanges.get(bln);
-                        const lineText = lines[bln - 1];
-                        const bp = blockPosition(bln);
-                        const borderCls = cn(
-                          BLOCK_BORDER[block.color],
-                          bp === "first" || bp === "single" ? "border-t" : "",
-                          bp === "first" ? "rounded-t-sm" : bp === "last" ? "rounded-b-sm" : bp === "mid" ? "" : "rounded-sm",
-                          bp !== "mid" ? "border-l border-r" : "border-l border-r",
-                        );
-                        els.push(
-                          <div key={`bl${bln}`} className={cn(SUBSTR_BG[block.color], borderCls, "px-panel", lineColor.get(bln))}>
-                            {r ? segmentedLine(lineText, r, bp) : perLineTokens[bln - 1] && perLineTokens[bln - 1].length > 0 ? renderHighlightedLine(perLineTokens[bln - 1]) : lineText || " "}
-                          </div>,
-                        );
-                      }
-                      i = block.endLine;
-                    } else if (!block) {
-                      const r = lineRanges.get(ln);
-                      els.push(
-                        <div key={`ln${i}`} className={cn("px-panel", lineColor.get(i + 1))}>
-                          {r ? segmentedLine(lines[i], r, null) : perLineTokens[i] && perLineTokens[i].length > 0 ? renderHighlightedLine(perLineTokens[i]) : lines[i] || " "}
-                        </div>,
-                      );
-                      i++;
-                    } else {
-                      i++;
-                    }
-                  }
-                  return els;
-                })()}
+                {perLineTokens.map((lineTokens, i) => (
+                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
+                    {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
+                  </div>
+                ))}
               </code>
+              {overlayRectsByColor.size > 0 && Array.from(overlayRectsByColor.entries()).map(([color, rects]) => (
+                <MergedHighlight
+                  key={color}
+                  rects={rects}
+                  color={COLOR_VARS[color] ?? COLOR_VARS.primary}
+                  strokeColor={COLOR_VARS[color] ?? COLOR_VARS.primary}
+                />
+              ))}
             </pre>
           ) : (
             <pre
               ref={ref}
               className={cn(
-                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg",
+                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
                 wrap && "whitespace-pre-wrap break-words",
               )}
               {...props}
             >
               <code>
-                {(() => {
-                  const els: ReactNode[] = [];
-                  let i = 0;
-                  while (i < lines.length) {
-                    const ln = i + 1;
-                    const block = highlightBlocks.find(b => ln >= b.startLine && ln <= b.endLine);
-                    if (block && ln === block.startLine) {
-                      for (let j = block.startLine; j <= block.endLine; j++) {
-                        const bln = j;
-                        const r = lineRanges.get(bln);
-                        const lineText = lines[bln - 1];
-                        const bp = blockPosition(bln);
-                        const borderCls = cn(
-                          BLOCK_BORDER[block.color],
-                          bp === "first" || bp === "single" ? "border-t" : "",
-                          bp === "first" ? "rounded-t-sm" : bp === "last" ? "rounded-b-sm" : bp === "mid" ? "" : "rounded-sm",
-                          bp !== "mid" ? "border-l border-r" : "border-l border-r",
-                        );
-                        els.push(
-                          <div key={`bl${bln}`} className={cn(SUBSTR_BG[block.color], borderCls, "px-panel", lineColor.get(bln))}>
-                            {r ? segmentedLine(lineText, r, bp) : lineText || " "}
-                          </div>,
-                        );
-                      }
-                      i = block.endLine;
-                    } else if (!block) {
-                      const r = lineRanges.get(ln);
-                      els.push(
-                        <div key={`ln${i}`} className={cn("px-panel", lineColor.get(i + 1))}>
-                          {r ? segmentedLine(lines[i], r, null) : lines[i] || " "}
-                        </div>,
-                      );
-                      i++;
-                    } else {
-                      i++;
-                    }
-                  }
-                  return els;
-                })()}
+                {lines.map((line, i) => (
+                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>{line || " "}</div>
+                ))}
               </code>
+              {overlayRectsByColor.size > 0 && Array.from(overlayRectsByColor.entries()).map(([color, rects]) => (
+                <MergedHighlight
+                  key={color}
+                  rects={rects}
+                  color={COLOR_VARS[color] ?? COLOR_VARS.primary}
+                  strokeColor={COLOR_VARS[color] ?? COLOR_VARS.primary}
+                />
+              ))}
             </pre>
           )}
         </div>
