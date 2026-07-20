@@ -1,3 +1,4 @@
+import { useRef, useLayoutEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { CodeBlock } from "../code-block";
 import { ScrollArea } from "../scroll-area";
@@ -159,6 +160,19 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
     ? []
     : Object.keys(value as Record<string, unknown>);
 
+  const previewRef = useRef<HTMLSpanElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [value]);
+
   return (
     <Popover>
       <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
@@ -170,13 +184,18 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
               {count} {isArray ? "items" : "keys"}
             </Badge>
             {keys.length > 0 && (
-              <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-secondary-fg">
+              <span
+                ref={previewRef}
+                className="block min-w-0 overflow-hidden whitespace-nowrap text-secondary-fg"
+              >
                 {keys.map((k, i) => (
                   <span key={k}>{i > 0 && <span className="text-muted">, </span>}{k}</span>
                 ))}
               </span>
             )}
-            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+            {isTruncated && (
+              <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+            )}
           </>
         )}
       </PopoverTrigger>
@@ -195,6 +214,20 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
 export function ArrayDisplay({ value }: { value: unknown }) {
   const arr = Array.isArray(value) ? value : [];
   const count = arr.length;
+
+  const previewRef = useRef<HTMLSpanElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [value]);
+
   return (
     <Popover>
       <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
@@ -205,12 +238,17 @@ export function ArrayDisplay({ value }: { value: unknown }) {
             <Badge variant="neutral" style="soft" className="text-[10px] px-1 py-0 leading-none shrink-0">
               {count} items
             </Badge>
-            <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-secondary-fg">
+            <span
+              ref={previewRef}
+              className="block min-w-0 overflow-hidden whitespace-nowrap text-secondary-fg"
+            >
               {arr.map((item, i) => (
                 <span key={i}>{i > 0 && <span className="text-muted">, </span>}{String(item)}</span>
               ))}
             </span>
-            <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+            {isTruncated && (
+              <span className="ml-0.5 inline-flex size-[14px] shrink-0 items-center justify-center rounded bg-muted/10 text-[10px] font-bold leading-none text-muted">…</span>
+            )}
           </>
         )}
       </PopoverTrigger>
