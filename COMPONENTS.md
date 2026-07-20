@@ -25,7 +25,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data types in a table, Project X, Project X, Numeric types |
+| `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data Types, Project X, Project X, Numeric types |
 | `DataTable` | variant: striped<br>density: compact | Alice, Bob, Charlie, Diana, Eve, Frank, Grace, Ivy, Leo, Olivia, Default, Striped, Scrolling + sticky header, Truncation |
 | `List` | variant: compact | Default & Compact, Striped, Scrolling |
 | `TreeView` | type: button<br>variant: condensed | Default vs Condensed, Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |

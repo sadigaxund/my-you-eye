@@ -8,7 +8,7 @@ function TableGrid({ children, className }: { children: ReactNode; className?: s
     <div
       role="table"
       className={cn(
-        "grid w-full grid-cols-[auto_minmax(0,1fr)] text-sm",
+        "grid w-full grid-cols-[180px_minmax(0,1fr)] text-sm",
         "[&>[role=row]:not(:first-of-type)>[role=columnheader]]:border-t [&>[role=row]:not(:first-of-type)>[role=columnheader]]:border-border",
         "[&>[role=row]:not(:first-of-type)>[role=cell]]:border-t [&>[role=row]:not(:first-of-type)>[role=cell]]:border-border",
         className,
@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
   group: "data",
   demos: [
     {
-      name: "Data types in a table",
+      name: "Data Types",
       render: () => (
         <TableGrid>
           <div role="row" className="contents">
