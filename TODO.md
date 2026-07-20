@@ -52,36 +52,112 @@ Code in `packages/motion/src/`. Smoke-test compositions in `apps/video/src/compo
 
 **Acceptance:** All 5 primitives render in Remotion Studio and to MP4. ✅
 
-### Phase 3 — `packages/scenes` (composed scene templates)
+---
 
-- [ ] **CodeWalkthrough** — title + code block + highlight steps.
-- [ ] **Diagram** — nodes (GraphNode variant="simple") + edges (ConnectionLine) from data.
+### Architecture Decision: @remotion/player for interactive mode
 
-**Acceptance:** Both scenes render animated from sample JSON data.
+External input confirmed: **`@remotion/player`** (npm package, 54+ dependents) embeds
+Remotion compositions live in any React app with `seek(frame)`, `play()`, `pause()`,
+and `frameupdate` events. It renders compositions using `useCurrentFrame()` directly —
+**no `core/remotion/interactive` layer needed** unless the Player proves insufficient.
 
-### Phase 4 — Monorepo migration
+**Approach:** Each "step" in a presentation = a frame range in the SAME composition.
+Click handler → `playerRef.current.seek(stepStartFrame)` → `play()` → `outFrame` stops
+at the step boundary. Zero duplication of animation primitives. Same `Reveal`/`Stagger`/
+`TypeText` code renders in both Remotion Studio AND the live presenter.
 
-- [ ] Move existing code to `packages/ui/`.
+**Fallback:** If `@remotion/player` can't express a smooth click-to-advance flow (e.g.
+per-primitive interruption/reversal that frame-seeking can't handle), THEN extract a
+`core/` layer: primitives accept `progress: number` (0→1), Remotion wrappers convert
+`useCurrentFrame()` → progress, interactive wrappers use `requestAnimationFrame` →
+progress. But do NOT build this until the Player is proven insufficient.
+
+### Phase 3 — `packages/present` (interactive presenter via @remotion/player)
+
+- [ ] **3a. Player PoC** — install `@remotion/player` in `apps/video`. Create a thin
+  presenter shell that renders one composition inside `<Player>` with play/pause/seek
+  controls. Prove seek-to-frame + play-to-outFrame = usable click-to-advance.
+- [ ] **3b. Step mapping** — define a scene data format mapping "steps" to frame ranges
+  `{ label, startFrame, endFrame }`. Render step titles in a sidebar. Click →
+  `seek(startFrame)` → `play()` → `outFrame={endFrame}` stops automatically.
+- [ ] **3c. Full presenter** — load the `CodeWalkthrough` or `Diagram` composition from
+  Phase 5, map its steps to frame ranges, test end-to-end click-to-advance flow.
+
+**Acceptance:** Click through a multi-step presentation live in the browser. Each click
+advances to the next step and plays its animation segment, pausing at the boundary.
+
+---
+
+### Phase 4 — `packages/scenes` (composed scene templates)
+
+- [ ] **CodeWalkthrough** — title + CodeBlock (with highlightLines/highlightRanges) +
+  TypeText typing reveal. Data-driven (typed content props). Composes `my-you-eye` +
+  `@lib/motion`. Steps map naturally to frame ranges for the presenter.
+- [ ] **Diagram** — nodes (GraphNode variant="simple") + edges (ConnectionLine
+  arrowhead+label) from `{ nodes: { id, label, x, y }[], edges: { from, to, label? }[] }`.
+  Staggered entrance via Stagger primitive.
+
+**Acceptance:** Both scenes render animated from sample JSON data in Remotion Studio AND
+in the `packages/present` shell.
+
+---
+
+### Phase 5 — Monorepo migration (mechanical, after PoC proven)
+
 - [ ] Add `pnpm-workspace.yaml`, root `turbo.json`.
-- [ ] Update package names (`@lib/ui`, `@lib/motion`, `@lib/scenes`).
-- [ ] Update all import paths.
+- [ ] Move `src/` → `packages/ui/src/`, `packages/motion/`, `packages/scenes/`,
+  `apps/video/`, `apps/present/` into place.
+- [ ] Rename packages: `my-you-eye` → `@lib/ui`, keep `@lib/motion`, add `@lib/scenes`.
+- [ ] Update all import paths, tsconfig paths, Tailwind content paths.
+- [ ] Verify `pnpm -F ui build` + `pnpm -F video render smoke-test` pass.
 
-**Acceptance:** `pnpm -F ui build` + `pnpm -F video render smoke-test` pass.
+**Acceptance:** `pnpm -F ui build` + `pnpm -F video render smoke-test` pass. Zero visual
+regressions in the showcase.
 
-### Phase 5 — Video composition + transitions
+---
 
-- [ ] Video data definitions (JSON) driving scene selection/ordering.
-- [ ] `@remotion/transitions` `<TransitionSeries>` chaining scenes.
-- [ ] One end-to-end example video: CodeWalkthrough → Diagram.
+### Phase 6 — Video composition + transitions
 
-**Acceptance:** Full MP4 renders with animated scenes + working transitions.
+- [ ] Video data definitions (JSON/TS) driving scene selection, ordering, and step timing.
+- [ ] `@remotion/transitions` `<TransitionSeries>` chaining scenes with fade/slide.
+- [ ] One end-to-end example video: CodeWalkthrough → transition → Diagram.
+- [ ] Same scene data powers both the `apps/video` composition AND the `packages/present`
+  presenter shell.
+
+**Acceptance:** Full MP4 renders with animated scenes + smooth transitions between them.
+The same JSON scene data produces both a click-through presenter AND a video export.
+
+---
+
+### Future animation primitives (after core 5 proven)
+
+**Highest priority — express patterns the current 5 can't:**
+- [ ] **CameraPan / CameraZoom** — translate + scale on a wrapping container to
+  "zoom into" a diagram region or code function. Highest-value addition for
+  code-walkthrough videos.
+- [ ] **PathDraw** — animated `stroke-dashoffset` on SVG paths, for diagram edges
+  drawing themselves on. Pairs with ConnectionLine.
+
+**Fit the existing `progress: 0→1` model:**
+- [ ] **Pulse** — looping scale/opacity breathing (draw attention to a node).
+- [ ] **Shake** — short oscillating error/attention indicator.
+- [ ] **CountUp** — numeric tween from 0 to target (stat/metric scenes).
+
+**Need extra params (from/to pairs or path data):**
+- [ ] **Morph** — FLIP-based cross-fade/reposition between two diagram states
+  (before/after architecture).
+- [ ] **CursorMove** — fake pointer animating along a path, for simulated clicks.
+- [ ] **FocusBlur** — dim + blur everything except a focused region (complement to
+  Highlight).
+
+---
 
 ### Deferred (not in any phase)
 
-- `packages/present` (interactive click-to-advance) — separate runtime
 - Storybook / `apps/docs`
-- Additional animation types: Pulse, DrawLine, CameraPan, CursorMove, CountUp, Morph
-- Additional components: Callout, Cursor, ComparisonTable, Terminal, Avatar/speaker
+- Additional components: Callout, Cursor (static), ComparisonTable, Terminal,
+  Avatar/speaker
+- `core/remotion/interactive` extraction (only if @remotion/player proves insufficient)
 
 ---
 

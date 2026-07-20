@@ -479,31 +479,52 @@ Scenes composes both. Video is the runtime.
 
 | Phase | What | Depends on |
 |---|---|---|
-| 0 | Pre-requisite additions to existing `src/ui` (CodeBlock `highlightLines`, GraphNode `variant="simple"`, ConnectionLine `arrowhead` + `label`) | — |
-| 1 | Remotion PoC in `apps/video` — import existing components, render one static composition to MP4 | Phase 0 |
-| 2 | `packages/motion` — 5 animation primitives (Reveal, Stagger, TypeText, Highlight, SlideTransition) | Phase 1 |
-| 3 | `packages/scenes` — CodeWalkthrough, Diagram scene templates | Phase 0 + Phase 2 |
-| 4 | Monorepo migration (pnpm workspaces, Turborepo) — mechanical only | Phase 3 proven |
-| 5 | Video composition + transitions (`@remotion/transitions`), end-to-end example video | Phase 3 + Phase 4 |
+| 0 | Pre-requisite additions to `src/ui` (CodeBlock `highlightLines`/`highlightRanges`, GraphNode `variant="simple"`, ConnectionLine `arrowhead` + `label`) | — |
+| 1 | Remotion PoC in `apps/video` — import existing components, render static composition to MP4 with correct Tailwind styling | Phase 0 |
+| 2 | `packages/motion` — 5 animation primitives (Reveal, Stagger, TypeText, Highlight, SlideTransition), smoke-test compositions | Phase 1 |
+| 3 | `packages/present` — interactive presenter via `@remotion/player`. Step = frame range. `seek()` + `play()` + `outFrame`. No `core/` extraction needed unless Player proves insufficient. | Phase 1 + 2 |
+| 4 | `packages/scenes` — CodeWalkthrough, Diagram scene templates (compose ui + motion). Data-driven. | Phase 0 + 2 |
+| 5 | Monorepo migration (pnpm workspaces, Turborepo) — mechanical only | Phases 3+4 proven |
+| 6 | Video composition + transitions (`@remotion/transitions`). Same scene data powers both MP4 export AND interactive presenter. | Phase 4 + 5 |
 
 **Do not start a phase until the previous phase's acceptance check passes.** Stop and
 report back after each phase with a short summary: what was done, verification results,
 and how to visually confirm it works.
 
-### 9e. Phase 0 specific rules
+### 9e. Interactive mode — `@remotion/player` (preferred architecture)
 
-Phase 0 makes three additive changes to the existing static component library:
-- `CodeBlock.highlightLines?: number[]` — renders `bg-primary/10` behind specified line numbers
-- `GraphNode variant="simple"` — new CVA variant, hides ports/footer/accent-bar, keeps header+body
-- `ConnectionLine arrowhead?: boolean` + `label?: string` — SVG arrowhead at `to`, centered text label
+The primary approach for live click-to-advance uses `@remotion/player`, NOT a
+separate `core/remotion/interactive` layer:
 
-**These must not change any existing visual output.** Default props render identically.
-Every change is opt-in. `npm run validate` must stay green. Add showcase demos for each
-new feature.
+1. Define each presentation "step" as a frame range in a Remotion composition.
+2. Embed the composition via `<Player ref={playerRef} />`.
+3. On click → `playerRef.current.seek(step.startFrame)` → `play()`.
+4. `outFrame={step.endFrame}` stops playback automatically at the step boundary.
+5. Animation primitives (`Reveal`/`Stagger`/`TypeText`/etc.) stay exactly as they
+   are today with `useCurrentFrame()` — zero duplication.
 
-### 9f. What is NOT in scope yet
+**Only if `@remotion/player` proves insufficient** (e.g. per-primitive
+interruption/reversal that frame-seeking can't express smoothly) should you build
+the `core/remotion/interactive` extraction. That fallback is documented in
+`TODO.md` but is NOT the current plan.
 
-- Interactive click-to-advance presentation mode (`packages/present/`) — separate runtime
-- Storybook / `apps/docs` — nice-to-have, not blocking
-- Remaining animation types: Pulse, DrawLine, CameraPan, CursorMove, CountUp, Morph
-- Remaining components: Callout, Cursor, ComparisonTable, Terminal, Avatar/speaker
+### 9f. Future animation primitives
+
+After the current 5 are proven in both video and interactive contexts, the next
+highest-value additions:
+
+**Priority (express patterns the current 5 cannot):**
+- `CameraPan` / `CameraZoom` — translate + scale container for zooming into
+  diagram regions or code functions
+- `PathDraw` — `stroke-dashoffset` animation on SVG paths for edge/connection
+  drawing (pairs with ConnectionLine)
+
+**Fit existing `progress: 0→1` model:**
+- `Pulse` — looping scale/opacity breathing
+- `Shake` — oscillating error/attention indicator
+- `CountUp` — numeric tween for stats/metrics
+
+**Need extra params (from/to pairs or path data):**
+- `Morph` — FLIP-based cross-fade between two diagram states
+- `CursorMove` — fake pointer along a path
+- `FocusBlur` — dim/blur everything except a focused region
