@@ -7,8 +7,9 @@ All notable changes to this project are documented here.
 ### Fixed
 
 - **`TexturedSurface`**: inline texture path no longer wraps children in a `relative` div (fixes flex `justify-between` layout for header). Decorative elements use `-z-10` and `pointer-events-none` so non-positioned children stack above naturally.
-- **`DateTimeTzDisplay`**: timezone badge no longer clipped — date+time merged into a `min-w-0 flex-1 truncate` group that absorbs space deficit before the `flex-shrink-0` badge is ever touched.
+- **`DateTimeTzDisplay`**: timezone badge no longer clipped — date+time merged into a `min-w-0 flex-1 truncate` group that absorbs space deficit before the `flex-shrink-0` badge is ever touched. Removed `flex-1` to keep badge left-aligned next to time. Zero-padded day (`2-digit`) and hour (`2-digit`) for aligned table cells.
 - **`DataTable`**: sticky header restructured to render outside ScrollArea — scrollbar no longer covers the top-right rounded corner.
+- **`TreeDisplay` / `ArrayDisplay`**: "…" badge now conditional on actual overflow via `ResizeObserver` + `scrollWidth > clientWidth`. Removed `flex-1` from preview span so content stays left-aligned.
 
 ### Added
 
