@@ -10,7 +10,7 @@ export interface MetallicState {
 
 export type TextureKey = "paper-grain" | "frosted-glass" | "brushed-aluminium";
 
-export const DEFAULT_PAPER: PaperState = { freq: 0.35, octaves: 3, stretch: 2.6, tile: 200, opacity: 0.18 };
+export const DEFAULT_PAPER: PaperState = { freq: 0.30, octaves: 5, stretch: 3.0, tile: 300, opacity: 0.25 };
 export const DEFAULT_FROSTED_BLUR: FrostedBlurState = { freq: 0.01, octaves: 2, stretch: 2.2, tile: 300, opacity: 0.30 };
 export const DEFAULT_METALLIC: MetallicState = { freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0.22 };
 
@@ -158,7 +158,7 @@ function fAssets(freq: number, octaves: number, stretch: number, tile: number, s
 /** Pre-generated page.medium paper-grain SVG data URI — single source of truth
     for the page-level texture. Themes that want a page texture should reference
     this via JS rather than hardcoding SVG strings in CSS. */
-export const PAGE_MEDIUM_URI = pAssets(0.12, 3, 2.4, 170, 111).primary;
+export const PAGE_MEDIUM_URI = pAssets(0.40, 5, 2.6, 255, 166).primary;
 
 /** Pre-generated page.medium frosted-glass SVG data URI — tileable low-frequency
     noise for a subtle frosted page overlay. Used by the glass theme.
@@ -171,14 +171,14 @@ export const PAGE_MEDIUM_FROSTED_LAYERS = [1, 7, 13]
 
 const layerPaper: LayerMap = {
   page: {
-    subtle:  pAssets(0.16, 4, 2.0, 140, 91),
-    medium:  pAssets(0.12, 3, 2.4, 170, 111),
-    strong:  pAssets(0.09, 3, 2.8, 200, 130),
-  },
-  surface: {
     subtle:  pAssets(0.16, 4, 1.8, 110, 72),
     medium:  pAssets(0.14, 3, 2.0, 130, 85),
     strong:  pAssets(0.11, 3, 2.2, 150, 98),
+  },
+  surface: {
+    subtle:  pAssets(0.55, 6, 2.1, 210, 137),
+    medium:  pAssets(0.40, 5, 2.6, 255, 166),
+    strong:  pAssets(0.30, 5, 3.0, 300, 195),
   },
   foreground: {
     subtle:  pAssets(0.24, 5, 1.4, 65, 42),
@@ -189,14 +189,14 @@ const layerPaper: LayerMap = {
 
 const layerMetallic: LayerMap = {
   page: {
-    subtle:  mAssets(1.56, 0.0036, 2, 2.2, 228, 149),
-    medium:  mAssets(1.44, 0.0024, 1, 2.3, 264, 172),
-    strong:  mAssets(1.38, 0.0012, 1, 2.4, 300, 196),
-  },
-  surface: {
     subtle:  mAssets(1.80, 0.0096, 2, 2.0, 168, 109),
     medium:  mAssets(1.68, 0.0060, 2, 2.2, 204, 133),
     strong:  mAssets(1.56, 0.0036, 2, 2.3, 240, 156),
+  },
+  surface: {
+    subtle:  mAssets(1.56, 0.0036, 2, 2.2, 228, 149),
+    medium:  mAssets(1.44, 0.0024, 1, 2.3, 264, 172),
+    strong:  mAssets(1.38, 0.0012, 1, 2.4, 300, 196),
   },
   foreground: {
     subtle:  mAssets(2.04, 0.0144, 3, 1.9, 108, 71),
@@ -209,14 +209,14 @@ export const FROSTED_DITHER = dataUri(ditherSvg());
 
 const layerFrosted: LayerMap = {
   page: {
-    subtle:  fAssets(0.005, 2, 2.4, 2000, 1300),
-    medium:  fAssets(0.003, 2, 2.6, 3334, 2167),
-    strong:  fAssets(0.002, 2, 3.0, 5000, 3250),
-  },
-  surface: {
     subtle:  fAssets(0.015, 2, 2.0, 667, 434),
     medium:  fAssets(0.010, 2, 2.2, 1000, 650),
     strong:  fAssets(0.008, 2, 2.4, 1250, 813),
+  },
+  surface: {
+    subtle:  fAssets(0.03, 1, 2.4, 334, 217),
+    medium:  fAssets(0.03, 1, 2.6, 350, 228),
+    strong:  fAssets(0.03, 1, 3.0, 400, 260),
   },
   foreground: {
     subtle:  fAssets(0.040, 3, 1.6, 250, 163),

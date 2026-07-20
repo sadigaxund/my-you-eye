@@ -77,6 +77,8 @@ html[data-theme="metallic"].dark {
 
   --border-width: 1px;
   --backdrop-blur: 0px;
+  --font-sans: var(--font-plus-jakarta);
+  --theme-font: plus-jakarta;
 
   --radius-ui: 4px;
   --radius-ui-sm: 2px;
@@ -126,6 +128,8 @@ html[data-theme="metallic"].dark {
   --color-code-bg: oklch(0.16 0.02 255);
   --color-code-fg: oklch(0.92 0.003 255);
   --color-code-muted: oklch(0.55 0.005 255);
+
+  --texture-blend: screen;
 
   --shadow-card: 1px 2px 0 0 oklch(0 0 0 / 0.4);
   --shadow-elevated: 3px 4px 0 0 oklch(0 0 0 / 0.5);

@@ -10,8 +10,8 @@ const TEXTURE_STRENGTHS: Record<string, Record<string, number>> = {
 };
 
 const LAYER_OPACITY: Record<TextureLayer, number> = {
-  page: 1.0,
-  surface: 0.55,
+  page: 0.55,
+  surface: 0.30,
   foreground: 0.25,
 };
 
@@ -171,7 +171,7 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
               ))}
             </div>
           )}
-          <div className="relative">{children}</div>
+          {children}
         </div>
       );
     }

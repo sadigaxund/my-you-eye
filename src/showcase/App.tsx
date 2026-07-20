@@ -43,6 +43,7 @@ export default function App() {
   const [theme, setTheme] = useState<ThemeProfile>("default");
   const [activeSlug, setActiveSlug] = useState<string | undefined>(initialSlug);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [texture, setTexture] = useState("theme");
 
   const toggleDark = () => {
     setDark((d) => {
@@ -53,6 +54,7 @@ export default function App() {
 
   const handleThemeChange = (val: ThemeProfile) => {
     setTheme(val);
+    setTexture(val === "glass" ? "frosted-glass" : val === "metallic" ? "brushed-aluminium" : "theme");
     const el = document.documentElement;
     if (val === "default") {
       el.removeAttribute("data-theme");
@@ -67,6 +69,15 @@ export default function App() {
         el.style.removeProperty("--texture-paper");
       }
     }
+
+    const themeFont = getComputedStyle(el).getPropertyValue("--theme-font").trim();
+    if (themeFont && fontOptions.some((f) => f.value === themeFont)) {
+      setFont(themeFont as FontMode);
+      el.dataset.font = themeFont;
+    } else {
+      setFont("sans");
+      el.dataset.font = "sans";
+    }
   };
 
   const selectComponent = (slug: string) => {
@@ -76,7 +87,7 @@ export default function App() {
 
   return (
     <div className="min-h-dvh text-fg">
-      <TexturedSurface texture="theme" layer="foreground" strength="subtle" color="--color-surface-elevated" variant="elevated" className="flex items-center justify-between gap-inline border-b border-border px-panel py-3">
+      <TexturedSurface texture={texture} layer="foreground" strength="subtle" color="--color-surface-elevated" variant="elevated" className="flex items-center justify-between gap-inline border-b border-border px-panel py-3">
         <div className="flex items-center gap-inline">
           <button
             type="button"
@@ -130,6 +141,7 @@ export default function App() {
 
       <div className="flex">
         <Sidebar
+          texture={texture}
           activeSlug={activeSlug}
           onSelect={selectComponent}
           mobileOpen={mobileNavOpen}

@@ -5,13 +5,14 @@ import { TexturedSurface } from "../ui/patterns/textured-surface";
 import { GROUPS, pages } from "./registry";
 
 interface SidebarProps {
+  texture: string;
   activeSlug: string | undefined;
   onSelect: (slug: string) => void;
   mobileOpen: boolean;
   onCloseMobile: () => void;
 }
 
-export function Sidebar({ activeSlug, onSelect, mobileOpen, onCloseMobile }: SidebarProps) {
+export function Sidebar({ texture, activeSlug, onSelect, mobileOpen, onCloseMobile }: SidebarProps) {
   const [filter, setFilter] = useState("");
 
   const filtered = useMemo(() => {
@@ -22,7 +23,7 @@ export function Sidebar({ activeSlug, onSelect, mobileOpen, onCloseMobile }: Sid
 
   return (
     <TexturedSurface
-      texture="theme"
+      texture={texture}
       layer="surface"
       strength="subtle"
       color="--color-surface"

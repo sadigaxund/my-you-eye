@@ -271,20 +271,24 @@ Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--sh
 
 | Layer | Noise character | Tile size | Opacity multiplier (`LAYER_OPACITY`) |
 |---|---|---|---|
-| `page` | Coarsest, highest contrast (low freq, few octaves, high stretch) | 160–240px | 1.0× |
-| `surface` | Medium grain | 110–150px | 0.55× |
+| `page` | Coarsest, highest contrast (low freq, few octaves, high stretch) | 110–1250px | 0.55× |
+| `surface` | Medium grain | 110–300px | 0.30× |
 | `foreground` | Finest, subtle (high freq, more octaves, low stretch) | 65–100px | 0.25× |
 
 **Current paper-grain params (do not change without cross-checking all themes):**
 
 ```
-page.subtle:     freq=0.16, octaves=4, stretch=2.0, tile=140
-page.medium:     freq=0.12, octaves=3, stretch=2.4, tile=170
-page.strong:     freq=0.09, octaves=3, stretch=2.8, tile=200
+page.subtle:     freq=0.16, octaves=4, stretch=1.8, tile=110
+page.medium:     freq=0.14, octaves=3, stretch=2.0, tile=130
+page.strong:     freq=0.11, octaves=3, stretch=2.2, tile=150
 
-surface.subtle:  freq=0.16, octaves=4, stretch=1.8, tile=110
-surface.medium:  freq=0.14, octaves=3, stretch=2.0, tile=130
-surface.strong:  freq=0.11, octaves=3, stretch=2.2, tile=150
+frosted.page.subtle:  freq=0.015, octaves=2, stretch=2.0, tile=667
+frosted.page.medium:  freq=0.010, octaves=2, stretch=2.2, tile=1000
+frosted.page.strong:  freq=0.008, octaves=2, stretch=2.4, tile=1250
+
+surface.subtle:  freq=0.55, octaves=6, stretch=2.1, tile=210
+surface.medium:  freq=0.40, octaves=5, stretch=2.6, tile=255
+surface.strong:  freq=0.30, octaves=5, stretch=3.0, tile=300
 
 foreground.subtle:   freq=0.24, octaves=5, stretch=1.4, tile=65
 foreground.medium:   freq=0.20, octaves=4, stretch=1.5, tile=80
