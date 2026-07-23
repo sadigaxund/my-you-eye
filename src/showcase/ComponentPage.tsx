@@ -1,7 +1,8 @@
 import { DemoSection } from "./DemoSection";
 import type { RegistryPage } from "./registry";
+import type { ShowcaseTexture } from "./types";
 
-export function ComponentPage({ texture, page }: { texture: string; page: RegistryPage | undefined }) {
+export function ComponentPage({ texture, page }: { texture: ShowcaseTexture; page: RegistryPage | undefined }) {
   if (!page) {
     return (
       <p className="text-muted text-sm">

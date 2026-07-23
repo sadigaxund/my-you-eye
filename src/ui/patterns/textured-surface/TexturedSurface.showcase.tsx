@@ -64,6 +64,17 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Nested inline → theme",
+      description: "An inline paper-grain (page layer) surface wrapping a texture=\"theme\" surface (surface layer). The theme child's own texture is now visible — it is no longer zeroed by the outer inline surface's suppression.",
+      render: () => (
+        <TexturedSurface texture="paper-grain" strength="medium" layer="page" className="p-6">
+          <TexturedSurface texture="theme" layer="surface" variant="elevated" className="p-4">
+            <p className="text-sm text-fg">theme · surface — nested inside an inline paper-grain page surface</p>
+          </TexturedSurface>
+        </TexturedSurface>
+      ),
+    },
+    {
       name: "Composed",
       description: "Nested TexturedSurface: page background, surface container, foreground card.",
       render: () => (

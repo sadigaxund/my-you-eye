@@ -50,6 +50,7 @@ html[data-theme="comic"].dark {
   --color-success: oklch(0.48 0.20 145);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.72 0.25 75);
+  --color-warning-fg: oklch(0.08 0.02 40);
   --color-surface: oklch(0.96 0.02 60);
   --color-surface-hover: oklch(0.93 0.025 60);
   --color-surface-active: oklch(0.90 0.03 60);
@@ -93,6 +94,7 @@ html[data-theme="comic"].dark {
   --color-success: oklch(0.55 0.20 145);
   --color-success-fg: oklch(0 0 0);
   --color-warning: oklch(0.78 0.25 75);
+  --color-warning-fg: oklch(0.08 0.02 40);
   --color-surface: oklch(0.20 0.02 55);
   --color-surface-hover: oklch(0.23 0.025 55);
   --color-surface-active: oklch(0.26 0.03 55);

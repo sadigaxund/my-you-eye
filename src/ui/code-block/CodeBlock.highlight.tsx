@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 const KEYWORDS = new Set([
   "break", "case", "catch", "class", "const", "continue", "debugger", "default",
   "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for",

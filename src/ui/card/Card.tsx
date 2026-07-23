@@ -8,6 +8,7 @@ const cardVariants = cva("rounded-ui bg-surface text-fg", {
     variant: {
       default: "border border-border",
       outlined: "border-2 border-border",
+      // NOTE(human): audit suggests surface-elevated + --shadow-elevated token; deferred to avoid visual change
       elevated: "border border-border shadow-lg",
     },
   },

@@ -5,6 +5,7 @@ import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
 import { Badge } from "../badge";
+import type { UrlReplacement } from "./CellType";
 
 function safeStringify(value: unknown): string {
   const seen = new WeakSet();
@@ -151,7 +152,7 @@ function detectType(val: unknown): "text" | "number" | "boolean" | "null" | "ema
   return "text";
 }
 
-export function TreeDisplay({ value, replacements }: { value: unknown; replacements?: unknown[] }) {
+export function TreeDisplay({ value, replacements }: { value: unknown; replacements?: UrlReplacement[] }) {
   if (typeof value !== "object" || value === null) return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
   const nodes = objToTreeNodes(value);
   const isArray = Array.isArray(value);

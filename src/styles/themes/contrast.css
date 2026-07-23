@@ -11,6 +11,7 @@
   --color-success: oklch(0.45 0.2 150);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.6 0.2 80);
+  --color-warning-fg: oklch(0 0 0);
   --color-surface: oklch(1 0 0);
   --color-surface-hover: oklch(0.92 0 0);
   --color-surface-active: oklch(0.88 0 0);

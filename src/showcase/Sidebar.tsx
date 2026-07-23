@@ -3,9 +3,10 @@ import { Input } from "../ui/input";
 import { cn } from "../lib/cn";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
 import { GROUPS, pages } from "./registry";
+import type { ShowcaseTexture } from "./types";
 
 interface SidebarProps {
-  texture: string;
+  texture: ShowcaseTexture;
   activeSlug: string | undefined;
   onSelect: (slug: string) => void;
   mobileOpen: boolean;

@@ -1,5 +1,10 @@
+// NON-CANONICAL: this is a live design playground for exploring texture
+// parameters, not the shipped preset matrix. Its state below is arbitrary
+// and does NOT represent (nor is it derived from) LAYER_SVGS /
+// TEXTURE_STRENGTHS in svg-utils.ts / TexturedSurface.tsx — see AGENTS.md
+// §7 item 6. Do not treat values discovered here as canonical presets.
 import { useState, useCallback, useMemo } from "react";
-import type { TextureKey } from "./svg-utils";
+import type { TextureKey, PaperState, FrostedBlurState, MetallicState } from "./svg-utils";
 import {
   DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_METALLIC,
 } from "./svg-utils";

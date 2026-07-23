@@ -123,6 +123,9 @@ const PAIRS = [
   ["danger-fg", "danger"],
   ["success-fg", "success"],
   ["secondary-fg", "secondary"],
+  ["warning-fg", "warning"],
+  ["fg", "surface"],
+  ["muted", "surface"],
 ];
 
 const MIN_RATIO = 4.5;
@@ -151,6 +154,75 @@ for (const theme of themes) {
         failures.push(
           `${theme.name} (${mode}): color-${fgKey}/color-${bgKey} contrast ${ratio.toFixed(2)}:1 < ${MIN_RATIO}:1  (fg=${fgVal} bg=${bgVal})`,
         );
+      }
+    }
+  }
+}
+
+// --- Class-level cross-wire guard ---------------------------------------
+// The danger/primary-fg bug (AGENTS.md §7 audit) was invisible to the PAIRS
+// check above because that check only verifies *declared* token pairs, not
+// the classes a component actually renders (e.g. `bg-danger text-primary-fg`
+// — both tokens individually fine, the pairing wrong). This scans src/ui for
+// a `bg-<sem>` and a `text-<sem2>-fg` (or `text-bg`/`text-fg`) co-occurring
+// inside the SAME quoted class string, and fails if that literal pairing
+// doesn't hit MIN_RATIO in every theme/mode.
+// NOTE(human): this is a narrow heuristic, not a general class-list resolver.
+// It only catches tokens written together in one string literal, grouped by
+// their Tailwind modifier prefix (e.g. `data-[state=checked]:`, `hover:`) so
+// a base `bg-bg` isn't wrongly paired with an unrelated
+// `data-[state=checked]:text-primary-fg` a few tokens later — same string,
+// different rendered state. It does NOT join classes split across separate
+// array elements (e.g. cva's `["text-secondary-fg", "bg-secondary/60"]`) or
+// across separate `cn()`/template arguments — doing that generally needs
+// real JSX/class-list parsing, out of scope here.
+const SEM = "fg|bg|primary|secondary|danger|success|warning|surface";
+const bgRe = new RegExp(`^bg-(${SEM})$`);
+const fgRe = new RegExp(`^text-(bg|fg|primary-fg|secondary-fg|danger-fg|success-fg|warning-fg)$`);
+const stringLitRe = /"[^"\n]*"|'[^'\n]*'|`[^`]*`/g;
+const uiFiles = [];
+(function walk(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) walk(p);
+    else if (entry.name.endsWith(".tsx") && !entry.name.endsWith(".showcase.tsx")) uiFiles.push(p);
+  }
+})(join(ROOT, "src/ui"));
+
+for (const file of uiFiles) {
+  const content = readFileSync(file, "utf-8");
+  let m;
+  while ((m = stringLitRe.exec(content)) !== null) {
+    const classTokens = m[0].slice(1, -1).split(/\s+/).filter(Boolean);
+    const groups = new Map(); // modifier prefix -> { bg, fg }
+    for (const tok of classTokens) {
+      const lastColon = tok.lastIndexOf(":");
+      const prefix = lastColon === -1 ? "" : tok.slice(0, lastColon + 1);
+      const utility = (lastColon === -1 ? tok : tok.slice(lastColon + 1)).replace(/\/\d+$/, "");
+      const bgMatch = bgRe.exec(utility);
+      const fgMatch = fgRe.exec(utility);
+      if (!bgMatch && !fgMatch) continue;
+      const g = groups.get(prefix) ?? {};
+      if (bgMatch) g.bg = bgMatch[1];
+      if (fgMatch) g.fg = fgMatch[1];
+      groups.set(prefix, g);
+    }
+    for (const { bg, fg } of groups.values()) {
+      if (!bg || !fg) continue;
+      if (fg.replace(/-fg$/, "") === bg) continue; // correctly-paired, already covered by PAIRS
+      for (const theme of themes) {
+        for (const mode of ["light", "dark"]) {
+          const tokens = effectiveTokens(theme, mode);
+          const fgVal = tokens[`color-${fg}`];
+          const bgVal = tokens[`color-${bg}`];
+          if (!fgVal || !bgVal) continue;
+          const ratio = contrastRatio(fgVal, bgVal);
+          if (ratio !== null && ratio < MIN_RATIO) {
+            failures.push(
+              `${file.replace(ROOT, "")}: rendered class "bg-${bg} text-${fg}" — ${theme.name} (${mode}) contrast ${ratio.toFixed(2)}:1 < ${MIN_RATIO}:1`,
+            );
+          }
+        }
       }
     }
   }

@@ -10,6 +10,16 @@ export interface MetallicState {
 
 export type TextureKey = "paper-grain" | "frosted-glass" | "brushed-aluminium";
 
+const TEXTURE_KEYS: readonly TextureKey[] = ["paper-grain", "frosted-glass", "brushed-aluminium"];
+
+/** Runtime type guard for `TextureKey` — used wherever a texture identifier
+    comes from an untyped source (e.g. a CSS custom property value read via
+    `getComputedStyle`) and needs to be narrowed before indexing a
+    `Record<TextureKey, …>` table. See AGENTS.md §7. */
+export function isTextureKey(value: string): value is TextureKey {
+  return (TEXTURE_KEYS as readonly string[]).includes(value);
+}
+
 export const DEFAULT_PAPER: PaperState = { freq: 0.30, octaves: 5, stretch: 3.0, tile: 300, opacity: 0.25 };
 export const DEFAULT_FROSTED_BLUR: FrostedBlurState = { freq: 0.01, octaves: 2, stretch: 2.2, tile: 300, opacity: 0.30 };
 export const DEFAULT_METALLIC: MetallicState = { freqX: 0.6, freqY: 0.01, angle: 0, octaves: 4, stretch: 2.6, tile: 200, opacity: 0.22 };
@@ -155,11 +165,6 @@ function fAssets(freq: number, octaves: number, stretch: number, tile: number, s
   };
 }
 
-/** Pre-generated page.medium paper-grain SVG data URI — single source of truth
-    for the page-level texture. Themes that want a page texture should reference
-    this via JS rather than hardcoding SVG strings in CSS. */
-export const PAGE_MEDIUM_URI = pAssets(0.40, 5, 2.6, 255, 166).primary;
-
 /** Pre-generated page.medium frosted-glass SVG data URI — tileable low-frequency
     noise for a subtle frosted page overlay. Used by the glass theme.
     Comma-separated list of 3 URIs at different seeds for layered page overlay.
@@ -186,6 +191,18 @@ const layerPaper: LayerMap = {
     strong:  pAssets(0.18, 4, 1.6, 100, 65),
   },
 };
+
+/** Pre-generated page-level paper-grain SVG data URI — single source of truth
+    for the `html::before` page overlay (Comic theme). Themes that want a page
+    texture should reference this via JS rather than hardcoding SVG strings in CSS.
+    NOTE(human): the constant is named PAGE_MEDIUM_URI and AGENTS.md previously
+    claimed it mirrored `layerPaper.page.medium`, but its params
+    (freq=0.40, octaves=5, stretch=2.6, tile=255) have always actually been
+    `layerPaper.surface.medium`'s. The owner likes the shipped look, so this
+    now sources directly from `surface.medium` (byte-identical output) instead
+    of re-declaring the copied numbers — the drift is fixed, the render is not.
+    Flagged here for the owner to decide whether to rename or restyle later. */
+export const PAGE_MEDIUM_URI = layerPaper.surface.medium.primary;
 
 const layerMetallic: LayerMap = {
   page: {
@@ -229,7 +246,7 @@ export type TextureLayer = keyof typeof layerPaper;
 
 export type TextureLayerStrengthMap = Record<string, Record<string, LayerSvgAssets>>;
 
-export const LAYER_SVGS: Record<string, TextureLayerStrengthMap> = {
+export const LAYER_SVGS: Record<TextureKey, TextureLayerStrengthMap> = {
   "paper-grain": layerPaper,
   "brushed-aluminium": layerMetallic,
   "frosted-glass": layerFrosted,

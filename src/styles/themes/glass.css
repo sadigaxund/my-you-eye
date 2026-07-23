@@ -75,6 +75,7 @@ html[data-theme="glass"]::before {
   --color-success: oklch(0.42 0.15 150);
   --color-success-fg: oklch(0.98 0 0);
   --color-warning: oklch(0.75 0.18 75);
+  --color-warning-fg: oklch(0.20 0.04 290);
 
   /* Colors - Glass Surfaces (translucency lives only here) */
   --color-surface: oklch(1 0 0 / 0.70);
@@ -139,6 +140,7 @@ html[data-theme="glass"]::before {
   --color-success: oklch(0.42 0.15 150);
   --color-success-fg: oklch(0.98 0 0);
   --color-warning: oklch(0.78 0.20 75);
+  --color-warning-fg: oklch(0.20 0.04 290);
 
   /* Colors - Glass Surfaces */
   --color-surface: oklch(0.22 0.05 290 / 0.65);

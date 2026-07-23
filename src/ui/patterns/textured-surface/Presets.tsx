@@ -4,6 +4,18 @@ import {
   fullFrostedSvg, dataUri,
 } from "./svg-utils";
 
+/**
+ * Hand-picked preset gallery — intentionally independent of the canonical
+ * LAYER_SVGS / TEXTURE_STRENGTHS matrix (svg-utils.ts / TexturedSurface.tsx).
+ * Audited for AGENTS.md §7 item 6 (A1 fragility pass): none of the 8 presets
+ * below is an exact match for any canonical (layer, strength) combo — each
+ * differs from its nearest neighbor in at least one of octaves/stretch/tile,
+ * so sourcing any of them from the canonical tables would change the
+ * rendered SVG. Left as literals to preserve the owner's tuned look; do not
+ * "deduplicate" these against LAYER_SVGS without re-verifying byte-identical
+ * output first.
+ */
+
 type Mode = "tiled" | "full";
 
 interface PresetDef {
@@ -58,7 +70,10 @@ const PRESETS: PresetDef[] = [
     texture: "brushed-aluminium",
     mode: "tiled",
     rotated: 45,
-    ...(() => { const s = tileableMetallicSvg({ freqX: 0.3, freqY: 0.003, octaves: 3, stretch: 3.0, tile: 250, opacity: 0 }); return { svg: s, tileSize: 250, opacity: 0.30 }; })(),
+    // NOTE(human): `angle` is unused by tileableMetallicSvg (it always generates
+    // untilted, 0°-baseline noise for CSS rotation) but MetallicState requires
+    // it — added `angle: 0` here to satisfy the type without changing output.
+    ...(() => { const s = tileableMetallicSvg({ freqX: 0.3, freqY: 0.003, angle: 0, octaves: 3, stretch: 3.0, tile: 250, opacity: 0 }); return { svg: s, tileSize: 250, opacity: 0.30 }; })(),
   },
   {
     name: "Micro texture",

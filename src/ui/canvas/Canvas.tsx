@@ -148,8 +148,22 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
             // reads `var(--backdrop-blur)` / `var(--texture-opacity)`, so
             // overriding them here — rather than in each component — is
             // what makes this structural instead of a per-component patch.
+            //
+            // This only genuinely suppresses TexturedSurface's `texture="theme"`
+            // path: --texture-opacity-surface (its real opacity input) and
+            // --texture-suppress (belt-and-suspenders, see
+            // TexturedSurface.tsx) are both real CSS custom properties that
+            // inherit into every descendant's ::after opacity calc, with
+            // nothing in that path able to reset them back to non-zero.
+            // A `texture` other than "theme" (paper-grain / frosted-glass /
+            // brushed-aluminium) renders via a numeric React `opacity` style
+            // on plain divs — CSS custom-property overrides cannot reach
+            // that path at all. Do not place a non-theme TexturedSurface
+            // inside Canvas; it will not be suppressed here.
             ["--backdrop-blur" as string]: "0px",
             ["--texture-opacity" as string]: "0",
+            ["--texture-opacity-surface" as string]: "0",
+            ["--texture-suppress" as string]: "0",
           }}
         >
           <div

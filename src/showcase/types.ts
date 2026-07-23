@@ -1,6 +1,16 @@
 import type { ReactNode } from "react";
+import type { TexturedSurfaceProps } from "../ui/patterns/textured-surface";
 
 export type ShowcaseGroup = "inputs" | "display" | "feedback" | "overlay" | "navigation" | "canvas" | "data" | "patterns" | "typography";
+
+/**
+ * The showcase's theme-selector state, threaded down through App → Sidebar /
+ * ComponentPage → DemoSection → TexturedSurface. It genuinely varies (not
+ * always "theme"): `handleThemeChange` in App.tsx sets it to
+ * `"frosted-glass"` / `"brushed-aluminium"` for the Glass/Metallic themes
+ * and `"theme"` otherwise, mirroring TexturedSurface's own `texture` union.
+ */
+export type ShowcaseTexture = NonNullable<TexturedSurfaceProps["texture"]>;
 
 export interface ShowcaseEntry {
   title: string;

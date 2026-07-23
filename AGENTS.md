@@ -49,10 +49,15 @@ set of components. Your job is to keep it that way. These rules are not suggesti
       never repaints, and `backdrop-filter` can sample it cheaply.
     - **Never** let an element with `backdrop-filter` live inside a transforming subtree (i.e.
       inside `Canvas`'s pannable/zoomable layer). `Canvas` enforces this structurally by
-      overriding `--backdrop-blur` (and `--texture-opacity`) to `0` as inline custom properties
-      on its transforming layer — every component already reads these via `var(...)`, so the
-      override cascades to any descendant automatically. Do not reintroduce a hardcoded
-      `backdropFilter` value inside `src/ui/canvas/**` or `src/ui/graph-node/**`.
+      overriding `--backdrop-blur`, `--texture-opacity`, `--texture-opacity-surface` and
+      `--texture-suppress` to `0` as inline custom properties on its transforming layer — every
+      component already reads these via `var(...)`, so the override cascades to any descendant
+      automatically. Do not reintroduce a hardcoded `backdropFilter` value inside
+      `src/ui/canvas/**` or `src/ui/graph-node/**`. This guarantee only reaches `TexturedSurface`
+      instances rendered with `texture="theme"` — an inline texture (`paper-grain` /
+      `frosted-glass` / `brushed-aluminium`) paints via a numeric React `opacity` style that no
+      CSS override can reach, so a non-theme `TexturedSurface` must never be placed inside
+      `Canvas`.
     - **Canvas surfaces are always opaque.** `GraphNode` (and anything else rendered as a
       canvas-space surface) uses `bg-canvas-surface` (the `--color-canvas-surface` token), never
       `bg-surface`. Every theme must define an opaque `--color-canvas-surface` (enforced by
@@ -196,7 +201,7 @@ Runs, in order — ALL must pass:
 
 | Step | Command | Catches |
 |---|---|---|
-| Types | `tsc --noEmit` | type errors |
+| Types | `tsc -p tsconfig.app.json --noEmit` | type errors |
 | Lint | `eslint .` | native elements outside `src/ui/`, files >250 lines, restricted imports, arbitrary Tailwind color values |
 | Showcase coverage | `node scripts/check-showcase.mjs` | any `src/ui/**` component folder missing a `*.showcase.tsx`, any `ui/` folder not exported from `src/index.ts` |
 | Contrast | `node scripts/check-contrast.mjs` | WCAG AA contrast ratio failures |
@@ -206,6 +211,13 @@ Runs, in order — ALL must pass:
 
 Rules about validation itself:
 
+- **Do not "simplify" the Types step back to bare `tsc --noEmit`.** Root `tsconfig.json`
+  uses project references with `files: []`, so a bare `tsc --noEmit` traverses nothing and
+  silently type-checks zero files — a no-op that looks green. `tsconfig.app.json` is the
+  config that actually `include`s `src`, so `npm run validate` must invoke
+  `tsc -p tsconfig.app.json --noEmit` to get a real type-check. This was a confirmed hole
+  (fixed 2026-07-23, surfaced 6 pre-existing errors) — reverting it to bare `tsc --noEmit`
+  is a weakening of validation and is forbidden by the rule above.
 - **Never** modify `scripts/check-showcase.mjs`, `eslint.config.js`, or `tsconfig.json`
   to make a failure pass. If you believe a rule is wrong, stop and report to the human.
 - **Never** use `eslint-disable` without a `-- reason:` comment on the same line, and only
@@ -306,7 +318,7 @@ foreground.strong:   freq=0.18, octaves=4, stretch=1.6, tile=100
 | `medium` | 0.50 / 0.35 / 0.28 | Default params |
 | `subtle` | 0.30 / 0.22 / 0.15 | Finer freq, lower stretch within the layer |
 
-**Opacity formula** (read this before adjusting any value):
+**Opacity formula — inline textures only** (`texture="paper-grain" | "frosted-glass" | "brushed-aluminium"`; read this before adjusting any value):
 ```
 FINAL = TEXTURE_STRENGTHS[texture][strength] × LAYER_OPACITY[layer]
 ```
@@ -314,10 +326,12 @@ Example: `<TexturedSurface texture="paper-grain" strength="subtle" layer="foregr
 
 When layering textures (nested TexturedSurfaces), the cumulative effect is multiplicative. A foreground card inside a surface panel inside a page-backed view: the card's own texture at 0.075 compounds with the panel's texture at its opacity. The values are chosen so foreground textures are noticeably lighter — never override `LAYER_OPACITY` or `TEXTURE_STRENGTHS` to flatten this hierarchy.
 
-**SVG preset matrix** — defined in `svg-utils.ts` as `LAYER_SVGS[texture][layer][strength]`, returning `{ primary, secondary, tileSize }`. Each material defines 9 presets (3 layers × 3 strengths). Presets are pre-generated at module level via helper functions (`pAssets`, `mAssets`, `fAssets`) that call `dataUri(paperSvg(...))` etc. — no runtime SVG generation.
+**`texture="theme"` does NOT use this formula for opacity.** In theme mode, `strength` only selects which SVG noise preset to draw (`LAYER_SVGS["paper-grain"][layer][strength]`) — it has no effect on opacity. Theme-mode opacity is `calc(var(--texture-opacity-surface) * LAYER_OPACITY[layer])`, i.e. `TEXTURE_STRENGTHS` is never consulted for this path. This is intentional, not a bug: the active theme (not `strength`) owns the surface's base opacity via `--texture-opacity-surface`, and only the layer multiplier + the theme's chosen intensity apply. Do not "fix" this by multiplying in `strength` — that would change every themed surface's tuned opacity.
+
+**SVG preset matrix** — defined in `svg-utils.ts` as `LAYER_SVGS[texture][layer][strength]`, returning `{ primary, secondary, tileSize }`. Each material defines 9 presets (3 layers × 3 strengths). Presets are pre-generated at module level via helper functions (`pAssets`, `mAssets`, `fAssets`) that call `dataUri(paperSvg(...))` etc. — no runtime SVG generation. `LAYER_SVGS`, `TEXTURE_STRENGTHS` and `TEXTURE_CONFS` are all typed against the `TextureKey` union (`svg-utils.ts`), so adding a texture that misses one of the three tables fails to compile rather than silently falling through at runtime. A `getComputedStyle`-derived value (e.g. `--texture-type`) is untyped at the CSS boundary — narrow it with the exported `isTextureKey` guard before indexing any of these tables.
 
 **Two rendering paths:**
-- **Inline textures** (`texture="paper-grain" | "brushed-aluminium" | "frosted-glass"`): React-rendered `<div>` overlays with `backgroundImage: url("${svg}")`. Theme-independent. Conf is built by `TEXTURE_CONFS[texture](opacity, layer, strength)`.
+- **Inline textures** (`texture="paper-grain" | "brushed-aluminium" | "frosted-glass"`): React-rendered `<div>` overlays with `backgroundImage: url("${svg}")`. Theme-independent. Conf is built by `TEXTURE_CONFS[texture](opacity, layer, strength)`. In DEV (`import.meta.env?.DEV`), a missing `TEXTURE_STRENGTHS`/`TEXTURE_CONFS` entry for the given `texture` logs a `console.warn` instead of silently falling through to theme rendering.
 - **Theme-driven** (`texture="theme"`): `::after` pseudo-element reads `--texture-paper-resolved` / `--texture-opacity-resolved` (with fallback to `--texture-paper` / `--texture-opacity-surface`). Component writes `--texture-paper-resolved` from `LAYER_SVGS["paper-grain"][layer][strength]` and `--texture-opacity-resolved` from `calc(var(--texture-opacity-surface) * layerOpacity)`.
 
 **ParamTable subcomponent** — `<TexturedSurface.ParamTable texture="paper-grain" />` renders a 3×3 grid (layers × strengths) for any texture, filling container width with aspect-square cells. No labels inside cells — just bare texture swatches. Always use literal JSX in showcase files (no `.map()` loops) so the code extractor produces copyable output.
@@ -326,6 +340,13 @@ When layering textures (nested TexturedSurfaces), the cumulative effect is multi
 - Never write to the same CSS custom property that the `::after` reads. The CVA reads `--texture-paper-resolved` (fallback to `--texture-paper`), and the component writes to `--texture-paper-resolved` — never to `--texture-paper`. Same for `--texture-size-resolved` and `--texture-opacity-resolved`.
 - Self-reference example (DO NOT DO): setting `--texture-opacity-surface: calc(var(--texture-opacity-surface) * 0.5)` creates a dependency cycle → guaranteed-invalid → property falls back to initial value (opacity: 1).
 - The `html::before` page texture (Comic theme) uses `--texture-paper` directly — this is fine because the component never writes to the base `--texture-paper` token. The indirection only exists for the `::after` path.
+
+**`--texture-suppress` — nested-texture suppression, without poisoning:**
+- The inline-texture path (above) renders its own visuals via numeric React `opacity` on plain `<div>`s, but it still carries the shared `texturedSurfaceVariants` classes (including the `::after` theme-texture pseudo-element) on its root — so it must suppress its *own* `::after`, or a themed texture would render behind its inline layers too.
+- It does this by setting `--texture-suppress: "0"` (only on itself). The CVA's opacity expression is `calc(var(--texture-opacity-resolved,var(--texture-opacity-surface)) * var(--texture-suppress,1))` — multiplying by `0` zeroes that one element's own `::after`, no matter what it inherited.
+- Because CSS custom properties inherit, `--texture-suppress: 0` also reaches any descendant that doesn't redeclare it. Every `texture="theme"` render therefore unconditionally re-declares `--texture-suppress: "1"` on itself, undoing whatever it inherited from an ancestor inline surface — so a `texture="theme"` surface nested inside an inline one always shows its own texture (see the "Nested inline → theme" showcase demo).
+- **Do not use `--texture-suppress` to intentionally hide a nested theme surface's texture** — a `texture="theme"` render always resets it to `1`. The only real (and correct) way to suppress a nested theme texture is `Canvas`'s override of `--texture-opacity-surface` itself (§0.12), which the theme path never resets.
+- This is a different mechanism from the *former* bug where the inline path zeroed `--texture-opacity-surface` directly as its kill switch — that inherited into nested theme children and silently zeroed their real opacity too. `--texture-suppress` exists so "kill switch" and "real opacity input" are never the same variable.
 
 **Theme tokens for texture:**
 ```
@@ -340,7 +361,7 @@ All per-layer SVG textures use the JS-side `LAYER_SVGS` factory pattern (see Tex
 **Comic theme page texture stacking:**
 - `html[data-theme="comic"]` sets the background color + repeating line pattern.
 - `html[data-theme="comic"]::before` overlays the SVG noise texture at `z-index: -1` with `--texture-opacity: 0.5` — sits behind body content but in front of the html background.
-- The page SVG (`--texture-paper`) comes from the DS factory (`PAGE_MEDIUM_URI` in `svg-utils.ts`), **not** from a hardcoded string in CSS. The showcase's `handleThemeChange` sets it via JS on `document.documentElement.style`. This ensures the page texture always matches the `LAYER_SVGS["paper-grain"]["page"]["medium"]` preset — single source of truth.
+- The page SVG (`--texture-paper`) comes from the DS factory (`PAGE_MEDIUM_URI` in `svg-utils.ts`), **not** from a hardcoded string in CSS. The showcase's `handleThemeChange` sets it via JS on `document.documentElement.style`. `PAGE_MEDIUM_URI` sources directly from `LAYER_SVGS["paper-grain"]["surface"]["medium"]` (`layerPaper.surface.medium.primary`) — **not** `["page"]["medium"]` as the name suggests. This is a known naming drift (`NOTE(human)` at its declaration in `svg-utils.ts`): the constant's params have always matched `surface.medium`, and the owner likes the shipped look, so the reference points at the preset it actually reproduces rather than being changed to the `page.medium` params its name implies. Still a single source of truth — just not the one the name suggests.
 - `html[data-theme="comic"] body { background-color: transparent; }` ensures the page texture shows through.
 - The showcase root `<div>` must NOT have `bg-bg` (or must be overridden per theme) — it blocks the html background.
 

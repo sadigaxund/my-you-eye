@@ -7,6 +7,7 @@ import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/patterns/text
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
+import type { ShowcaseTexture } from "./types";
 
 const THEME_GROUPS = [
   {
@@ -43,7 +44,7 @@ export default function App() {
   const [theme, setTheme] = useState<ThemeProfile>("default");
   const [activeSlug, setActiveSlug] = useState<string | undefined>(initialSlug);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [texture, setTexture] = useState("theme");
+  const [texture, setTexture] = useState<ShowcaseTexture>("theme");
 
   const toggleDark = () => {
     setDark((d) => {

@@ -1,9 +1,9 @@
-import { useRef, useState, useEffect, type React } from "react";
+import { useRef, useState, useEffect, type CSSProperties } from "react";
 
 const FEATHER_A = "repeating-linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%)";
 const FEATHER_B = "repeating-linear-gradient(to bottom, black 0%, transparent 50%, black 100%)";
 
-function maskProps(gradient: string, tile: number): React.CSSProperties {
+function maskProps(gradient: string, tile: number): CSSProperties {
   return {
     WebkitMaskImage: gradient,
     maskImage: gradient,
@@ -34,7 +34,7 @@ export function Preview({ bg, uri, tile, opacity, angle, seamBlend }: {
   }, [rotated]);
 
   const half = rotated ? sz / 2 || 0 : 0;
-  const layerStyle: React.CSSProperties = rotated
+  const layerStyle: CSSProperties = rotated
     ? { top: "50%", left: "50%", width: sz || 1, height: sz || 1, marginLeft: -half, marginTop: -half, transform: `rotate(${angle}deg)`, transformOrigin: "center" }
     : { inset: "0" };
 

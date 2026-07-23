@@ -12,7 +12,7 @@
     "build:lib": "tsup",
     "prebuild:lib": "node scripts/gen-manifest.mjs",
     "postbuild:lib": "node scripts/copy-styles.mjs",
-    "validate": "tsc --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/copy-styles.mjs",
+    "validate": "tsc -p tsconfig.app.json --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/copy-styles.mjs",
     "audit": "node scripts/audit.mjs",
     "preview": "vite preview",
     "prepare": "npm run build:lib",

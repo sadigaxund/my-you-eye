@@ -20,6 +20,7 @@ html[data-theme="stark"].dark {
   --color-success: oklch(0.50 0.15 150);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.70 0.15 80);
+  --color-warning-fg: oklch(0.15 0 0);
 
   --color-surface: oklch(1 0 0);
   --color-surface-hover: oklch(0.97 0 0);
@@ -69,6 +70,7 @@ html[data-theme="stark"].dark {
   --color-success: oklch(0.65 0.15 150);
   --color-success-fg: oklch(0 0 0);
   --color-warning: oklch(0.80 0.15 80);
+  --color-warning-fg: oklch(0.15 0 0);
 
   --color-surface: oklch(0.05 0 0);
   --color-surface-hover: oklch(0.10 0 0);

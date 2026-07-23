@@ -12,7 +12,7 @@ const buttonVariants = cva(
         primary: "bg-primary text-primary-fg hover:bg-primary/90",
         secondary: "bg-secondary text-secondary-fg hover:bg-secondary/80",
         ghost: "text-fg hover:bg-secondary",
-        danger: "bg-danger text-primary-fg hover:bg-danger/90",
+        danger: "bg-danger text-danger-fg hover:bg-danger/90",
       },
       size: {
         sm: "h-8 px-3 text-xs",
