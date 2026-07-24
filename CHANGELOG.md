@@ -10,6 +10,13 @@ All notable changes to this project are documented here.
 - **`check-contrast.mjs`**: 3 new declared-token pairs — `warning-fg/warning`, `fg/surface`, `muted/surface` — checked across all 9 themes × light/dark (all pass without needing any theme value changes).
 - **`check-contrast.mjs`**: a bounded class-level cross-wire guard that scans `src/ui/**/*.tsx` (excluding showcase files) for a `bg-<sem>` and a mismatched `text-<sem2>-fg`/`text-bg`/`text-fg` co-occurring in the same Tailwind class string (grouped by modifier prefix, e.g. `hover:`/`data-[state=…]:`, to avoid false-pairing unrelated states) and fails if the rendered pairing doesn't hit 4.5:1 in every theme/mode. This is the check that would have caught the `Button`/`Badge` danger mis-wiring below. See its `NOTE(human)` for the heuristic's known limits (doesn't join classes split across array elements or separate `cn()` arguments).
 
+### Changed
+
+- **New `decorators` category** (governance framework, Track B). Formalized the five-category model in `AGENTS.md` §1 — components / themes / decorators / motion / effects — with a category map, a "which home does this belong to" step, and a triage workflow for decomposing HTML found elsewhere into existing categories (or identifying the new entry that must be added first). Added a §2-decorator checklist covering the rules specific to wrapper-style visual effects.
+- **`TexturedSurface` moved** from `src/ui/patterns/textured-surface/` to `src/ui/decorators/textured-surface/` as the reference decorator. Public import path is unchanged (`import { TexturedSurface } from "my-you-eye"`) — the move is internal. Its showcase `group` changed from `patterns` to the new `decorators` tab.
+- **`check-showcase.mjs`** now recognizes category container dirs (`patterns`, `decorators`, `effects`) instead of hardcoding `patterns`, so category folders aren't mistaken for component folders missing a showcase.
+- **`SKILL.md`** (consumer-facing) gained a `decorators` catalog section plus guidance on wrapping and nesting decorators to compose effects.
+
 ### Fixed
 
 - **WCAG AA contrast failures** (theme/profile audit):

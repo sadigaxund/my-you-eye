@@ -41,7 +41,10 @@ Canvas, ConnectionLine, Graph, GraphNode, Port
 CellType, DataList, DataTable, Table, TreeView
 
 ### patterns
-ConfirmDialog, FormField, PageShell, StatCard, TexturedSurface, Toolbar
+ConfirmDialog, FormField, PageShell, StatCard, Toolbar
+
+### decorators
+TexturedSurface
 
 ### typography
 Typography
@@ -94,6 +97,37 @@ document.documentElement.dataset.theme = "glass";
 // Toggle dark mode
 document.documentElement.classList.toggle("dark");
 ```
+
+## Decorators — composable visual effects
+
+A **decorator** is not a component you fill with content — it *wraps* content and changes how it
+looks. It doesn't care what's inside, so you can wrap anything.
+
+```tsx
+import { TexturedSurface } from "my-you-eye";
+
+<TexturedSurface texture="theme" layer="surface" strength="subtle">
+  <Card>…</Card>
+</TexturedSurface>
+```
+
+Decorators **compose by nesting** — stack them to combine effects:
+
+```tsx
+<TexturedSurface texture="paper-grain" layer="page">
+  <TexturedSurface texture="theme" layer="surface">
+    <Card>…</Card>
+  </TexturedSurface>
+</TexturedSurface>
+```
+
+Rules of thumb:
+- Reach for a decorator when you want a *surface treatment* (texture, depth, glow, border style),
+  not new UI structure.
+- Nest outermost = furthest back. A `layer` of `page` sits behind `surface`, which sits behind
+  `foreground`.
+- Decorators are themeable: `texture="theme"` follows whatever theme is active, so it restyles
+  for free when the user switches themes.
 
 ## CLI tool
 

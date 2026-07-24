@@ -5,7 +5,7 @@ import { Tuner } from "./Tuner";
 
 const entry: ShowcaseEntry = {
   title: "TexturedSurface",
-  group: "patterns",
+  group: "decorators",
   demos: [
     {
       name: "Tuner",

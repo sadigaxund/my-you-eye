@@ -11,6 +11,7 @@ export const GROUPS: ShowcaseGroup[] = [
   "canvas",
   "data",
   "patterns",
+  "decorators",
   "typography",
 ];
 

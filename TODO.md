@@ -140,13 +140,13 @@ inline→theme TexturedSurface renders visible texture.
 > `effects` = DOM-native, live, interaction-driven (hover/press/scroll/pulse/glow). They share
 > no runtime. See Track E and the amended AGENTS.md §9c.
 
-- [ ] Retrofit `TexturedSurface` as the first decorator (keep its public export path stable).
-- [ ] Extend AGENTS.md §1 decision tree with "which category does this belong to," and add a
+- [x] Retrofit `TexturedSurface` as the first decorator (keep its public export path stable).
+- [x] Extend AGENTS.md §1 decision tree with "which category does this belong to," and add a
   §2-analog checklist for creating a decorator.
-- [ ] Add an AGENTS.md triage workflow: "extracted HTML/component from elsewhere → decompose
+- [x] Add an AGENTS.md triage workflow: "extracted HTML/component from elsewhere → decompose
   into (existing component? token? decorator? motion?) → if nothing fits, which new entry to
   add first."
-- [ ] Update SKILL.md (consumer-facing): add decorators to the catalog + how to apply/compose
+- [x] Update SKILL.md (consumer-facing): add decorators to the catalog + how to apply/compose
   them. No dev details.
 
 **Acceptance:** A fresh agent given only AGENTS.md places a new border-effect → decorator and

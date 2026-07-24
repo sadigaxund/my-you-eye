@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { cn } from "../lib/cn";
-import { TexturedSurface } from "../ui/patterns/textured-surface";
+import { TexturedSurface } from "../ui/decorators/textured-surface";
 import { GROUPS, pages } from "./registry";
 import type { ShowcaseTexture } from "./types";
 

@@ -178,6 +178,34 @@
       ]
     },
     {
+      "name": "TexturedSurface",
+      "group": "decorators",
+      "folder": "ui/decorators/textured-surface",
+      "props": {
+        "variant": [
+          "elevated",
+          "ghost",
+          "primary",
+          "surface"
+        ],
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "Tuner",
+        "Paper grain",
+        "Frosted glass",
+        "Brushed aluminium",
+        "Paper grain — full matrix",
+        "Frosted glass — full matrix",
+        "Brushed aluminium — full matrix",
+        "Theme-driven",
+        "Nested inline → theme",
+        "Composed"
+      ]
+    },
+    {
       "name": "Avatar",
       "group": "display",
       "folder": "ui/avatar",
@@ -784,34 +812,6 @@
       "props": {},
       "demos": [
         "Default"
-      ]
-    },
-    {
-      "name": "TexturedSurface",
-      "group": "patterns",
-      "folder": "ui/patterns/textured-surface",
-      "props": {
-        "variant": [
-          "elevated",
-          "ghost",
-          "primary",
-          "surface"
-        ],
-        "size": [
-          "sm"
-        ]
-      },
-      "demos": [
-        "Tuner",
-        "Paper grain",
-        "Frosted glass",
-        "Brushed aluminium",
-        "Paper grain — full matrix",
-        "Frosted glass — full matrix",
-        "Brushed aluminium — full matrix",
-        "Theme-driven",
-        "Nested inline → theme",
-        "Composed"
       ]
     },
     {

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import type { TexturedSurfaceProps } from "../ui/patterns/textured-surface";
+import type { TexturedSurfaceProps } from "../ui/decorators/textured-surface";
 
-export type ShowcaseGroup = "inputs" | "display" | "feedback" | "overlay" | "navigation" | "canvas" | "data" | "patterns" | "typography";
+export type ShowcaseGroup = "inputs" | "display" | "feedback" | "overlay" | "navigation" | "canvas" | "data" | "patterns" | "decorators" | "typography";
 
 /**
  * The showcase's theme-selector state, threaded down through App → Sidebar /

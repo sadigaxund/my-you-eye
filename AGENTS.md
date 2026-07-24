@@ -68,6 +68,26 @@ set of components. Your job is to keep it that way. These rules are not suggesti
 
 ## 1. Decision tree — follow it top to bottom, stop at first match
 
+### Category map — decide the home BEFORE anything else
+
+Everything in this repo is exactly **one** of five categories. Put work in the right one:
+
+| Category | Home | What it is | Delivered as | Rules |
+|---|---|---|---|---|
+| **Components** | `src/ui/<name>/`, `src/ui/patterns/<name>/` | Self-contained UI (Button, Dialog) or a composition of primitives (FormField) | CVA variants + Radix behavior | §2 |
+| **Themes** | `src/styles/themes/<name>.css` | A complete token-override preset that restyles everything | `data-theme` + `.dark` | §0.9, §7 |
+| **Decorators** | `src/ui/decorators/<name>/` | A composable *visual effect* that WRAPS arbitrary children without knowing what they are (TexturedSurface, and the planned Elevate3d / Glow / HandDrawn border) | wrapper component (CVA + tokens), nested to compose | §2 + §2-decorator |
+| **Motion** | `packages/motion/` | Frame-driven, deterministic animation for the **scripted story** (video export + live presenter) | Remotion wrappers (`useCurrentFrame`) | §9 |
+| **Effects** | `src/ui/effects/` | Live, DOM-native **ambient/interactive** motion (hover-press, scroll-entrance, pulse) — NOT a scripted timeline | CSS transitions / `@keyframes` + hooks (IntersectionObserver). No Remotion. | §9 (effects tier) |
+
+Two distinctions people get wrong:
+- **Component vs Decorator** — renders specific UI content → **component**. Takes `children` and
+  only changes how they *look* (surface, border, glow, depth) without caring what they are →
+  **decorator**.
+- **Motion vs Effects** — frame-driven & deterministic for capture (video/presenter) →
+  `packages/motion` (Remotion). Live & interaction-driven on the page (hover/scroll/pulse) →
+  `src/ui/effects` (CSS + hooks). They share no runtime — **never merge them**. See §9.
+
 You need a UI element. Do this **in order**:
 
 ### Step A — Does it already exist?
@@ -96,6 +116,24 @@ on a `ui/` component, you are in variant territory — go to §3.
 ### Step C — It does not exist at all?
 
 Create it **in this repo** (never inline in a consuming app), following §2 exactly.
+
+### Triage — "I found this HTML/component elsewhere. Can we build it?"
+
+Do **not** paste foreign HTML in. Decompose it against the five categories, in this order:
+
+1. **Structure / behavior** → is it (or can it be built from) an existing **component**? Missing
+   primitive → create it (§2).
+2. **Look** (color/radius/spacing/shadow) → expressible as **theme tokens**? Missing visual
+   constant → add the token first (§0.2), then every theme defines it (§0.9).
+3. **Surface effect** (texture/border/glow/depth/translucency) → a **decorator** (existing or new,
+   §2-decorator).
+4. **Motion** → scripted & deterministic → **motion** (§9); live & interaction-driven → **effects**
+   (§9 effects tier).
+
+If every piece maps → compose them; done. If a piece maps to **nothing**, that gap IS the new
+entry you must add **first** — a token, a component, a decorator, or a primitive — in its own
+category, following its rules. Never inline the foreign markup to "make it work." Unsure which
+category a piece belongs to → §8 (stop and ask).
 
 ---
 
@@ -137,6 +175,29 @@ Work through every step. Do not skip. Do not reorder.
 A file exceeding **250 lines** is flagged by lint (warning). If a component
 legitimately needs more, split subparts into additional files **inside the same
 folder** (e.g. `Table.Row.tsx`) — never into a shared file elsewhere.
+
+### 2-decorator. Creating a decorator
+
+A decorator lives under `src/ui/decorators/<kebab-name>/` with the same file layout and the
+**full §2 checklist**, plus these extra rules. **TexturedSurface is the reference implementation.**
+
+1. **It wraps children it does not understand.** Signature is
+   `({ children, ...effectProps }) => <wrapper>{children}</wrapper>`. Never import or assume a
+   specific `src/ui` component inside a decorator — it decorates *any* `ReactNode`.
+2. **Composable by nesting.** Two decorators must stack
+   (`<Glow><Elevate3d>{x}</Elevate3d></Glow>`) without fighting. Prefer effects that live on the
+   wrapper element, a pseudo-element, or an absolutely-positioned overlay — not ones that
+   restructure children.
+3. **Token-driven, own namespace.** Tunable constants become `--decorator-*` (or a specific
+   `--glow-*` / `--elevate-*`) tokens in `tokens.css`, themed where a theme should be able to
+   art-direct them. No hardcoded values (§0.2).
+4. **Respect the Canvas performance boundary (§0.12).** No `backdrop-filter`/`filter` inside a
+   transforming subtree. A decorator that uses them must document that it cannot be used inside
+   `Canvas`, and read the Canvas-overridden tokens where applicable.
+5. **Showcase group is `decorators`.** Demo the effect on neutral sample content (a Card, a box)
+   with all variants, and demonstrate it composing with at least one other decorator.
+6. Export from `src/index.ts`; `npm run validate` green; visual check in the **decorators** tab,
+   light + dark, across themes.
 
 ## 3. Modifying an existing component — checklist
 
@@ -280,7 +341,10 @@ Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--sh
 
 ### TexturedSurface — layer × strength system
 
-**Files:** `src/ui/patterns/textured-surface/TexturedSurface.tsx`, `svg-utils.ts`, `ParamTable.tsx`, `texture-factory.ts`
+**Files:** `src/ui/decorators/textured-surface/TexturedSurface.tsx`, `svg-utils.ts`, `ParamTable.tsx`, `texture-factory.ts`
+
+> TexturedSurface is the **reference decorator** (§1 category map, §2-decorator). It lives under
+> `src/ui/decorators/`, not `src/ui/patterns/`.
 
 **Three-tier hierarchy** — every textured surface belongs to one of three layers, each with distinct SVG noise parameters (frequency, octaves, contrast stretch, tile size):
 

@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { CodeBlock } from "../ui/code-block";
-import { TexturedSurface } from "../ui/patterns/textured-surface";
+import { TexturedSurface } from "../ui/decorators/textured-surface";
 import { cn } from "../lib/cn";
 import type { RegistryDemo } from "./registry";
 import type { ShowcaseTexture } from "./types";

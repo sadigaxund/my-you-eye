@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**54 components** across 9 groups.
+**54 components** across 10 groups.
 
 ## canvas
 
@@ -30,6 +30,12 @@ import "my-you-eye/styles.css";
 | `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Truncation |
 | `Table` | — |  |
 | `TreeView` | type: button<br>variant: condensed | Default vs Condensed, Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
+
+## decorators
+
+| Component | Variants | Demos |
+|---|---|---|
+| `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Nested inline → theme, Composed |
 
 ## display
 
@@ -101,7 +107,6 @@ import "my-you-eye/styles.css";
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
 | `StatCard` | — | Default |
-| `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Nested inline → theme, Composed |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 
 ## typography

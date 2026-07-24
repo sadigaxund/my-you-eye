@@ -7,15 +7,21 @@ const INDEX_TS = join(ROOT, "src/index.ts");
 
 let errors = [];
 
-// Collect all component folders under src/ui/ (and src/ui/patterns/)
+// Category container dirs under src/ui/ — these group components one level
+// deeper rather than being components themselves (see AGENTS.md §1 category
+// map). "effects" is listed ahead of its creation in Track E; a missing dir is
+// simply skipped.
+const CONTAINER_DIRS = new Set(["patterns", "decorators", "effects"]);
+
+// Collect all component folders under src/ui/ (and its category containers)
 function findComponentDirs(dir) {
   const dirs = [];
   if (!existsSync(dir)) return dirs;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.isDirectory()) {
       const subdir = join(dir, entry.name);
-      // Only go one level deep for patterns
-      if (entry.name === "patterns") {
+      // Only go one level deep for category containers
+      if (CONTAINER_DIRS.has(entry.name)) {
         dirs.push(...findComponentDirs(subdir));
       } else {
         dirs.push(subdir);

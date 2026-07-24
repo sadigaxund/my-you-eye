@@ -81,4 +81,4 @@ export { FileDrop } from "./ui/file-drop";
 export { Image } from "./ui/image";
 export { Graph } from "./ui/patterns/graph";
 export type { GraphProps, EditorNode, EditorEdge } from "./ui/patterns/graph";
-export { TexturedSurface } from "./ui/patterns/textured-surface";
+export { TexturedSurface } from "./ui/decorators/textured-surface";
