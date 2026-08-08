@@ -20,3 +20,39 @@ const BLUR_MULTIPLIER: Record<BlurToken, number> = { sm: 0.25, md: 0.5, lg: 1 };
 export function blurExpr(token: BlurToken): string {
   return `calc(var(--grid-unit) * ${BLUR_MULTIPLIER[token]})`;
 }
+
+/**
+ * Shared closed color union for primitives that paint (Draw, Trace,
+ * Spotlight, Pulse, Shake, Ripple, Caption, ...) — every primitive picks
+ * from this instead of accepting a raw color string, and reads it through
+ * `colorVar`/`colorBgClass` instead of re-declaring its own token map.
+ */
+export type MotionColor = "primary" | "success" | "warning" | "danger" | "fg" | "muted";
+
+const COLOR_VAR: Record<MotionColor, string> = {
+  primary: "var(--color-primary)",
+  success: "var(--color-success)",
+  warning: "var(--color-warning)",
+  danger: "var(--color-danger)",
+  fg: "var(--color-fg)",
+  muted: "var(--color-muted)",
+};
+
+/** CSS `var(...)` reference for a MotionColor — usable in computed inline styles (stroke, boxShadow, ...). */
+export function colorVar(color: MotionColor): string {
+  return COLOR_VAR[color];
+}
+
+const COLOR_BG_CLASS: Record<MotionColor, string> = {
+  primary: "bg-primary",
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-danger",
+  fg: "bg-fg",
+  muted: "bg-muted",
+};
+
+/** Tailwind background-color utility class for a MotionColor. */
+export function colorBgClass(color: MotionColor): string {
+  return COLOR_BG_CLASS[color];
+}

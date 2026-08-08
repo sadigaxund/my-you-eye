@@ -14,5 +14,5 @@ export { applySpring } from "./springs";
 export { mulberry32, hashSeed, seededValueAt } from "./prng";
 export { Slot } from "./Slot";
 export type { SlotProps } from "./Slot";
-export { distanceExpr, blurExpr } from "./tokens";
-export type { DistanceToken, BlurToken } from "./tokens";
+export { distanceExpr, blurExpr, colorVar, colorBgClass } from "./tokens";
+export type { DistanceToken, BlurToken, MotionColor } from "./tokens";

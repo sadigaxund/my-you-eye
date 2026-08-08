@@ -10,3 +10,25 @@ export * from "./stagger";
 export * from "./type-text";
 export * from "./highlight";
 export * from "./slide";
+export * from "./camera";
+export * from "./draw";
+export * from "./trace";
+export * from "./wipe";
+export * from "./unmask";
+export * from "./spotlight";
+export * from "./pulse";
+export * from "./shake";
+export * from "./ripple";
+export * from "./count-up";
+export * from "./text-swap";
+export * from "./caption";
+export * from "./morph";
+export * from "./cursor";
+// Not a wildcard: `Beat` the no-op-hold component and `Beat` the semantic
+// timing-unit type (core/types.ts) share a name by design (both required
+// exactly this way in TODO.md) — tsc merges a same-named type + value
+// re-export correctly (they're different namespaces), but tsup's .d.ts
+// bundler can't resolve that merge across two separate `export *` targets.
+// Per TS's own TS2308 guidance, an explicit re-export disambiguates it.
+export { Beat } from "./beat";
+export type { BeatProps } from "./beat";
