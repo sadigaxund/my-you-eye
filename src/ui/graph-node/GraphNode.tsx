@@ -1,8 +1,8 @@
-import { forwardRef } from "react";
+import { forwardRef, useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode, HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { nodeHeightPx, portY, HEADER, ROW, FOOTER, GRID } from "./grid";
+import { nodeHeightPx, portY, snap, HEADER, ROW, FOOTER, GRID } from "./grid";
 import { Port } from "../port";
 
 const ROW_PORT_Y_OFFSET = HEADER * GRID;
@@ -59,10 +59,51 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
     const isSimple = variant === "simple";
     const hasRows = rows && rows.length > 0;
     const height = hasRows ? nodeHeightPx(rows!.length, !!footer && !isSimple) : undefined;
+    const hasLegacyPorts = Boolean(ports && ports.length > 0 && !hasRows && !isSimple);
+
+    // Legacy `ports` (no `rows`) sit on a node whose height is intrinsic —
+    // driven by header/children/footer, not the grid formula in grid.ts.
+    // Distributing them across "the node's real height" therefore means
+    // measuring that real, rendered height (ResizeObserver, same pattern
+    // as CodeBlock's substring-highlight geometry), then snapping each
+    // port's y to a grid line via `snap()` from grid.ts — never a second
+    // copy of the GRID/HEADER constants (see `npm run audit`).
+    const nodeRef = useRef<HTMLDivElement>(null);
+    const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
+
+    useLayoutEffect(() => {
+      if (!hasLegacyPorts) return;
+      const el = nodeRef.current;
+      if (!el) return;
+      // offsetHeight, never getBoundingClientRect().height: the latter is
+      // post-transform viewport space, and GraphNode lives inside Canvas's
+      // `scale(zoom)` layer (AGENTS.md §7). measuredHeight is fed back as a
+      // CSS `top` inside that same scaled layer, so a rect-based measurement
+      // would spread the ports across zoom× the node's real height.
+      const update = () => setMeasuredHeight(el.offsetHeight);
+      update();
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }, [hasLegacyPorts]);
+
+    const setRefs = useCallback((node: HTMLDivElement | null) => {
+      (nodeRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }, [ref]);
+
+    // Fallback (used only before the first measurement lands) reproduces
+    // the old header+one-cell span so there's no NaN/negative flash — it's
+    // replaced by the real measured span on the very next layout pass.
+    const legacyPortTop = HEADER * GRID;
+    const legacyPortBottom = measuredHeight != null
+      ? Math.max(legacyPortTop + GRID, measuredHeight - (footer && !isSimple ? FOOTER * GRID : 0))
+      : legacyPortTop + GRID;
 
     return (
       <div
-        ref={ref}
+        ref={setRefs}
         className={cn(graphNodeVariants({ variant }), className)}
         style={{ left: x, top: y, height, ...style }}
         {...props}
@@ -131,7 +172,8 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
               const isLeft = p.side === "left";
               const idx = isLeft ? leftPorts.indexOf(p) : rightPorts.indexOf(p);
               const total = isLeft ? leftPorts.length : rightPorts.length;
-              const yPos = ((HEADER * GRID) + GRID) / (total + 1) * (idx + 1);
+              const span = legacyPortBottom - legacyPortTop;
+              const yPos = snap(legacyPortTop + (span / (total + 1)) * (idx + 1));
               return (
                 <div
                   key={i}

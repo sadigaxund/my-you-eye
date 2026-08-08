@@ -15,6 +15,16 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Sizes",
+      description: "size=\"sm\" is the compact, unlabelled track used when a Slider is composed inline (e.g. CellType's AudioDisplay seek bar).",
+      render: () => (
+        <div className="max-w-xs mx-auto space-y-4">
+          <Slider defaultValue={40} size="sm" />
+          <Slider defaultValue={65} size="md" />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

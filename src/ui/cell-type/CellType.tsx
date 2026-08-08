@@ -6,12 +6,16 @@ import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
 import { Dialog, DialogContent, DialogTitle } from "../dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
+import { Image } from "../image";
+import { Slider } from "../slider";
+import { Button } from "../button";
 import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellType.date-displays";
 import {
   NumberDisplay, PercentageDisplay, BytesDisplay, DurationDisplay,
   CurrencyDisplay, SignedDisplay,
 } from "./CellType.numeric-displays";
 import { JsonDisplay, TreeDisplay, ArrayDisplay } from "./CellType.complex-displays";
+import { useTruncated, EllipsisBadge } from "./CellType.shared";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
@@ -63,11 +67,18 @@ function ImageDisplay({ value }: { value: unknown }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <img src={src} alt="" className="size-8 rounded-ui-sm object-cover border border-border cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setOpen(true)} />
+      <Image
+        src={src}
+        alt=""
+        radius="sm"
+        bordered
+        className="size-thumb cursor-pointer hover:opacity-80 transition-opacity"
+        onClick={() => setOpen(true)}
+      />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="p-0 overflow-hidden max-w-[90vw] w-auto">
           <DialogTitle className="sr-only">Image preview</DialogTitle>
-          <img src={src} alt="" className="max-w-[80vw] max-h-[80vh] object-contain" />
+          <Image src={src} alt="" fit="contain" radius="none" className="max-w-[80vw] max-h-[80vh]" />
         </DialogContent>
       </Dialog>
     </>
@@ -93,34 +104,21 @@ function AudioDisplay({ value }: { value: unknown }) {
   }, []);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
   return (
-    <span className="inline-flex items-center gap-2 text-xs min-w-48" onClick={(e) => e.stopPropagation()}>
+    <span className="inline-flex items-center gap-inline text-xs min-w-audio-min" onClick={(e) => e.stopPropagation()}>
       <audio ref={r} src={src} onTimeUpdate={() => setT(r.current?.currentTime ?? 0)} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
-      <button type="button" onClick={toggle}
-        className="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-fg cursor-pointer hover:opacity-80 transition-opacity">
+      <Button type="button" variant="ghost" size="icon-sm" onClick={toggle} aria-label={p ? "Pause" : "Play"}>
         {p ? <svg viewBox="0 0 10 10" className="size-3 fill-current"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
           : <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>}
-      </button>
-      <input type="range" min={0} max={d || 1} step={0.1} value={t} onChange={seek}
-        className="flex-1 h-1 accent-primary cursor-pointer" />
-      <span className="font-mono tabular-nums text-muted shrink-0 w-24 text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
+      </Button>
+      <Slider aria-label="Seek" size="sm" min={0} max={d || 1} step={0.1} value={t} onChange={seek} className="flex-1" />
+      <span className="font-mono tabular-nums text-muted shrink-0 w-audio-time text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
     </span>
   );
 }
 
 function TruncatedCellValue({ value, className }: { value: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
+  const [ref, isTruncated] = useTruncated<HTMLSpanElement>([value]);
   const [open, setOpen] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
 
   useLayoutEffect(() => {
     if (!isTruncated) setOpen(false);
@@ -144,11 +142,7 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
           >
             {value}
           </span>
-          {isTruncated && (
-            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">
-              …
-            </span>
-          )}
+          {isTruncated && <EllipsisBadge />}
         </span>
       </PopoverTrigger>
       <PopoverContent className="max-w-sm p-3 text-sm whitespace-pre-wrap break-words">

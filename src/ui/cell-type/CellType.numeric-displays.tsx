@@ -1,8 +1,7 @@
-function numberParts(value: number, opts?: Intl.NumberFormatOptions) {
-  const n = Number(value);
-  if (isNaN(n)) return null;
-  return { n, parts: new Intl.NumberFormat(undefined, opts).formatToParts(n) };
-}
+import {
+  formatNumberParts, formatPercentageParts, formatBytesParts, formatDurationParts,
+  formatCurrencyParts, formatSignedParts,
+} from "../../lib/format";
 
 function styledParts(parts: Intl.NumberFormatPart[], overrides?: {
   integer?: string; fraction?: string; decimal?: string; group?: string;
@@ -16,24 +15,8 @@ function styledParts(parts: Intl.NumberFormatPart[], overrides?: {
 
 const common = "font-mono tabular-nums truncate inline-block max-w-full align-middle";
 
-const BYTE_UNITS: Intl.NumberFormatOptions["unit"][] = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"];
-const BYTE_SHORT = ["B", "KB", "MB", "GB", "TB"];
-
-function byteUnitIndex(unit?: string): number | undefined {
-  if (!unit) return undefined;
-  const u = unit.toUpperCase();
-  for (let i = 0; i < BYTE_SHORT.length; i++) {
-    if (BYTE_SHORT[i] === u || BYTE_UNITS[i] === u.toLowerCase()) return i;
-  }
-  return undefined;
-}
-
 export function NumberDisplay({ value, compact, fractionDigits }: { value: unknown; compact?: boolean; fractionDigits?: number }) {
-  const opts: Intl.NumberFormatOptions = fractionDigits != null
-    ? { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }
-    : {};
-  if (compact) { opts.notation = "compact"; opts.maximumFractionDigits = 1; }
-  const r = numberParts(Number(value), opts);
+  const r = formatNumberParts(value, { fractionDigits, compact });
   if (!r) return <span className="text-muted">—</span>;
   return (
     <span className={common}>
@@ -43,49 +26,29 @@ export function NumberDisplay({ value, compact, fractionDigits }: { value: unkno
 }
 
 export function PercentageDisplay({ value, fractionDigits }: { value: unknown; fractionDigits?: number }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const maxFrac = fractionDigits ?? 1;
-  const parts = new Intl.NumberFormat(undefined, { style: "percent", minimumFractionDigits: maxFrac, maximumFractionDigits: maxFrac }).formatToParts(n);
+  const r = formatPercentageParts(value, fractionDigits ?? 1);
+  if (!r) return <span className="text-muted">—</span>;
   return (
     <span className={common}>
-      {styledParts(parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", percentSign: "text-muted text-xs" })}
+      {styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", percentSign: "text-muted text-xs" })}
     </span>
   );
 }
 
 export function BytesDisplay({ value, compact, displayUnit }: { value: unknown; compact?: boolean; displayUnit?: string }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const forcedIdx = byteUnitIndex(displayUnit);
-  let i = 0, s = n;
-  if (forcedIdx != null) {
-    i = forcedIdx;
-    s = n / Math.pow(1024, i);
-  } else {
-    while (s >= 1024 && i < BYTE_UNITS.length - 1) { s /= 1024; i++; }
-  }
-  const opts: Intl.NumberFormatOptions = { style: "unit", unit: BYTE_UNITS[i], unitDisplay: "short", minimumFractionDigits: 1, maximumFractionDigits: 2 };
-  if (compact) opts.notation = "compact";
-  const parts = new Intl.NumberFormat(undefined, opts).formatToParts(s);
-  const unitLabel = parts.find(p => p.type === "unit")?.value ?? BYTE_SHORT[i];
-  const nonUnit = parts.filter(p => p.type !== "unit");
+  const r = formatBytesParts(value, { compact, displayUnit });
+  if (!r) return <span className="text-muted">—</span>;
   return (
     <span className={common}>
-      {styledParts(nonUnit, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
-      <span className="text-muted text-xs"> {unitLabel}</span>
+      {styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+      <span className="text-muted text-xs"> {r.unitLabel}</span>
     </span>
   );
 }
 
 export function DurationDisplay({ value }: { value: unknown }) {
-  const sec = Number(value);
-  if (isNaN(sec)) return <span className="text-muted">—</span>;
-  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.round(sec % 60);
-  const segs: { v: string; u: string }[] = [];
-  if (h > 0) segs.push({ v: String(h), u: "h" });
-  if (m > 0) segs.push({ v: String(m), u: "m" });
-  if (s > 0 || segs.length === 0) segs.push({ v: String(s), u: "s" });
+  const segs = formatDurationParts(value);
+  if (!segs) return <span className="text-muted">—</span>;
   return (
     <span className={common}>
       {segs.map((seg, i) => (
@@ -99,9 +62,7 @@ export function DurationDisplay({ value }: { value: unknown }) {
 }
 
 export function CurrencyDisplay({ value, compact, fractionDigits, currency }: { value: unknown; compact?: boolean; fractionDigits?: number; currency?: string }) {
-  const minFrac = fractionDigits ?? 2;
-  const maxFrac = fractionDigits ?? 2;
-  const r = numberParts(Number(value), { style: "currency", currency: currency ?? "USD", minimumFractionDigits: minFrac, maximumFractionDigits: maxFrac, ...(compact ? { notation: "compact" } : {}) });
+  const r = formatCurrencyParts(value, { fractionDigits, currency, compact });
   if (!r) return <span className="text-muted">—</span>;
   return (
     <span className={common}>
@@ -118,13 +79,11 @@ export function CurrencyDisplay({ value, compact, fractionDigits, currency }: { 
 }
 
 export function SignedDisplay({ value }: { value: unknown }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const positive = n > 0;
-  const negative = n < 0;
+  const r = formatSignedParts(value);
+  if (!r) return <span className="text-muted">—</span>;
+  const positive = r.sign === "positive";
+  const negative = r.sign === "negative";
   const color = positive ? "text-success" : negative ? "text-danger" : "text-muted";
-  const abs = Math.abs(n);
-  const parts = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).formatToParts(abs);
   return (
     <span className={`${common} ${color}`}>
       <span className="inline-flex items-center gap-0.5">
@@ -139,7 +98,7 @@ export function SignedDisplay({ value }: { value: unknown }) {
           </svg>
         )}
         <span>
-          {styledParts(parts, { integer: "font-semibold", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+          {styledParts(r.parts, { integer: "font-semibold", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
         </span>
       </span>
     </span>

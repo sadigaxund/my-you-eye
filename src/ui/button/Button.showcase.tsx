@@ -28,6 +28,20 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Icon-only (compact)",
+      description: "size=\"icon-sm\" — for dense inline contexts (e.g. a table-cell audio player's play/pause toggle) where the text-sized buttons' horizontal padding is too wide around a single glyph.",
+      render: () => (
+        <div className="flex items-center justify-center gap-3">
+          <Button variant="ghost" size="icon-sm" aria-label="Play">
+            <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>
+          </Button>
+          <Button variant="secondary" size="icon-sm" aria-label="Pause">
+            <svg viewBox="0 0 10 10" className="size-3 fill-current"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
+          </Button>
+        </div>
+      ),
+    },
+    {
       name: "Disabled & loading",
       render: () => (
         <div className="flex flex-wrap justify-center gap-3">

@@ -184,6 +184,22 @@ const entry: ShowcaseEntry = {
       },
     },
     {
+      name: "Substring highlights on a long line (wrap forced off)",
+      description: "highlightRanges forces wrap={false} internally so every rect stays on its own logical line — even though wrap is left at its default (true) here.",
+      render: () => (
+        <CodeBlock
+          code={`const veryLongVariableNameThatWouldNormallyWrapOntoASecondVisualLine = computeSomethingExpensive(argumentOne, argumentTwo, argumentThree);\nconst ok = true;`}
+          language="typescript"
+          header="long.ts"
+          showLineNumbers
+          highlightRanges={[
+            { line: 1, start: 92, end: 111, color: "danger" },
+            { line: 2, start: 6, end: 8, color: "success" },
+          ]}
+        />
+      ),
+    },
+    {
       name: "Merged highlights",
       render: () => (
         <CodeBlock

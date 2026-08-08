@@ -70,6 +70,34 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Legacy ports on a tall node",
+      description: "ports (no rows) distribute across the node's real measured height, snapped to grid lines — not squeezed into the header band regardless of body height.",
+      render: () => (
+        <div className="flex items-center justify-center h-72">
+          <GraphNode
+            x={0} y={0} className="static"
+            header="Tall Node"
+            footer="6 ports"
+            ports={[
+              { side: "left", label: "in-1", state: "connected" },
+              { side: "left", label: "in-2" },
+              { side: "left", label: "in-3", state: "highlighted" },
+              { side: "right", label: "out-1", state: "connected" },
+              { side: "right", label: "out-2" },
+              { side: "right", label: "out-3", state: "highlighted" },
+            ]}
+          >
+            <div className="flex flex-col gap-2 py-3 px-2">
+              <div className="h-6 rounded-ui-sm bg-muted/10" />
+              <div className="h-6 rounded-ui-sm bg-muted/10" />
+              <div className="h-6 rounded-ui-sm bg-muted/10" />
+              <div className="h-6 rounded-ui-sm bg-muted/10" />
+            </div>
+          </GraphNode>
+        </div>
+      ),
+    },
+    {
       name: "Free-form body",
       render: () => (
         <div className="flex items-center justify-center gap-4 h-56">

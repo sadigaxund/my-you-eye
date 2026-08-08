@@ -9,16 +9,17 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**54 components** across 9 groups.
+**55 components** across 9 groups.
 
 ## canvas
 
 | Component | Variants | Demos |
 |---|---|---|
 | `Canvas` | — | Empty grid |
-| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions |
+| `ConnectionLayer` | — | Many edges, one svg, Edge states share the same visual language as ConnectionLine |
+| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges) |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
-| `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Free-form body |
+| `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Legacy ports on a tall node, Free-form body |
 | `Port` | state: connected / default / highlighted | States |
 
 ## data
@@ -38,7 +39,7 @@ import "my-you-eye/styles.css";
 | `Avatar` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | variant: danger / default / elevated / ghost / outlined<br>size: lg / md / sm | Variants, With footer actions, Size |
-| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Merged highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `EmptyState` | variant: secondary | Default, With icon and action |
 | `Image` | — | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | — | Default, Combinations |
@@ -61,7 +62,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `Button` | variant: danger / ghost / primary / secondary<br>size: lg / md / sm | Variants, Sizes, Disabled & loading |
+| `Button` | variant: danger / ghost / primary / secondary<br>size: icon-sm / lg / md / sm | Variants, Sizes, Icon-only (compact), Disabled & loading |
 | `Checkbox` | size: md / sm | Sizes, States |
 | `Combobox` | — | Basic, Disabled |
 | `FileDrop` | — | Default, Single image only |
@@ -70,7 +71,7 @@ import "my-you-eye/styles.css";
 | `MultiSelect` | — | Basic, Empty, Disabled |
 | `RadioGroup` | — | Default |
 | `Select` | size: md / sm | Sizes, States, No indicator |
-| `Slider` | — | Basic slider |
+| `Slider` | size: md / sm | Basic slider, Sizes |
 | `Switch` | size: md / sm | Sizes, States |
 | `Textarea` | variant: filled | Variants, States |
 

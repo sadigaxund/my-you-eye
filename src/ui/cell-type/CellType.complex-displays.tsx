@@ -1,10 +1,10 @@
-import { useRef, useLayoutEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { CodeBlock } from "../code-block";
 import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
 import { Badge } from "../badge";
+import { useTruncated, EllipsisBadge } from "./CellType.shared";
 
 function safeStringify(value: unknown): string {
   const seen = new WeakSet();
@@ -101,7 +101,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
                 <span key={i} className={tokenStyles[t.type]}>{t.value}</span>
               ))}
             </span>
-            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
+            <EllipsisBadge />
           </>
         )}
       </PopoverTrigger>
@@ -160,18 +160,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
     ? []
     : Object.keys(value as Record<string, unknown>);
 
-  const previewRef = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = previewRef.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
+  const [previewRef, isTruncated] = useTruncated<HTMLSpanElement>([value]);
 
   return (
     <Popover>
@@ -193,9 +182,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
                 ))}
               </span>
             )}
-            {isTruncated && (
-              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
-            )}
+            {isTruncated && <EllipsisBadge />}
           </>
         )}
       </PopoverTrigger>
@@ -215,18 +202,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
   const arr = Array.isArray(value) ? value : [];
   const count = arr.length;
 
-  const previewRef = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = previewRef.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
+  const [previewRef, isTruncated] = useTruncated<HTMLSpanElement>([value]);
 
   return (
     <Popover>
@@ -246,9 +222,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
                 <span key={i}>{i > 0 && <span className="text-muted">, </span>}{String(item)}</span>
               ))}
             </span>
-            {isTruncated && (
-              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
-            )}
+            {isTruncated && <EllipsisBadge />}
           </>
         )}
       </PopoverTrigger>

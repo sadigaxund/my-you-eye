@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 54,
+  "count": 55,
   "components": [
     {
       "name": "Canvas",
@@ -10,6 +10,16 @@
       "props": {},
       "demos": [
         "Empty grid"
+      ]
+    },
+    {
+      "name": "ConnectionLayer",
+      "group": "canvas",
+      "folder": "ui/connection-layer",
+      "props": {},
+      "demos": [
+        "Many edges, one svg",
+        "Edge states share the same visual language as ConnectionLine"
       ]
     },
     {
@@ -32,7 +42,9 @@
         "Path variants",
         "Edge states",
         "Decorations (arrowheads + labels)",
-        "Label positions"
+        "Label positions",
+        "Label on a genuinely curved path",
+        "ConnectionLayer (one svg, many edges)"
       ]
     },
     {
@@ -62,6 +74,7 @@
       "demos": [
         "Variants",
         "Simple variant",
+        "Legacy ports on a tall node",
         "Free-form body"
       ]
     },
@@ -292,6 +305,7 @@
         "Line highlights (implicit gutter)",
         "Multi-color highlights",
         "Substring highlights",
+        "Substring highlights on a long line (wrap forced off)",
         "Merged highlights",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
@@ -493,6 +507,7 @@
           "secondary"
         ],
         "size": [
+          "icon-sm",
           "lg",
           "md",
           "sm"
@@ -501,6 +516,7 @@
       "demos": [
         "Variants",
         "Sizes",
+        "Icon-only (compact)",
         "Disabled & loading"
       ]
     },
@@ -607,9 +623,15 @@
       "name": "Slider",
       "group": "inputs",
       "folder": "ui/slider",
-      "props": {},
+      "props": {
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
       "demos": [
-        "Basic slider"
+        "Basic slider",
+        "Sizes"
       ]
     },
     {

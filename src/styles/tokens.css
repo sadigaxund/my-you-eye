@@ -60,6 +60,23 @@
   --width-data-list-label-md: 9rem;
   --width-data-list-label-lg: 11rem;
 
+  /* Compact icon-only control size (Button size="icon-sm"; matches the
+     previous hand-rolled 24px play/pause button in CellType's AudioDisplay
+     before it was composed from Button — see AGENTS.md TODO A3). */
+  --spacing-control: 1.5rem;
+  /* CellType thumbnail size (ImageDisplay), matching Avatar's "sm" (size-8)
+     scale so a data-grid thumbnail and an Avatar read as the same "small
+     image chip" size. */
+  --spacing-thumb: 2rem;
+  /* CellType AudioDisplay: fixed-width elapsed/duration readout so digits
+     don't reflow the row as playback advances. */
+  --width-audio-time: 6rem;
+  /* CellType AudioDisplay: minimum width so the seek bar + time readout
+     don't get crushed in a narrow table cell. Tailwind v4 maps min-w-*
+     utilities from the --min-width-* theme namespace specifically (not
+     --width-*), so this needs its own prefix to auto-generate a class. */
+  --min-width-audio-min: 12rem;
+
   /* ---- Opacity ---- */
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;

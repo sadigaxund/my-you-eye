@@ -24,6 +24,11 @@ const buttonVariants = cva(
         sm: "h-8 px-3 text-xs",
         md: "h-10 px-4 text-sm",
         lg: "h-12 px-6 text-base",
+        // Compact icon-only control (no text label) — for inline, dense
+        // contexts like a table-cell audio player's play/pause toggle,
+        // where the text-sized "sm" button's horizontal padding reads as
+        // too wide around a single glyph.
+        "icon-sm": "size-control p-0",
       },
     },
     defaultVariants: {
