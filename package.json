@@ -31,6 +31,16 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./motion": {
+      "types": "./dist/motion.d.ts",
+      "import": "./dist/motion.js",
+      "default": "./dist/motion.js"
+    },
+    "./motion/remotion": {
+      "types": "./dist/motion-remotion.d.ts",
+      "import": "./dist/motion-remotion.js",
+      "default": "./dist/motion-remotion.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./styles.compiled.css": "./dist/styles.compiled.css"
   },
@@ -59,6 +69,14 @@
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.2.0"
   },
+  "peerDependencies": {
+    "remotion": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "remotion": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
@@ -70,6 +88,7 @@
     "eslint": "^9.25.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
+    "remotion": "^4.0.507",
     "tailwindcss": "^4.1.0",
     "tsup": "^8.4.0",
     "typescript": "~6.0.2",

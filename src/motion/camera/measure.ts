@@ -1,0 +1,109 @@
+// Pure math + DOM measurement helpers for Camera — kept separate from the
+// component so the interpolation logic is unit-testable without rendering
+// React (mirrors the useSequence.ts / buildSequence split in core).
+
+export interface CameraRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface CameraKeyframe {
+  /** Frame this keyframe is reached at. */
+  at: number;
+  /** An explicit rect in the scene's own untransformed layout coordinates, or the `id` of a descendant element to measure. */
+  focus: CameraRect | string;
+  /** Explicit zoom. If omitted, computed from the focus rect via `fit` (see Camera's `fit` prop). */
+  zoom?: number;
+}
+
+export interface ResolvedKeyframe {
+  at: number;
+  rect: CameraRect;
+  zoom: number;
+}
+
+/**
+ * Position of `el` relative to `root`, in untransformed layout space.
+ *
+ * Deliberately uses `offsetLeft`/`offsetTop`/`offsetWidth`/`offsetHeight`
+ * (walking the `offsetParent` chain) instead of `getBoundingClientRect()`.
+ * `getBoundingClientRect()` returns post-transform viewport pixels — once
+ * Camera's own scene layer (or any ancestor, e.g. a `Canvas` pan/zoom
+ * layer) has a `transform: scale(...)` applied, those pixels are already
+ * scaled by whatever zoom is currently in effect, producing wrong,
+ * compounding measurements. `offsetLeft`/`offsetTop`/`offsetWidth`/
+ * `offsetHeight` are defined in the element's own untransformed box model
+ * and are invariant to any ancestor's CSS transform, which is exactly the
+ * coordinate space Camera needs to compute a *stable* pan/zoom target from.
+ * (A previous batch shipped the `getBoundingClientRect()` version of this
+ * bug — see TODO.md C3.)
+ */
+export function measureRelative(el: HTMLElement, root: HTMLElement): CameraRect {
+  let x = 0;
+  let y = 0;
+  let node: HTMLElement | null = el;
+  let guard = 0;
+  while (node && node !== root && guard < 100) {
+    x += node.offsetLeft;
+    y += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+    guard++;
+  }
+  return { x, y, width: el.offsetWidth, height: el.offsetHeight };
+}
+
+function rectCenter(r: CameraRect): { cx: number; cy: number } {
+  return { cx: r.x + r.width / 2, cy: r.y + r.height / 2 };
+}
+
+/** Zoom that fits `rect` inside a `containerWidth` x `containerHeight` viewport, with a margin so focused content isn't flush against the edges. */
+export function fitZoom(rect: CameraRect, containerWidth: number, containerHeight: number, margin = 0.85): number {
+  if (rect.width <= 0 || rect.height <= 0 || containerWidth <= 0 || containerHeight <= 0) return 1;
+  return Math.min(containerWidth / rect.width, containerHeight / rect.height) * margin;
+}
+
+/**
+ * Linear interpolation across resolved keyframes at `frame`. Frames before
+ * the first keyframe hold its value; frames after the last hold its value.
+ * Pure function — no DOM, no React — so it's directly unit-testable.
+ */
+export function interpolateCamera(keyframes: ResolvedKeyframe[], frame: number): { rect: CameraRect; zoom: number } {
+  if (keyframes.length === 0) return { rect: { x: 0, y: 0, width: 0, height: 0 }, zoom: 1 };
+  const first = keyframes[0];
+  if (frame <= first.at) return { rect: first.rect, zoom: first.zoom };
+  const last = keyframes[keyframes.length - 1];
+  if (frame >= last.at) return { rect: last.rect, zoom: last.zoom };
+
+  let i = 0;
+  while (i < keyframes.length - 1 && keyframes[i + 1].at < frame) i++;
+  const a = keyframes[i];
+  const b = keyframes[i + 1];
+  const span = b.at - a.at;
+  const t = span <= 0 ? 1 : (frame - a.at) / span;
+
+  return {
+    rect: {
+      x: a.rect.x + (b.rect.x - a.rect.x) * t,
+      y: a.rect.y + (b.rect.y - a.rect.y) * t,
+      width: a.rect.width + (b.rect.width - a.rect.width) * t,
+      height: a.rect.height + (b.rect.height - a.rect.height) * t,
+    },
+    zoom: a.zoom + (b.zoom - a.zoom) * t,
+  };
+}
+
+/** Pan translate that centers `rect` at `zoom` inside the container — the scene layer's `transform-origin` must be `0 0` for this to be correct. */
+export function cameraTransform(
+  rect: CameraRect,
+  zoom: number,
+  containerWidth: number,
+  containerHeight: number,
+): { panX: number; panY: number } {
+  const { cx, cy } = rectCenter(rect);
+  return {
+    panX: containerWidth / 2 - cx * zoom,
+    panY: containerHeight / 2 - cy * zoom,
+  };
+}
