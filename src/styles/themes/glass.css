@@ -84,6 +84,12 @@ html[data-theme="glass"]::before {
   --color-canvas-surface: oklch(0.97 0.01 280);
   --color-surface-opaque: oklch(1 0 0);
 
+  /* Chart palette override (Batch 4 / TODO.md D3): at this theme's primary
+     hue (H=290), the general tokens.css derivation puts slot 5 on a deutan
+     confusion line with slot 6. Re-stepped to a fixed hue; every other
+     chart-* token still inherits the shared formula. See tokens.css. */
+  --color-chart-5: oklch(0.485 0.175 10);
+
   /* Colors - Utilities */
   --color-border: oklch(0.32 0.06 290 / 0.45);
   --color-ring: oklch(0.55 0.22 290 / 0.4);

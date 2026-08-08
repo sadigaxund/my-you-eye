@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 55,
+  "count": 65,
   "components": [
     {
       "name": "Canvas",
@@ -91,6 +91,151 @@
       },
       "demos": [
         "States"
+      ]
+    },
+    {
+      "name": "BarChart",
+      "group": "charts",
+      "folder": "ui/bar-chart",
+      "props": {
+        "orientation": [
+          "horizontal"
+        ]
+      },
+      "demos": [
+        "Single series (vertical)",
+        "Grouped, multi-series",
+        "Stacked",
+        "Horizontal",
+        "Horizontal, grouped",
+        "Long category label",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "ChartFrame",
+      "group": "charts",
+      "folder": "ui/patterns/chart-frame",
+      "props": {},
+      "demos": [
+        "Axes, gridlines & a custom plot",
+        "Loading",
+        "Empty"
+      ]
+    },
+    {
+      "name": "Funnel",
+      "group": "charts",
+      "folder": "ui/funnel",
+      "props": {},
+      "demos": [
+        "Four stages",
+        "Two stages",
+        "Long stage labels",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "Gauge",
+      "group": "charts",
+      "folder": "ui/gauge",
+      "props": {},
+      "demos": [
+        "Basic",
+        "Threshold bands — healthy",
+        "Threshold bands — critical",
+        "Custom range",
+        "Long label",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "Heatmap",
+      "group": "charts",
+      "folder": "ui/heatmap",
+      "props": {},
+      "demos": [
+        "Activity calendar",
+        "Single column",
+        "Long row label",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "Legend",
+      "group": "charts",
+      "folder": "ui/legend",
+      "props": {
+        "orientation": [
+          "vertical"
+        ]
+      },
+      "demos": [
+        "Rect swatches (bar / area fills)",
+        "Line swatches",
+        "Dot swatches (scatter / points)",
+        "Vertical orientation"
+      ]
+    },
+    {
+      "name": "LineChart",
+      "group": "charts",
+      "folder": "ui/line-chart",
+      "props": {},
+      "demos": [
+        "Single series",
+        "Multi-series",
+        "Area fill",
+        "No point markers",
+        "Long category label",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "PieChart",
+      "group": "charts",
+      "folder": "ui/pie-chart",
+      "props": {},
+      "demos": [
+        "Pie",
+        "Donut with center label",
+        "Single category (no legend)",
+        "Long labels",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "ScatterPlot",
+      "group": "charts",
+      "folder": "ui/scatter-plot",
+      "props": {},
+      "demos": [
+        "Single series",
+        "With trend line",
+        "Multi-series (3, all-pairs cap)",
+        "Long point label (tooltip)",
+        "Loading",
+        "Empty",
+        "Draw-on progress (50%)"
+      ]
+    },
+    {
+      "name": "Sparkline",
+      "group": "charts",
+      "folder": "ui/sparkline",
+      "props": {},
+      "demos": [
+        "Basic",
+        "Area fill",
+        "Downward trend, danger token",
+        "Inside StatCard",
+        "Empty",
+        "Draw-on progress (50%)"
       ]
     },
     {

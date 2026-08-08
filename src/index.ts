@@ -85,3 +85,43 @@ export { Image } from "./ui/image";
 export { Graph } from "./ui/patterns/graph";
 export type { GraphProps, EditorNode, EditorEdge } from "./ui/patterns/graph";
 export { TexturedSurface } from "./ui/patterns/textured-surface";
+export { ChartFrame } from "./ui/patterns/chart-frame";
+export type {
+  ChartFrameProps,
+  ChartFrameLegendItem,
+  ChartFrameRenderCtx,
+  ChartColorToken,
+  ChartSequentialToken,
+} from "./ui/patterns/chart-frame";
+export {
+  CHART_COLOR_TOKENS,
+  CHART_SEQUENTIAL_TOKENS,
+  chartColorToken,
+  chartFill,
+  chartStroke,
+  chartBg,
+  formatCompactNumber,
+  formatTickNumber,
+  formatTickPercentage,
+  formatTickBytes,
+  formatTickCurrency,
+  niceTicks,
+} from "./ui/patterns/chart-frame";
+export { Legend } from "./ui/legend";
+export type { LegendProps, LegendItem } from "./ui/legend";
+export { BarChart } from "./ui/bar-chart";
+export type { BarChartProps, BarChartSeries } from "./ui/bar-chart";
+export { LineChart } from "./ui/line-chart";
+export type { LineChartProps, LineChartSeries } from "./ui/line-chart";
+export { Sparkline } from "./ui/sparkline";
+export type { SparklineProps } from "./ui/sparkline";
+export { PieChart } from "./ui/pie-chart";
+export type { PieChartProps, PieChartSlice } from "./ui/pie-chart";
+export { Gauge } from "./ui/gauge";
+export type { GaugeProps, GaugeThresholdBand } from "./ui/gauge";
+export { Heatmap } from "./ui/heatmap";
+export type { HeatmapProps } from "./ui/heatmap";
+export { ScatterPlot } from "./ui/scatter-plot";
+export type { ScatterPlotProps, ScatterSeries, ScatterPoint } from "./ui/scatter-plot";
+export { Funnel } from "./ui/funnel";
+export type { FunnelProps, FunnelStage } from "./ui/funnel";

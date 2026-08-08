@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**55 components** across 9 groups.
+**65 components** across 10 groups.
 
 ## canvas
 
@@ -21,6 +21,21 @@ import "my-you-eye/styles.css";
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
 | `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Legacy ports on a tall node, Free-form body |
 | `Port` | state: connected / default / highlighted | States |
+
+## charts
+
+| Component | Variants | Demos |
+|---|---|---|
+| `BarChart` | orientation: horizontal | Single series (vertical), Grouped, multi-series, Stacked, Horizontal, Horizontal, grouped, Long category label, Empty, Draw-on progress (50%) |
+| `ChartFrame` | — | Axes, gridlines & a custom plot, Loading, Empty |
+| `Funnel` | — | Four stages, Two stages, Long stage labels, Empty, Draw-on progress (50%) |
+| `Gauge` | — | Basic, Threshold bands — healthy, Threshold bands — critical, Custom range, Long label, Draw-on progress (50%) |
+| `Heatmap` | — | Activity calendar, Single column, Long row label, Empty, Draw-on progress (50%) |
+| `Legend` | orientation: vertical | Rect swatches (bar / area fills), Line swatches, Dot swatches (scatter / points), Vertical orientation |
+| `LineChart` | — | Single series, Multi-series, Area fill, No point markers, Long category label, Empty, Draw-on progress (50%) |
+| `PieChart` | — | Pie, Donut with center label, Single category (no legend), Long labels, Empty, Draw-on progress (50%) |
+| `ScatterPlot` | — | Single series, With trend line, Multi-series (3, all-pairs cap), Long point label (tooltip), Loading, Empty, Draw-on progress (50%) |
+| `Sparkline` | — | Basic, Area fill, Downward trend, danger token, Inside StatCard, Empty, Draw-on progress (50%) |
 
 ## data
 

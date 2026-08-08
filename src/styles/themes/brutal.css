@@ -28,6 +28,14 @@ html[data-theme="brutal"].dark {
   --color-canvas-surface: oklch(1 0 0);
   --color-surface-opaque: oklch(1 0 0);
 
+  /* Chart palette override (Batch 4 / TODO.md D3): the general derivation
+     in tokens.css rotates 8 hues off --color-primary (H=45 here); at this
+     specific hue, slot 4 collides with slot 3 under deutan simulation
+     (verified with scripts/validate_palette.js — see tokens.css comment).
+     Slot 4 alone is re-stepped to a fixed hue far from every other slot;
+     every other chart-* token still inherits the shared formula. */
+  --color-chart-4: oklch(0.485 0.141 240);
+
   --color-border: oklch(0.10 0 0);
   --color-ring: oklch(0.10 0 0);
   --color-scrollbar: oklch(0.10 0 0);

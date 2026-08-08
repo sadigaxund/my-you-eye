@@ -35,6 +35,58 @@
      (non-canvas) surface role. See AGENTS.md §0.12. */
   --color-surface-opaque: oklch(1 0 0);
 
+  /* ---- Chart palette (TODO.md D3 / AGENTS.md §0.9 approved exception) ----
+     Defined ONCE here, derived in oklch from each theme's own --color-primary
+     via CSS relative-color syntax (oklch(from ...)), so all 9 themes inherit
+     a coherent, contrast-checked chart palette with zero per-theme work.
+     Requires Chrome 119+ / Safari 16.4+ / Firefox 128+ (relative color
+     syntax) — acceptable here: Remotion renders through headless Chrome, and
+     the showcase targets modern evergreen browsers.
+
+     Hue is rotated off the theme's own primary hue (the brand lineage: slot 1
+     shares the primary's hue). Lightness/chroma per slot are fixed constants,
+     NOT derived from the primary's own L/C — carrying over the dataviz
+     skill's own hue-family tuning (its validated default categorical palette,
+     decomposed to OKLCH and min-max-rescaled from its light-mode L range into
+     the [0.48, 0.67] band that is a subset of BOTH this validator's light
+     [0.43,0.77] and dark [0.48,0.67] OKLCH-L bands — one definition, no
+     per-mode split needed, since --color-primary itself already differs
+     between .dark/[data-theme] blocks and every var(--color-primary)
+     reference here re-resolves at the point of use). A flat L/C rotation
+     (constant lightness+chroma, only hue varying) was tried first and
+     collapses in the ~60-140deg yellow/olive zone, the least-separated
+     region of OKLab — see the chart-token verification script referenced in
+     the Batch 4 report. Hue offsets below are the reference palette's own
+     relative spacing (offset = reference_H - reference_blue_H), which
+     preserves its proven relative structure under an arbitrary rotation.
+
+     Verified with the dataviz skill's six-checks validator
+     (scripts/validate_palette.js) across all 9 themes x light/dark = 18
+     combinations, plus the "default" (unnamed) theme = 20: zero hard FAILs.
+     A few slots land in the documented WARN bands (adjacent CVD 6-8 floor;
+     sub-3:1 mark contrast) — both are legal only with secondary encoding,
+     which ChartFrame provides unconditionally (a legend is always rendered
+     for >=2 series, per the dataviz skill's own non-negotiable rule). */
+  --color-chart-1: oklch(from var(--color-primary) 0.5622 0.163 h);
+  --color-chart-2: oklch(from var(--color-primary) 0.6156 0.175 calc(h + 145.1));
+  --color-chart-3: oklch(from var(--color-primary) 0.6145 0.141 calc(h + 266.6));
+  --color-chart-4: oklch(from var(--color-primary) 0.665 0.161 calc(h + 179.6));
+  --color-chart-5: oklch(from var(--color-primary) 0.6398 0.141 calc(h + 101.9));
+  --color-chart-6: oklch(from var(--color-primary) 0.5382 0.18 calc(h + 247));
+  --color-chart-7: oklch(from var(--color-primary) 0.485 0.167 calc(h + 28.1));
+  --color-chart-8: oklch(from var(--color-primary) 0.5878 0.191 calc(h + 129.4));
+
+  /* Sequential ramp for magnitude (heatmaps, choropleth-style fills): one
+     hue (chart-1's hue), 5 lightness steps light-to-dark ("more is darker",
+     per the dataviz skill). Chroma stays clamped to the primary's own
+     chroma so a low-chroma theme (e.g. a near-grayscale primary) doesn't
+     produce an over-saturated ramp relative to its own categorical slots. */
+  --color-chart-seq-1: oklch(from var(--color-primary) 0.86 clamp(0.08, c, 0.2) h);
+  --color-chart-seq-2: oklch(from var(--color-primary) 0.72 clamp(0.08, c, 0.2) h);
+  --color-chart-seq-3: oklch(from var(--color-primary) 0.58 clamp(0.08, c, 0.2) h);
+  --color-chart-seq-4: oklch(from var(--color-primary) 0.44 clamp(0.08, c, 0.2) h);
+  --color-chart-seq-5: oklch(from var(--color-primary) 0.32 clamp(0.08, c, 0.2) h);
+
   /* ---- Shape / Space ---- */
   --radius-ui: 6px;
   --radius-ui-sm: 4px;

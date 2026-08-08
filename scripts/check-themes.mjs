@@ -23,7 +23,25 @@ while ((match = tokenPattern.exec(tokensRaw)) !== null) {
 // --texture-paper/--texture-size are the shared raster asset + tile size —
 // intentionally global, not themed, so they're excluded from the check.
 const requiredPrefixes = ["color-", "texture-"];
-const excludedTokens = new Set(["texture-paper", "texture-size"]);
+// DERIVED CATEGORY (TODO.md D3 / AGENTS.md §0.9 approved exception, Batch 4):
+// the chart palette (--color-chart-1..8 categorical, --color-chart-seq-1..5
+// sequential) is computed ONCE in tokens.css from each theme's own
+// --color-primary via CSS relative-color syntax (oklch(from var(--color-primary) ...)).
+// Requiring every theme to redefine 13 more color tokens is exactly the
+// maintenance trap D3 exists to avoid — themes inherit a coherent, validated
+// chart palette for free. A theme MAY still override individual chart-*
+// tokens (a few do, to dodge a CVD collision the general formula hits at
+// that theme's specific primary hue — see the chart-token comment in
+// tokens.css) but is never REQUIRED to, so these stay out of the coverage
+// check the same way texture-paper/texture-size already do above.
+const excludedTokens = new Set([
+  "texture-paper",
+  "texture-size",
+  "color-chart-1", "color-chart-2", "color-chart-3", "color-chart-4",
+  "color-chart-5", "color-chart-6", "color-chart-7", "color-chart-8",
+  "color-chart-seq-1", "color-chart-seq-2", "color-chart-seq-3",
+  "color-chart-seq-4", "color-chart-seq-5",
+]);
 
 let errors = [];
 

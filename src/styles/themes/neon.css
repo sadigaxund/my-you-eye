@@ -17,6 +17,15 @@
   --color-surface-elevated: oklch(0.1 0.08 280);
   --color-canvas-surface: oklch(0.08 0.06 280);
   --color-surface-opaque: oklch(0.08 0.06 280);
+
+  /* Chart palette override (Batch 4 / TODO.md D3): at this theme's primary
+     hue (H=180), the general tokens.css derivation's slot 7 falls outside
+     the sRGB gamut at its target lightness/chroma and gets gamut-mapped
+     below the chroma floor (reads as gray). Re-stepped to a fixed
+     in-gamut hue; every other chart-* token still inherits the shared
+     formula. See tokens.css. */
+  --color-chart-7: oklch(0.53 0.141 230);
+
   --color-border: oklch(0.3 0.12 180 / 0.5);
   --color-ring: oklch(0.7 0.28 180);
   --color-grid-dot: oklch(0.4 0.12 180 / 0.4);

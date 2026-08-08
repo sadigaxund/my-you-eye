@@ -13,6 +13,7 @@ export const GROUPS: ShowcaseGroup[] = [
   "patterns",
   "typography",
   "motion",
+  "charts",
 ];
 
 export interface RegistryDemo {

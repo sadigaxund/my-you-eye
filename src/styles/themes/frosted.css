@@ -65,6 +65,13 @@ html[data-theme="frosted"].dark::before {
   --color-canvas-surface: oklch(0.975 0.005 235);
   --color-surface-opaque: oklch(0.99 0.004 235);
 
+  /* Chart palette override (Batch 4 / TODO.md D3): at this theme's primary
+     hue (H=235), the general tokens.css derivation puts slot 3 on a deutan
+     confusion line with slot 2 (same failure mode as comic.css, whose
+     primary hue is close by). Re-stepped to a fixed hue; every other
+     chart-* token still inherits the shared formula. See tokens.css. */
+  --color-chart-3: oklch(0.665 0.141 180);
+
   /* Colors - Utilities */
   --color-border: oklch(0.62 0.01 235);
   --color-ring: oklch(0.52 0.10 235 / 0.4);
