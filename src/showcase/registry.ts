@@ -61,9 +61,22 @@ function slugify(title: string): string {
 // to extract copy-pasteable JSX for the code toggle). Vite's import.meta.glob
 // accepts an array of patterns and is happy when some of them match nothing,
 // so this keeps working today with zero files under motion/ or scenes/.
-const SHOWCASE_GLOBS = ["../ui/**/*.showcase.tsx", "../motion/**/*.showcase.tsx", "../scenes/**/*.showcase.tsx"];
-const modules = import.meta.glob(SHOWCASE_GLOBS, { eager: true }) as Record<string, { default: ShowcaseEntry }>;
-const rawSources = import.meta.glob(SHOWCASE_GLOBS, {
+//
+// The pattern list MUST be written inline at each call site. `import.meta.glob`
+// is compile-time syntax, not a function: Vite statically parses its arguments
+// and rejects anything that isn't a literal ("Invalid glob import syntax: Could
+// only use literals"). Hoisting these into a shared `const` array reads better
+// but breaks the dev server outright — don't.
+const modules = import.meta.glob([
+  "../ui/**/*.showcase.tsx",
+  "../motion/**/*.showcase.tsx",
+  "../scenes/**/*.showcase.tsx",
+], { eager: true }) as Record<string, { default: ShowcaseEntry }>;
+const rawSources = import.meta.glob([
+  "../ui/**/*.showcase.tsx",
+  "../motion/**/*.showcase.tsx",
+  "../scenes/**/*.showcase.tsx",
+], {
   eager: true,
   query: "?raw",
   import: "default",

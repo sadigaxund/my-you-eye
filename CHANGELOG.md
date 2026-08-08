@@ -6,6 +6,27 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **`ConnectionLayer`** — renders many edges in a single `<svg>`, where `ConnectionLine` renders one full-size stacked `<svg>` per edge (30 edges meant 30 of them, with the attendant layout cost and z-order fights). Both share all path/arrowhead/label geometry through one internal `ConnectionPath`, so the arrowhead-angle and point-at-t math exists in exactly one place.
+- **`src/lib/format.ts`** — the pure `Intl` number/percentage/bytes/duration/currency/signed/compact formatting extracted from `CellType`, so the forthcoming `CountUp` motion primitive can format identically without crossing the `src/ui` tier boundary (AGENTS.md §9b).
+- **`Slider`**: `size: "sm" | "md"` variant. **`Button`**: `size: "icon-sm"` variant. Both added so `CellType` could compose real components instead of native elements.
+- **`CellType.shared.tsx`** — one `useTruncated` hook + `EllipsisBadge`, replacing three duplicated `ResizeObserver` blocks.
+- **`--spacing-control`, `--spacing-thumb`, `--width-audio-time`, `--min-width-audio-min`** tokens.
+
+### Fixed
+
+- **`CodeBlock`**: substring highlights (`highlightRanges`) were positioned from hardcoded font metrics (`CHAR_W = 7.2`, `LINE_H = 19.5`, `PAD = 16`), so every highlight silently drifted under any of the 9 themes or 7 font families. Now measured from real rendered geometry via a hidden ruler.
+- **`CodeBlock`**: `highlightRanges` now forces `wrap={false}`. The overlay assumes one visual row per logical line, so a wrapped line desynced every rect below it — a correct-but-scrolling block beats a silently-misaligned wrapped one.
+- **`CodeBlock`**: the line-number gutter scrolled out of view horizontally; it is now sticky with an opaque background. The floating copy button's `-mb-7` negative-margin hack is replaced with absolute positioning, and `navigator.clipboard` is guarded so the component can't throw in a non-secure context.
+- **`ConnectionLine`**: `labelPosition` linearly interpolated between the endpoints while the component drew a cubic bezier, so labels floated off curved edges. Now evaluates the actual rendered path — closed-form cubic for `bezier`, length-walked polyline for `stepped`.
+- **`ConnectionLine`**: the label badge used an inline `backdrop-filter` while rendering inside `Canvas`'s transforming layer — precisely the composite-repaint failure mode AGENTS.md §0.12 exists to prevent. Removed. Label width was guessed as `label.length * 3.5`, clipping non-ASCII and wide-glyph labels; now measured. `rounded-sm` → token-mapped `rounded-ui-sm`.
+- **`GraphNode`**: legacy `ports` (used when `rows` is absent) distributed across header height plus one grid cell, ignoring the node body entirely, so on any node taller than 48px every port bunched near the top. Now spread across the node's real height, snapped to grid lines via `grid.ts`.
+- **Zoom-invariant measurement**: `ConnectionLine` and `GraphNode` measured with `getBoundingClientRect()`, which reports post-transform viewport pixels, then fed the result back as untransformed layout/SVG units. Inside `Canvas`'s `scale(zoom)` layer that is wrong by exactly the zoom factor — labels drift sideways and ports spread across `zoom ×` the node's height. Both now use `offset*`, which is layout-space.
+
+### Changed
+
+- **`CellType`**: `AudioDisplay` composes `Slider` + `Button` instead of hand-rolling `<input type="range">` and `<button>`; `ImageDisplay` composes `Image` instead of hand-rolling `<img>` twice. Arbitrary spacing values mapped to tokens.
+- **`Canvas`** deliberately left untouched — it uses no native scrolling, so routing it through `ScrollArea` would fight the drag performance contract (AGENTS.md §7) for no reuse win.
+
 - **Scrollbar tokens** — `--scrollbar-width` / `--scrollbar-radius`. `globals.css` scrollbar rules are now token-driven instead of hardcoded `6px`/`3px`, making AGENTS.md §0.10's "all token-driven" claim true. Same 6px/3px visual result.
 - **`--color-surface-opaque`** (tokens.css + all 9 theme files) — guaranteed-opaque companion to `--color-surface`, same mechanism and rationale as `--color-canvas-surface`. Automatically enforced across themes by `check-themes.mjs`'s `color-` prefix rule.
 - **`--shadow-subtle`** token for hover-lift affordances (defined, not yet applied).
