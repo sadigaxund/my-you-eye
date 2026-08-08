@@ -6,6 +6,22 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **`src/motion/` — a frame-driven motion engine**, published as `my-you-eye/motion` (remotion-free) and `my-you-eye/motion/remotion` (the sole module importing remotion, so a plain-UI consumer never pulls a video renderer into their bundle). Ships as a subpath of this package rather than a separate `@lib/motion`, so one version bump moves the whole library — see TODO.md D1.
+  - **Foundation:** `MotionRoot`, `DomDriver` (rAF clock: play/pause/seek/reverse/rate, honours `prefers-reduced-motion`), `RemotionDriver`, `useTimeline`, `useProgress`, `useSequence`, and the `Timing` / `Beat` / `EasingName` / `SpringName` contract. Primitives never call a clock API; both drivers write through one `TimelineProvider`, so the same primitive renders identically in a video and in a live presentation. This implements the driver abstraction AGENTS.md §9e defers — see TODO.md D2 for why `@remotion/player` alone is insufficient (inside a Player the frame is owned by playback, so nothing can react to a hover, drag, or live value change).
+  - **Timing is semantic, not numeric.** `Beat` is `"instant" | "quick" | "normal" | "slow"` (raw frames remain an escape hatch), so a consuming project cannot pick a janky duration — taste stays in the library. `easing` and `spring` are mutually exclusive at the type level, not by documented precedence.
+  - **25 primitives.** Rewritten: `Reveal`, `Stagger`, `TypeText`, `Highlight`, `Slide` (`SlideTransition` kept as a deprecated alias). New: `Wipe`, `Draw`, `Unmask`, `Spotlight`, `Pulse`, `Shake`, `Ripple`, `Trace`, `Camera`, `CountUp`, `TextSwap`, `Caption`, `Morph`, `Cursor`, `Beat`.
+  - `CountUp` reuses `src/lib/format.ts`, so tweened numbers format identically to `CellType` without crossing the tier boundary. `Camera` measures via an `offsetLeft`/`offsetTop` walk, never `getBoundingClientRect()`, which returns post-transform pixels and would compound with the camera's own zoom. `Spotlight` dims via a box-shadow cut-out and never touches `filter`/`backdrop-filter` (AGENTS.md §0.12).
+  - New **`motion` showcase group**, each demo wrapped in a live play/pause/replay/scrub preview.
+- **`scripts/check-motion.mjs`**, wired into `npm run validate` — fails the build on any wall-clock API (`useCurrentFrame`, `Date.now`, `performance.now`, `setTimeout`, `setInterval`, `requestAnimationFrame`, unseeded `Math.random`) outside the driver layer, on any CSS `transition`/`@keyframes`/`animation:` in the tier, on either direction of a ui↔motion import, on remotion escaping its one allowed module, and on a primitive folder not reachable from `src/motion/index.ts`. Non-determinism corrupts MP4 output frame-by-frame rather than failing loudly, so it needs a build gate rather than review.
+
+### Changed
+
+- **`apps/video`** imports from `my-you-eye/motion` instead of the `packages/motion` `file:` dependency.
+
+### Removed
+
+- **`packages/motion/`** — migrated into `src/motion/`. The pnpm-monorepo plan (old Phase 5) is cancelled; see TODO.md D1.
+
 - **`ConnectionLayer`** — renders many edges in a single `<svg>`, where `ConnectionLine` renders one full-size stacked `<svg>` per edge (30 edges meant 30 of them, with the attendant layout cost and z-order fights). Both share all path/arrowhead/label geometry through one internal `ConnectionPath`, so the arrowhead-angle and point-at-t math exists in exactly one place.
 - **`src/lib/format.ts`** — the pure `Intl` number/percentage/bytes/duration/currency/signed/compact formatting extracted from `CellType`, so the forthcoming `CountUp` motion primitive can format identically without crossing the `src/ui` tier boundary (AGENTS.md §9b).
 - **`Slider`**: `size: "sm" | "md"` variant. **`Button`**: `size: "icon-sm"` variant. Both added so `CellType` could compose real components instead of native elements.
