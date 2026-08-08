@@ -59,57 +59,31 @@ function ControlledTreeViewDemo() {
 }
 
 const sampleData: TreeNode[] = [
-  {
-    id: "1",
-    label: "users",
-    kind: "array",
-    children: [
-      {
-        id: "1-1", label: "[0]", kind: "object",
-        children: [
-          { id: "1-1-1", label: "name", value: { type: "text", value: "John" } },
-          { id: "1-1-2", label: "active", value: { type: "boolean", value: true } },
-          { id: "1-1-3", label: "role", value: { type: "badge", value: "Admin", badgeVariant: "primary" } },
-        ],
-      },
-      {
-        id: "1-2", label: "[1]", kind: "object",
-        children: [
-          { id: "1-2-1", label: "name", value: { type: "text", value: "Jane" } },
-          { id: "1-2-2", label: "active", value: { type: "boolean", value: false } },
-          { id: "1-2-3", label: "status", value: { type: "status", value: "Away", statusVariant: "warning" } },
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    label: "config",
-    kind: "object",
-    children: [
-      {
-        id: "2-1",
-        label: "limits",
-        kind: "object",
-        children: [
-          { id: "2-1-1", label: "maxConnections", value: { type: "number", value: 100 } },
-          { id: "2-1-2", label: "timeout", value: { type: "number", value: 30000 } },
-          { id: "2-1-3", label: "retryDelay", value: { type: "duration", value: 5 } },
-        ],
-      },
-      {
-        id: "2-2",
-        label: "tags",
-        kind: "array",
-        children: [
-          { id: "2-2-1", label: "[0]", value: { type: "text", value: "production" } },
-          { id: "2-2-2", label: "[1]", value: { type: "text", value: "us-east" } },
-        ],
-      },
-      { id: "2-3", label: "emptyArr", kind: "array", children: [] },
-      { id: "2-4", label: "emptyObj", kind: "object", children: [] },
-    ],
-  },
+  { id: "1", label: "users", kind: "array", children: [
+    { id: "1-1", label: "[0]", kind: "object", children: [
+      { id: "1-1-1", label: "name", value: { type: "text", value: "John" } },
+      { id: "1-1-2", label: "active", value: { type: "boolean", value: true } },
+      { id: "1-1-3", label: "role", value: { type: "badge", value: "Admin", badgeVariant: "primary" } },
+    ] },
+    { id: "1-2", label: "[1]", kind: "object", children: [
+      { id: "1-2-1", label: "name", value: { type: "text", value: "Jane" } },
+      { id: "1-2-2", label: "active", value: { type: "boolean", value: false } },
+      { id: "1-2-3", label: "status", value: { type: "status", value: "Away", statusVariant: "warning" } },
+    ] },
+  ] },
+  { id: "2", label: "config", kind: "object", children: [
+    { id: "2-1", label: "limits", kind: "object", children: [
+      { id: "2-1-1", label: "maxConnections", value: { type: "number", value: 100 } },
+      { id: "2-1-2", label: "timeout", value: { type: "number", value: 30000 } },
+      { id: "2-1-3", label: "retryDelay", value: { type: "duration", value: 5 } },
+    ] },
+    { id: "2-2", label: "tags", kind: "array", children: [
+      { id: "2-2-1", label: "[0]", value: { type: "text", value: "production" } },
+      { id: "2-2-2", label: "[1]", value: { type: "text", value: "us-east" } },
+    ] },
+    { id: "2-3", label: "emptyArr", kind: "array", children: [] },
+    { id: "2-4", label: "emptyObj", kind: "object", children: [] },
+  ] },
   { id: "3", label: "version", value: { type: "text", value: "2.4.1" } },
   { id: "4", label: "enabled", value: { type: "boolean", value: true } },
   { id: "5", label: "ratio", value: { type: "percentage", value: 0.75 } },
@@ -119,70 +93,62 @@ const sampleData: TreeNode[] = [
 ];
 
 const iconData: TreeNode[] = [
-  {
-    id: "src",
-    label: "src",
-    icon: <FolderIcon />,
-    children: [
-      {
-        id: "ui",
-        label: "ui",
-        icon: <FolderIcon />,
-        children: [
-          { id: "button-tsx", label: "Button.tsx", icon: <FileIcon />, value: { type: "text", value: "2.1 kb" } },
-          { id: "badge-tsx", label: "Badge.tsx", icon: <FileIcon />, value: { type: "text", value: "1.4 kb" } },
-        ],
-      },
-      { id: "index-ts", label: "index.ts", icon: <FileIcon />, value: { type: "text", value: "0.3 kb" } },
-    ],
-  },
+  { id: "src", label: "src", icon: <FolderIcon />, children: [
+    { id: "ui", label: "ui", icon: <FolderIcon />, children: [
+      { id: "button-tsx", label: "Button.tsx", icon: <FileIcon />, value: { type: "text", value: "2.1 kb" } },
+      { id: "badge-tsx", label: "Badge.tsx", icon: <FileIcon />, value: { type: "text", value: "1.4 kb" } },
+    ] },
+    { id: "index-ts", label: "index.ts", icon: <FileIcon />, value: { type: "text", value: "0.3 kb" } },
+  ] },
   { id: "readme", label: "README.md", icon: <FileIcon />, value: { type: "text", value: "4.8 kb" } },
 ];
 
 const messyPayload: TreeNode[] = [
+  { id: "m1", label: "deploy", kind: "object", children: [
+    { id: "m1-1", label: "environments", kind: "array", children: [
+      { id: "m1-1-1", label: "[0]", kind: "object", children: [
+        { id: "m1-1-1-1", label: "name", value: { type: "text", value: "staging" } },
+        { id: "m1-1-1-2", label: "url", value: { type: "url", value: "https://staging.example.com" } },
+        { id: "m1-1-1-3", label: "active", value: { type: "boolean", value: true } },
+      ] },
+      { id: "m1-1-2", label: "[1]", kind: "object", children: [
+        { id: "m1-1-2-1", label: "name", value: { type: "text", value: "production" } },
+        { id: "m1-1-2-2", label: "url", value: { type: "url", value: "https://example.com" } },
+        { id: "m1-1-2-3", label: "active", value: { type: "boolean", value: false } },
+      ] },
+    ] },
+    { id: "m1-2", label: "features", kind: "object", children: [
+      { id: "m1-2-1", label: "darkMode", value: { type: "boolean", value: true } },
+      { id: "m1-2-2", label: "maxRetries", value: { type: "number", value: 3 } },
+      { id: "m1-2-3", label: "description", value: { type: "text", value: "Main deployment config" } },
+    ] },
+    { id: "m1-3", label: "emptyArr", kind: "array", children: [] },
+    { id: "m1-4", label: "emptyObj", kind: "object", children: [] },
+    { id: "m1-5", label: "nullValue", value: { type: "null" } },
+  ] },
+  { id: "m2", label: "metrics", kind: "array", children: [
+    { id: "m2-1", label: "[0]", value: { type: "number", value: 42 } },
+    { id: "m2-2", label: "[1]", value: { type: "number", value: 7 } },
+    { id: "m2-3", label: "[2]", value: { type: "number", value: 99 } },
+  ] },
+];
+
+const tallData: TreeNode[] = [
   {
-    id: "m1", label: "deploy", kind: "object",
+    id: "t1", label: "media", kind: "object",
     children: [
+      { id: "t1-1", label: "track", value: { type: "audio", value: "https://example.com/track.mp3" } },
+      { id: "t1-2", label: "title", value: { type: "text", value: "Interlude" } },
       {
-        id: "m1-1", label: "environments", kind: "array",
+        id: "t1-3", label: "metadata", kind: "object",
         children: [
-          {
-            id: "m1-1-1", label: "[0]", kind: "object",
-            children: [
-              { id: "m1-1-1-1", label: "name", value: { type: "text", value: "staging" } },
-              { id: "m1-1-1-2", label: "url", value: { type: "url", value: "https://staging.example.com" } },
-              { id: "m1-1-1-3", label: "active", value: { type: "boolean", value: true } },
-            ],
-          },
-          {
-            id: "m1-1-2", label: "[1]", kind: "object",
-            children: [
-              { id: "m1-1-2-1", label: "name", value: { type: "text", value: "production" } },
-              { id: "m1-1-2-2", label: "url", value: { type: "url", value: "https://example.com" } },
-              { id: "m1-1-2-3", label: "active", value: { type: "boolean", value: false } },
-            ],
-          },
+          { id: "t1-3-1", label: "config", value: { type: "json", value: { bitrate: 320, channels: 2, format: "mp3" } } },
+          { id: "t1-3-2", label: "duration", value: { type: "duration", value: 214 } },
         ],
       },
-      { id: "m1-2", label: "features", kind: "object",
-        children: [
-          { id: "m1-2-1", label: "darkMode", value: { type: "boolean", value: true } },
-          { id: "m1-2-2", label: "maxRetries", value: { type: "number", value: 3 } },
-          { id: "m1-2-3", label: "description", value: { type: "text", value: "Main deployment config" } },
-        ],
-      },
-      { id: "m1-3", label: "emptyArr", kind: "array", children: [] },
-      { id: "m1-4", label: "emptyObj", kind: "object", children: [] },
-      { id: "m1-5", label: "nullValue", value: { type: "null" } },
     ],
   },
-  { id: "m2", label: "metrics", kind: "array",
-    children: [
-      { id: "m2-1", label: "[0]", value: { type: "number", value: 42 } },
-      { id: "m2-2", label: "[1]", value: { type: "number", value: 7 } },
-      { id: "m2-3", label: "[2]", value: { type: "number", value: 99 } },
-    ],
-  },
+  { id: "t2", label: "narration", value: { type: "audio", value: "https://example.com/narration.mp3" } },
 ];
 
 const entry: ShowcaseEntry = {
@@ -191,15 +157,39 @@ const entry: ShowcaseEntry = {
   description: "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, and typed value rendering.",
   demos: [
     {
-      name: "Default vs Condensed",
+      name: "Density (normal vs compact)",
+      description: "density=\"compact\" is the current name; variant=\"condensed\" (right column) still works as a deprecated alias.",
       render: () => (
         <div className="flex items-stretch gap-6">
           <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">density=&quot;normal&quot;</p>
             <TreeView data={sampleData} defaultExpandedDepth={2} />
           </div>
           <div className="w-px bg-border shrink-0" />
           <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">density=&quot;compact&quot;</p>
+            <TreeView data={sampleData} density="compact" defaultExpandedDepth={2} />
+          </div>
+          <div className="w-px bg-border shrink-0" />
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">variant=&quot;condensed&quot; (deprecated)</p>
             <TreeView data={sampleData} variant="condensed" defaultExpandedDepth={2} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      name: "Tall values (elbow/chevron alignment)",
+      description: "Audio players and JSON popover triggers render taller than a text line. The elbow connector still joins exactly at the chevron's vertical center at every row, in both density and indent sizes, because row-content height is a fixed --grid-unit multiple rather than driven by the tallest value.",
+      render: () => (
+        <div className="flex items-start gap-6">
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">indent=&quot;md&quot;, density=&quot;normal&quot;</p>
+            <TreeView data={tallData} defaultExpandedDepth={3} />
+          </div>
+          <div className="flex-1 min-w-0 px-2">
+            <p className="text-xs text-muted mb-1 font-mono">indent=&quot;lg&quot;, density=&quot;compact&quot;</p>
+            <TreeView data={tallData} indent="lg" density="compact" defaultExpandedDepth={3} />
           </div>
         </div>
       ),

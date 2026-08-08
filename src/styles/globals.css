@@ -93,14 +93,14 @@ html {
 }
 
 *::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  border-radius: 3px;
+  border-radius: var(--scrollbar-radius);
   background: var(--color-scrollbar);
 }
 *::-webkit-scrollbar-thumb:hover {
@@ -109,6 +109,55 @@ html {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+/* ScrollArea edge-fade masks (opt-in via the `fade` prop). Token-sized via
+   --scrollarea-fade-size so a scrollable region visibly reads as scrollable
+   without any per-component scrollbar styling (AGENTS.md §0.10 — this masks
+   content opacity at the edge, it does not touch scrollbar rendering). */
+.scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+}
+.scroll-fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+}
+/* Both axes at once (ScrollArea orientation="both" fade): two mask layers
+   intersected so all four edges fade, not just whichever layer's rule wins. */
+.scroll-fade-xy {
+  mask-image:
+    linear-gradient(to right, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent),
+    linear-gradient(to bottom, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent),
+    linear-gradient(to bottom, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent);
+  -webkit-mask-composite: source-in;
 }
 
 /* Syntax highlighting (CodeBlock) */

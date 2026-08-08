@@ -27,12 +27,22 @@
      transforming layer, regardless of active theme. See AGENTS.md §7. */
   --color-canvas-surface: oklch(1 0 0);
 
+  /* Opaque companion to --color-surface: some themes (glass, frosted) give
+     --color-surface an alpha channel for the translucent look. Elements that
+     must never let content show through underneath them regardless of theme
+     (e.g. a sticky table header riding over scrolled rows) use this instead —
+     same mechanism as --color-canvas-surface above, applied to the ordinary
+     (non-canvas) surface role. See AGENTS.md §0.12. */
+  --color-surface-opaque: oklch(1 0 0);
+
   /* ---- Shape / Space ---- */
   --radius-ui: 6px;
   --radius-ui-sm: 4px;
   --radius-ui-lg: 10px;
   --radius-node: 6px;
+  --spacing-panel-sm: 0.75rem;
   --spacing-panel: 1rem;
+  --spacing-panel-lg: 1.5rem;
   --spacing-compact-x: 0.75rem;
   --spacing-compact-y: 0.5rem;
   --spacing-stack: 0.75rem;
@@ -44,13 +54,25 @@
   --spacing-dot: 0.375rem;
   --spacing-port: 0.75rem;
 
+  /* DataList label ("dt") column widths — grid-unit multiples (8/9/11 * 16px).
+     "md" matches the previous hardcoded w-36. */
+  --width-data-list-label-sm: 8rem;
+  --width-data-list-label-md: 9rem;
+  --width-data-list-label-lg: 11rem;
+
   /* ---- Opacity ---- */
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
 
-  /* ---- Shadow ---- */
-  --shadow-card: 0 1px 3px 0 oklch(0 0 0 / 0.08), 0 1px 2px -1px oklch(0 0 0 / 0.06);
-  --shadow-elevated: 0 4px 12px oklch(0 0 0 / 0.1);
+  /* ---- Shadow ----
+     Two-layer recipe throughout: a tight, darker "contact" layer close to the
+     edge plus a soft, faint "ambient" layer that spreads further. --shadow-subtle
+     is the single-layer, low-commitment version for hover-lift affordances
+     (Button/TableRow/TreeItem micro-interactions) where --shadow-card would
+     read as too heavy. */
+  --shadow-subtle: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.06), 0 2px 6px -2px oklch(0 0 0 / 0.05);
+  --shadow-elevated: 0 4px 10px -2px oklch(0 0 0 / 0.08), 0 12px 28px -6px oklch(0 0 0 / 0.10);
 
   /* ---- Typography ---- */
   --font-sans: "Inter", "system-ui", sans-serif;
@@ -115,10 +137,26 @@
   /* ---- Grid ---- */
   --grid-unit: 16px;
 
+  /* Fixed, grid-unit-multiple row-content heights for TreeItem. Deliberately
+     NOT intrinsic/percentage-of-stretch: pinning this to a constant means the
+     chevron and the elbow-connector join always agree on the row's vertical
+     center, even when a row's value renders taller than one text line (an
+     audio player, a JSON popover trigger) — see AGENTS.md §7's "never
+     content-driven" GraphNode philosophy, applied here to TreeItem rows.
+     Overflow content (an oversized value) extends past the row visually
+     rather than dragging the anchor down with it. */
+  --spacing-tree-row: calc(var(--grid-unit) * 1.5);
+  --spacing-tree-row-compact: var(--grid-unit);
+
   /* ---- Scrollbar ---- */
   --color-scrollbar: oklch(0.87 0.01 260);
   --color-scrollbar-hover: oklch(0.55 0.01 260);
   --color-grid-dot: oklch(0.77 0.01 260);
+  --scrollbar-width: 6px;
+  --scrollbar-radius: 3px;
+  /* ScrollArea's optional edge-fade mask (`fade` prop) — how far the
+     transparent-to-opaque mask gradient extends in from each scrollable edge. */
+  --scrollarea-fade-size: calc(var(--grid-unit) * 1.5);
 
   /* ---- Texture (Phase 4): overlay-only, off by default. A theme opts in
      by raising --texture-opacity above 0 in its own token block; the image

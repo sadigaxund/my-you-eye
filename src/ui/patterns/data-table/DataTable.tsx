@@ -60,10 +60,16 @@ const dataTableVariants = cva("", {
 
 const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
   ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", ...props }, ref) => (
+    // `density` is intentionally NOT forwarded to Table/TableRow — that variant
+    // was a no-op there (see TODO.md A2) and was removed. TableHead/TableCell
+    // are the real owners of row density; it reaches them below.
+    // ScrollArea (not an extra rounded/overflow-hidden wrapper) is the element
+    // that should carry any rounding a consumer wants, so its own overflow-auto
+    // box owns both the clip radius and the scrollbar — see ScrollArea's own
+    // comment for why a separate ancestor wrapper mis-renders the corner.
     <ScrollArea ref={ref} className={cn("w-full", className)} {...props}>
       <Table
         variant={variant}
-        density={density}
         className={layout === "fixed" ? "table-fixed" : "table-auto"}
       >
         {layout === "fixed" && (
@@ -84,9 +90,9 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
         </TableHeader>
         <TableBody>
           {rows.map((row, i) => (
-            <TableRow key={i} density={density}>
+            <TableRow key={i}>
               {columns.map((col) => (
-                  <TableCell key={col.key} density={density} align={col.align}>
+                <TableCell key={col.key} density={density} align={col.align}>
                   <CellType
                     type={col.type}
                     value={row[col.key]}

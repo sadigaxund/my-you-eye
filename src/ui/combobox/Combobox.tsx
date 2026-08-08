@@ -45,7 +45,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           disabled={disabled}
           className={cn(
             "flex w-full items-center justify-between rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg",
-            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
             "disabled:cursor-not-allowed disabled:opacity-50",
             !selectedLabel && "text-muted",
             className,
@@ -76,7 +76,10 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             className="border-0 rounded-none ring-0 focus-visible:ring-0"
           />
         </div>
-        <ScrollArea className="max-h-60">
+        {/* rounded-b-[inherit]: matches PopoverContent's inherited bottom
+            radius so this ScrollArea's own scrollbar clips in sync with the
+            curve instead of a mismatched ancestor clip. See AGENTS.md §0.10. */}
+        <ScrollArea className="max-h-60 rounded-b-[inherit]">
           <div className="p-1">
             {filtered.length === 0 ? (
               <p className="px-2 py-4 text-sm text-muted text-center">{emptyText}</p>

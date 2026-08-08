@@ -10,6 +10,12 @@ const items = [
   { label: "Website", value: "https://example.com/john", type: "url" as const, replacements: [{ pattern: "john", label: "..." }] },
 ];
 
+const numericItems = [
+  { label: "Requests", value: 1284739, type: "number" as const },
+  { label: "Errors", value: 42, type: "number" as const },
+  { label: "Uptime", value: 0.9998, type: "percentage" as const },
+];
+
 const manyItems = Array.from({ length: 20 }, (_, i) => ({
   label: `Property ${i + 1}`,
   value: `Value ${i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. Ut enim ad minim`,
@@ -23,32 +29,57 @@ const entry: ShowcaseEntry = {
   description: "A label/value list (definition list) for record-detail views — the non-tabular counterpart to Table/DataTable.",
   demos: [
     {
-      name: "Default & Compact",
+      name: "Density (normal vs compact)",
+      description: "density is the current name; variant=\"compact\" still works as a deprecated alias.",
       render: () => (
         <div className="flex gap-6">
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted mb-2">Default</p>
+            <p className="text-xs text-muted mb-2">density=&quot;normal&quot;</p>
             <DataList items={items} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted mb-2">Compact</p>
-            <DataList items={items} variant="compact" />
+            <p className="text-xs text-muted mb-2">density=&quot;compact&quot;</p>
+            <DataList items={items} density="compact" />
           </div>
         </div>
       ),
     },
     {
       name: "Striped",
+      description: "striped is a real variant now — no more call-site [&>div:nth-child(odd)] hack.",
+      render: () => <DataList items={items} striped />,
+    },
+    {
+      name: "Label width",
+      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sizes the dt column on a two-column CSS grid instead of a hardcoded w-36, so long labels get room without crushing the value column.",
       render: () => (
-        <DataList items={items} className="[&>div:nth-child(odd)]:bg-secondary/50" />
+        <div className="flex flex-col gap-4">
+          <DataList
+            labelWidth="sm"
+            items={[
+              { label: "ID", value: "usr_8213", type: "text" },
+              { label: "Role", value: "Admin", type: "badge", badgeVariant: "primary" },
+            ]}
+          />
+          <DataList
+            labelWidth="lg"
+            items={[
+              { label: "Deployment target region", value: "us-east-1", type: "text" },
+              { label: "Autoscaling group capacity", value: 12, type: "number" },
+            ]}
+          />
+        </div>
       ),
+    },
+    {
+      name: "Alignment",
+      description: "Numeric values render with tabular-nums via CellType; dt/dd share a single grid row so the label and value baselines match at every row.",
+      render: () => <DataList items={numericItems} />,
     },
     {
       name: "Scrolling",
       render: () => (
-        <div className="rounded-ui border border-border max-h-48 overflow-auto">
-          <DataList items={manyItems} />
-        </div>
+        <DataList items={manyItems} className="rounded-ui border border-border max-h-48" />
       ),
     },
   ],

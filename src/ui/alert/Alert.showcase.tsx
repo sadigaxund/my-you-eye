@@ -39,6 +39,17 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Size",
+      description: "size (sm/md/lg, default md) — same padding scale as Card, so density is uniform between Card/Alert/StatCard.",
+      render: () => (
+        <div className="flex flex-col gap-3 max-w-lg mx-auto">
+          <Alert variant="info" size="sm">Compact padding for dense layouts.</Alert>
+          <Alert variant="info" size="md">Default padding.</Alert>
+          <Alert variant="info" size="lg">Roomier padding.</Alert>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

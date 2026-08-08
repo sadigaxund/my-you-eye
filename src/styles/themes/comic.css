@@ -55,6 +55,7 @@ html[data-theme="comic"].dark {
   --color-surface-active: oklch(0.90 0.03 60);
   --color-surface-elevated: oklch(0.975 0.015 60);
   --color-canvas-surface: oklch(0.93 0.02 65);
+  --color-surface-opaque: oklch(0.96 0.02 60);
   --color-border: oklch(0.12 0.03 40);
   --color-ring: oklch(0.50 0.22 240 / 0.5);
   --color-scrollbar: oklch(0.12 0.03 40 / 0.25);
@@ -98,6 +99,7 @@ html[data-theme="comic"].dark {
   --color-surface-active: oklch(0.26 0.03 55);
   --color-surface-elevated: oklch(0.18 0.02 55);
   --color-canvas-surface: oklch(0.18 0.02 55);
+  --color-surface-opaque: oklch(0.20 0.02 55);
   --color-border: oklch(0.55 0.02 50);
   --color-ring: oklch(0.62 0.22 240 / 0.5);
   --color-scrollbar: oklch(0.55 0.02 50 / 0.25);

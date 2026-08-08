@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const alertVariants = cva(
-  "relative w-full rounded-ui border p-panel",
+  "relative w-full rounded-ui border",
   {
     variants: {
       variant: {
@@ -13,9 +13,18 @@ const alertVariants = cva(
         warning: "border-warning/20 bg-warning/5 text-warning",
         danger: "border-danger/20 bg-danger/5 text-danger",
       },
+      // Same sm/md/lg padding scale as Card (--spacing-panel-sm/-panel/-panel-lg)
+      // so density is uniform across Card/Alert/StatCard. md (unchanged) is
+      // still the default.
+      size: {
+        sm: "p-panel-sm",
+        md: "p-panel",
+        lg: "p-panel-lg",
+      },
     },
     defaultVariants: {
       variant: "info",
+      size: "md",
     },
   },
 );
@@ -28,8 +37,8 @@ export interface AlertProps
 }
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant, title, icon, children, ...props }, ref) => (
-    <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props}>
+  ({ className, variant, size, title, icon, children, ...props }, ref) => (
+    <div ref={ref} role="alert" className={cn(alertVariants({ variant, size }), className)} {...props}>
       <div className="flex gap-stack">
         {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
         <div className="flex flex-col gap-tight">

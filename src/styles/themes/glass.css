@@ -82,6 +82,7 @@ html[data-theme="glass"]::before {
   --color-surface-active: oklch(1 0 0 / 0.90);
   --color-surface-elevated: oklch(1 0 0 / 0.85);
   --color-canvas-surface: oklch(0.97 0.01 280);
+  --color-surface-opaque: oklch(1 0 0);
 
   /* Colors - Utilities */
   --color-border: oklch(0.32 0.06 290 / 0.45);
@@ -146,6 +147,7 @@ html[data-theme="glass"]::before {
   --color-surface-active: oklch(0.35 0.06 290 / 0.85);
   --color-surface-elevated: oklch(0.25 0.05 290 / 0.80);
   --color-canvas-surface: oklch(0.16 0.03 290);
+  --color-surface-opaque: oklch(0.22 0.05 290);
 
   /* Colors - Utilities */
   --color-border: oklch(1 0 0 / 0.30);

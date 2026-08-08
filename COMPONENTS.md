@@ -26,10 +26,10 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data Types, Project X, Project X, Numeric types |
-| `DataList` | variant: compact | Default & Compact, Striped, Scrolling |
-| `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Truncation |
-| `Table` | — |  |
-| `TreeView` | type: button<br>variant: condensed | Default vs Condensed, Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
+| `DataList` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
+| `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
+| `Table` | align: right<br>variant: striped<br>density: compact | Composition, Variants, Density, Sticky header |
+| `TreeView` | type: button<br>density: compact<br>variant: condensed | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
 ## display
 
@@ -37,13 +37,13 @@ import "my-you-eye/styles.css";
 |---|---|---|
 | `Avatar` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
-| `Card` | variant: danger / default / elevated / ghost / outlined<br>size: sm | Variants, With footer actions |
+| `Card` | variant: danger / default / elevated / ghost / outlined<br>size: lg / md / sm | Variants, With footer actions, Size |
 | `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Merged highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `EmptyState` | variant: secondary | Default, With icon and action |
 | `Image` | — | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | — | Default, Combinations |
 | `Markdown` | — | Rendered markdown |
-| `ScrollArea` | — | Vertical scroll, Horizontal scroll |
+| `ScrollArea` | orientation: horizontal / vertical | Vertical scroll, Horizontal scroll, Rounded corners (radius on ScrollArea itself, not a wrapper), Edge fade |
 | `Separator` | orientation: vertical | Horizontal, Vertical |
 | `StatusDot` | variant: danger / info / neutral / success / warning<br>size: md / sm | Variants, Sizes, Pulsing |
 
@@ -51,7 +51,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `Alert` | variant: danger / info / success / warning | Variants, With title, With icon |
+| `Alert` | variant: danger / info / success / warning<br>size: lg / md / sm | Variants, With title, With icon, Size |
 | `Progress` | variant: danger / default / success / warning | Variants, No label |
 | `Skeleton` | shape: circle / rect / text | Shapes |
 | `Spinner` | size: lg / md / sm | Sizes |
@@ -100,7 +100,7 @@ import "my-you-eye/styles.css";
 | `ConfirmDialog` | variant: danger / secondary | Variants |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
-| `StatCard` | — | Default |
+| `StatCard` | size: lg / md / sm | Default, Size |
 | `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import type { MouseEvent } from "react";
 import { GraphNode } from "../../graph-node";
 import type { EditorNode, PortRef } from "./types";
 import { PortHitZone } from "./PortHitZone";
@@ -12,7 +13,7 @@ export function GraphNodeRenderer({
   onDragStart: (id: string, clientX: number, clientY: number, nodeX: number, nodeY: number) => void;
   onPortEvent: (type: "start" | "move" | "end", portRef: PortRef, e: PointerEvent) => void;
 }) {
-  const onDown = useCallback((e: React.MouseEvent) => {
+  const onDown = useCallback((e: MouseEvent) => {
     e.stopPropagation();
     onSelect(node.id);
     onDragStart(node.id, e.clientX, e.clientY, node.x, node.y);
@@ -20,6 +21,12 @@ export function GraphNodeRenderer({
 
   return (
     <div className="absolute" style={{ left: node.x, top: node.y, width: NODE_WIDTH }} onMouseDown={onDown}>
+      {/* Width comes from NODE_WIDTH alone (types.ts) — the wrapper div above
+          sets it via inline style, and GraphNode gets the same value via
+          inline style below, instead of a second, independently-drifting
+          Tailwind class (the old `max-w-40` was a rem-based 160px that could
+          disagree with NODE_WIDTH's raw px 160 under a themed --scale). See
+          TODO.md A2 "GraphNode two sources of truth for node width". */}
       <GraphNode
         x={0} y={0}
         header={node.header}
@@ -27,7 +34,7 @@ export function GraphNodeRenderer({
         accent={node.accent}
         footer={node.footer}
         rows={node.rows}
-        className="max-w-40"
+        style={{ width: NODE_WIDTH }}
       />
       {node.rows.flatMap((row, i) =>
         (["left", "right"] as const)

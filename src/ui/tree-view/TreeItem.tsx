@@ -61,7 +61,7 @@ function Sigil({ kind, count }: { kind: "object" | "array"; count: number }) {
 export interface TreeItemProps {
   node: TreeNode;
   depth: number;
-  variant: "default" | "condensed";
+  density: "normal" | "compact";
   indent: number;
   ancestorLines: boolean[];
   isLast: boolean;
@@ -75,16 +75,17 @@ export interface TreeItemProps {
 }
 
 const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
-  ({ node, depth, variant, indent, ancestorLines, isLast, expanded, current, hovered, onToggle, onHover, replacements, children }, ref) => {
+  ({ node, depth, density, indent, ancestorLines, isLast, expanded, current, hovered, onToggle, onHover, replacements, children }, ref) => {
     const hasChildren = !!node.children?.length;
     const arrIndex = isArrayIndex(node.label);
     const guideHighlight = hovered;
+    const compact = density === "compact";
 
     const handleMouseEnter = useCallback(() => onHover(node.id), [node.id, onHover]);
     const handleMouseLeave = useCallback(() => onHover(undefined), [onHover]);
 
     return (
-      <li ref={ref} className={cn("relative", variant === "condensed" ? "py-px" : "py-0.5")}>
+      <li ref={ref} className={cn("relative", compact ? "py-px" : "py-0.5")}>
         <div
           id={node.id}
           role="treeitem"
@@ -107,8 +108,16 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
           ))}
           {depth > 0 && <ElbowColumn indent={indent} isLast={isLast} highlight={guideHighlight} />}
           <div className={cn(
-            "flex items-center gap-1.5 min-w-0 flex-1 pr-2",
-            variant === "condensed" ? "py-1" : "py-1.5",
+            "flex items-center gap-1.5 min-w-0 min-h-0 flex-1 pr-2",
+            // Fixed, grid-unit-multiple height (--spacing-tree-row(-compact) in
+            // tokens.css) instead of intrinsic/content-driven sizing. `min-h-0`
+            // opts this flex item out of the default `min-height: auto` floor
+            // so a taller value (audio player, JSON popover trigger) never
+            // grows this box — the chevron/elbow join stays anchored to the
+            // same constant regardless of what the value renders. Tall values
+            // overflow visibly past the row rather than dragging the anchor.
+            // See AGENTS.md §7 (GraphNode: "never content-driven").
+            compact ? "h-tree-row-compact" : "h-tree-row",
           )}>
             {hasChildren ? (
               <Chevron expanded={expanded} />
@@ -128,7 +137,12 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
               arrIndex && "font-mono text-muted text-xs",
             )}>{node.label}</span>
             {node.value && (
-              <span className="truncate overflow-hidden shrink min-w-0 text-right">
+              // Width constraint only — CellType's own TruncatedCellValue owns
+              // truncation detection (scrollWidth > clientWidth) internally.
+              // An outer `truncate overflow-hidden` here used to clip first,
+              // so CellType's "…" affordance and popover never saw an overflow
+              // to react to. See TODO.md A1 "TreeItem double-truncates".
+              <span className="shrink min-w-0 text-right">
                 <CellType {...node.value} replacements={replacements} />
               </span>
             )}

@@ -54,15 +54,16 @@ function slugify(title: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-// Auto-discovery: every `*.showcase.tsx` under src/ui/ registers itself just
-// by existing — no manual list. We glob twice: once for the live module
-// (component + render fns) and once for the raw file text (used only to
-// extract copy-pasteable JSX for the code toggle).
-const modules = import.meta.glob("../ui/**/*.showcase.tsx", { eager: true }) as Record<
-  string,
-  { default: ShowcaseEntry }
->;
-const rawSources = import.meta.glob("../ui/**/*.showcase.tsx", {
+// Auto-discovery: every `*.showcase.tsx` under src/ui/ (and, once they exist,
+// src/motion/ and src/scenes/ — AGENTS.md §9d phase 0 / TODO.md A0) registers
+// itself just by existing — no manual list. We glob twice: once for the live
+// module (component + render fns) and once for the raw file text (used only
+// to extract copy-pasteable JSX for the code toggle). Vite's import.meta.glob
+// accepts an array of patterns and is happy when some of them match nothing,
+// so this keeps working today with zero files under motion/ or scenes/.
+const SHOWCASE_GLOBS = ["../ui/**/*.showcase.tsx", "../motion/**/*.showcase.tsx", "../scenes/**/*.showcase.tsx"];
+const modules = import.meta.glob(SHOWCASE_GLOBS, { eager: true }) as Record<string, { default: ShowcaseEntry }>;
+const rawSources = import.meta.glob(SHOWCASE_GLOBS, {
   eager: true,
   query: "?raw",
   import: "default",

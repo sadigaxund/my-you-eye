@@ -121,13 +121,15 @@
       "group": "data",
       "folder": "ui/data-list",
       "props": {
-        "variant": [
+        "density": [
           "compact"
         ]
       },
       "demos": [
-        "Default & Compact",
+        "Density (normal vs compact)",
         "Striped",
+        "Label width",
+        "Alignment",
         "Scrolling"
       ]
     },
@@ -147,6 +149,15 @@
         "Default",
         "Striped",
         "Scrolling + sticky header",
+        "Alignment",
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Alpha",
+        "Beta",
+        "Alpha",
+        "Beta",
         "Truncation"
       ]
     },
@@ -154,8 +165,23 @@
       "name": "Table",
       "group": "data",
       "folder": "ui/table",
-      "props": {},
-      "demos": []
+      "props": {
+        "align": [
+          "right"
+        ],
+        "variant": [
+          "striped"
+        ],
+        "density": [
+          "compact"
+        ]
+      },
+      "demos": [
+        "Composition",
+        "Variants",
+        "Density",
+        "Sticky header"
+      ]
     },
     {
       "name": "TreeView",
@@ -165,12 +191,16 @@
         "type": [
           "button"
         ],
+        "density": [
+          "compact"
+        ],
         "variant": [
           "condensed"
         ]
       },
       "demos": [
-        "Default vs Condensed",
+        "Density (normal vs compact)",
+        "Tall values (elbow/chevron alignment)",
         "Depth-based expand",
         "Controlled expand state",
         "Leading icons (click a row, then use arrow keys)",
@@ -230,12 +260,15 @@
           "outlined"
         ],
         "size": [
+          "lg",
+          "md",
           "sm"
         ]
       },
       "demos": [
         "Variants",
-        "With footer actions"
+        "With footer actions",
+        "Size"
       ]
     },
     {
@@ -313,10 +346,17 @@
       "name": "ScrollArea",
       "group": "display",
       "folder": "ui/scroll-area",
-      "props": {},
+      "props": {
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ]
+      },
       "demos": [
         "Vertical scroll",
-        "Horizontal scroll"
+        "Horizontal scroll",
+        "Rounded corners (radius on ScrollArea itself, not a wrapper)",
+        "Edge fade"
       ]
     },
     {
@@ -366,12 +406,18 @@
           "info",
           "success",
           "warning"
+        ],
+        "size": [
+          "lg",
+          "md",
+          "sm"
         ]
       },
       "demos": [
         "Variants",
         "With title",
-        "With icon"
+        "With icon",
+        "Size"
       ]
     },
     {
@@ -781,9 +827,16 @@
       "name": "StatCard",
       "group": "patterns",
       "folder": "ui/patterns/stat-card",
-      "props": {},
+      "props": {
+        "size": [
+          "lg",
+          "md",
+          "sm"
+        ]
+      },
       "demos": [
-        "Default"
+        "Default",
+        "Size"
       ]
     },
     {

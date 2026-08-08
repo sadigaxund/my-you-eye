@@ -4,11 +4,47 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Scrollbar tokens** — `--scrollbar-width` / `--scrollbar-radius`. `globals.css` scrollbar rules are now token-driven instead of hardcoded `6px`/`3px`, making AGENTS.md §0.10's "all token-driven" claim true. Same 6px/3px visual result.
+- **`--color-surface-opaque`** (tokens.css + all 9 theme files) — guaranteed-opaque companion to `--color-surface`, same mechanism and rationale as `--color-canvas-surface`. Automatically enforced across themes by `check-themes.mjs`'s `color-` prefix rule.
+- **`--shadow-subtle`** token for hover-lift affordances (defined, not yet applied).
+- **`--spacing-panel-sm` / `--spacing-panel-lg`** (12px/24px) alongside the existing 16px `--spacing-panel`, giving Card/Alert/StatCard a shared 3-step padding scale.
+- **`--spacing-tree-row` / `--spacing-tree-row-compact`** — fixed grid-unit row-content heights for `TreeItem`.
+- **`--width-data-list-label-sm/-md/-lg`** for `DataList`'s label column.
+- **`--scrollarea-fade-size`** token + `.scroll-fade-x/-y/-xy` CSS-mask classes.
+- **`ScrollArea`**: `orientation` (`"vertical" | "horizontal" | "both"`) and `fade` (CSS-mask edge fade) props. Base class now sets `scrollbar-gutter: stable`.
+- **`Table`**: a real showcase (Composition / Variants / Density / Sticky header) replacing an empty `demos: []` placeholder that existed only to satisfy `check-showcase.mjs`.
+- **`TreeView`**: `density` prop; `indent` now accepts `"sm" | "md" | "lg"`.
+- **`DataList`**: `density`, `striped`, and `labelWidth` props.
+- **`Card` / `Alert` / `StatCard`**: `size` prop (`"sm" | "md" | "lg"`).
+- **Tier-boundary lint rules** for the upcoming `src/motion` / `src/scenes` / `src/present` layer (AGENTS.md §9b), plus `check-showcase.mjs` and `registry.ts` coverage for them. Inert until those directories exist.
+
+### Changed
+
+- **`TableHeader`** sticky background: `bg-bg` → `bg-surface-opaque`. It previously used the page background regardless of the surface the table sat on, so the sticky header was a different colour from its own table and rows showed through at the seam on translucent themes.
+- **`TableHead`**: row height is now padding-driven and matches `TableCell` exactly, instead of a fixed `h-8`/`h-10` — closes a ~2–5px header/body height mismatch that misaligned columns between a sticky header and its body.
+- **`Table` / `TableRow`**: removed the no-op `density` variant (both values mapped to `""` while `DataTable` passed the prop through, so callers believed it worked). Density is now owned by `TableHead`/`TableCell`; `DataTable`'s `density` prop is unaffected.
+- **`Table`**: `variant="striped"` class string no longer carries a stray leading space.
+- **`TreeItem`**: row-content height is now a fixed `--grid-unit` multiple rather than intrinsic/stretched, so the chevron and the elbow connector always agree on vertical centre — previously a taller-than-text value kinked the guide line. Consistent with AGENTS.md §7's "height is a function of row count, never content-driven".
+- **`TreeItem`**: the value wrapper no longer truncates itself (width constraint only) — `CellType`'s own truncation detection and "…" popover now actually fire, where the outer clip used to win.
+- **`TreeView`**: `variant="condensed"` deprecated in favour of `density="compact"`; raw-number `indent` deprecated in favour of `"sm" | "md" | "lg"`.
+- **`DataList`**: `variant="compact"` deprecated in favour of `density="compact"`; label/value row restructured from flex to a two-column CSS grid, so long labels truncate instead of wrapping.
+- **Density vocabulary unified** to `density: "compact" | "normal"` across `Table`, `DataTable`, `DataList`, `TreeView` — previously three names (`density`, `variant="compact"`, `variant="condensed"`) for one concept. Old props still work, marked `@deprecated`.
+- **`patterns/graph/GraphNode.tsx`** renamed to `GraphNodeRenderer.tsx` to match its export. Node width now comes from `NODE_WIDTH` alone, instead of that plus an independently-drifting `max-w-40` class pinning every editor node to exactly 160px.
+- **`Card`/`Alert`/`StatCard`** default padding is now a shared token-sourced `size="md"` (16px). Card's default is visibly tighter than before and now matches Alert/StatCard; the previous 24px is available as `size="lg"`.
+- **`Card variant="elevated"`**: `shadow-lg` → the `shadow-elevated` token.
+- **`--shadow-card` / `--shadow-elevated`**: softened to two-layer shadow recipes.
+- **`Button`**: focus ring is now `ring-inset`; transition timing made explicit via `--duration-fast` / `--ease-standard`. Same for the `Combobox` / `MultiSelect` triggers.
+- **`CommandPalette` / `Combobox` / `MultiSelect`**: internal `ScrollArea` uses `rounded-b-[inherit]` so the scrollbar clip matches the popover's corner radius.
+
 ### Fixed
 
+- **Scrollbar gutters no longer cut across rounded corners** in `ScrollArea`, `DataTable`, `CommandPalette`, `Combobox`, and `MultiSelect` — fixed by applying the radius to the scrolling element itself plus `scrollbar-gutter: stable`.
+- **`DataTable`**: the previous `[Unreleased]` claim that the "sticky header [was] restructured to render outside ScrollArea" was **never true** — `<TableHeader sticky>` has been inside `ScrollArea` in every revision of the file since it was created, so this was an unimplemented aspiration rather than a regression. The underlying complaint (scrollbar over the rounded corner) is now genuinely fixed as described above. Entry corrected below.
 - **`TexturedSurface`**: inline texture path no longer wraps children in a `relative` div (fixes flex `justify-between` layout for header). Decorative elements use `-z-10` and `pointer-events-none` so non-positioned children stack above naturally.
 - **`DateTimeTzDisplay`**: timezone badge no longer clipped — date+time merged into a `min-w-0 flex-1 truncate` group that absorbs space deficit before the `flex-shrink-0` badge is ever touched. Removed `flex-1` to keep badge left-aligned next to time. Zero-padded day (`2-digit`) and hour (`2-digit`) for aligned table cells.
-- **`DataTable`**: sticky header restructured to render outside ScrollArea — scrollbar no longer covers the top-right rounded corner.
+- ~~**`DataTable`**: sticky header restructured to render outside ScrollArea — scrollbar no longer covers the top-right rounded corner.~~ **Retracted — never implemented.** See the corrected entry above.
 - **`TreeDisplay` / `ArrayDisplay`**: "…" badge now conditional on actual overflow via `ResizeObserver` + `scrollWidth > clientWidth`. Removed `flex-1` from preview span so content stays left-aligned.
 
 ### Added

@@ -7,16 +7,11 @@ const tableVariants = cva("w-full caption-bottom text-sm", {
   variants: {
     variant: {
       default: "",
-      striped: " [&_tbody_tr:nth-child(odd)]:bg-secondary/50",
-    },
-    density: {
-      compact: "",
-      normal: "",
+      striped: "[&_tbody_tr:nth-child(odd)]:bg-secondary/50",
     },
   },
   defaultVariants: {
     variant: "default",
-    density: "normal",
   },
 });
 
@@ -25,9 +20,9 @@ export interface TableProps
     VariantProps<typeof tableVariants> {}
 
 const Table = forwardRef<HTMLTableElement, TableProps>(
-  ({ className, variant, density, ...props }, ref) => (
+  ({ className, variant, ...props }, ref) => (
     <div className="relative w-full">
-      <table ref={ref} className={cn(tableVariants({ variant, density }), className)} {...props} />
+      <table ref={ref} className={cn(tableVariants({ variant }), className)} {...props} />
     </div>
   ),
 );

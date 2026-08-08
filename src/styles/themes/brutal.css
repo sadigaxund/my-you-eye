@@ -26,6 +26,7 @@ html[data-theme="brutal"].dark {
   --color-surface-active: oklch(0.90 0 0);
   --color-surface-elevated: oklch(1 0 0);
   --color-canvas-surface: oklch(1 0 0);
+  --color-surface-opaque: oklch(1 0 0);
 
   --color-border: oklch(0.10 0 0);
   --color-ring: oklch(0.10 0 0);
@@ -75,6 +76,7 @@ html[data-theme="brutal"].dark {
   --color-surface-active: oklch(0.35 0.01 250);
   --color-surface-elevated: oklch(0.25 0.01 250);
   --color-canvas-surface: oklch(0.25 0.01 250);
+  --color-surface-opaque: oklch(0.25 0.01 250);
 
   --color-border: oklch(0.95 0 0);
   --color-ring: oklch(0.95 0 0);

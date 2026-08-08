@@ -1,9 +1,19 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type { ReactNode, KeyboardEvent } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { TreeItem } from "./TreeItem";
 import type { CellValueType, UrlReplacement } from "../cell-type";
+
+// Grid-unit multiples (mirrors --grid-unit in tokens.css, same mirror-constant
+// pattern as GRID in src/ui/graph-node/grid.ts). Kept as plain numbers because
+// GuideColumn/ElbowColumn need a JS pixel value for their inline `width` style
+// and elbow-stub half-width math (indent / 2) — see AGENTS.md §0.2/§7.
+const INDENT_SIZES = {
+  sm: 12, // 0.75 * grid-unit
+  md: 16, // 1 * grid-unit
+  lg: 24, // 1.5 * grid-unit
+} as const;
+type IndentSize = keyof typeof INDENT_SIZES;
 
 export interface TreeNodeValue {
   type: CellValueType;
@@ -23,26 +33,24 @@ export interface TreeNode {
   kind?: "object" | "array";
 }
 
-export interface TreeViewProps extends VariantProps<typeof treeVariants> {
+export interface TreeViewProps {
   data: TreeNode[];
-  indent?: number;
+  /**
+   * "sm" | "md" | "lg", mapped to --grid-unit multiples (12 / 16 / 24px).
+   * A raw number is still accepted as a deprecated fallback for callers
+   * migrating off the old untyped-px API — off-grid values will misalign the
+   * guide columns, so prefer the named sizes.
+   * @deprecated pass a raw number — use "sm" | "md" | "lg" instead.
+   */
+  indent?: IndentSize | number;
+  /** @deprecated use `density` instead — "condensed" maps to density="compact". */
+  variant?: "default" | "condensed";
+  density?: "normal" | "compact";
   defaultExpandedDepth?: number;
   expandedKeys?: Set<string>;
   onToggle?: (id: string) => void;
   replacements?: UrlReplacement[];
 }
-
-const treeVariants = cva("", {
-  variants: {
-    variant: {
-      default: "space-y-0.5",
-      condensed: "space-y-0",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
 
 interface VisibleEntry {
   id: string;
@@ -77,7 +85,7 @@ function flattenVisible(nodes: TreeNode[], expanded: Set<string>, parentId: stri
 
 function renderNodes(
   nodes: TreeNode[], depth: number, ancestorLines: boolean[],
-  variant: "default" | "condensed", indent: number,
+  density: "normal" | "compact", indent: number,
   expanded: Set<string>, currentId: string | undefined, hoveredId: string | undefined,
   onToggle: (id: string) => void, onHover: (id: string | undefined) => void,
   replacements: UrlReplacement[] | undefined,
@@ -91,7 +99,7 @@ function renderNodes(
         key={node.id}
         node={node}
         depth={depth}
-        variant={variant}
+        density={density}
         indent={indent}
         ancestorLines={ancestorLines}
         isLast={isLast}
@@ -106,7 +114,7 @@ function renderNodes(
           <ul role="group" className="list-none m-0 p-0">
             {renderNodes(
               node.children!, depth + 1, [...ancestorLines, !isLast],
-              variant, indent, expanded, currentId, hoveredId,
+              density, indent, expanded, currentId, hoveredId,
               onToggle, onHover, replacements,
             )}
           </ul>
@@ -117,11 +125,14 @@ function renderNodes(
 }
 
 export function TreeView({
-  data, variant = "default", indent = 16, defaultExpandedDepth = 1,
+  data, variant, density, indent = "md", defaultExpandedDepth = 1,
   expandedKeys, onToggle, replacements,
 }: TreeViewProps) {
   const treeRef = useRef<HTMLUListElement>(null);
-  const v = variant ?? "default";
+  // `variant="condensed"` is the deprecated alias for `density="compact"`.
+  // `density` wins if both are somehow passed.
+  const d = density ?? (variant === "condensed" ? "compact" : "normal");
+  const indentPx = typeof indent === "number" ? indent : INDENT_SIZES[indent];
 
   const [internalExpanded, setInternalExpanded] = useState(() =>
     computeInitialExpanded(data, defaultExpandedDepth),
@@ -191,9 +202,9 @@ export function TreeView({
       ref={treeRef}
       role="tree"
       onKeyDown={handleKeyDown}
-      className={cn(treeVariants({ variant: v }), "list-none m-0 p-0 outline-none")}
+      className={cn(d === "compact" ? "space-y-0" : "space-y-0.5", "list-none m-0 p-0 outline-none")}
     >
-      {renderNodes(data, 0, [], v, indent, expanded, currentId, hoveredId, toggle, onHover, replacements)}
+      {renderNodes(data, 0, [], d, indentPx, expanded, currentId, hoveredId, toggle, onHover, replacements)}
     </ul>
   );
 }

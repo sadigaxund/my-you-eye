@@ -15,6 +15,17 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Size",
+      description: "size (sm/md/lg, default md) controls padding density, forwarded to CardContent — matches Card's own size scale.",
+      render: () => (
+        <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
+          <StatCard size="sm" label="Revenue (sm)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+          <StatCard size="md" label="Revenue (md)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+          <StatCard size="lg" label="Revenue (lg)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

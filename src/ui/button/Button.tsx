@@ -5,7 +5,13 @@ import { cn } from "../../lib/cn";
 import { Spinner } from "../spinner";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-inline rounded-ui font-medium transition-colors focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  // Focus ring: ring-inset consistently (see AGENTS.md §Step-B / TODO.md A5
+  // "focus rings: some components use ring-inset, some don't" — this batch
+  // standardizes on ring-inset for the components it touches, since an inset
+  // ring never gets clipped by an ancestor's overflow-hidden, unlike an
+  // outside ring). Transition timing is explicit token duration/ease rather
+  // than Tailwind's un-tokenized `transition-colors` default.
+  "inline-flex items-center justify-center gap-inline rounded-ui font-medium transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {

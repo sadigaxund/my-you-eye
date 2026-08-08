@@ -100,7 +100,13 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
             className="w-full bg-transparent px-4 py-3 text-sm outline-none placeholder:text-muted"
           />
         </div>
-        <ScrollArea className="max-h-80">
+        {/* rounded-b-[inherit]: this ScrollArea sits flush against
+            DialogContent's rounded bottom corners (DialogContent is
+            overflow-hidden via the className override above). Matching its
+            own radius to the inherited one keeps its scrollbar's clip in
+            sync with the curve instead of a mismatched ancestor clip cutting
+            across it. See AGENTS.md §0.10 / TODO.md A4. */}
+        <ScrollArea className="max-h-80 rounded-b-[inherit]">
           <div className="p-2" onKeyDown={handleKeyDown}>
           {flatItems.length === 0 ? (
             <p className="px-2 py-8 text-sm text-muted text-center">{emptyText}</p>

@@ -58,21 +58,67 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Scrolling + sticky header",
+      description: "Rounding lives directly on DataTable (which forwards to its own ScrollArea) rather than on a separate wrapper div, so the scrollbar's clip matches the border-radius and never overlaps the top-right corner. The sticky header is opaque (bg-surface-opaque) so scrolled rows never show through the seam.",
       render: () => (
-        <div className="rounded-ui border border-border overflow-hidden">
-          <DataTable
-            stickyHeader
-            className="max-h-72"
-            columns={[
-              { key: "name", header: "Name", width: "sm" },
+        <DataTable
+          stickyHeader
+          className="max-h-72 rounded-ui border border-border"
+          columns={[
+            { key: "name", header: "Name", width: "sm" },
             { key: "email", header: "Email", type: "email", width: "lg" },
             { key: "role", header: "Role", type: "badge", badgeVariant: "primary", width: "xs" },
             { key: "status", header: "Status", type: "status", statusVariant: statusFromRole, width: "sm" },
             { key: "sessions", header: "Sessions", type: "number", align: "right", width: "xs" },
             { key: "lastLogin", header: "Last Login", type: "datetime-tz", width: "lg" },
+          ]}
+          rows={users}
+        />
+      ),
+    },
+    {
+      name: "Alignment",
+      description: "Numeric columns are right-aligned with tabular-nums (via CellType), the header/body cell horizontal padding is identical so columns line up under the sticky header, and header + body compute the same row height from matching padding at each density.",
+      render: () => (
+        <div className="flex flex-col gap-4">
+          <DataTable
+            stickyHeader
+            className="max-h-56 rounded-ui border border-border"
+            columns={[
+              { key: "name", header: "Name", width: "lg" },
+              { key: "small", header: "Small #", type: "number", align: "right", width: "sm" },
+              { key: "big", header: "Large #", type: "number", align: "right", width: "sm" },
+              { key: "pct", header: "Ratio", type: "percentage", align: "right", width: "sm" },
             ]}
-            rows={users}
+            rows={[
+              { name: "Row A", small: 1, big: 1234567, pct: 0.05 },
+              { name: "Row B", small: 42, big: 8901, pct: 0.734 },
+              { name: "Row C", small: 907, big: 23, pct: 0.9998 },
+              { name: "Row D", small: 15, big: 456789, pct: 0.4 },
+            ]}
           />
+          <div className="flex gap-6">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted mb-1 font-mono">density: normal</p>
+              <DataTable
+                columns={[
+                  { key: "name", header: "Name" },
+                  { key: "n", header: "Count", type: "number", align: "right" },
+                ]}
+                rows={[{ name: "Alpha", n: 1204 }, { name: "Beta", n: 8 }]}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted mb-1 font-mono">density: compact</p>
+              <DataTable
+                density="compact"
+                columns={[
+                  { key: "name", header: "Name" },
+                  { key: "n", header: "Count", type: "number", align: "right" },
+                ]}
+                rows={[{ name: "Alpha", n: 1204 }, { name: "Beta", n: 8 }]}
+              />
+            </div>
+          </div>
         </div>
       ),
     },
