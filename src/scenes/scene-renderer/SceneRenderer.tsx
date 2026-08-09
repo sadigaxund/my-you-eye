@@ -8,6 +8,7 @@ import { OutroScene } from "../outro-scene";
 import { DiagramScene } from "../diagram-scene";
 import { SequenceScene } from "../sequence-scene";
 import { ChartScene } from "../chart-scene";
+import { StatScene } from "../stat-scene";
 import type { Scene } from "../schema";
 
 export interface SceneRendererProps {
@@ -48,7 +49,7 @@ export function SceneRenderer({ scene }: SceneRendererProps) {
     case "diagram": return <DiagramScene scene={scene} />;
     case "sequence": return <SequenceScene scene={scene} />;
     case "chart": return <ChartScene scene={scene} />;
-    case "stat": return <NotImplemented kind="stat" />;
+    case "stat": return <StatScene scene={scene} />;
     case "compare": return <NotImplemented kind="compare" />;
     case "walkthrough": return <NotImplemented kind="walkthrough" />;
     default: {
