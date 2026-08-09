@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 68,
+  "count": 69,
   "components": [
     {
       "name": "Canvas",
@@ -379,6 +379,22 @@
         "Variants",
         "Density",
         "Sticky header"
+      ]
+    },
+    {
+      "name": "Timeline",
+      "group": "data",
+      "folder": "ui/timeline",
+      "props": {
+        "orientation": [
+          "vertical"
+        ]
+      },
+      "demos": [
+        "Horizontal — single lane",
+        "Horizontal — lanes",
+        "Vertical — single lane",
+        "Vertical — lanes"
       ]
     },
     {

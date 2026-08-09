@@ -131,3 +131,5 @@ export { DiffBlock, diffBlockVariants, pairDiffLines, wordDiff } from "./ui/diff
 export type { DiffBlockProps, DiffLine, DiffLineType, DiffRow, WordDiffSegment, WordDiffResult } from "./ui/diff-block";
 export { DeviceFrame, deviceFrameVariants } from "./ui/device-frame";
 export type { DeviceFrameProps, DeviceFrameVariant } from "./ui/device-frame";
+export { Timeline } from "./ui/timeline";
+export type { TimelineProps, TimelineEvent, TimelineEventState } from "./ui/timeline";

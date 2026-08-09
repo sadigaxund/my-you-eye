@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**68 components** across 10 groups.
+**69 components** across 10 groups.
 
 ## canvas
 
@@ -45,6 +45,7 @@ import "my-you-eye/styles.css";
 | `DataList` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
 | `Table` | align: right<br>variant: striped<br>density: compact | Composition, Variants, Density, Sticky header |
+| `Timeline` | orientation: vertical | Horizontal — single lane, Horizontal — lanes, Vertical — single lane, Vertical — lanes |
 | `TreeView` | type: button<br>density: compact<br>variant: condensed | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
 ## display
