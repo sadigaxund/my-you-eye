@@ -51,19 +51,27 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Label width",
-      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sizes the dt column on a two-column CSS grid instead of a hardcoded w-36. Same three items rendered at all three widths, side by side: at \"sm\" the longer labels truncate with an ellipsis (the column is too narrow for them); \"lg\" gives them enough room that nothing truncates.",
+      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sets the dt column to a fixed width on a two-column CSS grid — 8rem / 9rem / 11rem (128px / 144px / 176px) — instead of the old hardcoded w-36. The EXACT SAME three rows render at all three widths, side by side, with a divider on the label column so its width is visible even before any text truncates: \"ID\" always fits; \"Deployment target region\" fits once the column is \"md\" or wider; \"Autoscaling group desired capacity\" is long enough that it still truncates even at \"lg\" — it just shows visibly more of the label as the column widens, exactly as truncation is supposed to look.",
       render: () => {
         const labelWidthItems = [
           { label: "ID", value: "usr_8213", type: "text" as const },
           { label: "Deployment target region", value: "us-east-1", type: "text" as const },
-          { label: "Autoscaling group capacity", value: 12, type: "number" as const },
+          { label: "Autoscaling group desired capacity", value: 12, type: "number" as const },
         ];
+        const WIDTH_PX = { sm: "128px", md: "144px", lg: "176px" } as const;
         return (
           <div className="flex flex-col gap-6 sm:flex-row sm:gap-4">
             {(["sm", "md", "lg"] as const).map((w) => (
               <div key={w} className="flex-1 min-w-0">
-                <p className="text-xs text-muted mb-2 font-mono">labelWidth=&quot;{w}&quot;{w === "md" && " (default)"}</p>
-                <DataList labelWidth={w} items={labelWidthItems} className="rounded-ui border border-border" />
+                <p className="text-xs text-muted mb-2 font-mono">
+                  labelWidth=&quot;{w}&quot; <span className="text-muted/70">({WIDTH_PX[w]})</span>
+                  {w === "md" && " — default"}
+                </p>
+                <DataList
+                  labelWidth={w}
+                  items={labelWidthItems}
+                  className="rounded-ui border border-border [&_dt]:border-r [&_dt]:border-dashed [&_dt]:border-border [&_dt]:pr-2"
+                />
               </div>
             ))}
           </div>
