@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Playing",
-      description: "The full transition: two lines are removed and rewritten as one reduce() call, the signature grows a taxRate parameter, and the return statement's math changes.",
+      description: "The full change plays out — two lines are removed and rewritten as one reduce() call, the signature grows a taxRate parameter, and the return statement's math changes.",
       render: () => (
         <MotionPreview durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />

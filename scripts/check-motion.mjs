@@ -16,11 +16,23 @@ import { join, relative } from "node:path";
  * 3. The default `my-you-eye/motion` entry must not reach `remotion`, so a
  *    plain-UI consumer never pulls a video renderer into their bundle. Only
  *    `src/motion/remotion.tsx` is allowed to import it.
+ *
+ * TODO.md Phase E extends invariants 1 and 3 to `src/scenes/**`: a scene is
+ * also a pure function of the timeline (it reads `useProgress()`/
+ * `useTimeline()` from `src/motion/core`, never a clock directly), and it
+ * must stay remotion-free the same way `src/motion/`'s default entry does —
+ * `VideoRoot` (Phase G) supplies the Remotion driver via `MotionRoot`, so a
+ * consumer who only wants the live presenter never pulls a video renderer
+ * into their bundle. Invariant 2 (the `src/ui/**` <-> motion import
+ * boundary) does NOT extend to scenes: `src/scenes/**` is explicitly allowed
+ * to import both `src/ui/**` and `src/motion/**` (TODO.md D1) — it's the
+ * wiring tier where a static component meets a timeline.
  */
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const MOTION_DIR = join(ROOT, "src/motion");
 const UI_DIR = join(ROOT, "src/ui");
+const SCENES_DIR = join(ROOT, "src/scenes");
 const CORE_DIR = join(MOTION_DIR, "core");
 const REMOTION_ENTRY = join(MOTION_DIR, "remotion.tsx");
 
@@ -91,6 +103,31 @@ for (const file of walk(UI_DIR)) {
   const src = readFileSync(file, "utf-8");
   if (/from\s+["'][^"']*\.\.\/motion/.test(src) || /from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
     errors.push(`${relative(ROOT, file)}: src/ui/ must not import the motion tier or remotion — AGENTS.md §9b.`);
+  }
+}
+
+// src/scenes/** (TODO.md Phase E): same clock/CSS-animation ban and the same
+// "must not import remotion" rule as src/motion/'s default entry — but NOT
+// the ui-tier import ban, since scenes are explicitly allowed to import both
+// src/ui/** and src/motion/** (TODO.md D1).
+for (const file of walk(SCENES_DIR)) {
+  const rel = relative(ROOT, file);
+  const src = readFileSync(file, "utf-8");
+
+  for (const [re, label] of CLOCK_PATTERNS) {
+    if (re.test(src)) {
+      errors.push(`${rel}: uses ${label}. Scenes must be pure functions of useProgress()/useTimeline() (src/motion/core) — AGENTS.md §9c rule 1, extended to src/scenes/ by TODO.md Phase E.`);
+    }
+  }
+
+  for (const [re, label] of CSS_ANIM_PATTERNS) {
+    if (re.test(src)) {
+      errors.push(`${rel}: uses ${label}. Scenes must be frame-driven, not wall-clock — it will not render deterministically to MP4. AGENTS.md §9c rule 1.`);
+    }
+  }
+
+  if (/from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
+    errors.push(`${rel}: imports remotion. Scenes must stay remotion-free — VideoRoot (Phase G) supplies the driver via MotionRoot from "my-you-eye/motion/remotion", so a consumer who only wants the live presenter never pulls a video renderer into their bundle (TODO.md D1).`);
   }
 }
 
