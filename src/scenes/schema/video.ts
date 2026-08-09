@@ -15,21 +15,17 @@
 // TODO.md §0 "stability over customizability".
 
 import type { FontMode } from "../../lib/fonts";
+import type { ThemeProfile } from "../../lib/themes";
 import type { Scene } from "./scenes";
 
 /**
  * Theme profile applied to the whole video, mirroring the files in
  * `src/styles/themes/`. "default" applies no `data-theme` attribute at all.
+ *
+ * Derived from `src/lib/themes.ts` — the same module the showcase's theme
+ * picker reads — rather than redeclared here, so the two can never drift.
  */
-export type VideoTheme =
-  | "default"
-  | "neon"
-  | "contrast"
-  | "brutal"
-  | "stark"
-  | "glass"
-  | "comic"
-  | "metallic";
+export type VideoTheme = ThemeProfile;
 
 /**
  * Output frame size. A closed union rather than free `width`/`height`

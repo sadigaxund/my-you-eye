@@ -1,35 +1,14 @@
 import { useState } from "react";
 import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
+import { themeGroups } from "../lib/themes";
+import type { ThemeProfile } from "../lib/themes";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
 import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/patterns/textured-surface/svg-utils";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
-
-const THEME_GROUPS = [
-  {
-    label: "Simple",
-    options: [
-      { value: "default", label: "Default" },
-      { value: "neon", label: "Neon" },
-      { value: "contrast", label: "Contrast" },
-      { value: "brutal", label: "Brutal" },
-      { value: "stark", label: "Stark" },
-    ],
-  },
-  {
-    label: "Textured",
-    options: [
-      { value: "glass", label: "Glass" },
-      { value: "comic", label: "Comic" },
-      { value: "metallic", label: "Metallic" },
-    ],
-  },
-] as const;
-
-type ThemeProfile = (typeof THEME_GROUPS)[number]["options"][number]["value"];
 
 function initialSlug(): string | undefined {
   const fromHash = window.location.hash.replace(/^#/, "");
@@ -105,7 +84,7 @@ export default function App() {
               <SelectValue placeholder="Theme" />
             </SelectTrigger>
             <SelectContent>
-              {THEME_GROUPS.flatMap((group, gi) => [
+              {themeGroups.flatMap((group, gi) => [
                 ...(gi > 0 ? [<div key={`sep-${gi}`} className="mx-2 my-1 h-px bg-border" role="separator" />] : []),
                 ...group.options.map((t) => (
                   <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
