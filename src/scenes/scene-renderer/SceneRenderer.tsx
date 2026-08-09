@@ -5,6 +5,7 @@ import { BulletScene } from "../bullet-scene";
 import { CodeScene } from "../code-scene";
 import { TerminalScene } from "../terminal-scene";
 import { OutroScene } from "../outro-scene";
+import { DiagramScene } from "../diagram-scene";
 import type { Scene } from "../schema";
 
 export interface SceneRendererProps {
@@ -42,7 +43,7 @@ export function SceneRenderer({ scene }: SceneRendererProps) {
     case "code": return <CodeScene scene={scene} />;
     case "terminal": return <TerminalScene scene={scene} />;
     case "outro": return <OutroScene scene={scene} />;
-    case "diagram": return <NotImplemented kind="diagram" />;
+    case "diagram": return <DiagramScene scene={scene} />;
     case "sequence": return <NotImplemented kind="sequence" />;
     case "chart": return <NotImplemented kind="chart" />;
     case "stat": return <NotImplemented kind="stat" />;

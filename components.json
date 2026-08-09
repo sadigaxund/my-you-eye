@@ -12,13 +12,16 @@
           "browser"
         ],
         "side": [
+          "bottom",
           "left",
-          "right"
+          "right",
+          "top"
         ]
       },
       "demos": [
         "Marker variants",
         "Auto-flip near the container edge",
+        "Vertical sides (top/bottom)",
         "Progress reveal"
       ]
     },

@@ -58,6 +58,17 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Vertical sides (top/bottom)",
+      description: "side=\"top\"/\"bottom\" anchors the label directly above/below target instead of left/right — for DiagramScene's node callouts, where a node's most legible free side is often above or below it rather than beside it. No auto-flip (there's no containerHeight to flip against).",
+      render: () => (
+        <div className="relative mx-auto" style={{ width: 480, height: 240 }}>
+          <MockScreenshot />
+          <Annotation target={{ x: 200, y: 40 }} label="Above the header" side="top" marker="arrow" />
+          <Annotation target={{ x: 340, y: 140 }} label="Below the card" side="bottom" marker="pin" accentColor="success" />
+        </div>
+      ),
+    },
+    {
       name: "Progress reveal",
       description:
         "progress (0→1): the leader line strokes on via stroke-dashoffset for the first 60%, then the label fades in over the remaining 40% — a pure function of the prop, no CSS transition.",

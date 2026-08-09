@@ -25,8 +25,12 @@ export interface AnnotationProps extends Omit<HTMLAttributes<HTMLDivElement>, "c
    * screenshot `Image`'s own pixel space). */
   target: Point;
   label: ReactNode;
-  /** Preferred side the label sits on before auto-flip is evaluated. Default "right". */
-  side?: "left" | "right";
+  /** Preferred side the label sits on. "left"/"right" (default "right") are
+   * auto-flipped near a container edge when `containerWidth` is given;
+   * "top"/"bottom" anchor the label directly above/below `target` instead
+   * (no auto-flip — there's no `containerHeight` prop to flip against, so a
+   * vertical leader always renders on the side you asked for). */
+  side?: "left" | "right" | "top" | "bottom";
   /** Distance (px) from `target` to the label's near edge, before flip. Default 64. */
   distance?: number;
   /** Pointer-end decoration at `target`. Default "arrow". */
@@ -99,25 +103,37 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
       return () => ro.disconnect();
     }, [label]);
 
+    const isVertical = side === "top" || side === "bottom";
+
     const resolvedSide = useMemo(() => {
-      if (containerWidth == null) return side;
+      // Auto-flip is a left/right-only affordance (it's evaluated against
+      // `containerWidth`, a horizontal extent) — "top"/"bottom" always
+      // render on the side asked for.
+      if (isVertical || containerWidth == null) return side;
       const wouldOverflowRight = side === "right" && target.x + distance + labelWidth > containerWidth;
       const wouldOverflowLeft = side === "left" && target.x - distance - labelWidth < 0;
       if (wouldOverflowRight) return "left";
       if (wouldOverflowLeft) return "right";
       return side;
-    }, [side, containerWidth, target.x, distance, labelWidth]);
+    }, [side, isVertical, containerWidth, target.x, distance, labelWidth]);
 
-    const anchor: Point = useMemo(
-      () => ({ x: resolvedSide === "right" ? target.x + distance : target.x - distance, y: target.y }),
-      [resolvedSide, target.x, target.y, distance],
-    );
+    const anchor: Point = useMemo(() => {
+      if (resolvedSide === "top") return { x: target.x, y: target.y - distance };
+      if (resolvedSide === "bottom") return { x: target.x, y: target.y + distance };
+      return { x: resolvedSide === "right" ? target.x + distance : target.x - distance, y: target.y };
+    }, [resolvedSide, target.x, target.y, distance]);
 
     const d = useMemo(() => generatePath(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
     const length = useMemo(() => getRouteLength(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
     const angle = useMemo(() => getArrowAngle(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
 
-    const labelLeft = resolvedSide === "right" ? anchor.x : anchor.x - labelWidth;
+    // Horizontal sides position the label's near edge at the anchor and
+    // center it vertically (translateY(-50%), unchanged from before "top"/
+    // "bottom" existed); vertical sides center it horizontally on the
+    // anchor and stack it above/below via the label's own transform.
+    const labelLeft = isVertical ? anchor.x - labelWidth / 2 : resolvedSide === "right" ? anchor.x : anchor.x - labelWidth;
+    const labelTransform =
+      resolvedSide === "top" ? "translate(-50%, -100%)" : resolvedSide === "bottom" ? "translateX(-50%)" : "translateY(-50%)";
 
     return (
       <div ref={ref} className={cn("absolute inset-0 pointer-events-none", className)} style={style} {...props}>
@@ -148,7 +164,7 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
             "absolute inline-flex max-w-64 items-center rounded-ui-sm border border-border/60 bg-canvas-surface px-2 py-1 text-xs shadow-subtle",
             TEXT[accentColor],
           )}
-          style={{ left: labelLeft, top: anchor.y, transform: "translateY(-50%)", opacity: labelT }}
+          style={{ left: labelLeft, top: anchor.y, transform: labelTransform, opacity: labelT }}
         >
           {label}
         </div>
