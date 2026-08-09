@@ -223,7 +223,26 @@ so an interruption never leaves a half-built folder.
       also fixed the `TreeView` + `CellType type="image"` row overflow
       (new `size-thumb-sm` token, `compact` prop). (`76bce8f`)
 
-**Q5. Scenes** — Phase E below. **Get the schema reviewed by the human first.**
+**Q5. Scenes — ✅ COMPLETE** (`2ee262a`..`8db8337`)
+- [x] `src/scenes/schema/` — the `Video`/`Scene`/`Step` union, published as `my-you-eye/scenes`.
+      Plain JSON-serializable closed unions: no `className`, no `style`, no colors, no frame
+      counts, no pixel coordinates. Diagram node positions are grid units and optional, group
+      rects are computed from member-node bounds, sequence activation bars are derived — the
+      "wired up without care for how it looks" failure mode is unreachable, not just discouraged.
+- [x] Runtime validator (`validateVideo`/`assertVideo`) with JSON-path pointers and
+      reference-integrity checks across diagram/sequence/chart ids.
+- [x] `sceneSteps`/`sceneDuration` — the timing spine `VideoRoot` and the Presenter share,
+      so MP4 and click-through pacing cannot drift.
+- [x] All 11 scenes + `SceneRenderer` (no placeholder branch remains) + `CodeDiff`.
+
+**Q5 follow-ups deferred to a later pass** (not blocking Q6):
+- `ChartStep.focus` dimming only applies to `bar`/`line` — gauge/heatmap/scatter/funnel have
+  no comparable "category" concept, and `validate.charts.ts` only builds a category set for
+  those two. Either widen both or document the limit in the SKILL reference.
+- `DiagramScene` doesn't auto-fit its `Canvas` viewport to content (starts at 0,0 / zoom 1).
+- `SequenceScene`'s derived activations are a single active/inactive flag per participant,
+  with no call-stack depth: a bar closes on the participant's next outgoing message whether
+  or not it is a genuine reply.
 
 **Q6. Presenter / video / packaging** — Phases F, G, H below.
 
