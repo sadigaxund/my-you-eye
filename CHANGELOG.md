@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **The scene schema — `Video` / `Scene` / `Step`** — published as `my-you-eye/scenes`. This is the entire API a consuming project writes against: one typed, JSON-serializable data object made of closed unions. What it deliberately does not accept is the point of it — no `className`, no `style`, no colors, no frame counts, no easing names, no pixel coordinates. Three of the choices carry most of the weight:
+  - **Diagram geometry is mostly not authorable.** Node `x`/`y` are grid units (× 16px) and both optional — omit them and `layered()`/`grid()` place the node with crossing reduction already applied. A `GraphGroup` region has no coordinates at all; its box is computed from the bounds of its member nodes, so a boundary can neither land in the wrong place nor leave a node hanging outside it. Sequence activation bars are derived from the message order rather than declared.
+  - **Walkthrough coordinates are percent-of-frame**, so a step keeps pointing at the right thing when `meta.size` changes.
+  - **Pacing is derived from content.** A step's duration comes from the length of its `say` line — the same string that serves as the speaker-view script and the reserved anchor for narration timing. `pace: "slow" | "normal" | "fast"` per scene is the only dial.
 - **Presentation components for screencasts and technical video.** Each composes existing primitives rather than restyling markup:
   - **`Terminal`** — shell session with prompt/command/output framing, composing `CodeBlock` for the output body.
   - **`DiffBlock`** — unified and split diff views with word-level intra-line highlighting.
