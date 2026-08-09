@@ -210,11 +210,18 @@ so an interruption never leaves a half-built folder.
       Crossing-reduction proven by `scripts/prove-layout-crossings.mjs`
       (13 → 1 crossings on a deliberately scrambled 3-layer graph). (`f7609ed`)
 
-**Q4. Diagram components** (depend on Q1)
-- [ ] `GraphGroup` — labelled boundary regions.
-- [ ] `SequenceDiagram` — actors, lifelines, messages, activation bars.
-- [ ] `Annotation` — leader line + label.
-- [ ] `FileTree` — pattern over `TreeView`.
+**Q4. Diagram components — ✅ COMPLETE** (depend on Q1)
+- [x] `GraphGroup` — labelled boundary regions. (`04bddc0`)
+- [x] `SequenceDiagram` — actors, lifelines, messages, activation bars, self-messages,
+      notes. Message arrows are `ConnectionLayer` edges (`kind` mapped onto
+      sync/async/data/error), never a hand-drawn `<path>`. (`3e14994`)
+- [x] `Annotation` — leader line + label. Path math reused from
+      `connection-line/geometry.ts`; `progress` strokes the line on via
+      `stroke-dashoffset` then fades the label in. (`237c5af`)
+- [x] `FileTree` — pattern over `TreeView`. Extended `TreeView` with a
+      per-item `trailing` slot (backwards-compatible) instead of forking it;
+      also fixed the `TreeView` + `CellType type="image"` row overflow
+      (new `size-thumb-sm` token, `compact` prop). (`76bce8f`)
 
 **Q5. Scenes** — Phase E below. **Get the schema reviewed by the human first.**
 
@@ -226,7 +233,6 @@ weaker models wiring up chaotic graphs.
 
 ### Known issues
 
-- `TreeView` + `CellType type="image"`: row is a fixed 24px, image renders 32px → overflows.
 - `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).
 - `CodeBlock.highlight.tsx` exceeds the 250-line lint warning (pre-existing).
 - Unbuilt guards: `check-tokens.mjs` (no raw px/hex), dead-CVA-variant check in `audit.mjs`.
