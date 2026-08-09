@@ -46,6 +46,9 @@ export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".
 export { PageShell } from "./ui/patterns/page-shell";
 export { Toolbar } from "./ui/patterns/toolbar";
 export { StatCard } from "./ui/patterns/stat-card";
+export type { StatCardProps, StatCardDelta, StatCardSparklineProps } from "./ui/patterns/stat-card";
+export { StatGrid } from "./ui/patterns/stat-grid";
+export type { StatGridProps, StatGridItem } from "./ui/patterns/stat-grid";
 export { Separator } from "./ui/separator";
 export { Progress } from "./ui/progress";
 export { StatusDot } from "./ui/status-dot";

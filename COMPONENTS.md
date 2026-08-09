@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**69 components** across 10 groups.
+**70 components** across 10 groups.
 
 ## canvas
 
@@ -120,7 +120,8 @@ import "my-you-eye/styles.css";
 | `ConfirmDialog` | variant: danger / secondary | Variants |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
-| `StatCard` | size: lg / md / sm | Default, Size |
+| `StatCard` | size: lg / md / sm | Default, Size, Numeric delta, Icon + sparkline |
+| `StatGrid` | size: sm | 4-column KPI row, 3-column with sparklines, Size |
 | `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 

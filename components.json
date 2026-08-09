@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 69,
+  "count": 70,
   "components": [
     {
       "name": "Canvas",
@@ -1104,6 +1104,23 @@
       },
       "demos": [
         "Default",
+        "Size",
+        "Numeric delta",
+        "Icon + sparkline"
+      ]
+    },
+    {
+      "name": "StatGrid",
+      "group": "patterns",
+      "folder": "ui/patterns/stat-grid",
+      "props": {
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "4-column KPI row",
+        "3-column with sparklines",
         "Size"
       ]
     },
