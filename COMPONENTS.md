@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**74 components** across 10 groups.
+**75 components** across 10 groups.
 
 ## canvas
 
@@ -121,6 +121,7 @@ import "my-you-eye/styles.css";
 |---|---|---|
 | `Comparison` | tone: after / before | Side-by-side, Wipe (draggable), Wipe — progress-driven |
 | `ConfirmDialog` | variant: danger / secondary | Variants |
+| `FileTree` | density: compact | Project tree with git status, Compact density |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
 | `SequenceDiagram` | — | Request flow, Self-messages, spanning note, error path, Progress reveal |

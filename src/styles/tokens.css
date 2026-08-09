@@ -125,6 +125,11 @@
      scale so a data-grid thumbnail and an Avatar read as the same "small
      image chip" size. */
   --spacing-thumb: 2rem;
+  /* CellType thumbnail size for `compact` contexts — sized to fit inside a
+     TreeView "normal" density row (--spacing-tree-row, 1.5rem) with a little
+     margin to spare, instead of overflowing it the way the full --spacing-thumb
+     (2rem) does. See TreeItem.tsx / TODO.md's TreeView+image "Known issues" entry. */
+  --spacing-thumb-sm: 1.25rem;
   /* CellType AudioDisplay: fixed-width elapsed/duration readout so digits
      don't reflow the row as playback advances. */
   --width-audio-time: 6rem;

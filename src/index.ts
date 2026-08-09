@@ -149,3 +149,5 @@ export type {
 } from "./ui/patterns/sequence-diagram";
 export { Annotation } from "./ui/annotation";
 export type { AnnotationProps } from "./ui/annotation";
+export { FileTree } from "./ui/patterns/file-tree";
+export type { FileTreeProps, FileTreeNode, FileGitStatus } from "./ui/patterns/file-tree";

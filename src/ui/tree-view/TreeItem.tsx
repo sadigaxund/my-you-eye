@@ -143,8 +143,24 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
               // so CellType's "…" affordance and popover never saw an overflow
               // to react to. See TODO.md A1 "TreeItem double-truncates".
               <span className="shrink min-w-0 text-right">
-                <CellType {...node.value} replacements={replacements} />
+                <CellType
+                  {...node.value}
+                  // "image" is the one CellType value TreeView can't fit at
+                  // its own natural size: `size-thumb` (32px, --spacing-thumb)
+                  // is taller than even the "normal" row (24px,
+                  // --spacing-tree-row) — see TODO.md's "Known issues".
+                  // `compact` only ever changes ImageDisplay's own thumbnail
+                  // size (every other CellType type ignores it unless it's
+                  // already opted into compact numeric formatting via its own
+                  // value, which TreeNodeValue doesn't expose), so this is
+                  // scoped to the one type that actually overflows.
+                  compact={node.value.type === "image" ? true : undefined}
+                  replacements={replacements}
+                />
               </span>
+            )}
+            {node.trailing && (
+              <span className="shrink-0 text-xs text-muted tabular-nums">{node.trailing}</span>
             )}
           </div>
         </div>

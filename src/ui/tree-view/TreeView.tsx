@@ -28,6 +28,14 @@ export interface TreeNode {
   id: string;
   label: string;
   value?: TreeNodeValue;
+  /**
+   * Trailing slot rendered after `value`, at the far end of the row — for
+   * content that isn't itself a `CellType` value (e.g. `FileTree`'s file
+   * size / line count readout). Purely presentational; TreeView never
+   * inspects it. Additive: omitted renders byte-identical to before this
+   * prop existed.
+   */
+  trailing?: ReactNode;
   children?: TreeNode[];
   icon?: ReactNode;
   kind?: "object" | "array";

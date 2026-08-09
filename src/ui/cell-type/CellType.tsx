@@ -73,7 +73,7 @@ function applyReplacements(str: string, replacements?: UrlReplacement[]) {
   return r;
 }
 
-function ImageDisplay({ value }: { value: unknown }) {
+function ImageDisplay({ value, compact }: { value: unknown; compact?: boolean }) {
   const src = String(value);
   const [open, setOpen] = useState(false);
   return (
@@ -83,7 +83,16 @@ function ImageDisplay({ value }: { value: unknown }) {
         alt=""
         radius="sm"
         bordered
-        className="size-thumb cursor-pointer hover:opacity-80 transition-opacity"
+        // `compact`: size-thumb (32px, --spacing-thumb) is taller than a
+        // TreeView row (24px, --spacing-tree-row) and overflows it — see
+        // TODO.md's "Known issues". size-thumb-sm (20px, --spacing-thumb-sm)
+        // fits inside a "normal" density row with margin to spare. Default
+        // (size-thumb) is unchanged for every other CellType consumer
+        // (tables, DataList, etc.) — this is opt-in only.
+        className={cn(
+          compact ? "size-thumb-sm" : "size-thumb",
+          "cursor-pointer hover:opacity-80 transition-opacity",
+        )}
         onClick={() => setOpen(true)}
       />
       <Dialog open={open} onOpenChange={setOpen}>
@@ -205,7 +214,7 @@ export function CellType({
     case "duration": return <DurationDisplay value={value} />;
     case "currency": return <CurrencyDisplay value={value} compact={compact} fractionDigits={fractionDigits} currency={currency} />;
     case "signed": return <SignedDisplay value={value} />;
-    case "image": return <ImageDisplay value={value} />;
+    case "image": return <ImageDisplay value={value} compact={compact} />;
     case "audio": return <AudioDisplay value={value} />;
     case "array": return <ArrayDisplay value={value} />;
     case "tree": return <TreeDisplay value={value} replacements={replacements} />;
