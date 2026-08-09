@@ -129,3 +129,5 @@ export { Terminal, terminalVariants } from "./ui/terminal";
 export type { TerminalProps, TerminalEntry, TerminalPromptGlyph } from "./ui/terminal";
 export { DiffBlock, diffBlockVariants, pairDiffLines, wordDiff } from "./ui/diff-block";
 export type { DiffBlockProps, DiffLine, DiffLineType, DiffRow, WordDiffSegment, WordDiffResult } from "./ui/diff-block";
+export { DeviceFrame, deviceFrameVariants } from "./ui/device-frame";
+export type { DeviceFrameProps, DeviceFrameVariant } from "./ui/device-frame";
