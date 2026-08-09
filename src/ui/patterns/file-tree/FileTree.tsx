@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { cn } from "../../../lib/cn";
 import { TreeView } from "../../tree-view";
 import type { TreeNode, TreeViewProps } from "../../tree-view";
 
@@ -81,9 +80,5 @@ function toTreeNode(node: FileTreeNode): TreeNode {
  */
 export function FileTree({ data, className, ...treeViewProps }: FileTreeProps) {
   const items = data.map(toTreeNode);
-  return (
-    <div className={cn(className)}>
-      <TreeView data={items} {...treeViewProps} />
-    </div>
-  );
+  return <TreeView data={items} className={className} {...treeViewProps} />;
 }

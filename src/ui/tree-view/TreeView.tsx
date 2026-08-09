@@ -58,6 +58,10 @@ export interface TreeViewProps {
   expandedKeys?: Set<string>;
   onToggle?: (id: string) => void;
   replacements?: UrlReplacement[];
+  /** Merged onto the root `<ul>`. Every other component in the library takes
+   * one; without it a caller can only style a tree by wrapping it in a spare
+   * `<div>`, which is what `FileTree` originally had to do. */
+  className?: string;
 }
 
 interface VisibleEntry {
@@ -134,7 +138,7 @@ function renderNodes(
 
 export function TreeView({
   data, variant, density, indent = "md", defaultExpandedDepth = 1,
-  expandedKeys, onToggle, replacements,
+  expandedKeys, onToggle, replacements, className,
 }: TreeViewProps) {
   const treeRef = useRef<HTMLUListElement>(null);
   // `variant="condensed"` is the deprecated alias for `density="compact"`.
@@ -210,7 +214,7 @@ export function TreeView({
       ref={treeRef}
       role="tree"
       onKeyDown={handleKeyDown}
-      className={cn(d === "compact" ? "space-y-0" : "space-y-0.5", "list-none m-0 p-0 outline-none")}
+      className={cn(d === "compact" ? "space-y-0" : "space-y-0.5", "list-none m-0 p-0 outline-none", className)}
     >
       {renderNodes(data, 0, [], d, indentPx, expanded, currentId, hoveredId, toggle, onHover, replacements)}
     </ul>

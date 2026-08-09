@@ -68,10 +68,14 @@ export function buildMessagesAndNotes(
       const left = idxs.length === 1 ? xs[0] - NOTE_HALF_W : Math.min(...xs) - NOTE_MARGIN;
       const width = idxs.length === 1 ? NOTE_HALF_W * 2 : Math.max(...xs) - Math.min(...xs) + NOTE_MARGIN * 2;
       // Positioned to START at the row's natural band, but not height-
-      // capped: a note whose text wraps past ROW_H overflows visibly
-      // (overlapping the row below) rather than being clipped — the same
-      // "fixed band, content overflows past it" tradeoff TreeItem documents
-      // for an over-tall CellType value.
+      // capped: a note whose text wraps past ROW_H grows downward over the
+      // row below rather than being truncated mid-sentence — the same
+      // "fixed band, content grows past it" tradeoff TreeItem documents for
+      // an over-tall CellType value. This is the only thing that can
+      // overflow the component's own box (self-loops and spanning notes are
+      // both proven to fit inside one lane width), and the root's
+      // `overflow-auto` turns that case into a scrollbar rather than a
+      // silent spill into whatever is laid out beneath the diagram.
       notes.push({ id: item.id, left, top: y - ROW_H / 2 + GRID / 2, width, opacity: t, text: item.text });
       return;
     }
