@@ -6,6 +6,33 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **Presentation components for screencasts and technical video.** Each composes existing primitives rather than restyling markup:
+  - **`Terminal`** — shell session with prompt/command/output framing, composing `CodeBlock` for the output body.
+  - **`DiffBlock`** — unified and split diff views with word-level intra-line highlighting.
+  - **`DeviceFrame`** — browser / window / phone chrome to wrap a screenshot or a live demo.
+  - **`Timeline`** — horizontal or vertical event sequences.
+  - **`Comparison`** — before/after, either side-by-side or as a draggable wipe.
+  - **`StatGrid`** — a grid of `StatCard`s with a shared column rhythm; `StatCard` itself gains a numeric delta and a sparkline slot.
+  - **`Callout`** — `Alert`'s `note` / `tip` variants plus an `xl` presentation size, for on-screen asides large enough to read in a video.
+  - **`GraphGroup`** — a labelled boundary region (VPC, cluster, service boundary) drawn behind the nodes and edges it encloses. Stacking is DOM order, not `z-index`: render groups before nodes. Nests without compounding fills (flat 5% alpha per level) and tints by plain alpha compositing, never `backdrop-filter`, so it stays inside Canvas's drag performance contract (AGENTS.md §0.12).
+- **`src/lib/layout.ts`** — `layered()` (longest-path DAG ranking with barycentre crossing reduction) and `grid()` placement, so a diagram's node positions can be computed instead of hand-placed. Shares `GRID`/`snap` with `graph-node/grid.ts` rather than redeclaring them. `scripts/prove-layout-crossings.mjs` measures the reduction on a fixture graph: **13 edge crossings → 1**.
+- **`Port`**: `shape: "circle" | "socket"`. The half-disc "female port" look was previously accidental — a full circle straddling the node border with its outer half clipped by the node's `overflow-hidden`, which also meant row ports and legacy ports disagreed on shape. `socket` draws a true half-disc from SVG arc geometry, so the effect survives anyone touching an ancestor's `overflow`. The hit target stays a full circle.
+- **`GraphNode`** header/footer variations: `headerIcon`, `headerStatus`, `subtitle`, `headerDots`, `accentColor`, `footerMetric`, `footerAction`, and `footerProgress` (reusing `Progress`). A `subtitle` takes the header to `HEADER + 1` cells — still a whole number of grid cells, so rows and ports stay grid-aligned per AGENTS.md §7.
+- **`CellType`**: eight new value types — `sparkline`, `tags`, `code`, `color`, `hash`, `user`, `progress`, `secret` — each composing an existing component rather than restyling markup.
+- **`ConnectionLine`**: `variant="orthogonal"` with obstacle avoidance, explicit `waypoints`, and semantic `kind` (`sync` | `async` | `data` | `error`) as an axis independent of `state`.
+
+### Changed
+
+- **`CellType`**: the JSON popover now syntax-highlights, via `CodeBlock language="json" highlight` — `CodeBlock` already supported JSON, it simply wasn't switched on.
+- **`ConnectionLine`** decomposed into `ConnectionPath` + `geometry.ts` / `layout.ts` / `gapped-path.ts`, so the routing math has one home shared with `ConnectionLayer`. Edge labels no longer sit on a translucent badge fighting the stroke; the path is interrupted beneath the label instead — the conventional diagramming fix, and readable on curved paths where the old semi-transparent badge was not.
+- **`Slider`**: `step` now derives ~500 increments from the actual range instead of defaulting to `1`. The reported "low FPS" was two separate problems, neither of them dropped frames: `CellType`'s audio seek bar read its position from the `timeupdate` DOM event, which the HTML spec fires only ~4×/second (now driven by rAF while playing), and every other slider was *quantized* rather than jittering — `step=1` over a 0–100 range means the thumb can only land every ~4px on a 400px track. Confirmed there is no systemic cause: no `backdrop-filter` in the stylesheets, and `--backdrop-blur` is `0px` in every theme except neon and frosted.
+- **`DataList`**: the "Label width" showcase demo rewritten to be self-explanatory (it previously showed three widths with nothing indicating what was varying).
+
+### Fixed
+
+- **`ConnectionLine`**: `orthogonal` obstacle avoidance only tested the route's vertical spine. For a flat edge that spine degenerates to a point, so a route could pass the check while both of its horizontal legs ran straight through the obstacle. Both legs are now tested (`rectBlocksHorizontalSpan` / `elbowBlockedByRect` in `geometry.ts`).
+- ~~**`DataTable`**: sticky header restructured to render outside `ScrollArea`.~~ **Retracted** — this entry was never true. `git show` across every revision of `DataTable.tsx` confirms `<TableHeader sticky>` has always rendered inside `ScrollArea`. Nothing was changed and nothing has regressed; the entry is struck rather than deleted so the record of the false claim survives.
+
 - **`src/motion/` — a frame-driven motion engine**, published as `my-you-eye/motion` (remotion-free) and `my-you-eye/motion/remotion` (the sole module importing remotion, so a plain-UI consumer never pulls a video renderer into their bundle). Ships as a subpath of this package rather than a separate `@lib/motion`, so one version bump moves the whole library — see TODO.md D1.
   - **Foundation:** `MotionRoot`, `DomDriver` (rAF clock: play/pause/seek/reverse/rate, honours `prefers-reduced-motion`), `RemotionDriver`, `useTimeline`, `useProgress`, `useSequence`, and the `Timing` / `Beat` / `EasingName` / `SpringName` contract. Primitives never call a clock API; both drivers write through one `TimelineProvider`, so the same primitive renders identically in a video and in a live presentation. This implements the driver abstraction AGENTS.md §9e defers — see TODO.md D2 for why `@remotion/player` alone is insufficient (inside a Player the frame is owned by playback, so nothing can react to a hover, drag, or live value change).
   - **Timing is semantic, not numeric.** `Beat` is `"instant" | "quick" | "normal" | "slow"` (raw frames remain an escape hatch), so a consuming project cannot pick a janky duration — taste stays in the library. `easing` and `spring` are mutually exclusive at the type level, not by documented precedence.
