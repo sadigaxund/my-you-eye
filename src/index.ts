@@ -60,6 +60,8 @@ export { Kbd } from "./ui/kbd";
 export { CellType } from "./ui/cell-type";
 export { Canvas } from "./ui/canvas";
 export { GraphNode } from "./ui/graph-node";
+export { GraphGroup } from "./ui/graph-group";
+export type { GraphGroupProps } from "./ui/graph-group";
 export { Port } from "./ui/port";
 export { Typography } from "./ui/typography";
 export { TreeView } from "./ui/tree-view";

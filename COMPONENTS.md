@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**71 components** across 10 groups.
+**72 components** across 10 groups.
 
 ## canvas
 
@@ -19,6 +19,7 @@ import "my-you-eye/styles.css";
 | `ConnectionLayer` | — | Many edges, one svg, Parallel edges (automatic bundling), Edge states share the same visual language as ConnectionLine |
 | `ConnectionLine` | variant: bezier / orthogonal / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges), Orthogonal routing avoids obstacles, Waypoints, Edge kind (semantic styling) |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
+| `GraphGroup` | variant: success<br>size: sm | Architecture boundaries, Label placement |
 | `GraphNode` | variant: ghost / muted / selected / simple / success<br>type: button<br>size: icon-sm<br>style: soft | Variants, Simple variant, Legacy ports on a tall node, Free-form body, Header variations, Accent bar color, Footer variations, All variations together |
 | `Port` | state: connected / default / highlighted<br>shape: circle / socket<br>side: in / out | States (circle), Socket shape — mounted on a border, Socket shape — all states, Circle vs socket, side by side |
 
