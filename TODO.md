@@ -152,7 +152,85 @@ can pass that produces a broken frame.
 
 ---
 
-## Phase A — Audit & repair (do this first; everything else builds on it)
+---
+
+# ⚑ CURRENT STATUS — read this first
+
+Branch `feat/animation-layer`. `npm run validate` green, `npm run audit` clean,
+dev server verified (86 showcase modules + `main.tsx` all 200). HEAD = `f1e8c09`.
+
+**Process rule: ONE agent at a time, working in the main checkout, sequentially.**
+No parallel batches, no worktrees, no sub-agents. Finish each component completely
+(component + `index.ts` + showcase + `src/index.ts` export) before starting the next,
+so an interruption never leaves a half-built folder.
+
+### Done
+
+- **Phase A** — full audit/repair (scrollbars, alignment, truncation, dead API, reuse).
+- **Phase B + C** — motion engine: driver foundation + 25 primitives, shipped as
+  `my-you-eye/motion` (remotion-free) and `my-you-eye/motion/remotion`.
+  `packages/motion/` deleted, `apps/video` migrated. MP4 render verified.
+- **Phase D2** — charts: `ChartFrame`, `Legend`, and 8 SVG charts on a theme-derived
+  `oklch` palette, validated zero-FAIL across 9 themes × light/dark.
+- **Owner feedback round 1** — `Port` socket shape, slider smoothing (rAF audio +
+  step derivation), `GraphNode` header/footer slots, JSON popover highlighting,
+  8 new `CellType` types, label-over-path legibility, demo caption spacing.
+- **Guards** — `scripts/check-motion.mjs` wired into `validate`.
+
+### QUEUE — in this order
+
+**Q1. Finish edge routing** (started, unfinished — `src/ui/connection-line/`)
+- [ ] `variant="orthogonal"` with real obstacle avoidance. A previous agent found and
+      was mid-fix on a genuine bug: for a flat edge, a sideways jog does *not* clear a
+      centred obstacle — clearing only the vertical spine is insufficient. Horizontal
+      legs must be checked too.
+- [ ] `waypoints?: Point[]` on `ConnectionLine` and `ConnectionLayer` edges.
+- [ ] Parallel-edge separation (edges sharing a node pair must not overlap).
+- [ ] Label placement that avoids crossing edges.
+- [ ] `kind: "sync" | "async" | "data" | "error"` styling union.
+- [ ] Fix the `ConnectionLayer` demo so no edges cross.
+- All geometry stays in the shared `ConnectionPath`/`geometry.ts` — never forked.
+
+**Q2. Finish feedback round 1 leftovers**
+- [ ] `ArrayDisplay` reuses `DataList` instead of hand-rolled pills.
+- [ ] Rewrite the `DataList` "Label width" demo — currently unreadable; make the
+      `sm`/`md`/`lg` difference and the truncation behaviour obvious.
+
+**Q3. Content components** (none built — a previous attempt produced nothing)
+- [ ] `Terminal` — prompt/command/output/exit code, composing `CodeBlock`.
+- [ ] `DiffBlock` — unified + side-by-side, reusing `CodeBlock`'s tokenizer.
+- [ ] `DeviceFrame` — browser/window/phone chrome.
+- [ ] `Timeline` — event sequence with lanes.
+- [ ] `StatCard` delta/sparkline/icon/size + `StatGrid`.
+- [ ] `Comparison` — side-by-side + wipe divider, `progress`-driven.
+- [ ] `Callout` — extend `Alert` with `note`/`tip` + presentation size.
+- [ ] `src/lib/layout.ts` — `layered()` (DAG ranking + crossing reduction) and
+      `grid()`. Import `GRID` from `graph-node/grid.ts`, never redeclare.
+
+**Q4. Diagram components** (depend on Q1)
+- [ ] `GraphGroup` — labelled boundary regions.
+- [ ] `SequenceDiagram` — actors, lifelines, messages, activation bars.
+- [ ] `Annotation` — leader line + label.
+- [ ] `FileTree` — pattern over `TreeView`.
+
+**Q5. Scenes** — Phase E below. **Get the schema reviewed by the human first.**
+
+**Q6. Presenter / video / packaging** — Phases F, G, H below.
+
+**Q7. SKILL set** — `SKILL.md` entry point + `references/{diagrams,motion,scenes,data-display}.md`.
+Diagram reference must be prescriptive (rules + checklist), since its purpose is to stop
+weaker models wiring up chaotic graphs.
+
+### Known issues
+
+- `TreeView` + `CellType type="image"`: row is a fixed 24px, image renders 32px → overflows.
+- `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).
+- `CodeBlock.highlight.tsx` exceeds the 250-line lint warning (pre-existing).
+- Unbuilt guards: `check-tokens.mjs` (no raw px/hex), dead-CVA-variant check in `audit.mjs`.
+
+---
+
+## Phase A — Audit & repair (COMPLETE)
 
 Findings from reading the current source. Each is a discrete task.
 **None of these are speculative — all were read off the code.**
