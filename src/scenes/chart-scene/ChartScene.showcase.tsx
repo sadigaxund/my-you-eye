@@ -85,7 +85,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with focus + callout, step 2 (frame ${step2.endFrame - 1}/${barTotal})`,
-      description: "Fri's bars stay lit, every other day dims to opacity-30, and a \"Fri · Organic\" CountUp readout has settled on 58 in the top-right corner.",
+      description: "Fri's bars stay lit, every other day dims to opacity-muted, and a \"Fri · Organic\" CountUp readout has settled on 58 in the top-right corner.",
       render: () => (
         <PinnedFrame frame={step2.endFrame - 1} durationInFrames={barTotal}>
           <Frame><ChartScene scene={barScene} /></Frame>

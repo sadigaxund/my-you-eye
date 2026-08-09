@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Focus a category",
-      description: "focus dims every bar outside the named category to opacity-30 — for ChartScene's per-step focus callout.",
+      description: "focus dims every bar outside the named category to opacity-muted — for ChartScene's per-step focus callout.",
       render: () => <BarChart categories={categories} series={series} focus="Thu" title="Weekly signups" />,
     },
   ],

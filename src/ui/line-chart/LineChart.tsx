@@ -32,7 +32,7 @@ export interface LineChartProps {
    * progress) — a pure function of this value. */
   progress?: number;
   /** Category label to spotlight — every series' point marker at every
-   * other category dims to `opacity-30` (the lines themselves, which span
+   * other category dims to `opacity-muted` (the lines themselves, which span
    * every category, stay at full opacity). Omitted (default) draws every
    * point at full opacity. */
   focus?: string;
@@ -148,7 +148,7 @@ function LineChart({
                           cx={pt.x}
                           cy={pt.y}
                           r={4}
-                          className={cn(chartFill(token), "stroke-surface", focusIndex >= 0 && i !== focusIndex && "opacity-30")}
+                          className={cn(chartFill(token), "stroke-surface", focusIndex >= 0 && i !== focusIndex && "opacity-muted")}
                           strokeWidth={2}
                         />
                       ))}

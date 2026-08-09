@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { cn } from "../../lib/cn";
 import { ChartFrame, chartFill, formatTickNumber, CHART_SEQUENTIAL_TOKENS } from "../patterns/chart-frame";
 
 export interface HeatmapProps {
@@ -98,7 +97,7 @@ function Heatmap({ xLabels, yLabels, values, title, subtitle, valueFormat = form
                       width={Math.max(bandWidth - CELL_GAP, 0)}
                       height={Math.max(rowHeight - CELL_GAP, 0)}
                       rx={3}
-                      className={cn(chartFill(tokenFor(value)), "transition-opacity duration-150")}
+                      className={chartFill(tokenFor(value))}
                       opacity={isRevealed ? 1 : 0}
                       onPointerEnter={(e) => {
                         setHover({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY, row, col });

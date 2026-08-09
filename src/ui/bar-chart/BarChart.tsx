@@ -32,7 +32,7 @@ export interface BarChartProps {
    * no internal timers or motion imports (AGENTS.md §9b / TODO.md D4). */
   progress?: number;
   /** Category label to spotlight — every other category's bars dim to
-   * `opacity-30`. Omitted (default) draws every bar at full opacity. */
+   * `opacity-muted`. Omitted (default) draws every bar at full opacity. */
   focus?: string;
   className?: string;
 }
@@ -146,7 +146,7 @@ function BarChart({
                           width={Math.max(w, 0)}
                           height={thickness}
                           rx={4}
-                          className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity", dimmed && "opacity-30")}
+                          className={cn(chartFill(s.token ?? chartColorToken(si)), dimmed && "opacity-muted")}
                           onPointerEnter={(e) => showHover(s.label, value, e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
                           onPointerLeave={hideHover}
                         />
@@ -187,7 +187,7 @@ function BarChart({
                         width={thickness}
                         height={Math.max(h, 0)}
                         rx={4}
-                        className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity", dimmed && "opacity-30")}
+                        className={cn(chartFill(s.token ?? chartColorToken(si)), dimmed && "opacity-muted")}
                         onPointerEnter={(e) => showHover(s.label, value, e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
                         onPointerLeave={hideHover}
                       />
