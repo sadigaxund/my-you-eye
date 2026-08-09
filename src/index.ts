@@ -49,6 +49,8 @@ export { StatCard } from "./ui/patterns/stat-card";
 export type { StatCardProps, StatCardDelta, StatCardSparklineProps } from "./ui/patterns/stat-card";
 export { StatGrid } from "./ui/patterns/stat-grid";
 export type { StatGridProps, StatGridItem } from "./ui/patterns/stat-grid";
+export { Comparison } from "./ui/patterns/comparison";
+export type { ComparisonProps } from "./ui/patterns/comparison";
 export { Separator } from "./ui/separator";
 export { Progress } from "./ui/progress";
 export { StatusDot } from "./ui/status-dot";

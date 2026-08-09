@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**70 components** across 10 groups.
+**71 components** across 10 groups.
 
 ## canvas
 
@@ -117,6 +117,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
+| `Comparison` | tone: after / before | Side-by-side, Wipe (draggable), Wipe — progress-driven |
 | `ConfirmDialog` | variant: danger / secondary | Variants |
 | `FormField` | type: password | Default, With hint, Required with error |
 | `PageShell` | variant: secondary | Default, With actions |
