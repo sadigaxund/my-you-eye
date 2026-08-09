@@ -97,6 +97,39 @@ function rectBlocksVerticalSpan(x: number, y0: number, y1: number, o: ObstacleRe
   return x > ox0 && x < ox1 && bottom > oy0 && top < oy1;
 }
 
+/** Same test as `rectBlocksVerticalSpan`, axes swapped: does the horizontal
+ * segment at `y` spanning `x0..x1` cross `o`? Needed alongside the vertical
+ * check because `elbowPoints`' candidate columns aren't the whole story —
+ * see `elbowBlockedByRect`. */
+function rectBlocksHorizontalSpan(y: number, x0: number, x1: number, o: ObstacleRect, margin: number): boolean {
+  const left = Math.min(x0, x1), right = Math.max(x0, x1);
+  const ox0 = o.x - margin, ox1 = o.x + o.width + margin;
+  const oy0 = o.y - margin, oy1 = o.y + o.height + margin;
+  return y > oy0 && y < oy1 && right > ox0 && left < ox1;
+}
+
+/**
+ * Does the full elbow `a → (cx, a.y) → (cx, b.y) → b` cross `o` at all?
+ * Checking only the vertical spine (`rectBlocksVerticalSpan(cx, a.y, b.y,
+ * …)`) is not sufficient: for a flat edge (`a.y === b.y`) the "vertical"
+ * segment has zero height, so the spine check degenerates to testing a
+ * single point, while the two horizontal legs — which for a flat edge
+ * both actually run the FULL width at `a.y`/`b.y` — are exactly what the
+ * naive check skipped. A candidate `cx` sitting just past one edge of the
+ * obstacle can pass the point-check yet still leave the *other* leg
+ * running straight through the obstacle's x-range at that same y — the
+ * elbow "jog" doesn't jog at all when there's no vertical travel to jog
+ * along. Checking all three segments (both legs + the spine) is what
+ * makes `elbowPoints` correct for flat edges, not just diagonal ones.
+ */
+function elbowBlockedByRect(a: Point, b: Point, cx: number, o: ObstacleRect, margin: number): boolean {
+  return (
+    rectBlocksHorizontalSpan(a.y, a.x, cx, o, margin) ||
+    rectBlocksVerticalSpan(cx, a.y, b.y, o, margin) ||
+    rectBlocksHorizontalSpan(b.y, cx, b.x, o, margin)
+  );
+}
+
 /**
  * Right-angle route between exactly two points, detouring around any
  * `obstacles` that block the naive mid-X elbow (the same shape `stepped`
@@ -114,14 +147,14 @@ function rectBlocksVerticalSpan(x: number, y0: number, y1: number, o: ObstacleRe
 function elbowPoints(a: Point, b: Point, obstacles: ObstacleRect[] = [], margin = DEFAULT_CLEARANCE): Point[] {
   const midX = (a.x + b.x) / 2;
   if (obstacles.length === 0) return [a, { x: midX, y: a.y }, { x: midX, y: b.y }, b];
-  const blocker = obstacles.find((o) => rectBlocksVerticalSpan(midX, a.y, b.y, o, margin));
+  const blocker = obstacles.find((o) => elbowBlockedByRect(a, b, midX, o, margin));
   if (!blocker) return [a, { x: midX, y: a.y }, { x: midX, y: b.y }, b];
   const spread = Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) + margin * 4;
   const candidates = [blocker.x - margin, blocker.x + blocker.width + margin]
     .filter((x) => Math.abs(x - midX) <= spread)
     .sort((x1, x2) => Math.abs(x1 - midX) - Math.abs(x2 - midX));
   for (const cx of candidates) {
-    if (!obstacles.some((o) => rectBlocksVerticalSpan(cx, a.y, b.y, o, margin))) {
+    if (!obstacles.some((o) => elbowBlockedByRect(a, b, cx, o, margin))) {
       return [a, { x: cx, y: a.y }, { x: cx, y: b.y }, b];
     }
   }

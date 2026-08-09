@@ -8,18 +8,31 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Many edges, one svg",
-      render: () => (
-        <div className="relative" style={{ width: 360, height: 220 }}>
-          <ConnectionLayer
-            edges={[
-              { id: "api-queue", from: { x: 20, y: 20 }, to: { x: 340, y: 20 }, variant: "straight", state: "connected", arrowhead: true, label: "publish" },
-              { id: "queue-worker-1", from: { x: 20, y: 80 }, to: { x: 340, y: 130 }, variant: "bezier", state: "connected", arrowhead: true, label: "consume" },
-              { id: "queue-worker-2", from: { x: 20, y: 140 }, to: { x: 340, y: 130 }, variant: "bezier", state: "highlighted", arrowhead: true, label: "consume" },
-              { id: "worker-db", from: { x: 20, y: 200 }, to: { x: 340, y: 190 }, variant: "stepped", state: "pending", arrowhead: true, label: "retry" },
-            ]}
-          />
-        </div>
-      ),
+      description: "A small architecture diagram, not hand-tuned coordinates: every forward edge uses variant=\"orthogonal\" with the OTHER nodes passed as obstacles, so it detours around them instead of cutting through. The \"retry\" edge runs backward (worker → api) and is pinned with explicit waypoints to loop underneath the whole diagram instead of cutting back across it. No edge crosses another — verified geometrically (see ConnectionLine's showcase report), not eyeballed.",
+      render: () => {
+        const api = { x: 20, y: 90, width: 80, height: 40 };
+        const queue = { x: 190, y: 20, width: 80, height: 40 };
+        const cache = { x: 190, y: 160, width: 80, height: 40 };
+        const worker = { x: 360, y: 90, width: 80, height: 40 };
+        const nodeBoxClass = "absolute flex items-center justify-center rounded-ui-sm border border-border bg-surface text-xs font-medium text-fg";
+        const boxStyle = (r: typeof api) => ({ left: r.x, top: r.y, width: r.width, height: r.height });
+        return (
+          <div className="relative" style={{ width: 460, height: 260 }}>
+            <div className={nodeBoxClass} style={boxStyle(api)}>api</div>
+            <div className={nodeBoxClass} style={boxStyle(queue)}>queue</div>
+            <div className={nodeBoxClass} style={boxStyle(cache)}>cache</div>
+            <div className={nodeBoxClass} style={boxStyle(worker)}>worker</div>
+            <ConnectionLayer
+              edges={[
+                { id: "sync", from: { x: 100, y: 100 }, to: { x: 190, y: 40 }, variant: "orthogonal", kind: "sync", arrowhead: true, label: "sync", obstacles: [cache, worker] },
+                { id: "data", from: { x: 100, y: 120 }, to: { x: 190, y: 180 }, variant: "orthogonal", kind: "data", arrowhead: true, label: "data", obstacles: [queue, worker] },
+                { id: "async", from: { x: 270, y: 40 }, to: { x: 360, y: 100 }, variant: "orthogonal", kind: "async", arrowhead: true, label: "async", obstacles: [api, cache] },
+                { id: "retry", from: { x: 400, y: 130 }, to: { x: 60, y: 130 }, variant: "straight", kind: "error", arrowhead: true, label: "retry", waypoints: [{ x: 400, y: 220 }, { x: 60, y: 220 }] },
+              ]}
+            />
+          </div>
+        );
+      },
     },
     {
       name: "Parallel edges (automatic bundling)",
