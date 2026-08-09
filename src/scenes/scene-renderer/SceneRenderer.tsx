@@ -9,6 +9,7 @@ import { DiagramScene } from "../diagram-scene";
 import { SequenceScene } from "../sequence-scene";
 import { ChartScene } from "../chart-scene";
 import { StatScene } from "../stat-scene";
+import { CompareScene } from "../compare-scene";
 import type { Scene } from "../schema";
 
 export interface SceneRendererProps {
@@ -50,7 +51,7 @@ export function SceneRenderer({ scene }: SceneRendererProps) {
     case "sequence": return <SequenceScene scene={scene} />;
     case "chart": return <ChartScene scene={scene} />;
     case "stat": return <StatScene scene={scene} />;
-    case "compare": return <NotImplemented kind="compare" />;
+    case "compare": return <CompareScene scene={scene} />;
     case "walkthrough": return <NotImplemented kind="walkthrough" />;
     default: {
       const exhaustive: never = scene;

@@ -34,6 +34,8 @@ export { ChartScene } from "./chart-scene";
 export type { ChartSceneProps } from "./chart-scene";
 export { StatScene } from "./stat-scene";
 export type { StatSceneProps } from "./stat-scene";
+export { CompareScene } from "./compare-scene";
+export type { CompareSceneProps } from "./compare-scene";
 
 // The scenes-tier CodeDiff component (TODO.md D4/Phase E §6) — animates
 // between two full sources; CodeScene renders it for any step whose `code`
