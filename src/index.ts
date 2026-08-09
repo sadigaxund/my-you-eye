@@ -127,3 +127,5 @@ export { Funnel } from "./ui/funnel";
 export type { FunnelProps, FunnelStage } from "./ui/funnel";
 export { Terminal, terminalVariants } from "./ui/terminal";
 export type { TerminalProps, TerminalEntry, TerminalPromptGlyph } from "./ui/terminal";
+export { DiffBlock, diffBlockVariants, pairDiffLines, wordDiff } from "./ui/diff-block";
+export type { DiffBlockProps, DiffLine, DiffLineType, DiffRow, WordDiffSegment, WordDiffResult } from "./ui/diff-block";

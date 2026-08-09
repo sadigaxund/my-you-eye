@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**66 components** across 10 groups.
+**67 components** across 10 groups.
 
 ## canvas
 
@@ -55,6 +55,7 @@ import "my-you-eye/styles.css";
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | variant: danger / default / elevated / ghost / outlined<br>size: lg / md / sm | Variants, With footer actions, Size |
 | `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `DiffBlock` | — | Unified, Unified — word diff, Split, Split — word diff |
 | `EmptyState` | variant: secondary | Default, With icon and action |
 | `Image` | — | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | — | Default, Combinations |
