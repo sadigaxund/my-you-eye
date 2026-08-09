@@ -179,21 +179,21 @@ so an interruption never leaves a half-built folder.
 
 ### QUEUE — in this order
 
-**Q1. Finish edge routing** (started, unfinished — `src/ui/connection-line/`)
-- [ ] `variant="orthogonal"` with real obstacle avoidance. A previous agent found and
+**Q1. Edge routing — ✅ COMPLETE** (`a5fd018`)
+- [x] `variant="orthogonal"` with real obstacle avoidance. A previous agent found and
       was mid-fix on a genuine bug: for a flat edge, a sideways jog does *not* clear a
       centred obstacle — clearing only the vertical spine is insufficient. Horizontal
       legs must be checked too.
-- [ ] `waypoints?: Point[]` on `ConnectionLine` and `ConnectionLayer` edges.
-- [ ] Parallel-edge separation (edges sharing a node pair must not overlap).
-- [ ] Label placement that avoids crossing edges.
-- [ ] `kind: "sync" | "async" | "data" | "error"` styling union.
-- [ ] Fix the `ConnectionLayer` demo so no edges cross.
+- [x] `waypoints?: Point[]` on `ConnectionLine` and `ConnectionLayer` edges.
+- [x] Parallel-edge separation (edges sharing a node pair must not overlap).
+- [x] Label placement that avoids crossing edges.
+- [x] `kind: "sync" | "async" | "data" | "error"` styling union.
+- [x] Fix the `ConnectionLayer` demo so no edges cross.
 - All geometry stays in the shared `ConnectionPath`/`geometry.ts` — never forked.
 
-**Q2. Finish feedback round 1 leftovers**
-- [ ] `ArrayDisplay` reuses `DataList` instead of hand-rolled pills.
-- [ ] Rewrite the `DataList` "Label width" demo — currently unreadable; make the
+**Q2. Feedback round 1 leftovers — ✅ COMPLETE** (`9782d6f`)
+- [x] `ArrayDisplay` reuses `DataList` instead of hand-rolled pills.
+- [x] Rewrite the `DataList` "Label width" demo — currently unreadable; make the
       `sm`/`md`/`lg` difference and the truncation behaviour obvious.
 
 **Q3. Content components** (none built — a previous attempt produced nothing)
