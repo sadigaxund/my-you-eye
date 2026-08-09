@@ -5,8 +5,11 @@ import { cn } from "../../lib/cn";
 import { ScrollArea } from "../scroll-area";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
 import { useHighlightOverlay } from "./CodeBlock.useHighlightOverlay";
+import { CodeHeaderBar, LanguageBadge } from "./CodeBlock.chrome";
 
-const codeBlockVariants = cva(
+/** Exported so the scenes-tier `CodeDiff` frames itself identically instead
+ * of copying the class string — see CodeBlock.chrome.tsx. */
+export const codeBlockVariants = cva(
   "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
   {
     variants: {
@@ -191,25 +194,11 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
           </span>
         )}
         {hasHeader && (
-          <div className="flex items-center justify-between gap-2 h-9 pl-panel pr-1.5 border-b border-border">
-            <div className="flex items-center gap-2 min-w-0">
-              {header && <span className="text-xs font-medium text-code-fg truncate">{header}</span>}
-              {language && (
-                <span className="shrink-0 rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50">
-                  {language}
-                </span>
-              )}
-            </div>
-            <CopyButton copied={copied} onCopy={copy} />
-          </div>
+          <CodeHeaderBar header={header} language={language} trailing={<CopyButton copied={copied} onCopy={copy} />} />
         )}
         {!hasHeader && (
           <div className="absolute top-1 right-1 z-10 flex items-center gap-1">
-            {language && (
-              <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
-                {language}
-              </span>
-            )}
+            {language && <LanguageBadge language={language} floating />}
             <CopyButton copied={copied} onCopy={copy} />
           </div>
         )}

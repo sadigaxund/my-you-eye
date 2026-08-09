@@ -1,4 +1,3 @@
-import { cn } from "../../lib/cn";
 import { Stagger } from "../../motion";
 import { useSequence } from "../../motion/core";
 import { Link } from "../../ui/link";
@@ -23,7 +22,7 @@ export function OutroScene({ scene }: OutroSceneProps) {
   const range = Object.values(ranges)[0];
 
   return (
-    <div className={cn("flex h-full w-full flex-col items-center justify-center gap-stack bg-bg px-panel-xl text-center text-fg")}>
+    <div className="flex h-full w-full flex-col items-center justify-center gap-stack bg-bg px-panel-xl text-center text-fg">
       <Stagger each="quick" delay={range.startFrame} duration="slow" revealFrom="up">
         {scene.title && <h1 className="text-3xl font-bold text-fg">{scene.title}</h1>}
         {scene.subtitle && <p className="text-lg text-muted">{scene.subtitle}</p>}

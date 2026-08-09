@@ -1,4 +1,3 @@
-import { cn } from "../../lib/cn";
 import { Reveal, Highlight } from "../../motion";
 import { useSequence } from "../../motion/core";
 import type { SequenceRange } from "../../motion/core";
@@ -55,7 +54,7 @@ export function BulletScene({ scene }: BulletSceneProps) {
   const ranges = useSequence(sceneSteps(scene), scene.pace);
 
   return (
-    <div className={cn("flex h-full w-full flex-col justify-center gap-stack bg-bg px-panel-xl text-fg")}>
+    <div className="flex h-full w-full flex-col justify-center gap-stack bg-bg px-panel-xl text-fg">
       {scene.heading && <h2 className="text-2xl font-semibold text-fg">{scene.heading}</h2>}
       <ul className="flex flex-col gap-stack">
         {scene.bullets.map((bullet, i) => (

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 import { ScrollArea } from "../../ui/scroll-area";
+import { codeBlockVariants, CodeHeaderBar } from "../../ui/code-block";
 import { pairDiffLines } from "../../ui/diff-block";
 import { useTimeline, resolveBeatFrames } from "../../motion/core";
 import type { Timing } from "../../motion/core";
@@ -69,19 +70,10 @@ export function CodeDiff({ from, to, language, header, className, ...timing }: C
   const eachFrames = rows.length > 1 ? Math.max(1, Math.round((totalDuration - rowDuration) / (rows.length - 1))) : 0;
 
   return (
-    <div className={cn("w-full overflow-clip rounded-ui border border-border bg-code-bg text-code-fg flex flex-col", className)}>
-      {header && (
-        <div className="flex items-center gap-2 h-9 px-panel border-b border-border shrink-0">
-          <span className="text-xs font-medium text-code-fg truncate">{header}</span>
-          {language && (
-            <span className="shrink-0 rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50">
-              {language}
-            </span>
-          )}
-        </div>
-      )}
-      <ScrollArea orientation="both" className="flex-1 min-h-0 py-1.5">
-        <div ref={rulerRef} aria-hidden className="invisible absolute px-2 font-mono text-xs leading-relaxed whitespace-pre">
+    <div className={cn(codeBlockVariants(), "w-full text-code-fg", className)}>
+      {header && <CodeHeaderBar header={header} language={language} />}
+      <ScrollArea orientation="both" className="flex-1 min-h-0 py-panel">
+        <div ref={rulerRef} aria-hidden className="invisible absolute px-panel font-mono text-xs leading-relaxed whitespace-pre">
           0
         </div>
         {rows.map((row, i) => (

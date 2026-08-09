@@ -58,7 +58,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
     return (
       <div className="relative">
         <div
-          className={cn("flex px-2 font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.removed)}
+          className={cn("flex px-panel font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.removed)}
           style={{ opacity: 1 - progress }}
         >
           <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.removed)}>{MARKER_GLYPH.removed}</span>
@@ -67,7 +67,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
           ))}
         </div>
         <div
-          className={cn("absolute inset-0 flex px-2 font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.added)}
+          className={cn("absolute inset-0 flex px-panel font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.added)}
           style={{ opacity: progress }}
         >
           <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.added)}>{MARKER_GLYPH.added}</span>
@@ -82,7 +82,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
   if (isAddedOnly) {
     return (
       <div
-        className={cn("flex px-2 font-mono text-xs leading-relaxed whitespace-pre overflow-hidden", ROW_BG.added)}
+        className={cn("flex px-panel font-mono text-xs leading-relaxed whitespace-pre overflow-hidden", ROW_BG.added)}
         style={{ opacity: progress, height: lineHeight > 0 ? lineHeight * progress : undefined }}
       >
         <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.added)}>{MARKER_GLYPH.added}</span>
@@ -94,7 +94,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
   if (isRemovedOnly) {
     return (
       <div
-        className={cn("flex px-2 font-mono text-xs leading-relaxed whitespace-pre overflow-hidden", ROW_BG.removed)}
+        className={cn("flex px-panel font-mono text-xs leading-relaxed whitespace-pre overflow-hidden", ROW_BG.removed)}
         style={{ opacity: 1 - progress, height: lineHeight > 0 ? lineHeight * (1 - progress) : undefined }}
       >
         <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.removed)}>{MARKER_GLYPH.removed}</span>
@@ -105,7 +105,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
 
   const line = (row.left ?? row.right)!;
   return (
-    <div className="flex px-2 font-mono text-xs leading-relaxed whitespace-pre">
+    <div className="flex px-panel font-mono text-xs leading-relaxed whitespace-pre">
       <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.context)}>{MARKER_GLYPH.context}</span>
       <LineText content={line.content} language={language} />
     </div>
