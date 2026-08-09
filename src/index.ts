@@ -51,6 +51,8 @@ export { StatGrid } from "./ui/patterns/stat-grid";
 export type { StatGridProps, StatGridItem } from "./ui/patterns/stat-grid";
 export { Comparison } from "./ui/patterns/comparison";
 export type { ComparisonProps } from "./ui/patterns/comparison";
+export { layered, grid, countCrossings } from "./lib/layout";
+export type { LayoutNode, LayoutEdge, LayoutPosition, LayeredOptions, GridOptions } from "./lib/layout";
 export { Separator } from "./ui/separator";
 export { Progress } from "./ui/progress";
 export { StatusDot } from "./ui/status-dot";
