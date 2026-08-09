@@ -142,3 +142,8 @@ export { DeviceFrame, deviceFrameVariants } from "./ui/device-frame";
 export type { DeviceFrameProps, DeviceFrameVariant } from "./ui/device-frame";
 export { Timeline } from "./ui/timeline";
 export type { TimelineProps, TimelineEvent, TimelineEventState } from "./ui/timeline";
+export { SequenceDiagram } from "./ui/patterns/sequence-diagram";
+export type {
+  SequenceDiagramProps, SequenceParticipant, SequenceMessage, SequenceNote,
+  SequenceItem, SequenceActivation,
+} from "./ui/patterns/sequence-diagram";

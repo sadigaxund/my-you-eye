@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 72,
+  "count": 73,
   "components": [
     {
       "name": "Canvas",
@@ -1127,6 +1127,17 @@
       "demos": [
         "Default",
         "With actions"
+      ]
+    },
+    {
+      "name": "SequenceDiagram",
+      "group": "patterns",
+      "folder": "ui/patterns/sequence-diagram",
+      "props": {},
+      "demos": [
+        "Request flow",
+        "Self-messages, spanning note, error path",
+        "Progress reveal"
       ]
     },
     {
