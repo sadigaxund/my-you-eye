@@ -157,7 +157,8 @@ can pass that produces a broken frame.
 # ⚑ CURRENT STATUS — read this first
 
 Branch `feat/animation-layer`. `npm run validate` green, `npm run audit` clean,
-dev server verified (86 showcase modules + `main.tsx` all 200). HEAD = `f1e8c09`.
+dev server verified (main.tsx + every new/changed showcase module all 200).
+HEAD = `f7609ed`.
 
 **Process rule: ONE agent at a time, working in the main checkout, sequentially.**
 No parallel batches, no worktrees, no sub-agents. Finish each component completely
@@ -196,16 +197,18 @@ so an interruption never leaves a half-built folder.
 - [x] Rewrite the `DataList` "Label width" demo — currently unreadable; make the
       `sm`/`md`/`lg` difference and the truncation behaviour obvious.
 
-**Q3. Content components** (none built — a previous attempt produced nothing)
-- [ ] `Terminal` — prompt/command/output/exit code, composing `CodeBlock`.
-- [ ] `DiffBlock` — unified + side-by-side, reusing `CodeBlock`'s tokenizer.
-- [ ] `DeviceFrame` — browser/window/phone chrome.
-- [ ] `Timeline` — event sequence with lanes.
-- [ ] `StatCard` delta/sparkline/icon/size + `StatGrid`.
-- [ ] `Comparison` — side-by-side + wipe divider, `progress`-driven.
-- [ ] `Callout` — extend `Alert` with `note`/`tip` + presentation size.
-- [ ] `src/lib/layout.ts` — `layered()` (DAG ranking + crossing reduction) and
-      `grid()`. Import `GRID` from `graph-node/grid.ts`, never redeclare.
+**Q3. Content components — ✅ COMPLETE** (`1258c25`..`f7609ed`)
+- [x] `Terminal` — prompt/command/output/exit code, composing `CodeBlock`. (`1258c25`)
+- [x] `DiffBlock` — unified + side-by-side, reusing `CodeBlock`'s tokenizer. (`deb269e`)
+- [x] `DeviceFrame` — browser/window/phone chrome. (`906238c`)
+- [x] `Timeline` — event sequence with lanes. (`f6b177e`)
+- [x] `StatCard` delta/sparkline/icon/size + `StatGrid`. (`936556f`)
+- [x] `Comparison` — side-by-side + wipe divider, `progress`-driven. (`42202ae`)
+- [x] `Callout` — extend `Alert` with `note`/`tip` + presentation size. (`9fad956`)
+- [x] `src/lib/layout.ts` — `layered()` (DAG ranking + crossing reduction) and
+      `grid()`. Imports `GRID`/`snap` from `graph-node/grid.ts`, never redeclares.
+      Crossing-reduction proven by `scripts/prove-layout-crossings.mjs`
+      (13 → 1 crossings on a deliberately scrambled 3-layer graph). (`f7609ed`)
 
 **Q4. Diagram components** (depend on Q1)
 - [ ] `GraphGroup` — labelled boundary regions.
