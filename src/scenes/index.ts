@@ -28,6 +28,8 @@ export type { OutroSceneProps } from "./outro-scene";
 // The six remaining scenes (TODO.md Phase E, second half).
 export { DiagramScene } from "./diagram-scene";
 export type { DiagramSceneProps } from "./diagram-scene";
+export { SequenceScene } from "./sequence-scene";
+export type { SequenceSceneProps } from "./sequence-scene";
 
 // The scenes-tier CodeDiff component (TODO.md D4/Phase E §6) — animates
 // between two full sources; CodeScene renders it for any step whose `code`
