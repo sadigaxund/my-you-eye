@@ -36,6 +36,8 @@ export { StatScene } from "./stat-scene";
 export type { StatSceneProps } from "./stat-scene";
 export { CompareScene } from "./compare-scene";
 export type { CompareSceneProps } from "./compare-scene";
+export { WalkthroughScene } from "./walkthrough-scene";
+export type { WalkthroughSceneProps } from "./walkthrough-scene";
 
 // The scenes-tier CodeDiff component (TODO.md D4/Phase E §6) — animates
 // between two full sources; CodeScene renders it for any step whose `code`

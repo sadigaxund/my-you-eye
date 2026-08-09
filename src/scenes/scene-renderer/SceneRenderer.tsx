@@ -1,5 +1,3 @@
-import { EmptyState } from "../../ui/empty-state";
-import { Badge } from "../../ui/badge";
 import { TitleScene } from "../title-scene";
 import { BulletScene } from "../bullet-scene";
 import { CodeScene } from "../code-scene";
@@ -10,26 +8,11 @@ import { SequenceScene } from "../sequence-scene";
 import { ChartScene } from "../chart-scene";
 import { StatScene } from "../stat-scene";
 import { CompareScene } from "../compare-scene";
+import { WalkthroughScene } from "../walkthrough-scene";
 import type { Scene } from "../schema";
 
 export interface SceneRendererProps {
   scene: Scene;
-}
-
-/** Clearly-labelled placeholder for a scene kind the renderer doesn't yet
- * implement (diagram/sequence/chart/stat/compare/walkthrough — the next
- * batch, TODO.md Q5's second half). Never a silent blank frame: a bad or
- * not-yet-supported scene should always be obvious in a preview. */
-function NotImplemented({ kind }: { kind: string }) {
-  return (
-    <div className="flex h-full w-full items-center justify-center bg-bg text-fg">
-      <EmptyState
-        icon={<Badge variant="warning">{kind}</Badge>}
-        title={`"${kind}" scenes aren't implemented yet`}
-        description="This scene kind is part of the frozen schema but SceneRenderer doesn't render it yet — a later batch adds it."
-      />
-    </div>
-  );
 }
 
 /**
@@ -37,8 +20,9 @@ function NotImplemented({ kind }: { kind: string }) {
  * (TODO.md Phase E). Exhaustive over `SceneKind`: the `default` branch
  * assigns `scene` to a `never`-typed binding, so TypeScript itself flags a
  * missing `case` the moment the union grows — this is not a runtime check,
- * it's a compile-time guarantee that every kind is handled somehow, even if
- * only by `NotImplemented` for now.
+ * it's a compile-time guarantee that every kind is handled. All eleven
+ * `SceneKind`s render for real as of TODO.md Phase E's second batch — there
+ * is no placeholder branch left.
  */
 export function SceneRenderer({ scene }: SceneRendererProps) {
   switch (scene.kind) {
@@ -52,7 +36,7 @@ export function SceneRenderer({ scene }: SceneRendererProps) {
     case "chart": return <ChartScene scene={scene} />;
     case "stat": return <StatScene scene={scene} />;
     case "compare": return <CompareScene scene={scene} />;
-    case "walkthrough": return <NotImplemented kind="walkthrough" />;
+    case "walkthrough": return <WalkthroughScene scene={scene} />;
     default: {
       const exhaustive: never = scene;
       throw new Error(`SceneRenderer: unhandled scene kind ${(exhaustive as Scene).kind}`);
