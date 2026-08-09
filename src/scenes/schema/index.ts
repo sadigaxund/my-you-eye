@@ -61,3 +61,6 @@ export type {
   StatScene,
   StatItem,
 } from "./scenes.data";
+
+export { validateVideo, assertVideo } from "./validate";
+export type { ValidationIssue } from "./validate";
