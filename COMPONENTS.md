@@ -9,12 +9,13 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**73 components** across 10 groups.
+**74 components** across 10 groups.
 
 ## canvas
 
 | Component | Variants | Demos |
 |---|---|---|
+| `Annotation` | variant: browser<br>side: left / right | Marker variants, Auto-flip near the container edge, Progress reveal |
 | `Canvas` | — | Empty grid |
 | `ConnectionLayer` | — | Many edges, one svg, Parallel edges (automatic bundling), Edge states share the same visual language as ConnectionLine |
 | `ConnectionLine` | variant: bezier / orthogonal / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges), Orthogonal routing avoids obstacles, Waypoints, Edge kind (semantic styling) |

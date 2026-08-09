@@ -147,3 +147,5 @@ export type {
   SequenceDiagramProps, SequenceParticipant, SequenceMessage, SequenceNote,
   SequenceItem, SequenceActivation,
 } from "./ui/patterns/sequence-diagram";
+export { Annotation } from "./ui/annotation";
+export type { AnnotationProps } from "./ui/annotation";

@@ -1,8 +1,27 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 73,
+  "count": 74,
   "components": [
+    {
+      "name": "Annotation",
+      "group": "canvas",
+      "folder": "ui/annotation",
+      "props": {
+        "variant": [
+          "browser"
+        ],
+        "side": [
+          "left",
+          "right"
+        ]
+      },
+      "demos": [
+        "Marker variants",
+        "Auto-flip near the container edge",
+        "Progress reveal"
+      ]
+    },
     {
       "name": "Canvas",
       "group": "canvas",
