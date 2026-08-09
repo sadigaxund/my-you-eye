@@ -211,6 +211,17 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Shape (state-machine pill)",
+      description: "shape=\"pill\" (default \"box\" = the fixed rounded-node radius) swaps in a full rounded-full corner — for DiagramScene's \"state\" preset (pill nodes, curved edges) rendering a state machine. Usually paired with variant=\"simple\" so there's no header rule/rows to look odd inside a pill.",
+      render: () => (
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <GraphNode x={0} y={0} className="static" header="idle" variant="simple" shape="pill" />
+          <GraphNode x={0} y={0} className="static" header="running" variant="selected" shape="pill" />
+          <GraphNode x={0} y={0} className="static" header="failed" variant="muted" shape="pill" />
+        </div>
+      ),
+    },
+    {
       name: "All variations together",
       render: () => (
         <div className="flex items-start justify-center">

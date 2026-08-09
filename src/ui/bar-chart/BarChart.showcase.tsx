@@ -73,6 +73,11 @@ const entry: ShowcaseEntry = {
       name: "Draw-on progress (50%)",
       render: () => <BarChart categories={categories} series={grouped} progress={0.5} title="Sessions by device" />,
     },
+    {
+      name: "Focus a category",
+      description: "focus dims every bar outside the named category to opacity-30 — for ChartScene's per-step focus callout.",
+      render: () => <BarChart categories={categories} series={series} focus="Thu" title="Weekly signups" />,
+    },
   ],
 };
 export default entry;

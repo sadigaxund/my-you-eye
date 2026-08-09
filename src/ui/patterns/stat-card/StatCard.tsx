@@ -20,17 +20,37 @@ export interface StatCardDelta {
   /** Required when `value` is a string. Ignored (derived from sign) when `value` is a number. */
   direction?: "up" | "down";
   label?: string;
+  /**
+   * Whether a positive `value` should read as good (success) rather than
+   * bad (danger) — set false for a metric like latency or error rate, where
+   * an increase is bad news. Default true (original behavior, byte-identical
+   * when omitted). Only affects color; the trend glyph (↑/↓) always follows
+   * the raw sign, since the number still went up or down regardless of
+   * whether that's good news. No effect when `value` is a string (there is
+   * no sign to read — `direction` already says everything this would).
+   */
+  positiveIsGood?: boolean;
 }
 
 export interface StatCardSparklineProps {
   data: number[];
   token?: ChartColorToken;
   area?: boolean;
+  /** 0→1 draw-on progress, forwarded to the underlying Sparkline. Omitted or
+   * 1 = fully drawn. */
+  progress?: number;
 }
 
 export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   label: string;
-  value: string;
+  /**
+   * Widened from `string` to `ReactNode` so a caller can drop in a live
+   * numeric tween (e.g. `my-you-eye/motion`'s `CountUp`) instead of a static
+   * string — a plain string still works exactly as before (TODO.md D4's
+   * progress-in convention: StatCard itself stays a pure presentational
+   * component, no motion import; the live number is the caller's problem).
+   */
+  value: ReactNode;
   delta?: StatCardDelta;
   icon?: ReactNode;
   /** Padding density, forwarded to CardContent. Default "md" matches Card/Alert. */
@@ -53,10 +73,12 @@ interface ResolvedDelta { text: string; variant: "success" | "danger" | "neutral
 // AGENTS.md §3.2, "don't change the default variant's appearance".
 function resolveDelta(delta: StatCardDelta): ResolvedDelta {
   if (typeof delta.value === "number") {
+    const positiveIsGood = delta.positiveIsGood ?? true;
     const r = formatSignedParts(delta.value);
     const text = r ? r.parts.map((p) => p.value).join("") : String(delta.value);
-    const variant = r?.sign === "negative" ? "danger" : r?.sign === "zero" ? "neutral" : "success";
     const glyph = r?.sign === "negative" ? "↓" : r?.sign === "zero" ? "→" : "↑";
+    const good = r?.sign === "positive" ? positiveIsGood : r?.sign === "negative" ? !positiveIsGood : null;
+    const variant = good == null ? "neutral" : good ? "success" : "danger";
     return { text, variant, glyph };
   }
   return {
@@ -89,6 +111,7 @@ const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
                   data={sparkline.data}
                   token={sparkline.token}
                   area={sparkline.area}
+                  progress={sparkline.progress}
                   className="mt-tight"
                 />
               )}

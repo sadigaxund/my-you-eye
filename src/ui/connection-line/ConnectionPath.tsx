@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { getArrowAngle, getPointAtT } from "./geometry";
 import type { ConnectionKind, ConnectionVariant, ObstacleRect, Point } from "./geometry";
-import { generateGappedPath, getRouteLength } from "./gapped-path";
+import { generateGappedPath, getRouteLength, truncatePathByFraction } from "./gapped-path";
 
 export type { Point, ObstacleRect, ConnectionKind, ConnectionVariant };
 
@@ -79,7 +79,20 @@ export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
    * `ConnectionLayer` automatically for edges that share an endpoint pair
    * (parallel-edge bundling); can also be set directly for manual control. */
   offset?: number;
+  /** 0→1 draw-on progress (TODO.md D4's progress-in convention). Omitted or
+   * 1 = fully drawn (default, byte-identical to before this prop existed).
+   * Below 1, the stroke renders as a real geometric prefix of the route
+   * (`truncatePathByFraction` — an arc-length walk, the same one the
+   * label-gap math already uses, not a `stroke-dasharray` illusion), and
+   * both the arrowhead and the label stay hidden until the edge completes —
+   * a label badge or an arrowhead pointing at empty air mid-draw would read
+   * as broken, not "drawing on". */
+  progress?: number;
   className?: string;
+}
+
+function clamp01(n: number): number {
+  return Math.max(0, Math.min(1, n));
 }
 
 const ARROWHEAD_COLOR: Record<string, string> = {
@@ -127,10 +140,13 @@ function ConnectionPath({
   obstacles,
   kind,
   offset,
+  progress = 1,
   className,
 }: ConnectionLineProps) {
   const v = (variant ?? "bezier") as ConnectionVariant;
   const opts = useMemo(() => ({ waypoints, obstacles, offset }), [waypoints, obstacles, offset]);
+  const drawProgress = clamp01(progress);
+  const drawn = drawProgress >= 1;
 
   const arrowAngle = useMemo(() => getArrowAngle(from, to, v, opts), [from, to, v, opts]);
   const t = useMemo(() => Math.max(0, Math.min(100, labelPosition ?? 50)) / 100, [labelPosition]);
@@ -171,14 +187,17 @@ function ConnectionPath({
   // (and z-order relative to every OTHER edge sharing the svg) to hide it.
   // This is what actually fixes "the label reads as translucent and the
   // line shows through" on a curved path: there is no line there anymore.
-  const sLabel = label ? t * routeLength : null;
-  const gapHalfLen = label && labelSize.width > 0 ? labelSize.width / 2 + LABEL_GAP_PADDING : 0;
+  const sLabel = label && drawn ? t * routeLength : null;
+  const gapHalfLen = label && drawn && labelSize.width > 0 ? labelSize.width / 2 + LABEL_GAP_PADDING : 0;
+  // Below `progress` 1, the rendered "d" is a real geometric prefix of the
+  // route (truncatePathByFraction) — not the gapped/label-aware path, since
+  // no label renders until the edge finishes drawing (see `drawn` below).
   // Empty when a label's gap swallows the entire (very short) route — a
   // no-op path, not a bug: there's nothing to draw once the badge covers
   // the whole edge.
   const d = useMemo(
-    () => generateGappedPath(from, to, v, sLabel, gapHalfLen, opts),
-    [from, to, v, sLabel, gapHalfLen, opts],
+    () => (drawn ? generateGappedPath(from, to, v, sLabel, gapHalfLen, opts) : truncatePathByFraction(from, to, v, drawProgress, opts)),
+    [drawn, from, to, v, sLabel, gapHalfLen, opts, drawProgress],
   );
 
   // Bounding box of the actual route (not just from/to) so the badge stays
@@ -199,7 +218,7 @@ function ConnectionPath({
   const arrowColor = kind ? KIND_TEXT_COLOR[kind] : ARROWHEAD_COLOR[state ?? "connected"];
 
   const portalTarget = useContext(ConnectionLabelPortalContext);
-  const labelNode = label && (
+  const labelNode = label && drawn && (
     <foreignObject
       x={badgeX}
       y={point.y - labelSize.height / 2}
@@ -222,7 +241,7 @@ function ConnectionPath({
   return (
     <>
       <path d={d} className={cn("fill-none", strokeClassName, stateDecoration, className)} />
-      {arrowhead && (
+      {arrowhead && drawn && (
         <polygon
           points="0,-4 8,0 0,4"
           fill="currentColor"
@@ -230,7 +249,7 @@ function ConnectionPath({
           transform={`translate(${to.x},${to.y}) rotate(${arrowAngle})`}
         />
       )}
-      {label && (portalTarget ? createPortal(labelNode, portalTarget) : labelNode)}
+      {label && drawn && (portalTarget ? createPortal(labelNode, portalTarget) : labelNode)}
     </>
   );
 }

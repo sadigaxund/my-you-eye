@@ -31,6 +31,9 @@ export interface BarChartProps {
    * baseline (0) toward their final length — a pure function of this value,
    * no internal timers or motion imports (AGENTS.md §9b / TODO.md D4). */
   progress?: number;
+  /** Category label to spotlight — every other category's bars dim to
+   * `opacity-30`. Omitted (default) draws every bar at full opacity. */
+  focus?: string;
   className?: string;
 }
 
@@ -52,6 +55,7 @@ function BarChart({
   height,
   valueFormat = formatTickNumber,
   progress = 1,
+  focus,
   className,
 }: BarChartProps) {
   const [hover, setHover] = useState<HoverInfo | null>(null);
@@ -115,6 +119,7 @@ function BarChart({
             <g>
               {categories.map((cat, ci) => {
                 const rowY = plot.y + ci * rowHeight;
+                const dimmed = focus != null && cat !== focus;
                 let offset = 0;
                 const thickness = stacked
                   ? Math.min(MAX_BAR_THICKNESS, rowHeight * 0.6)
@@ -141,7 +146,7 @@ function BarChart({
                           width={Math.max(w, 0)}
                           height={thickness}
                           rx={4}
-                          className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity")}
+                          className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity", dimmed && "opacity-30")}
                           onPointerEnter={(e) => showHover(s.label, value, e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
                           onPointerLeave={hideHover}
                         />
@@ -158,6 +163,7 @@ function BarChart({
           <g>
             {categories.map((cat, ci) => {
               const cx = xScale(ci);
+              const dimmed = focus != null && cat !== focus;
               let offset = 0;
               const thickness = stacked
                 ? Math.min(MAX_BAR_THICKNESS, bandWidth * 0.6)
@@ -181,7 +187,7 @@ function BarChart({
                         width={thickness}
                         height={Math.max(h, 0)}
                         rx={4}
-                        className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity")}
+                        className={cn(chartFill(s.token ?? chartColorToken(si)), "transition-opacity", dimmed && "opacity-30")}
                         onPointerEnter={(e) => showHover(s.label, value, e.nativeEvent.offsetX, e.nativeEvent.offsetY)}
                         onPointerLeave={hideHover}
                       />

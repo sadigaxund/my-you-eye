@@ -18,23 +18,23 @@ import "my-you-eye/styles.css";
 | `Annotation` | variant: browser<br>side: left / right | Marker variants, Auto-flip near the container edge, Progress reveal |
 | `Canvas` | — | Empty grid |
 | `ConnectionLayer` | — | Many edges, one svg, Parallel edges (automatic bundling), Edge states share the same visual language as ConnectionLine |
-| `ConnectionLine` | variant: bezier / orthogonal / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges), Orthogonal routing avoids obstacles, Waypoints, Edge kind (semantic styling) |
+| `ConnectionLine` | variant: bezier / orthogonal / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges), Orthogonal routing avoids obstacles, Waypoints, Edge kind (semantic styling), Draw-on progress |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
 | `GraphGroup` | variant: success<br>size: sm | Architecture boundaries, Label placement |
-| `GraphNode` | variant: ghost / muted / selected / simple / success<br>type: button<br>size: icon-sm<br>style: soft | Variants, Simple variant, Legacy ports on a tall node, Free-form body, Header variations, Accent bar color, Footer variations, All variations together |
+| `GraphNode` | variant: ghost / muted / selected / simple / success<br>type: button<br>size: icon-sm<br>shape: pill<br>style: soft | Variants, Simple variant, Legacy ports on a tall node, Free-form body, Header variations, Accent bar color, Footer variations, Shape (state-machine pill), All variations together |
 | `Port` | state: connected / default / highlighted<br>shape: circle / socket<br>side: in / out | States (circle), Socket shape — mounted on a border, Socket shape — all states, Circle vs socket, side by side |
 
 ## charts
 
 | Component | Variants | Demos |
 |---|---|---|
-| `BarChart` | orientation: horizontal | Single series (vertical), Grouped, multi-series, Stacked, Horizontal, Horizontal, grouped, Long category label, Empty, Draw-on progress (50%) |
+| `BarChart` | orientation: horizontal | Single series (vertical), Grouped, multi-series, Stacked, Horizontal, Horizontal, grouped, Long category label, Empty, Draw-on progress (50%), Focus a category |
 | `ChartFrame` | — | Axes, gridlines & a custom plot, Loading, Empty |
 | `Funnel` | — | Four stages, Two stages, Long stage labels, Empty, Draw-on progress (50%) |
 | `Gauge` | — | Basic, Threshold bands — healthy, Threshold bands — critical, Custom range, Long label, Draw-on progress (50%) |
 | `Heatmap` | — | Activity calendar, Single column, Long row label, Empty, Draw-on progress (50%) |
 | `Legend` | orientation: vertical | Rect swatches (bar / area fills), Line swatches, Dot swatches (scatter / points), Vertical orientation |
-| `LineChart` | — | Single series, Multi-series, Area fill, No point markers, Long category label, Empty, Draw-on progress (50%) |
+| `LineChart` | — | Single series, Multi-series, Area fill, No point markers, Long category label, Empty, Draw-on progress (50%), Focus a category |
 | `PieChart` | — | Pie, Donut with center label, Single category (no legend), Long labels, Empty, Draw-on progress (50%) |
 | `ScatterPlot` | — | Single series, With trend line, Multi-series (3, all-pairs cap), Long point label (tooltip), Loading, Empty, Draw-on progress (50%) |
 | `Sparkline` | — | Basic, Area fill, Downward trend, danger token, Inside StatCard, Empty, Draw-on progress (50%) |
@@ -127,7 +127,7 @@ import "my-you-eye/styles.css";
 | `PageShell` | variant: secondary | Default, With actions |
 | `SequenceDiagram` | — | Request flow, Self-messages, spanning note, error path, Progress reveal |
 | `StatCard` | size: lg / md / sm | Default, Size, Numeric delta, Icon + sparkline |
-| `StatGrid` | size: sm | 4-column KPI row, 3-column with sparklines, Size |
+| `StatGrid` | size: sm | 4-column KPI row, 3-column with sparklines, Size, positiveIsGood |
 | `TexturedSurface` | variant: elevated / ghost / primary / surface<br>size: sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
 | `Toolbar` | size: sm<br>variant: primary / secondary<br>style: soft | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 

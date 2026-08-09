@@ -47,6 +47,11 @@ const entry: ShowcaseEntry = {
       name: "Draw-on progress (50%)",
       render: () => <LineChart categories={categories} series={multi} area progress={0.5} title="Active users, YoY" />,
     },
+    {
+      name: "Focus a category",
+      description: "focus dims every point marker outside the named category to opacity-30 (the lines themselves stay full opacity) — for ChartScene's per-step focus callout.",
+      render: () => <LineChart categories={categories} series={multi} focus={categories[3]} title="Active users, YoY" />,
+    },
   ],
 };
 export default entry;

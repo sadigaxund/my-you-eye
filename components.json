@@ -68,7 +68,8 @@
         "ConnectionLayer (one svg, many edges)",
         "Orthogonal routing avoids obstacles",
         "Waypoints",
-        "Edge kind (semantic styling)"
+        "Edge kind (semantic styling)",
+        "Draw-on progress"
       ]
     },
     {
@@ -119,6 +120,9 @@
         "size": [
           "icon-sm"
         ],
+        "shape": [
+          "pill"
+        ],
         "style": [
           "soft"
         ]
@@ -131,6 +135,7 @@
         "Header variations",
         "Accent bar color",
         "Footer variations",
+        "Shape (state-machine pill)",
         "All variations together"
       ]
     },
@@ -177,7 +182,8 @@
         "Horizontal, grouped",
         "Long category label",
         "Empty",
-        "Draw-on progress (50%)"
+        "Draw-on progress (50%)",
+        "Focus a category"
       ]
     },
     {
@@ -259,7 +265,8 @@
         "No point markers",
         "Long category label",
         "Empty",
-        "Draw-on progress (50%)"
+        "Draw-on progress (50%)",
+        "Focus a category"
       ]
     },
     {
@@ -1218,7 +1225,8 @@
       "demos": [
         "4-column KPI row",
         "3-column with sparklines",
-        "Size"
+        "Size",
+        "positiveIsGood"
       ]
     },
     {

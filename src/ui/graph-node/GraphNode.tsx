@@ -22,8 +22,11 @@ const graphNodeVariants = cva(
   // blur-free surface regardless of theme — see the "Canvas surface
   // boundary" token set in tokens.css / AGENTS.md §7. `contain-[layout_paint]`
   // scopes each node's layout/paint work so one node's content changes never
-  // force a reflow/repaint of its siblings while panning/zooming.
-  "absolute flex flex-col rounded-node border bg-canvas-surface shadow-card min-w-40 overflow-hidden contain-[layout_paint]",
+  // force a reflow/repaint of its siblings while panning/zooming. Corner
+  // radius lives on the `shape` axis (below), not here — AGENTS.md §0.11's
+  // "fixed corner radius" invariant is about themes never overriding
+  // `--radius-node`, not about every node shape sharing one radius value.
+  "absolute flex flex-col border bg-canvas-surface shadow-card min-w-40 overflow-hidden contain-[layout_paint]",
   {
     variants: {
       variant: {
@@ -32,9 +35,20 @@ const graphNodeVariants = cva(
         muted: "border-border opacity-dim",
         simple: "border-border",
       },
+      // "box" (default) is `rounded-node` — AGENTS.md §0.11's invariant
+      // node radius. "pill" is `rounded-full`, for state-machine diagrams
+      // (DiagramPreset "state": "Pill nodes, curved edges, grid placement").
+      // Still theme-invariant either way: no theme file selects `shape`,
+      // only scene/call-site data does, so §0.11 ("themes must never
+      // override the node corner radius") is untouched.
+      shape: {
+        box: "rounded-node",
+        pill: "rounded-full",
+      },
     },
     defaultVariants: {
       variant: "default",
+      shape: "box",
     },
   },
 );
@@ -93,7 +107,7 @@ export interface GraphNodeProps
 const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
   (
     {
-      className, variant, x, y, header, accent, ports, footer, rows, children, style,
+      className, variant, shape, x, y, header, accent, ports, footer, rows, children, style,
       headerIcon, headerStatus, subtitle, headerDots, accentColor,
       footerMetric, footerAction, footerProgress,
       ...props
@@ -153,7 +167,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
     return (
       <div
         ref={setRefs}
-        className={cn(graphNodeVariants({ variant }), className)}
+        className={cn(graphNodeVariants({ variant, shape }), className)}
         style={{ left: x, top: y, height, ...style }}
         {...props}
       >

@@ -69,3 +69,20 @@ export function getRouteLength(from: Point, to: Point, variant: ConnectionVarian
   const lens = cumulativeLengths(pts);
   return lens[lens.length - 1];
 }
+
+/**
+ * The route's "d" string truncated to its own leading fraction `t` (0–1) of
+ * total arc length — a real geometric prefix of the actual rendered route
+ * (bends included), not a `stroke-dasharray` illusion. This is what lets
+ * `ConnectionPath`'s `progress` prop "draw an edge on" using the exact same
+ * arc-length walk `generateGappedPath`'s label gap already relies on
+ * (`sliceByArcLength`), rather than a second, divergent implementation of
+ * "walk part of this path".
+ */
+export function truncatePathByFraction(from: Point, to: Point, variant: ConnectionVariant | string, t: number, opts?: PathOptions): string {
+  const pts = getRoutePoints(from, to, variant as ConnectionVariant, opts);
+  const lens = cumulativeLengths(pts);
+  const total = lens[lens.length - 1];
+  const sliced = sliceByArcLength(pts, lens, 0, Math.max(0, Math.min(1, t)) * total);
+  return buildPolylineD(sliced);
+}

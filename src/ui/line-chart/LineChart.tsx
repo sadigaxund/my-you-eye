@@ -31,6 +31,11 @@ export interface LineChartProps {
    * left-to-right (line + area together, via a clip rect whose width tracks
    * progress) — a pure function of this value. */
   progress?: number;
+  /** Category label to spotlight — every series' point marker at every
+   * other category dims to `opacity-30` (the lines themselves, which span
+   * every category, stay at full opacity). Omitted (default) draws every
+   * point at full opacity. */
+  focus?: string;
   className?: string;
 }
 
@@ -48,11 +53,13 @@ function LineChart({
   height,
   valueFormat = formatTickNumber,
   progress = 1,
+  focus,
   className,
 }: LineChartProps) {
   const clipId = useId();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const p = Math.max(0, Math.min(1, progress));
+  const focusIndex = focus != null ? categories.indexOf(focus) : -1;
   const empty = categories.length === 0 || series.length === 0 || series.every((s) => s.data.length === 0);
 
   const dataMax = Math.max(...series.flatMap((s) => s.data), 0);
@@ -141,7 +148,7 @@ function LineChart({
                           cx={pt.x}
                           cy={pt.y}
                           r={4}
-                          className={cn(chartFill(token), "stroke-surface")}
+                          className={cn(chartFill(token), "stroke-surface", focusIndex >= 0 && i !== focusIndex && "opacity-30")}
                           strokeWidth={2}
                         />
                       ))}

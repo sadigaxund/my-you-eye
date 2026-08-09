@@ -192,6 +192,26 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Draw-on progress",
+      description: "progress (0→1, default 1) truncates the stroke to a real geometric prefix of the route — the mechanism DiagramScene's \"connect\" step uses to draw an edge on over its own step duration. The label and arrowhead stay hidden until the edge completes (an arrowhead pointing at empty air mid-draw reads as broken).",
+      render: () => (
+        <div className="flex flex-col items-center gap-6 py-4 h-auto">
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 50 }} to={{ x: 290, y: 10 }} variant="bezier" kind="data" arrowhead label="progress=0.35" progress={0.35} />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">progress=0.35 — no label/arrowhead yet</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 50 }} to={{ x: 290, y: 10 }} variant="orthogonal" kind="sync" arrowhead label="progress=0.7" progress={0.7} />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">progress=0.7, orthogonal</span>
+          </div>
+          <div className="relative" style={{ width: 300, height: 60 }}>
+            <ConnectionLine from={{ x: 10, y: 50 }} to={{ x: 290, y: 10 }} variant="bezier" kind="data" arrowhead label="done" progress={1} />
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">progress=1 (default) — fully drawn, label + arrowhead on</span>
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

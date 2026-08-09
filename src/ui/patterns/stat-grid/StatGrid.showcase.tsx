@@ -15,6 +15,11 @@ const withSparklines: StatGridItem[] = [
   { label: "P95 latency", value: "220ms", delta: { value: -8.6 }, sparkline: { data: [280, 270, 260, 250, 235, 225, 220] } },
 ];
 
+const inverted: StatGridItem[] = [
+  { label: "Latency (ms)", value: "182", delta: { value: 14.2, label: "vs last week", positiveIsGood: false } },
+  { label: "Error rate", value: "0.4%", delta: { value: -0.3, label: "vs last week", positiveIsGood: false } },
+];
+
 const entry: ShowcaseEntry = {
   title: "StatGrid",
   group: "patterns",
@@ -42,6 +47,15 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="w-full max-w-3xl mx-auto">
           <StatGrid items={kpis.slice(0, 2)} columns={2} size="sm" />
+        </div>
+      ),
+    },
+    {
+      name: "positiveIsGood",
+      description: "delta.positiveIsGood (default true) flips which sign reads as good — for a metric like latency or error rate where an increase is bad news. The trend glyph still follows the raw sign (both still show ↑); only the success/danger coloring flips.",
+      render: () => (
+        <div className="w-full max-w-3xl mx-auto">
+          <StatGrid items={inverted} columns={2} />
         </div>
       ),
     },
