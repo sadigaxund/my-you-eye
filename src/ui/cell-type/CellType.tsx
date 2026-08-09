@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useLayoutEffect } from "react";
+import { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
@@ -15,13 +15,18 @@ import {
   CurrencyDisplay, SignedDisplay,
 } from "./CellType.numeric-displays";
 import { JsonDisplay, TreeDisplay, ArrayDisplay } from "./CellType.complex-displays";
+import {
+  SparklineDisplay, TagsDisplay, CodeDisplay, ColorDisplay,
+  HashDisplay, UserDisplay, ProgressCellDisplay, SecretDisplay,
+} from "./CellType.misc-displays";
 import { useTruncated, EllipsisBadge } from "./CellType.shared";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
   | "number" | "percentage" | "date-human" | "date-system" | "datetime-tz"
   | "bytes" | "duration" | "currency" | "signed" | "array"
-  | "image" | "audio" | "tree";
+  | "image" | "audio" | "tree"
+  | "sparkline" | "tags" | "code" | "color" | "hash" | "user" | "progress" | "secret";
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
 
@@ -41,6 +46,12 @@ export interface CellTypeProps {
   currency?: string;
   /** Force a byte unit (e.g. "GB"). Overrides auto-scaling for "bytes" type. */
   displayUnit?: string;
+  /** Highlight language for "code" type (e.g. "ts", "sql"). Omit for a
+   * plain, unhighlighted snippet. */
+  codeLanguage?: string;
+  /** Optional photo URL for "user" type — falls back to initials (Avatar's
+   * own fallback behavior) when omitted. */
+  avatarSrc?: string;
 }
 
 function BooleanDisplay({ value }: { value: unknown }) {
@@ -102,10 +113,29 @@ function AudioDisplay({ value }: { value: unknown }) {
     a.currentTime = Number(e.target.value);
     setT(a.currentTime);
   }, []);
+  // `timeupdate` only fires ~4x/second (the HTML spec's floor, not this
+  // browser's), so driving the seek thumb from it alone reads as low-fps
+  // during playback. Drive it from rAF instead while playing — cancelled
+  // on pause/unmount — for a smooth ~60fps thumb; `timeupdate` still fires
+  // and would be harmless, but rAF supersedes it, so there's no reason to
+  // keep both updating the same state (AGENTS.md TODO A11). This is plain
+  // DOM/UI polish outside src/motion/ — not the frame-driven animation
+  // tier, so rAF here is unrelated to (and doesn't conflict with)
+  // AGENTS.md §9c's "no wall-clock APIs" rule, which scopes to src/motion/.
+  useEffect(() => {
+    if (!p) return;
+    let raf: number;
+    const tick = () => {
+      setT(r.current?.currentTime ?? 0);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [p]);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
   return (
     <span className="inline-flex items-center gap-inline text-xs min-w-audio-min" onClick={(e) => e.stopPropagation()}>
-      <audio ref={r} src={src} onTimeUpdate={() => setT(r.current?.currentTime ?? 0)} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
+      <audio ref={r} src={src} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
       <Button type="button" variant="ghost" size="icon-sm" onClick={toggle} aria-label={p ? "Pause" : "Play"}>
         {p ? <svg viewBox="0 0 10 10" className="size-3 fill-current"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
           : <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>}
@@ -154,7 +184,7 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
 
 export function CellType({
   type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements, dateFormat, compact,
-  fractionDigits, currency, displayUnit,
+  fractionDigits, currency, displayUnit, codeLanguage, avatarSrc,
 }: CellTypeProps) {
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
@@ -179,6 +209,14 @@ export function CellType({
     case "audio": return <AudioDisplay value={value} />;
     case "array": return <ArrayDisplay value={value} />;
     case "tree": return <TreeDisplay value={value} replacements={replacements} />;
+    case "sparkline": return <SparklineDisplay value={value} />;
+    case "tags": return <TagsDisplay value={value} />;
+    case "code": return <CodeDisplay value={value} language={codeLanguage} />;
+    case "color": return <ColorDisplay value={value} />;
+    case "hash": return <HashDisplay value={value} />;
+    case "user": return <UserDisplay value={value} avatarSrc={avatarSrc} />;
+    case "progress": return <ProgressCellDisplay value={value} />;
+    case "secret": return <SecretDisplay value={value} />;
     default: return <TruncatedCellValue value={String(value)} />;
   }
 }

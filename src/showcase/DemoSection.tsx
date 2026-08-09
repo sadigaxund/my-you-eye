@@ -19,8 +19,17 @@ export function DemoSection({ demo, texture }: { demo: RegistryDemo; texture: st
   };
 
   return (
-    <section className="mb-12">
-      <div className="mb-2">
+    // mb-20 (not the old mb-12): each demo's own name/description sits
+    // directly above its own render (mb-3 below), but that same caption is
+    // also the first thing after the PREVIOUS demo's rendered box — with
+    // too little separation there, a caption reads as belonging to the
+    // demo above it instead of the one it's actually describing (owner
+    // feedback: "the bottom descriptors are too close to the element").
+    // Widening the gap between sections while keeping the caption-to-its-
+    // own-demo gap comparatively tight is what makes the pairing
+    // unambiguous — proximity communicates the grouping.
+    <section className="mb-20">
+      <div className="mb-3">
         <h3 className="inline-flex flex-col text-xs uppercase tracking-widest font-semibold text-fg before:content-[''] before:w-full before:h-px before:bg-border before:mb-1.5">
           {demo.name}
         </h3>

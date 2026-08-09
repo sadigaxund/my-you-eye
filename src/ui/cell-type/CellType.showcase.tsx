@@ -49,6 +49,27 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "New data types",
+      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal).",
+      render: () => (
+        <TableGrid>
+          <div role="row" className="contents">
+            <div role="columnheader" className="p-3 min-w-0 font-medium text-muted whitespace-nowrap">Type</div>
+            <div role="columnheader" className="p-3 min-w-0 font-medium text-muted">Value</div>
+          </div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Sparkline</div><div role="cell" className="p-3 min-w-0"><CellType type="sparkline" value={[4, 7, 5, 9, 12, 10, 15, 13, 18, 22, 19, 25]} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Tags</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="tags" value={["frontend", "api", "docs"]} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Code</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="code" value={"SELECT * FROM users\nWHERE active = true"} codeLanguage="sql" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Color</div><div role="cell" className="p-3 min-w-0"><CellType type="color" value="#6366f1" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Hash / UUID</div><div role="cell" className="p-3 min-w-0"><CellType type="hash" value="a1b2c3d4e5f678901234567890abcdef12345678" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">User</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="user" value="Jordan Ellis" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">User (with photo)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="user" value="Sam Rivera" avatarSrc="https://picsum.photos/seed/user/64/64" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Progress</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="progress" value={68} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Secret</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="secret" value="sk_live_51H8x9fJ2mN3qR7vT" /></div></div>
+        </TableGrid>
+      ),
+    },
+    {
       name: "Numeric types",
       render: () => (
         <TableGrid>

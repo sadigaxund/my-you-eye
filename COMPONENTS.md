@@ -16,11 +16,11 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `Canvas` | — | Empty grid |
-| `ConnectionLayer` | — | Many edges, one svg, Edge states share the same visual language as ConnectionLine |
-| `ConnectionLine` | variant: bezier / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges) |
+| `ConnectionLayer` | — | Many edges, one svg, Parallel edges (automatic bundling), Edge states share the same visual language as ConnectionLine |
+| `ConnectionLine` | variant: bezier / orthogonal / stepped / straight<br>state: connected / highlighted / pending | Path variants, Edge states, Decorations (arrowheads + labels), Label positions, Label on a genuinely curved path, ConnectionLayer (one svg, many edges), Orthogonal routing avoids obstacles, Waypoints, Edge kind (semantic styling) |
 | `Graph` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
-| `GraphNode` | variant: muted / selected / simple | Variants, Simple variant, Legacy ports on a tall node, Free-form body |
-| `Port` | state: connected / default / highlighted | States |
+| `GraphNode` | variant: ghost / muted / selected / simple / success<br>type: button<br>size: icon-sm<br>style: soft | Variants, Simple variant, Legacy ports on a tall node, Free-form body, Header variations, Accent bar color, Footer variations, All variations together |
+| `Port` | state: connected / default / highlighted<br>shape: circle / socket<br>side: in / out | States (circle), Socket shape — mounted on a border, Socket shape — all states, Circle vs socket, side by side |
 
 ## charts
 
@@ -41,7 +41,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `CellType` | type: array / audio / badge / boolean / bytes / currency / date-human / date-system / datetime-tz / duration / email / image / json / null / number / percentage / signed / status / text / tree / url | Data Types, Project X, Project X, Numeric types |
+| `CellType` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / image / json / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
 | `DataList` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
 | `Table` | align: right<br>variant: striped<br>density: compact | Composition, Variants, Density, Sticky header |

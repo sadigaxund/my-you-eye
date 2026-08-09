@@ -51,25 +51,24 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Label width",
-      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sizes the dt column on a two-column CSS grid instead of a hardcoded w-36, so long labels get room without crushing the value column.",
-      render: () => (
-        <div className="flex flex-col gap-4">
-          <DataList
-            labelWidth="sm"
-            items={[
-              { label: "ID", value: "usr_8213", type: "text" },
-              { label: "Role", value: "Admin", type: "badge", badgeVariant: "primary" },
-            ]}
-          />
-          <DataList
-            labelWidth="lg"
-            items={[
-              { label: "Deployment target region", value: "us-east-1", type: "text" },
-              { label: "Autoscaling group capacity", value: 12, type: "number" },
-            ]}
-          />
-        </div>
-      ),
+      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sizes the dt column on a two-column CSS grid instead of a hardcoded w-36. Same three items rendered at all three widths, side by side: at \"sm\" the longer labels truncate with an ellipsis (the column is too narrow for them); \"lg\" gives them enough room that nothing truncates.",
+      render: () => {
+        const labelWidthItems = [
+          { label: "ID", value: "usr_8213", type: "text" as const },
+          { label: "Deployment target region", value: "us-east-1", type: "text" as const },
+          { label: "Autoscaling group capacity", value: 12, type: "number" as const },
+        ];
+        return (
+          <div className="flex flex-col gap-6 sm:flex-row sm:gap-4">
+            {(["sm", "md", "lg"] as const).map((w) => (
+              <div key={w} className="flex-1 min-w-0">
+                <p className="text-xs text-muted mb-2 font-mono">labelWidth=&quot;{w}&quot;{w === "md" && " (default)"}</p>
+                <DataList labelWidth={w} items={labelWidthItems} className="rounded-ui border border-border" />
+              </div>
+            ))}
+          </div>
+        );
+      },
     },
     {
       name: "Alignment",

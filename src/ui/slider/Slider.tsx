@@ -26,27 +26,45 @@ export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   showValue?: boolean;
 }
 
+// A `step` of 1 over the default 0–100 range means the thumb can only land
+// on ~1% increments — on a typical ~200-400px track that's a jump every
+// few px, which reads as low-fps/jittery dragging even though nothing is
+// actually dropping frames (AGENTS.md TODO A11: this is quantization, not
+// jitter). Deriving a default from the actual range gives ~500 steps
+// across it regardless of what that range is, fine enough granularity
+// that dragging reads as continuous on any realistic track width. Any
+// caller that wants coarse, meaningful steps (e.g. an integer count 1–10)
+// still passes `step` explicitly and gets exactly that.
+function defaultStep(min: number, max: number): number {
+  return Math.max((max - min) / 500, 0.001);
+}
+
 const Slider = forwardRef<HTMLInputElement, SliderProps>(
-  ({ className, label, showValue, size, value, min = 0, max = 100, step = 1, ...props }, ref) => (
-    <div className={cn("flex flex-col gap-1", className)}>
-      {(label || showValue) && (
-        <div className="flex items-center justify-between">
-          {label && <span className="text-sm text-fg">{label}</span>}
-          {showValue && <span className="text-sm text-muted font-mono">{String(value ?? 0)}</span>}
-        </div>
-      )}
-      <input
-        ref={ref}
-        type="range"
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        className={trackVariants({ size })}
-        {...props}
-      />
-    </div>
-  ),
+  ({ className, label, showValue, size, value, min = 0, max = 100, step, ...props }, ref) => {
+    const resolvedMin = Number(min);
+    const resolvedMax = Number(max);
+    const resolvedStep = step ?? defaultStep(resolvedMin, resolvedMax);
+    return (
+      <div className={cn("flex flex-col gap-1", className)}>
+        {(label || showValue) && (
+          <div className="flex items-center justify-between">
+            {label && <span className="text-sm text-fg">{label}</span>}
+            {showValue && <span className="text-sm text-muted font-mono">{String(value ?? 0)}</span>}
+          </div>
+        )}
+        <input
+          ref={ref}
+          type="range"
+          value={value}
+          min={min}
+          max={max}
+          step={resolvedStep}
+          className={trackVariants({ size })}
+          {...props}
+        />
+      </div>
+    );
+  },
 );
 Slider.displayName = "Slider";
 

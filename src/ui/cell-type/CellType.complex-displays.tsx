@@ -4,7 +4,9 @@ import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
 import { Badge } from "../badge";
+import { DataList } from "../data-list";
 import { useTruncated, EllipsisBadge } from "./CellType.shared";
+import type { CellValueType } from "./CellType";
 
 function safeStringify(value: unknown): string {
   const seen = new WeakSet();
@@ -110,7 +112,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
           <span className="text-xs text-muted">JSON</span>
         </div>
         <ScrollArea className="max-h-72">
-          <CodeBlock code={preview.full} />
+          <CodeBlock code={preview.full} language="json" highlight />
         </ScrollArea>
       </PopoverContent>
     </Popover>
@@ -198,6 +200,22 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
   );
 }
 
+// Maps each array item to a DataList row value/type — primitives keep
+// their own CellType rendering (numbers, booleans stay typed rather than
+// stringified), anything else (nested objects/arrays) falls back to a
+// stringified "badge" pill, matching what String(item) rendered before.
+function arrayItemValue(item: unknown): string | number | boolean | null {
+  if (item === null || item === undefined) return null;
+  if (typeof item === "number" || typeof item === "boolean" || typeof item === "string") return item;
+  return String(item);
+}
+function arrayItemType(item: unknown): CellValueType {
+  if (item === null || item === undefined) return "null";
+  if (typeof item === "number") return "number";
+  if (typeof item === "boolean") return "boolean";
+  return "badge";
+}
+
 export function ArrayDisplay({ value }: { value: unknown }) {
   const arr = Array.isArray(value) ? value : [];
   const count = arr.length;
@@ -230,12 +248,21 @@ export function ArrayDisplay({ value }: { value: unknown }) {
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">List ({count})</span>
         </div>
-        <ScrollArea className="max-h-72 p-2">
-          <div className="flex flex-col gap-1">
-            {arr.map((item, i) => (
-              <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>
-            ))}
-          </div>
+        <ScrollArea className="max-h-72">
+          {/* Reuses DataList instead of a hand-rolled pill list (AGENTS.md
+              §1 Step A) — each item gets an index label so it's still a
+              proper label/value row, not just a bare list of badges. */}
+          <DataList
+            density="compact"
+            labelWidth="sm"
+            items={arr.map((item, i) => ({
+              label: `[${i}]`,
+              value: arrayItemValue(item),
+              type: arrayItemType(item),
+              badgeVariant: "neutral",
+              badgeStyle: "soft",
+            }))}
+          />
         </ScrollArea>
       </PopoverContent>
     </Popover>

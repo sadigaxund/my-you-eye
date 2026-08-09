@@ -19,6 +19,7 @@
       "props": {},
       "demos": [
         "Many edges, one svg",
+        "Parallel edges (automatic bundling)",
         "Edge states share the same visual language as ConnectionLine"
       ]
     },
@@ -29,6 +30,7 @@
       "props": {
         "variant": [
           "bezier",
+          "orthogonal",
           "stepped",
           "straight"
         ],
@@ -44,7 +46,10 @@
         "Decorations (arrowheads + labels)",
         "Label positions",
         "Label on a genuinely curved path",
-        "ConnectionLayer (one svg, many edges)"
+        "ConnectionLayer (one svg, many edges)",
+        "Orthogonal routing avoids obstacles",
+        "Waypoints",
+        "Edge kind (semantic styling)"
       ]
     },
     {
@@ -66,16 +71,31 @@
       "folder": "ui/graph-node",
       "props": {
         "variant": [
+          "ghost",
           "muted",
           "selected",
-          "simple"
+          "simple",
+          "success"
+        ],
+        "type": [
+          "button"
+        ],
+        "size": [
+          "icon-sm"
+        ],
+        "style": [
+          "soft"
         ]
       },
       "demos": [
         "Variants",
         "Simple variant",
         "Legacy ports on a tall node",
-        "Free-form body"
+        "Free-form body",
+        "Header variations",
+        "Accent bar color",
+        "Footer variations",
+        "All variations together"
       ]
     },
     {
@@ -87,10 +107,21 @@
           "connected",
           "default",
           "highlighted"
+        ],
+        "shape": [
+          "circle",
+          "socket"
+        ],
+        "side": [
+          "in",
+          "out"
         ]
       },
       "demos": [
-        "States"
+        "States (circle)",
+        "Socket shape — mounted on a border",
+        "Socket shape — all states",
+        "Circle vs socket, side by side"
       ]
     },
     {
@@ -249,28 +280,37 @@
           "badge",
           "boolean",
           "bytes",
+          "code",
+          "color",
           "currency",
           "date-human",
           "date-system",
           "datetime-tz",
           "duration",
           "email",
+          "hash",
           "image",
           "json",
           "null",
           "number",
           "percentage",
+          "progress",
+          "secret",
           "signed",
+          "sparkline",
           "status",
+          "tags",
           "text",
           "tree",
-          "url"
+          "url",
+          "user"
         ]
       },
       "demos": [
         "Data Types",
         "Project X",
         "Project X",
+        "New data types",
         "Numeric types"
       ]
     },

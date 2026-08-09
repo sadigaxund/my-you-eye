@@ -22,6 +22,21 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Parallel edges (automatic bundling)",
+      description: "Three edges between the exact same two points would otherwise overlap into one indistinguishable stroke. ConnectionLayer detects the shared endpoint pair and fans them out automatically (bundleParallelEdges, default on) — no manual offset math at the call site.",
+      render: () => (
+        <div className="relative" style={{ width: 320, height: 100 }}>
+          <ConnectionLayer
+            edges={[
+              { id: "req", from: { x: 20, y: 50 }, to: { x: 300, y: 50 }, variant: "straight", state: "connected", arrowhead: true, label: "request" },
+              { id: "retry-1", from: { x: 20, y: 50 }, to: { x: 300, y: 50 }, variant: "straight", state: "pending", arrowhead: true, label: "retry 1" },
+              { id: "retry-2", from: { x: 20, y: 50 }, to: { x: 300, y: 50 }, variant: "straight", state: "pending", arrowhead: true, label: "retry 2" },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
       name: "Edge states share the same visual language as ConnectionLine",
       render: () => (
         <div className="relative" style={{ width: 300, height: 140 }}>

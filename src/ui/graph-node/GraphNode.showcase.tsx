@@ -1,5 +1,19 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { GraphNode } from ".";
+import { StatusDot } from "../status-dot";
+import { Badge } from "../badge";
+import { Button } from "../button";
+
+function ServerIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-full fill-none stroke-current" strokeWidth="1.3">
+      <rect x="1.5" y="1.5" width="9" height="3.5" rx="0.75" />
+      <rect x="1.5" y="7" width="9" height="3.5" rx="0.75" />
+      <circle cx="3.25" cy="3.25" r="0.4" fill="currentColor" stroke="none" />
+      <circle cx="3.25" cy="8.75" r="0.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const entry: ShowcaseEntry = {
   title: "GraphNode",
@@ -114,6 +128,107 @@ const entry: ShowcaseEntry = {
               <div className="flex flex-col items-center"><span className="text-lg font-semibold">3</span><span className="text-xs text-muted">GPU</span></div>
             </div>
           </GraphNode>
+        </div>
+      ),
+    },
+    {
+      name: "Header variations",
+      description: "headerIcon, headerStatus, subtitle and headerDots={false} compose independently — mix any of them. subtitle adds one grid cell to the header's height (still whole-number cells, so rows/ports stay grid-aligned); everything else stays inside the standard 2-cell header.",
+      render: () => (
+        <div className="flex flex-wrap items-start justify-center gap-4">
+          <GraphNode
+            x={0} y={0} className="static"
+            header="api-gateway"
+            headerIcon={<ServerIcon />}
+            rows={[{ label: "Region", value: "us-east-1" }]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="worker-pool"
+            headerStatus={<StatusDot variant="success" pulse />}
+            rows={[{ label: "Replicas", value: "6" }]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="orders-db"
+            subtitle="postgres · primary"
+            rows={[{ label: "Connections", value: "128" }]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="cache"
+            headerDots={false}
+            rows={[{ label: "Hit rate", value: "94%" }]}
+          />
+        </div>
+      ),
+    },
+    {
+      name: "Accent bar color",
+      description: "accentColor picks the accent bar's color (default \"primary\" — matches the original look exactly when omitted). Only visible when accent is true.",
+      render: () => (
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {(["primary", "success", "warning", "danger", "muted"] as const).map((color) => (
+            <GraphNode
+              key={color}
+              x={0} y={0} className="static"
+              header={color}
+              accent
+              accentColor={color}
+              rows={[{ label: "Status", value: color }]}
+            />
+          ))}
+        </div>
+      ),
+    },
+    {
+      name: "Footer variations",
+      description: "footerMetric, footerAction and footerProgress compose alongside footer's own text, inside the same fixed 1-cell footer row. footerProgress reuses Progress (no separate hand-rolled bar).",
+      render: () => (
+        <div className="flex flex-wrap items-start justify-center gap-4">
+          <GraphNode
+            x={0} y={0} className="static"
+            header="queue"
+            footer="pending"
+            footerMetric="1.2k"
+            rows={[{ label: "Consumers", value: "3" }]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="deploy"
+            footer="build #482"
+            footerAction={<Button type="button" variant="ghost" size="icon-sm" aria-label="Retry">↻</Button>}
+            rows={[{ label: "Branch", value: "main" }]}
+          />
+          <GraphNode
+            x={0} y={0} className="static"
+            header="migration"
+            footer="running"
+            footerProgress={62}
+            rows={[{ label: "Table", value: "users" }]}
+          />
+        </div>
+      ),
+    },
+    {
+      name: "All variations together",
+      render: () => (
+        <div className="flex items-start justify-center">
+          <GraphNode
+            x={0} y={0} className="static"
+            header="payments-svc"
+            headerIcon={<ServerIcon />}
+            headerStatus={<Badge variant="success" style="soft" className="px-1.5 py-0 text-xs leading-none">live</Badge>}
+            subtitle="eu-west-1 · v2.4.1"
+            accent
+            accentColor="success"
+            footer="healthy"
+            footerProgress={88}
+            rows={[
+              { label: "Status", value: <span className="text-success font-medium">running</span>, portLeft: { side: "left", state: "connected" } },
+              { label: "RPS", value: "1,204", portRight: { side: "right", state: "connected" } },
+            ]}
+          />
         </div>
       ),
     },
