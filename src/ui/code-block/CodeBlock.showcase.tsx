@@ -221,6 +221,13 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Focus range (dims everything outside it)",
+      description: "focusRange dims lines outside [start, end] via the opacity-muted token — used by CodeScene to spotlight the lines a step is talking about while Camera frames them.",
+      render: () => (
+        <CodeBlock code={typescript} language="typescript" header="api.ts" showLineNumbers highlight focusRange={[8, 12]} />
+      ),
+    },
+    {
       name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
       render: () => (
         <div className="flex flex-col gap-4">

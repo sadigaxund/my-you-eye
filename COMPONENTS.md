@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**75 components** across 10 groups.
+**76 components** across 10 groups.
 
 ## canvas
 
@@ -57,7 +57,7 @@ import "my-you-eye/styles.css";
 | `Avatar` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | variant: danger / default / elevated / ghost / outlined<br>size: lg / md / sm | Variants, With footer actions, Size |
-| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `CodeBlock` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `DeviceFrame` | variant: browser / phone / window | Browser, Window, Phone |
 | `DiffBlock` | — | Unified, Unified — word diff, Split, Split — word diff |
 | `EmptyState` | variant: secondary | Default, With icon and action |
@@ -101,6 +101,7 @@ import "my-you-eye/styles.css";
 | Component | Variants | Demos |
 |---|---|---|
 | `Breadcrumbs` | — | Default, Custom separator |
+| `Link` | variant: muted | Variants, In a sentence |
 | `Pagination` | — | Default (10 pages), Few pages |
 | `Tabs` | variant: filing / pills / underline | Underline, Pills, Filing |
 

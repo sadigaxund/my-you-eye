@@ -18,6 +18,10 @@ const jsonOutput: TerminalEntry[] = [
   { command: "curl -s https://api.example.com/health", output: '{\n  "status": "ok",\n  "uptime": 12345\n}', language: "json", exitCode: 0 },
 ];
 
+const rootShell: TerminalEntry[] = [
+  { command: "systemctl restart nginx", exitCode: 0 },
+];
+
 const entry: ShowcaseEntry = {
   title: "Terminal",
   group: "display",
@@ -30,6 +34,7 @@ const entry: ShowcaseEntry = {
           <Terminal prompt="$" user="dev" host="build" cwd="~/project" entries={npmInstall} />
           <Terminal prompt=">" cwd="C:\\project" entries={gitFlow} />
           <Terminal prompt="❯" entries={jsonOutput} />
+          <Terminal prompt="#" user="root" host="prod" entries={rootShell} />
         </div>
       ),
     },

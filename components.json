@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 75,
+  "count": 76,
   "components": [
     {
       "name": "Annotation",
@@ -544,6 +544,7 @@
         "Substring highlights",
         "Substring highlights on a long line (wrap forced off)",
         "Merged highlights",
+        "Focus range (dims everything outside it)",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },
@@ -958,6 +959,20 @@
       "demos": [
         "Default",
         "Custom separator"
+      ]
+    },
+    {
+      "name": "Link",
+      "group": "navigation",
+      "folder": "ui/link",
+      "props": {
+        "variant": [
+          "muted"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "In a sentence"
       ]
     },
     {

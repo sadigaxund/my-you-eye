@@ -22,8 +22,11 @@ const terminalVariants = cva(
   },
 );
 
-/** Prompt glyph shown before each command. */
-export type TerminalPromptGlyph = "$" | ">" | "❯";
+/** Prompt glyph shown before each command. "#" reads as a root shell —
+ * added for `my-you-eye/scenes`' `TerminalScene`, whose schema's `prompt`
+ * field always included it (additive: the other three glyphs render
+ * unchanged). */
+export type TerminalPromptGlyph = "$" | ">" | "#" | "❯";
 
 export interface TerminalEntry {
   /** Command text shown after the prompt. Omit for an output-only entry (banner text, log lines). */

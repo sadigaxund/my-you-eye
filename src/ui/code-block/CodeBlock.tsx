@@ -61,6 +61,23 @@ export interface CodeBlockProps
    * let the block scroll horizontally instead.
    */
   highlightRanges?: HighlightRangeDef[];
+  /**
+   * 1-based line numbers outside this `[start, end]` range get a reduced
+   * opacity (the `opacity-muted` token) instead of full contrast — the
+   * "focus on this range, dim the rest" treatment a code walkthrough needs.
+   * Added for `my-you-eye/scenes`' `CodeScene` (TODO.md Phase E): additive,
+   * defaults to no dimming.
+   */
+  focusRange?: [number, number];
+  /**
+   * Assigns an `id` to each rendered line's row element, keyed by its
+   * 1-based line number. Added for `CodeScene`, which needs to measure a
+   * specific line's on-screen position (via `offsetTop`/`offsetLeft`, never
+   * `getBoundingClientRect()` — AGENTS.md §7) to drive `Camera`/`Annotation`
+   * at that line. Optional, additive: omit it and lines render without ids,
+   * exactly as before.
+   */
+  lineId?: (lineNumber: number) => string;
 }
 
 function CopyIcon() {
@@ -108,7 +125,7 @@ const HIGHLIGHT_BG: Record<string, string> = {
 };
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, ...props }, ref) => {
     const [copied, setCopied] = useState(false);
     const copy = useCallback(() => {
       if (!navigator.clipboard) return;
@@ -153,6 +170,10 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
     // scrolling block beats a silently-misaligned wrapped one — see the
     // highlightRanges JSDoc above.
     const effectiveWrap = wrap && !hasRanges;
+    const isDimmed = useCallback(
+      (lineNumber: number) => focusRange != null && (lineNumber < focusRange[0] || lineNumber > focusRange[1]),
+      [focusRange],
+    );
     const showGutter = showLineNumbers
       || (highlightLines != null && highlightLines.length > 0)
       || (highlightGroups != null && highlightGroups.length > 0)
@@ -215,7 +236,12 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               >
                 <code>
                   {perLineTokens.map((lineTokens, i) => (
-                    <div key={i} ref={setLineRef(i)} className={cn("px-panel", lineColor.get(i + 1))}>
+                    <div
+                      key={i}
+                      id={lineId?.(i + 1)}
+                      ref={setLineRef(i)}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-muted")}
+                    >
                       {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
                     </div>
                   ))}
@@ -233,7 +259,14 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
               >
                 <code>
                   {lines.map((line, i) => (
-                    <div key={i} ref={setLineRef(i)} className={cn("px-panel", lineColor.get(i + 1))}>{line || " "}</div>
+                    <div
+                      key={i}
+                      id={lineId?.(i + 1)}
+                      ref={setLineRef(i)}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-muted")}
+                    >
+                      {line || " "}
+                    </div>
                   ))}
                 </code>
                 {overlays}
