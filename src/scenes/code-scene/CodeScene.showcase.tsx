@@ -2,8 +2,12 @@ import type { ReactNode } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
 import { MotionPreview } from "../../showcase/MotionPreview";
 import { PinnedFrame } from "../../showcase/PinnedFrame";
+import { buildSequence } from "../../motion/core";
 import { CodeScene } from ".";
+import { sceneSteps, sceneDuration } from "../timing";
 import type { CodeScene as CodeSceneData } from "../schema";
+
+const FPS = 30;
 
 const initialCode = `function total(items) {
   let sum = 0;
@@ -27,8 +31,20 @@ const scene: CodeSceneData = {
     { say: "Here's our starting point.", typed: true },
     { say: "The loop accumulates the sum.", focus: [2, 5], highlight: ["sum"] },
     { say: "We rewrite it as a single reduce call with tax support.", code: finalCode, focus: [1, 3] },
+    {
+      say: "The new tax rate parameter defaults to zero.",
+      focus: [1, 1],
+      annotate: [{ line: 1, text: "Optional param, defaults to 0", side: "right" }],
+    },
   ],
 };
+
+const ranges = buildSequence(sceneSteps(scene), FPS, scene.pace);
+const total = sceneDuration(scene, FPS);
+const step0 = ranges["step-0"];
+const step1 = ranges["step-1"];
+const step2 = ranges["step-2"];
+const step3 = ranges["step-3"];
 
 function Frame({ children }: { children: ReactNode }) {
   return <div className="aspect-video w-full overflow-hidden rounded-ui border border-border">{children}</div>;
@@ -42,43 +58,52 @@ const entry: ShowcaseEntry = {
     {
       name: "Playing",
       render: () => (
-        <MotionPreview durationInFrames={170} fps={30}>
+        <MotionPreview durationInFrames={total} fps={FPS}>
           <Frame><CodeScene scene={scene} /></Frame>
         </MotionPreview>
       ),
     },
     {
-      name: "Pinned mid-typing, step 1 (frame 15/149)",
+      name: `Pinned mid-typing, step 1 (frame ${step0.startFrame + 15}/${total})`,
       description: "The file types in character by character — roughly the first third of the source is visible, syntax-highlighted as it grows.",
       render: () => (
-        <PinnedFrame frame={15} durationInFrames={149}>
+        <PinnedFrame frame={step0.startFrame + 15} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
         </PinnedFrame>
       ),
     },
     {
-      name: "Pinned on focus + highlight, step 2 (frame 55/149)",
+      name: `Pinned on focus + highlight, step 2 (frame ${step1.startFrame + 5}/${total})`,
       description: "Lines 2–5 (the sum accumulator) are at full contrast; the rest of the file is dimmed via opacity-muted. Every \"sum\" substring inside that range is highlighted. Camera has zoomed/panned to frame lines 2–5.",
       render: () => (
-        <PinnedFrame frame={55} durationInFrames={149}>
+        <PinnedFrame frame={step1.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
         </PinnedFrame>
       ),
     },
     {
-      name: "Pinned mid-diff, step 3 (frame 105/149)",
+      name: `Pinned mid-diff, step 3 (frame ${step2.startFrame + 5}/${total})`,
       description: "CodeDiff is cross-fading the old loop body into the new reduce() call — some rows are still fading/growing/collapsing, not yet settled.",
       render: () => (
-        <PinnedFrame frame={105} durationInFrames={149}>
+        <PinnedFrame frame={step2.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
         </PinnedFrame>
       ),
     },
     {
-      name: "Pinned at rest (frame 149/149)",
-      description: "The final rewritten source, fully settled, with lines 1–3 framed by the camera.",
+      name: `Pinned at rest, end of step 3 (frame ${step2.endFrame - 1}/${total})`,
+      description: "The rewritten source, fully settled, with lines 1–3 framed by the camera.",
       render: () => (
-        <PinnedFrame frame={149} durationInFrames={149}>
+        <PinnedFrame frame={step2.endFrame - 1} durationInFrames={total}>
+          <Frame><CodeScene scene={scene} /></Frame>
+        </PinnedFrame>
+      ),
+    },
+    {
+      name: `Pinned with an Annotation callout, step 4 (frame ${step3.endFrame - 1}/${total})`,
+      description: "A leader line points from mid-panel out to a \"Optional param, defaults to 0\" label, pinned to line 1 — mounted inside Camera's own transformed layer, so it stays attached to the line as the camera frames it.",
+      render: () => (
+        <PinnedFrame frame={step3.endFrame - 1} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
         </PinnedFrame>
       ),
