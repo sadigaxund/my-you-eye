@@ -71,7 +71,7 @@ import "my-you-eye/styles.css";
 
 | Component | Variants | Demos |
 |---|---|---|
-| `Alert` | variant: danger / info / success / warning<br>size: lg / md / sm | Variants, With title, With icon, Size |
+| `Alert` | variant: danger / info / note / success / tip / warning<br>size: lg / md / sm / xl | Variants, With title, With icon, Size, Note & tip, Presentation size (xl) |
 | `Progress` | variant: danger / default / success / warning | Variants, No label |
 | `Skeleton` | shape: circle / rect / text | Shapes |
 | `Spinner` | size: lg / md / sm | Sizes |

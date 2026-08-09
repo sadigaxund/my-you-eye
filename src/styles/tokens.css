@@ -95,6 +95,11 @@
   --spacing-panel-sm: 0.75rem;
   --spacing-panel: 1rem;
   --spacing-panel-lg: 1.5rem;
+  /* "Presentation" density — a large-format callout meant to read at video
+     scale (Alert's `size="xl"`, TODO.md Q3 Callout). Distinct from
+     --spacing-panel-lg so xl isn't a no-op alias of lg (see AGENTS.md's own
+     "Table density is a no-op" cautionary tale). */
+  --spacing-panel-xl: 2rem;
   --spacing-compact-x: 0.75rem;
   --spacing-compact-y: 0.5rem;
   --spacing-stack: 0.75rem;

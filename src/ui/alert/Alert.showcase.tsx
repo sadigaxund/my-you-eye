@@ -50,6 +50,31 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Note & tip",
+      description: "variant=\"note\"/\"tip\" — presentation callouts (a left-accent card) for narrative asides in a video, distinct from the four status-alert variants above.",
+      render: () => (
+        <div className="flex flex-col gap-3 max-w-lg mx-auto">
+          <Alert variant="note" title="Note">
+            The cache is invalidated automatically after a deploy.
+          </Alert>
+          <Alert variant="tip" title="Tip">
+            You can pass a numeric delta to StatCard and it formats the sign for you.
+          </Alert>
+        </div>
+      ),
+    },
+    {
+      name: "Presentation size (xl)",
+      description: "size=\"xl\" steps up padding (its own --spacing-panel-xl token) and title/body typography for legibility at video scale.",
+      render: () => (
+        <div className="flex flex-col gap-3 max-w-lg mx-auto">
+          <Alert variant="tip" size="xl" title="Pro tip">
+            Compose, don't restyle — CodeBlock's tokenizer is reused by both DiffBlock and Terminal.
+          </Alert>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

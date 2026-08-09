@@ -664,20 +664,25 @@
         "variant": [
           "danger",
           "info",
+          "note",
           "success",
+          "tip",
           "warning"
         ],
         "size": [
           "lg",
           "md",
-          "sm"
+          "sm",
+          "xl"
         ]
       },
       "demos": [
         "Variants",
         "With title",
         "With icon",
-        "Size"
+        "Size",
+        "Note & tip",
+        "Presentation size (xl)"
       ]
     },
     {
