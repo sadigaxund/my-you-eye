@@ -125,3 +125,5 @@ export { ScatterPlot } from "./ui/scatter-plot";
 export type { ScatterPlotProps, ScatterSeries, ScatterPoint } from "./ui/scatter-plot";
 export { Funnel } from "./ui/funnel";
 export type { FunnelProps, FunnelStage } from "./ui/funnel";
+export { Terminal, terminalVariants } from "./ui/terminal";
+export type { TerminalProps, TerminalEntry, TerminalPromptGlyph } from "./ui/terminal";

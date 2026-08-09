@@ -9,7 +9,7 @@ import { Button, Card } from "my-you-eye";
 import "my-you-eye/styles.css";
 ```
 
-**65 components** across 10 groups.
+**66 components** across 10 groups.
 
 ## canvas
 
@@ -62,6 +62,7 @@ import "my-you-eye/styles.css";
 | `ScrollArea` | orientation: horizontal / vertical | Vertical scroll, Horizontal scroll, Rounded corners (radius on ScrollArea itself, not a wrapper), Edge fade |
 | `Separator` | orientation: vertical | Horizontal, Vertical |
 | `StatusDot` | variant: danger / info / neutral / success / warning<br>size: md / sm | Variants, Sizes, Pulsing |
+| `Terminal` | variant: default / elevated | Prompt glyphs, Title bar, Variant |
 
 ## feedback
 

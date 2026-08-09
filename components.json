@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 65,
+  "count": 66,
   "components": [
     {
       "name": "Canvas",
@@ -593,6 +593,22 @@
         "Variants",
         "Sizes",
         "Pulsing"
+      ]
+    },
+    {
+      "name": "Terminal",
+      "group": "display",
+      "folder": "ui/terminal",
+      "props": {
+        "variant": [
+          "default",
+          "elevated"
+        ]
+      },
+      "demos": [
+        "Prompt glyphs",
+        "Title bar",
+        "Variant"
       ]
     },
     {
