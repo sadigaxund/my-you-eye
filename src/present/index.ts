@@ -22,3 +22,6 @@
 
 export { useSteps } from "./use-steps";
 export type { UseStepsResult, UseStepsOptions, PresentStep, SceneTiming } from "./use-steps";
+
+export { SpeakerView } from "./speaker-view";
+export type { SpeakerViewProps } from "./speaker-view";
