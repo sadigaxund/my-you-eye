@@ -244,7 +244,19 @@ so an interruption never leaves a half-built folder.
   with no call-stack depth: a bar closes on the participant's next outgoing message whether
   or not it is a genuine reply.
 
-**Q6. Presenter / video / packaging** — Phases F, G, H below.
+**Q6. Presenter / video / packaging**
+- [x] **Phase F — ✅ COMPLETE** (`e31c53e`..`04cf5b0`). `src/present/` published as
+      `my-you-eye/present`: `useSteps`, `Presenter`, `SpeakerView`, and live-only diagram
+      interactivity via `LiveInteractionContext` (inert with no provider — a static or
+      Remotion render is byte-identical, verified by rendering to static markup before and
+      after the change and diffing). `check-motion.mjs` and `check-showcase.mjs` both extended
+      to `src/present/**`; the only wall-clock exception is the speaker view's elapsed timer,
+      scoped to that one named file in the guard.
+- [ ] Phases G, H — in progress.
+
+**P1 resolved:** `@remotion/player` and `@remotion/transitions` approved and installed
+(`a09bfc4`) as optional peers + devDependencies, alongside `remotion`. `PlayerEmbed` is
+built in Phase G/H, not Phase F.
 
 **Q7. SKILL set** — `SKILL.md` entry point + `references/{diagrams,motion,scenes,data-display}.md`.
 Diagram reference must be prescriptive (rules + checklist), since its purpose is to stop
