@@ -69,3 +69,21 @@ export function currentFocusIds(step: DiagramStep | undefined): Set<string> | nu
   if (!step?.focus || step.focus.length === 0) return null;
   return new Set(step.focus);
 }
+
+/**
+ * Node ids to keep at full opacity when a node is "expanded" via the
+ * live-only click interaction (TODO.md Phase F / D2): the expanded node
+ * itself plus every node directly connected to it by an edge. `null` when
+ * nothing is expanded — the default, and always true with no
+ * `LiveInteractionContext` provider mounted (`src/scenes/interaction.ts`),
+ * so this never changes a video render's or a plain static render's output.
+ */
+export function expandedFocusIds(expandedId: string | null, edges: DiagramSceneData["edges"]): Set<string> | null {
+  if (!expandedId) return null;
+  const set = new Set<string>([expandedId]);
+  for (const e of edges) {
+    if (e.from === expandedId) set.add(e.to);
+    if (e.to === expandedId) set.add(e.from);
+  }
+  return set;
+}

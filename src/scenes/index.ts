@@ -48,3 +48,11 @@ export type { CodeDiffProps } from "./code-diff";
 // Scene -> rendered frame. The single switch consumers never touch.
 export { SceneRenderer } from "./scene-renderer";
 export type { SceneRendererProps } from "./scene-renderer";
+
+// Live-only diagram interactivity (TODO.md D2/Phase F) — the context
+// DiagramScene reads. Defined here so the scenes tier never has to import
+// src/present/; the real provider is mounted only by Presenter.Stage.tsx.
+// Inert (isLive: false, every id null) with no provider mounted, which is
+// always the case in a Remotion video render or a plain static render.
+export { LiveInteractionContext, useLiveInteraction } from "./interaction";
+export type { LiveInteractionValue } from "./interaction";
