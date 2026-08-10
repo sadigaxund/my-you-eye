@@ -11,6 +11,7 @@ export default defineConfig({
     motion: "src/motion/index.ts",
     "motion-remotion": "src/motion/remotion.tsx",
     scenes: "src/scenes/index.ts",
+    present: "src/present/index.ts",
   },
   format: ["esm"],
   dts: { tsconfig: "tsconfig.app.json" },

@@ -27,14 +27,31 @@ import { join, relative } from "node:path";
  * boundary) does NOT extend to scenes: `src/scenes/**` is explicitly allowed
  * to import both `src/ui/**` and `src/motion/**` (TODO.md D1) — it's the
  * wiring tier where a static component meets a timeline.
+ *
+ * TODO.md Phase F extends invariants 1 and 3 again to `src/present/**`, with
+ * one narrowly-scoped exception: `speaker-view/SpeakerView.useElapsed.ts`'s
+ * elapsed-time timer is genuine wall-clock UI chrome (how long the speaker
+ * has been talking), never part of any rendered scene/frame, so it is the
+ * one named file in the whole repo outside `src/motion/core/` allowed to use
+ * `Date.now()`/`setInterval()`. Every other file in `src/present/` is held
+ * to the same rule as `src/motion/`'s default entry and `src/scenes/**`. In
+ * addition, Phase F's tier table says nothing in `src/ui/`, `src/motion/` or
+ * `src/scenes/` may import `src/present/` (present sits on top of all
+ * three) — enforced below alongside the existing ui<->motion boundary.
  */
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const MOTION_DIR = join(ROOT, "src/motion");
 const UI_DIR = join(ROOT, "src/ui");
 const SCENES_DIR = join(ROOT, "src/scenes");
+const PRESENT_DIR = join(ROOT, "src/present");
 const CORE_DIR = join(MOTION_DIR, "core");
 const REMOTION_ENTRY = join(MOTION_DIR, "remotion.tsx");
+// The ONE file allowed a wall-clock timer outside src/motion/core/ — see the
+// docblock above and this file's own comment (TODO.md Phase F).
+const PRESENT_TIMER_EXCEPTION = join(PRESENT_DIR, "speaker-view/SpeakerView.useElapsed.ts");
+// Any relative import whose specifier reaches into src/present/.
+const PRESENT_IMPORT_RE = /from\s+["'][^"']*\.\.\/present(?:\/|["'])/;
 
 const errors = [];
 
@@ -97,12 +114,20 @@ for (const file of walk(MOTION_DIR)) {
   if (!isRemotionEntry && /from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
     errors.push(`${rel}: imports remotion. Only src/motion/remotion.tsx may — it is what keeps "my-you-eye/motion" free of a video renderer (TODO.md D1).`);
   }
+
+  if (PRESENT_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/present/. src/present/ sits on top of src/motion/ — nothing below it may depend on it (TODO.md Phase F tier rules).`);
+  }
 }
 
 for (const file of walk(UI_DIR)) {
+  const rel = relative(ROOT, file);
   const src = readFileSync(file, "utf-8");
   if (/from\s+["'][^"']*\.\.\/motion/.test(src) || /from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
-    errors.push(`${relative(ROOT, file)}: src/ui/ must not import the motion tier or remotion — AGENTS.md §9b.`);
+    errors.push(`${rel}: src/ui/ must not import the motion tier or remotion — AGENTS.md §9b.`);
+  }
+  if (PRESENT_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/present/. src/present/ sits on top of src/ui/ — nothing below it may depend on it (TODO.md Phase F tier rules).`);
   }
 }
 
@@ -128,6 +153,40 @@ for (const file of walk(SCENES_DIR)) {
 
   if (/from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
     errors.push(`${rel}: imports remotion. Scenes must stay remotion-free — VideoRoot (Phase G) supplies the driver via MotionRoot from "my-you-eye/motion/remotion", so a consumer who only wants the live presenter never pulls a video renderer into their bundle (TODO.md D1).`);
+  }
+
+  if (PRESENT_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/present/. Scenes must not depend on the present tier — the interactivity context scenes read (src/scenes/interaction.ts) is defined here precisely so this import is never needed (TODO.md D2/Phase F tier rules).`);
+  }
+}
+
+// src/present/** (TODO.md Phase F): same clock/CSS-animation ban and the
+// same "must not import remotion" rule as src/scenes/** — the Presenter's
+// own DomDriver covers the live path; @remotion/player (PlayerEmbed) is
+// explicitly out of scope for this batch. One narrowly-scoped exception:
+// PRESENT_TIMER_EXCEPTION (the speaker view's elapsed-time timer) is
+// genuine wall-clock UI chrome, never part of a rendered scene/frame.
+for (const file of walk(PRESENT_DIR)) {
+  const rel = relative(ROOT, file);
+  const src = readFileSync(file, "utf-8");
+  const isTimerException = file === PRESENT_TIMER_EXCEPTION;
+
+  if (!isTimerException) {
+    for (const [re, label] of CLOCK_PATTERNS) {
+      if (re.test(src)) {
+        errors.push(`${rel}: uses ${label}. src/present/ must not read wall-clock time outside the one documented exception (speaker-view/SpeakerView.useElapsed.ts) — TODO.md Phase F.`);
+      }
+    }
+  }
+
+  for (const [re, label] of CSS_ANIM_PATTERNS) {
+    if (re.test(src)) {
+      errors.push(`${rel}: uses ${label}. Presenter chrome must not rely on CSS transitions/keyframes for anything timeline-driven — TODO.md Phase F.`);
+    }
+  }
+
+  if (/from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
+    errors.push(`${rel}: imports remotion. src/present/ must stay remotion-free — the Presenter's own DomDriver covers the live path; @remotion/player (PlayerEmbed) is explicitly out of scope for this batch (TODO.md Phase F).`);
   }
 }
 

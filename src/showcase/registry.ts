@@ -58,12 +58,13 @@ function slugify(title: string): string {
 }
 
 // Auto-discovery: every `*.showcase.tsx` under src/ui/ (and, once they exist,
-// src/motion/ and src/scenes/ — AGENTS.md §9d phase 0 / TODO.md A0) registers
-// itself just by existing — no manual list. We glob twice: once for the live
-// module (component + render fns) and once for the raw file text (used only
-// to extract copy-pasteable JSX for the code toggle). Vite's import.meta.glob
+// src/motion/, src/scenes/ and src/present/ — AGENTS.md §9d phase 0 /
+// TODO.md A0, extended to src/present/ by Phase F) registers itself just by
+// existing — no manual list. We glob twice: once for the live module
+// (component + render fns) and once for the raw file text (used only to
+// extract copy-pasteable JSX for the code toggle). Vite's import.meta.glob
 // accepts an array of patterns and is happy when some of them match nothing,
-// so this keeps working today with zero files under motion/ or scenes/.
+// so this keeps working today even if any of these directories were empty.
 //
 // The pattern list MUST be written inline at each call site. `import.meta.glob`
 // is compile-time syntax, not a function: Vite statically parses its arguments
@@ -74,11 +75,13 @@ const modules = import.meta.glob([
   "../ui/**/*.showcase.tsx",
   "../motion/**/*.showcase.tsx",
   "../scenes/**/*.showcase.tsx",
+  "../present/**/*.showcase.tsx",
 ], { eager: true }) as Record<string, { default: ShowcaseEntry }>;
 const rawSources = import.meta.glob([
   "../ui/**/*.showcase.tsx",
   "../motion/**/*.showcase.tsx",
   "../scenes/**/*.showcase.tsx",
+  "../present/**/*.showcase.tsx",
 ], {
   eager: true,
   query: "?raw",

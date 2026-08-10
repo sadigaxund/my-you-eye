@@ -46,6 +46,11 @@
       "import": "./dist/scenes.js",
       "default": "./dist/scenes.js"
     },
+    "./present": {
+      "types": "./dist/present.d.ts",
+      "import": "./dist/present.js",
+      "default": "./dist/present.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./styles.compiled.css": "./dist/styles.compiled.css"
   },
