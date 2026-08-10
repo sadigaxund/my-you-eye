@@ -16,6 +16,9 @@ export default defineConfig({
   format: ["esm"],
   dts: { tsconfig: "tsconfig.app.json" },
   tsconfig: "tsconfig.app.json",
-  external: ["react", "react-dom", "remotion"],
+  // Every remotion package stays external and is declared an *optional* peer
+  // (package.json): a consumer who only wants the static UI, or only the
+  // live presenter, never has a video renderer pulled into their bundle.
+  external: ["react", "react-dom", "remotion", "@remotion/player", "@remotion/transitions"],
   clean: true,
 });

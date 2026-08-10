@@ -80,9 +80,17 @@
     "tailwind-merge": "^3.2.0"
   },
   "peerDependencies": {
+    "@remotion/player": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
     "remotion": "^4.0.0"
   },
   "peerDependenciesMeta": {
+    "@remotion/player": {
+      "optional": true
+    },
+    "@remotion/transitions": {
+      "optional": true
+    },
     "remotion": {
       "optional": true
     }
@@ -90,6 +98,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@remotion/player": "^4.0.507",
+    "@remotion/transitions": "^4.0.507",
     "@tailwindcss/vite": "^4.1.0",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
