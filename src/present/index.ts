@@ -23,5 +23,17 @@
 export { useSteps } from "./use-steps";
 export type { UseStepsResult, UseStepsOptions, PresentStep, SceneTiming } from "./use-steps";
 
+export { Presenter } from "./presenter";
+export type { PresenterProps, PresenterStepInfo } from "./presenter";
+
 export { SpeakerView } from "./speaker-view";
 export type { SpeakerViewProps } from "./speaker-view";
+
+// Re-exported for convenience: the live-only diagram interactivity context
+// (TODO.md D2) is DEFINED in src/scenes/ (so a scene can read it without
+// importing src/present/), but a consumer building their own Presenter
+// chrome will most likely want it alongside everything else in this entry.
+// `LiveInteractionContext` is mounted with a real value only inside
+// `Presenter`'s own stage (`presenter/Presenter.Stage.tsx`).
+export { useLiveInteraction, LiveInteractionContext } from "../scenes";
+export type { LiveInteractionValue } from "../scenes";
