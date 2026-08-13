@@ -6,13 +6,13 @@ const entry: ShowcaseEntry = {
   title: "Reveal",
   group: "motion",
   description:
-    "Generic entrance animation — fade, directional slide, scale or blur — driven entirely by useProgress(). Wraps any single child without injecting a layout box when asChild is set.",
+    "Generic entrance animation — fade, directional slide, scale or blur — driven entirely by useProgress(). Wraps any single child without injecting a layout box when asChild is set. Stagger builds directly on top of this: it's just Reveal run once per child with offset delays — see Reveal vs Stagger on Stagger's own page.",
   demos: [
     {
       name: "from variants",
       render: () => (
-        <MotionPreview durationInFrames={90}>
-          <div className="flex flex-wrap gap-panel">
+        <MotionPreview durationInFrames={90} center leadIn>
+          <div className="flex flex-wrap items-center justify-center gap-panel">
             <Reveal from="fade" duration="slow">
               <div className="rounded-ui bg-secondary px-panel py-compact-y text-sm text-secondary-fg">fade</div>
             </Reveal>
@@ -42,7 +42,7 @@ const entry: ShowcaseEntry = {
       name: "asChild (no layout box)",
       description: "asChild merges the animation onto the flex item itself instead of wrapping it in a new <div>.",
       render: () => (
-        <MotionPreview durationInFrames={60}>
+        <MotionPreview durationInFrames={60} leadIn>
           <div className="flex items-center gap-inline">
             <span className="text-sm text-muted">flex row —</span>
             <Reveal asChild from="up">
