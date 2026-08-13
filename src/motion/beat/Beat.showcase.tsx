@@ -10,14 +10,17 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "hold between reveals",
+      description: 'The gap between "step one" and "step two" is a deliberate Beat, hold="slow" — not a missing animation.',
       render: () => (
-        <MotionPreview durationInFrames={120}>
-          <div className="flex flex-col gap-tight">
+        <MotionPreview durationInFrames={120} center leadIn>
+          <div className="flex flex-col items-center gap-tight">
             <Reveal from="up" duration="normal">
               <div className="rounded-ui bg-secondary px-panel py-compact-y text-sm text-secondary-fg">step one</div>
             </Reveal>
             <Beat hold="slow">
-              <div className="text-xs text-muted">(intentional pause here — hold=&quot;slow&quot;)</div>
+              <span className="rounded-ui-sm bg-surface-opaque px-tight py-compact-y text-xs font-medium uppercase tracking-wide text-muted">
+                hold
+              </span>
             </Beat>
             <Reveal from="up" duration="normal" delay="slow">
               <div className="rounded-ui bg-primary px-panel py-compact-y text-sm text-primary-fg">step two</div>
