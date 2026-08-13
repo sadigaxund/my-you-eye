@@ -23,7 +23,8 @@
     "bin",
     "SKILL.md",
     "components.json",
-    "COMPONENTS.md"
+    "COMPONENTS.md",
+    "references"
   ],
   "exports": {
     ".": {
