@@ -37,6 +37,16 @@ const COLOR_VAR: Record<HighlightColor, string> = {
  * an absolutely-positioned overlay inside a bare `<div>` that had no radius
  * of its own to inherit, so every highlight rendered with square corners
  * regardless of the content's shape.
+ *
+ * The three "boxy" modes (`fill`/`box`/`glow`) expand past the glyph bounds
+ * by `-inset-highlight` instead of hugging them with `inset-0` — owner
+ * feedback: the tight fit read as boxes clipping their own text. This has
+ * to be a negative inset, not padding: padding on an absolutely-positioned
+ * overlay just grows the box outward from the same origin, but the overlay
+ * shares its parent's content box with the text, so padding would push the
+ * *text* apart from its neighbours too. `underline`/`strike` stay edge-
+ * anchored (`inset-x-0`) — they're not a box, so the same breathing room
+ * would just misalign them from the text they're marking.
  */
 export function Highlight({ children, mode = "fill", color = "primary", as: As = "span", className, ...timing }: HighlightProps) {
   const progress = useProgress(timing);
@@ -46,21 +56,21 @@ export function Highlight({ children, mode = "fill", color = "primary", as: As =
       {mode === "fill" && (
         <span
           aria-hidden
-          className={`absolute inset-0 rounded-ui-sm ${COLOR_BG[color]}`}
+          className={`absolute -inset-highlight rounded-ui-sm ${COLOR_BG[color]}`}
           style={{ opacity: progress * 0.35 }}
         />
       )}
       {mode === "box" && (
         <span
           aria-hidden
-          className="absolute inset-0 rounded-ui-sm"
+          className="absolute -inset-highlight rounded-ui-sm"
           style={{ boxShadow: `inset 0 0 0 calc(var(--border-width) * 2) ${COLOR_VAR[color]}`, opacity: progress }}
         />
       )}
       {mode === "glow" && (
         <span
           aria-hidden
-          className="absolute inset-0 rounded-ui-sm"
+          className="absolute -inset-highlight rounded-ui-sm"
           style={{ boxShadow: `0 0 calc(var(--grid-unit) * ${progress}) ${COLOR_VAR[color]}`, opacity: progress }}
         />
       )}
