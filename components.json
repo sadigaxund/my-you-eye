@@ -55,9 +55,15 @@
       "tier": "motion",
       "entry": "my-you-eye/motion",
       "folder": "motion/cursor",
-      "props": {},
+      "props": {
+        "shape": [
+          "dot"
+        ]
+      },
       "demos": [
-        "move, click, type"
+        "move, click, type",
+        "shapes",
+        "click effect variants"
       ]
     },
     {
@@ -81,7 +87,7 @@
       "props": {},
       "demos": [
         "modes",
-        "over rounded content"
+        "overlay radius is its own, never the child"
       ]
     },
     {
@@ -92,7 +98,9 @@
       "folder": "motion/morph",
       "props": {},
       "demos": [
-        "reposition + resize"
+        "card moving + resizing between layout slots",
+        "cross-fade between two different elements",
+        "list item expanding into a detail panel"
       ]
     },
     {
@@ -103,7 +111,10 @@
       "folder": "motion/core",
       "props": {},
       "demos": [
-        "useTimeline / useProgress"
+        "useTimeline / useProgress",
+        "Beat values, side by side",
+        "easing vs spring",
+        "seek & scrub (DomDriverHandle)"
       ]
     },
     {
@@ -115,7 +126,8 @@
       "props": {},
       "demos": [
         "infinite",
-        "loop=3, then settles"
+        "loop=3, then settles",
+        "text stays crisp — pulse a non-text sibling instead"
       ]
     },
     {
@@ -136,10 +148,15 @@
       "tier": "motion",
       "entry": "my-you-eye/motion",
       "folder": "motion/ripple",
-      "props": {},
+      "props": {
+        "variant": [
+          "double",
+          "solid"
+        ]
+      },
       "demos": [
-        "single ripple",
-        "colors"
+        "click — ring",
+        "click — solid vs double"
       ]
     },
     {
@@ -173,7 +190,9 @@
       "folder": "motion/spotlight",
       "props": {},
       "demos": [
-        "focus rect"
+        "one line of code",
+        "one node in a diagram",
+        "one card in a dashboard"
       ]
     },
     {
@@ -184,6 +203,7 @@
       "folder": "motion/stagger",
       "props": {},
       "demos": [
+        "Reveal vs Stagger",
         "from=\\",
         "from=\\"
       ]
@@ -226,6 +246,7 @@
       "demos": [
         "char mode",
         "word mode",
+        "caret variants",
         "preserveLayout (no reflow)"
       ]
     },

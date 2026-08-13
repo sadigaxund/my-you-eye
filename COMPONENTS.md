@@ -365,21 +365,21 @@ Step (`WalkthroughStep`):
 | `Camera` | `my-you-eye/motion` | — | pan between elements, fit zoom |
 | `Caption` | `my-you-eye/motion` | — | positions, bottom-center |
 | `CountUp` | `my-you-eye/motion` | — | formats, signed + duration |
-| `Cursor` | `my-you-eye/motion` | — | move, click, type |
+| `Cursor` | `my-you-eye/motion` | shape: dot | move, click, type, shapes, click effect variants |
 | `Draw` | `my-you-eye/motion` | — | basic path, colors + stroke widths |
-| `Highlight` | `my-you-eye/motion` | — | modes, over rounded content |
-| `Morph` | `my-you-eye/motion` | — | reposition + resize |
-| `Motion Core` | `my-you-eye/motion` | — | useTimeline / useProgress |
-| `Pulse` | `my-you-eye/motion` | — | infinite, loop=3, then settles |
+| `Highlight` | `my-you-eye/motion` | — | modes, overlay radius is its own, never the child |
+| `Morph` | `my-you-eye/motion` | — | card moving + resizing between layout slots, cross-fade between two different elements, list item expanding into a detail panel |
+| `Motion Core` | `my-you-eye/motion` | — | useTimeline / useProgress, Beat values, side by side, easing vs spring, seek & scrub (DomDriverHandle) |
+| `Pulse` | `my-you-eye/motion` | — | infinite, loop=3, then settles, text stays crisp — pulse a non-text sibling instead |
 | `Reveal` | `my-you-eye/motion` | — | from variants, asChild (no layout box) |
-| `Ripple` | `my-you-eye/motion` | — | single ripple, colors |
+| `Ripple` | `my-you-eye/motion` | variant: double / solid | click — ring, click — solid vs double |
 | `Shake` | `my-you-eye/motion` | — | axis variants |
 | `Slide` | `my-you-eye/motion` | — | mode=\, mode=\ |
-| `Spotlight` | `my-you-eye/motion` | — | focus rect |
-| `Stagger` | `my-you-eye/motion` | — | from=\, from=\ |
+| `Spotlight` | `my-you-eye/motion` | — | one line of code, one node in a diagram, one card in a dashboard |
+| `Stagger` | `my-you-eye/motion` | — | Reveal vs Stagger, from=\, from=\ |
 | `TextSwap` | `my-you-eye/motion` | — | fade, roll |
 | `Trace` | `my-you-eye/motion` | shape: square | single token, looping, multiple tokens, spaced |
-| `TypeText` | `my-you-eye/motion` | — | char mode, word mode, preserveLayout (no reflow) |
+| `TypeText` | `my-you-eye/motion` | — | char mode, word mode, caret variants, preserveLayout (no reflow) |
 | `Unmask` | `my-you-eye/motion` | — | directions + softness |
 | `Wipe` | `my-you-eye/motion` | variant: radial | linear — 4 directions, radial |
 
