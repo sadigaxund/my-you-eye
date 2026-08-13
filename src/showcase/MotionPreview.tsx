@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { MotionRoot } from "../motion";
+import { MotionRoot, TimelineProvider, useTimeline, resolveBeatFrames } from "../motion";
 import type { DomDriverHandle } from "../motion";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
+import { cn } from "../lib/cn";
 
 export interface MotionPreviewProps {
   children: ReactNode;
@@ -12,6 +13,45 @@ export interface MotionPreviewProps {
   fps?: number;
   /** Loop back to the start automatically. Default true — a showcase demo should keep playing without being re-triggered. */
   loop?: boolean;
+  /**
+   * Centre the rendered content within the preview box instead of letting it
+   * sit flush at the box's block-start/inline-start corner (owner feedback:
+   * "centralize the presented elements within their container" — CountUp
+   * and several other demos sat flush left with visible unused space).
+   * `ShowcaseEntry.demos[].layout: "center"` centers the *whole* preview
+   * (chrome, controls and all) within the outer showcase panel, which is a
+   * no-op here because MotionPreview's own box is already `w-full` — this
+   * prop centers content within that box instead, which is the container
+   * the feedback actually meant. Default false — preserves every demo that
+   * intentionally fills the box (grids, full-bleed panels, positioned
+   * overlays).
+   */
+  center?: boolean;
+  /**
+   * Hold on frame 0 for about a second before the clock actually starts
+   * advancing for `children` (owner feedback, generalized from Unmask:
+   * "the presentation starts improperly... a second of delay at the start
+   * to see the [before] state then [animate] it" — a reveal-type demo that
+   * begins already mid-reveal never shows its own starting state). Only
+   * shifts what `children` perceive as `frame` — the scrub bar below still
+   * reports the real, unshifted frame, so manual scrubbing isn't affected.
+   * Default false.
+   */
+  leadIn?: boolean;
+}
+
+// ~0.9s at the default 30fps — reuses the "slow" semantic Beat instead of a
+// magic frame count, same as every primitive's own Timing.
+const LEAD_IN_BEAT = "slow" as const;
+
+function LeadInGate({ fps, children }: { fps: number; children: ReactNode }) {
+  const { frame, durationInFrames } = useTimeline();
+  const leadFrames = resolveBeatFrames(LEAD_IN_BEAT, fps);
+  return (
+    <TimelineProvider value={{ frame: Math.max(0, frame - leadFrames), fps, durationInFrames }}>
+      {children}
+    </TimelineProvider>
+  );
 }
 
 /**
@@ -26,14 +66,21 @@ export interface MotionPreviewProps {
  * import this the same way they already import ShowcaseEntry from
  * "../../showcase/types" — showcase infrastructure, not a primitive.
  */
-export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop = true }: MotionPreviewProps) {
+export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop = true, center = false, leadIn = false }: MotionPreviewProps) {
   const handleRef = useRef<DomDriverHandle>(null);
   const [frame, setFrame] = useState(0);
   const [playing, setPlaying] = useState(true);
 
+  const content = leadIn ? <LeadInGate fps={fps}>{children}</LeadInGate> : children;
+
   return (
     <div className="flex w-full flex-col gap-tight">
-      <div className="relative w-full overflow-hidden rounded-ui border border-border bg-surface p-panel">
+      <div
+        className={cn(
+          "relative w-full overflow-hidden rounded-ui border border-border bg-surface p-panel",
+          center && "flex items-center justify-center",
+        )}
+      >
         <MotionRoot
           ref={handleRef}
           mode="live"
@@ -43,7 +90,7 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
           autoPlay
           onFrame={setFrame}
         >
-          {children}
+          {content}
         </MotionRoot>
       </div>
       <div className="flex items-center gap-inline">
