@@ -5,12 +5,13 @@ import { Ripple } from ".";
 const entry: ShowcaseEntry = {
   title: "Ripple",
   group: "motion",
-  description: "An expanding, fading ring at a point — marks clicks and events. Used by Cursor for its click effect.",
+  description: "Click feedback at a point — an expanding ring, filled disc, or double pulse, all fading out. This is what Cursor's clickEffect renders on click/dblclick; standalone it also marks any other timed event.",
   demos: [
     {
-      name: "single ripple",
+      name: "click — ring",
+      description: "The default: a single outline expands and fades.",
       render: () => (
-        <MotionPreview durationInFrames={60} loop>
+        <MotionPreview durationInFrames={60} loop leadIn>
           <div className="relative h-24 w-full overflow-hidden rounded-ui bg-surface">
             <Ripple x={80} y={48} duration="normal" />
           </div>
@@ -18,12 +19,13 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "colors",
+      name: "click — solid vs double",
+      description: "solid: a filled disc, for a firmer tap. double: a second, phase-delayed ring for a richer pulse.",
       render: () => (
-        <MotionPreview durationInFrames={60} loop>
+        <MotionPreview durationInFrames={60} loop leadIn>
           <div className="relative flex h-24 w-full gap-panel overflow-hidden rounded-ui bg-surface p-panel">
-            <Ripple x={30} y={30} color="success" duration="normal" />
-            <Ripple x={110} y={30} color="danger" duration="normal" delay="quick" />
+            <Ripple x={30} y={30} variant="solid" color="success" duration="normal" />
+            <Ripple x={110} y={30} variant="double" color="primary" duration="normal" delay="quick" />
           </div>
         </MotionPreview>
       ),
