@@ -35,8 +35,23 @@ export function Pulse({ children, loop, asChild, as: As = "div", className, ...t
 
   const wave = active ? Math.sin(((local % periodFrames) / periodFrames) * Math.PI * 2) * 0.5 + 0.5 : 0;
   const style = {
-    transform: `scale(${1 + wave * SCALE_AMPLITUDE})`,
+    // scale3d (not scale) forces the browser onto its GPU compositing path
+    // rather than the ambiguous 2D path some engines still rasterize on the
+    // main thread; willChange pre-promotes the element to its own layer
+    // BEFORE the animation starts instead of lazily on first frame, and
+    // backfaceVisibility keeps that layer's own rasterization from being
+    // resampled against its (invisible) back face. Owner feedback: text
+    // inside a scaled element looks soft mid-animation on a high-refresh
+    // display — a well-documented Chromium/WebKit effect where a scaled
+    // layer's glyphs are resampled from an already-rasterized bitmap rather
+    // than re-hinted at the new size. This is the standard mitigation for
+    // it; it does not re-rasterize glyphs at every scale step (no browser
+    // API does that for a compositor-driven transform), so it reduces but
+    // does not eliminate the softening — see the Pulse showcase note.
+    transform: `scale3d(${1 + wave * SCALE_AMPLITUDE}, ${1 + wave * SCALE_AMPLITUDE}, 1)`,
     opacity: 1 - wave * OPACITY_AMPLITUDE,
+    willChange: "transform",
+    backfaceVisibility: "hidden" as const,
   };
 
   if (asChild) {

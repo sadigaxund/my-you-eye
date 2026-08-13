@@ -5,12 +5,13 @@ import { Pulse } from ".";
 const entry: ShowcaseEntry = {
   title: "Pulse",
   group: "motion",
-  description: "Looping scale/opacity breathing, driven by frame % period — never CSS animation.",
+  description:
+    "Looping scale/opacity breathing, driven by frame % period — never CSS animation. The scaled element is layer-promoted (will-change/backface-visibility/scale3d) to reduce the softening browsers apply when resampling text through a compositor transform; for text-heavy content, pulsing a non-text sibling (see the third demo) avoids it entirely.",
   demos: [
     {
       name: "infinite",
       render: () => (
-        <MotionPreview durationInFrames={120}>
+        <MotionPreview durationInFrames={120} center leadIn>
           <Pulse duration="normal">
             <div className="size-16 rounded-ui bg-primary" />
           </Pulse>
@@ -20,10 +21,24 @@ const entry: ShowcaseEntry = {
     {
       name: "loop=3, then settles",
       render: () => (
-        <MotionPreview durationInFrames={120}>
+        <MotionPreview durationInFrames={120} center leadIn>
           <Pulse duration="quick" loop={3}>
             <div className="rounded-ui bg-success px-panel py-compact-y text-sm text-success-fg">settles after 3 breaths</div>
           </Pulse>
+        </MotionPreview>
+      ),
+    },
+    {
+      name: "text stays crisp — pulse a non-text sibling instead",
+      description: "Scaling ANY element containing text resamples its glyphs somewhat on a compositor transform, however lightly — wrapping only a decorative dot, and leaving the label outside the Pulse entirely, sidesteps the effect rather than mitigating it.",
+      render: () => (
+        <MotionPreview durationInFrames={120} center leadIn>
+          <div className="flex items-center gap-inline">
+            <Pulse duration="normal" as="span">
+              <span className="block size-2.5 rounded-full bg-danger" />
+            </Pulse>
+            <span className="text-sm text-fg">3 alerts need attention</span>
+          </div>
         </MotionPreview>
       ),
     },
