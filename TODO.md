@@ -252,7 +252,14 @@ so an interruption never leaves a half-built folder.
       after the change and diffing). `check-motion.mjs` and `check-showcase.mjs` both extended
       to `src/present/**`; the only wall-clock exception is the speaker view's elapsed timer,
       scoped to that one named file in the guard.
-- [ ] Phases G, H — in progress.
+- [x] **Phases G + H — ✅ COMPLETE** (`d2c0332`..`073c707`). `src/video/` published as
+      `my-you-eye/video` (`VideoRoot` + `TransitionSeries` + chrome), `PlayerEmbed` at
+      `my-you-eye/present/player`, `gen-manifest` covering all four tiers plus the whole
+      `Video` schema re-parsed from source, and the reference video **rendered to a real MP4**
+      (1072 frames = 1132 scene frames − 60 frames of transition overlap, matching `nb_frames`).
+      Remotion isolation verified at the artifact level: no chunk reachable from the built
+      `index`/`motion`/`scenes`/`present` entries references `remotion` or `@remotion/*`.
+      `npx my-you-eye render <file>` was dropped (TODO marked it a nice-to-have).
 
 **P1 resolved:** `@remotion/player` and `@remotion/transitions` approved and installed
 (`a09bfc4`) as optional peers + devDependencies, alongside `remotion`. `PlayerEmbed` is
