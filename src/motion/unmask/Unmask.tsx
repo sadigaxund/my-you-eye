@@ -21,8 +21,20 @@ const GRADIENT_ANGLE: Record<UnmaskDirection, string> = {
 };
 
 function maskImage(progress: number, direction: UnmaskDirection, softness: number): string {
-  const hardStop = progress * 100;
-  const softStop = Math.min(100, hardStop + softness * 100);
+  // The soft edge has to start *off-box*, or progress=0 isn't a hidden
+  // state. The previous version put the hard stop at `progress * 100` and
+  // the soft stop `softness` beyond it, so at progress=0 the gradient read
+  // `white 0%, white 0%, transparent 25%` — the leading quarter was already
+  // visible before the sweep began, which is why the element looked
+  // half-masked at rest.
+  //
+  // Sweeping across `100 + soft` instead, with the hard stop trailing the
+  // soft stop by `soft`, pins both ends: at progress=0 the hard stop sits at
+  // `-soft` and the soft stop at 0 (nothing visible), and at progress=1 the
+  // hard stop reaches 100 (everything visible).
+  const soft = softness * 100;
+  const softStop = progress * (100 + soft);
+  const hardStop = softStop - soft;
   // `white` -> `transparent` (never `black` -> `transparent`) so the mask
   // reads correctly whether the browser treats a CSS-gradient mask-image as
   // an alpha mask or a luminance mask: white is fully-visible under both
