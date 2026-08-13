@@ -10,7 +10,7 @@ const entry: ShowcaseEntry = {
     {
       name: "fade",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} center leadIn>
           <TextSwap from="Draft" to="Published" mode="fade" duration="slow" className="text-lg text-fg" />
         </MotionPreview>
       ),
@@ -18,7 +18,7 @@ const entry: ShowcaseEntry = {
     {
       name: "roll",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} center leadIn>
           <TextSwap from="42 views" to="1,204 views" mode="roll" duration="slow" className="font-mono text-lg text-fg" />
         </MotionPreview>
       ),

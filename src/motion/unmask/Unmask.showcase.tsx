@@ -10,7 +10,7 @@ const entry: ShowcaseEntry = {
     {
       name: "directions + softness",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} leadIn>
           <div className="flex flex-col gap-panel">
             <Unmask direction="left" duration="slow">
               <h3 className="text-2xl font-semibold text-fg">Unmasked heading</h3>

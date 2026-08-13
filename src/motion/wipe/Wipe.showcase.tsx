@@ -14,7 +14,7 @@ const entry: ShowcaseEntry = {
     {
       name: "linear — 4 directions",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} leadIn>
           <div className="grid grid-cols-2 gap-panel">
             <Wipe direction="left" duration="slow">{panel("left")}</Wipe>
             <Wipe direction="right" duration="slow">{panel("right")}</Wipe>
@@ -27,7 +27,7 @@ const entry: ShowcaseEntry = {
     {
       name: "radial",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} leadIn>
           <Wipe variant="radial" direction="left" duration="slow">{panel("radial from left")}</Wipe>
         </MotionPreview>
       ),

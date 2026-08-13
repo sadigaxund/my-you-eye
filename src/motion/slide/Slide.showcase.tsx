@@ -15,7 +15,7 @@ const entry: ShowcaseEntry = {
     {
       name: "mode=\"in\" — all 4 directions",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} leadIn>
           <div className="grid grid-cols-2 gap-panel">
             <Slide direction="left" duration="slow">{panel("left")}</Slide>
             <Slide direction="right" duration="slow">{panel("right")}</Slide>
@@ -28,7 +28,7 @@ const entry: ShowcaseEntry = {
     {
       name: "mode=\"out\"",
       render: () => (
-        <MotionPreview durationInFrames={90}>
+        <MotionPreview durationInFrames={90} leadIn>
           <Slide direction="up" mode="out" duration="slow" delay="normal">
             {panel("slides out and clips")}
           </Slide>

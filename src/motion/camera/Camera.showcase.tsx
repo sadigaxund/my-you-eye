@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
       name: "pan between elements, fit zoom",
       description: "Camera moves from a full overview to node-a, then to node-c, fitting the zoom to each.",
       render: () => (
-        <MotionPreview durationInFrames={150}>
+        <MotionPreview durationInFrames={150} leadIn>
           <div style={{ height: 220 }}>
             <Camera
               keyframes={[
