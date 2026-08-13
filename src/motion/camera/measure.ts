@@ -54,6 +54,43 @@ export function measureRelative(el: HTMLElement, root: HTMLElement): CameraRect 
   return { x, y, width: el.offsetWidth, height: el.offsetHeight };
 }
 
+/** Value-equality for two `CameraRect`s. Used to skip a `setState` call when
+ * a fresh DOM measurement produces the exact same values as last time — the
+ * measurement itself (`measureRelative`) always returns a brand-new object,
+ * so without this an effect that re-measures on every render (because one
+ * of its OWN dependencies, e.g. a scene's per-render-fresh `ranges` object,
+ * has unstable identity even though its values didn't change) would call
+ * `setState` with a new-but-equal object every time, forcing another
+ * re-render, forcing another measure — an infinite loop that a live rAF
+ * loop happens to mask (each tick naturally yields between renders) but a
+ * synchronous frame-capture render (Remotion) does not, tripping React's
+ * "Maximum update depth exceeded" (error #185). See `Camera.tsx` and
+ * `src/scenes/code-scene/CodeScene.useCamera.ts`, both of which guard their
+ * `setState` calls with this. */
+export function rectsEqual(a: CameraRect, b: CameraRect): boolean {
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+
+/** Value-equality for two `Record<string, CameraRect>` — same key set, same
+ * rect per key. See `rectsEqual`'s docblock for why this exists. */
+export function rectRecordsEqual(a: Record<string, CameraRect>, b: Record<string, CameraRect>): boolean {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every((k) => b[k] != null && rectsEqual(a[k], b[k]));
+}
+
+function focusEqual(a: CameraRect | string, b: CameraRect | string): boolean {
+  if (typeof a === "string" || typeof b === "string") return a === b;
+  return rectsEqual(a, b);
+}
+
+/** Value-equality for two `CameraKeyframe[]` arrays. See `rectsEqual`'s docblock for why this exists. */
+export function keyframesEqual(a: CameraKeyframe[], b: CameraKeyframe[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((kf, i) => kf.at === b[i].at && kf.zoom === b[i].zoom && focusEqual(kf.focus, b[i].focus));
+}
+
 function rectCenter(r: CameraRect): { cx: number; cy: number } {
   return { cx: r.x + r.width / 2, cy: r.y + r.height / 2 };
 }

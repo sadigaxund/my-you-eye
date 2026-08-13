@@ -16,6 +16,18 @@ export interface CodeAnnotations {
   containerWidth: number;
 }
 
+/** Value-equality for two `CodeAnnotations` — guards the `setState` below
+ * against committing a new-but-value-equal object every time the effect
+ * re-runs (see `CodeScene.useCamera.ts`'s equivalent guard/docblock for why
+ * an unconditional `setState` inside a measurement effect can loop). */
+function annotationsEqual(a: CodeAnnotations, b: CodeAnnotations): boolean {
+  if (a.containerWidth !== b.containerWidth || a.annotations.length !== b.annotations.length) return false;
+  return a.annotations.every((x, i) => {
+    const y = b.annotations[i];
+    return x.target.x === y.target.x && x.target.y === y.target.y && x.text === y.text && x.side === y.side;
+  });
+}
+
 /**
  * Resolves the current step's `CodeAnnotation[]` into `Annotation`-ready
  * targets — the deferred item TODO.md calls out: `CodeStep.annotate` is
@@ -71,7 +83,8 @@ export function useCodeAnnotations(
           side: a.side ?? "right",
         });
       }
-      setState({ annotations: resolved, containerWidth });
+      const nextState: CodeAnnotations = { annotations: resolved, containerWidth };
+      setState((prev) => (annotationsEqual(prev, nextState) ? prev : nextState));
     };
 
     measure();

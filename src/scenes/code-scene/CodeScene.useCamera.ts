@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
-import { measureRelative } from "../../motion/camera";
+import { measureRelative, keyframesEqual } from "../../motion/camera";
 import type { CameraKeyframe } from "../../motion/camera";
 import type { SequenceRange } from "../../motion/core";
 import { stepName } from "../timing";
@@ -47,7 +47,18 @@ export function useCodeCameraKeyframes(scene: CodeSceneData, ranges: Record<stri
         const b = measureRelative(endEl, container);
         return { at, focus: { x: 0, y: a.y, width: full.width, height: b.y + b.height - a.y } };
       });
-      setKeyframes(next);
+      // Guarded: `ranges` (an effect dependency, below) is a fresh object
+      // every CodeScene render (`useSequence` doesn't memoize), so this
+      // effect re-runs on every render regardless of whether anything a
+      // viewer would see actually changed. An unconditional `setKeyframes`
+      // here would commit a new-but-value-equal array every time, forcing
+      // another re-render, forcing another re-run of this same effect — an
+      // infinite loop that a live rAF-driven preview happens to mask (each
+      // tick yields to the browser between renders) but a synchronous
+      // frame-capture render (Remotion) does not, tripping React's "Maximum
+      // update depth exceeded" the moment it renders a `code` scene. See
+      // `measure.ts`'s `keyframesEqual` docblock.
+      setKeyframes((prev) => (keyframesEqual(prev, next) ? prev : next));
     };
 
     measure();

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useTimeline } from "../core/TimelineContext";
-import { measureRelative, fitZoom, interpolateCamera, cameraTransform } from "./measure";
+import { measureRelative, fitZoom, interpolateCamera, cameraTransform, rectRecordsEqual } from "./measure";
 import type { CameraRect, CameraKeyframe, ResolvedKeyframe } from "./measure";
 
 export type { CameraRect, CameraKeyframe };
@@ -34,7 +34,14 @@ export function Camera({ children, keyframes, fit = true, className }: CameraPro
     if (!root) return undefined;
 
     const measure = () => {
-      setContainerSize({ width: root.offsetWidth, height: root.offsetHeight });
+      const width = root.offsetWidth;
+      const height = root.offsetHeight;
+      // Guarded: `measure()` re-runs whenever `keyframes` changes identity,
+      // which can happen on every render if a caller doesn't memoize its own
+      // keyframes array (see measure.ts's `rectsEqual`/`rectRecordsEqual`
+      // docblock) — without this, an unconditional setState here would
+      // re-trigger the render that re-ran this effect, looping forever.
+      setContainerSize((prev) => (prev.width === width && prev.height === height ? prev : { width, height }));
       const next: Record<string, CameraRect> = {};
       for (const kf of keyframes) {
         if (typeof kf.focus === "string") {
@@ -42,7 +49,7 @@ export function Camera({ children, keyframes, fit = true, className }: CameraPro
           if (el) next[kf.focus] = measureRelative(el, root);
         }
       }
-      setMeasuredRects(next);
+      setMeasuredRects((prev) => (rectRecordsEqual(prev, next) ? prev : next));
     };
 
     measure();
