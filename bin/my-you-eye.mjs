@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const SKILL = join(ROOT, "SKILL.md");
 const COMPONENTS_JSON = join(ROOT, "components.json");
+const REFERENCES_DIR = join(ROOT, "references");
 
 function usage(exitCode = 0) {
   console.log(`my-you-eye v0.2.0 — UI Component Toolkit
 
 Usage:
-  my-you-eye init [--force]    Copy SKILL.md + components.json to skills/
+  my-you-eye init [--force]    Copy SKILL.md + references/ + components.json to skills/
   my-you-eye list              List all components with groups and variants
-  my-you-eye sync              Re-copy SKILL.md + components.json (overwrite)
+  my-you-eye sync              Re-copy SKILL.md + references/ + components.json (overwrite)
 
 Options:
   --help                       Show this help
@@ -22,26 +23,36 @@ Options:
   process.exit(exitCode);
 }
 
-async function cmdInit(force) {
-  const sourceFiles = [
-    { src: SKILL, name: "SKILL.md" },
-    { src: COMPONENTS_JSON, name: "components.json" },
-  ];
-
+// SKILL.md's decision table routes to files under references/ by relative
+// path (e.g. "references/diagrams.md") — those files must land next to
+// wherever SKILL.md itself is copied, or the routing table points at
+// nothing in the consuming project. Flat directory of *.md files, no
+// subdirectories, so a plain readdir is enough (no recursive walk needed).
+function cmdInit(force) {
   const targetDir = join(process.cwd(), "skills");
   if (!existsSync(targetDir)) {
     mkdirSync(targetDir, { recursive: true });
   }
 
-  for (const file of sourceFiles) {
-    const target = join(targetDir, file.name);
-    if (existsSync(target) && !force) {
-      console.log(`  skipped  ${file.name} (already exists, use --force to overwrite)`);
-      continue;
+  function copyOne(src, targetPath, label) {
+    if (existsSync(targetPath) && !force) {
+      console.log(`  skipped  ${label} (already exists, use --force to overwrite)`);
+      return;
     }
-    const content = readFileSync(file.src, "utf-8");
-    writeFileSync(target, content, "utf-8");
-    console.log(`  written  ${target}`);
+    const content = readFileSync(src, "utf-8");
+    writeFileSync(targetPath, content, "utf-8");
+    console.log(`  written  ${targetPath}`);
+  }
+
+  copyOne(SKILL, join(targetDir, "SKILL.md"), "SKILL.md");
+  copyOne(COMPONENTS_JSON, join(targetDir, "components.json"), "components.json");
+
+  const referencesTargetDir = join(targetDir, "references");
+  if (!existsSync(referencesTargetDir)) {
+    mkdirSync(referencesTargetDir, { recursive: true });
+  }
+  for (const name of readdirSync(REFERENCES_DIR)) {
+    copyOne(join(REFERENCES_DIR, name), join(referencesTargetDir, name), `references/${name}`);
   }
 }
 
