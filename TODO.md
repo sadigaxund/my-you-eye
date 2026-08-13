@@ -265,9 +265,29 @@ so an interruption never leaves a half-built folder.
 (`a09bfc4`) as optional peers + devDependencies, alongside `remotion`. `PlayerEmbed` is
 built in Phase G/H, not Phase F.
 
-**Q7. SKILL set** — `SKILL.md` entry point + `references/{diagrams,motion,scenes,data-display}.md`.
-Diagram reference must be prescriptive (rules + checklist), since its purpose is to stop
-weaker models wiring up chaotic graphs.
+**Q7. SKILL set — ✅ COMPLETE** (`ece1924`..`f0ee584`)
+- [x] `SKILL.md` rewritten as a short router across all four tiers + decision table.
+- [x] `references/{diagrams,motion,scenes,data-display}.md`. `diagrams.md` is prescriptive:
+      20 numbered rules, a wrong-vs-right example, and a runnable pre-flight checklist.
+- [x] `references/` ships in `package.json` `files`; `my-you-eye init`/`sync` copy it.
+- [x] Fixed the manifest parser dropping any field whose doc comment contains a `;`
+      (`DiagramStep.focus` was missing from `COMPONENTS.md`).
+
+### Open, not blocking — for a later pass
+
+- **`frosted` theme is orphaned.** `src/styles/themes/frosted.css` exists but is absent from
+  `src/lib/themes.ts`, so it is selectable neither in the showcase picker nor as
+  `VideoMeta.theme`. Left alone deliberately — themes are out of scope until the owner says
+  otherwise. (`dark.css` is not a profile; it backs the `.dark` class, and `meta.appearance`
+  covers it.)
+- **Scene-schema field names differ from the `src/ui/` props they wrap** in three places:
+  `ChartSpec` `columns`/`rows` vs `Heatmap` `xLabels`/`yLabels`; `ChartSpec` `trend` vs
+  `ScatterPlot` `trendLine`; `CompareScene` `mode: "columns"` vs `Comparison`
+  `"side-by-side"`. Intentional (the schema reads better), documented in
+  `references/data-display.md`, and invisible to consumers — noted so nobody "fixes" one side.
+- **`countCrossings` takes pre-grouped `layers: string[][]`**, not the flat `LayoutPosition[]`
+  that `layered()` returns, so a caller has to re-derive layers to use them together. See
+  `scripts/prove-layout-crossings.mjs` for the pattern.
 
 ### Known issues
 
