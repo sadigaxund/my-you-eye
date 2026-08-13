@@ -21,11 +21,17 @@ export type TextSwapProps = Timing & {
  */
 export function TextSwap({ from, to, mode = "fade", className, ...timing }: TextSwapProps) {
   const progress = useProgress(timing);
-  const travel = `calc(${distanceExpr("sm")} * ${progress})`;
-  const travelBack = `calc(${distanceExpr("sm")} * -1 * ${progress})`;
+  // An odometer rolls in one direction: the outgoing line travels 0 → -d
+  // (up and out), and the incoming line travels +d → 0 (up from below,
+  // settling in place). The incoming offset must therefore be driven by
+  // `1 - progress`, not `progress` — with `progress` it starts correctly
+  // positioned and rolls *away* as it fades in, which read as the new text
+  // sliding off rather than arriving.
+  const exitOffset = `calc(${distanceExpr("sm")} * -1 * ${progress})`;
+  const enterOffset = `calc(${distanceExpr("sm")} * ${1 - progress})`;
 
-  const oldStyle: CSSProperties = { opacity: 1 - progress, transform: mode === "roll" ? `translateY(${travelBack})` : undefined };
-  const newStyle: CSSProperties = { opacity: progress, transform: mode === "roll" ? `translateY(${travel})` : undefined };
+  const oldStyle: CSSProperties = { opacity: 1 - progress, transform: mode === "roll" ? `translateY(${exitOffset})` : undefined };
+  const newStyle: CSSProperties = { opacity: progress, transform: mode === "roll" ? `translateY(${enterOffset})` : undefined };
 
   const sizerText = to.length >= from.length ? to : from;
 

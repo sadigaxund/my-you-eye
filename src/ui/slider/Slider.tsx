@@ -39,17 +39,43 @@ function defaultStep(min: number, max: number): number {
   return Math.max((max - min) / 500, 0.001);
 }
 
+/**
+ * How many decimals to show for a given step. The fine default step above
+ * makes the raw value a long float (`33.400000000000006`) — displaying
+ * `String(value)` printed all of it, which both read as noise and pushed
+ * the readout past the right edge of the row. The displayed precision is
+ * derived from the step, so an explicit `step={1}` still reads "42", while
+ * the derived fine step rounds to something a human can take in.
+ *
+ * This is display only: the input's own `value`/`step` are untouched, so
+ * dragging stays as smooth as the step allows and the value a caller
+ * receives in `onChange` is unchanged.
+ */
+function decimalsForStep(step: number): number {
+  if (step >= 1) return 0;
+  if (step >= 0.1) return 1;
+  if (step >= 0.01) return 2;
+  return 3;
+}
+
 const Slider = forwardRef<HTMLInputElement, SliderProps>(
   ({ className, label, showValue, size, value, min = 0, max = 100, step, ...props }, ref) => {
     const resolvedMin = Number(min);
     const resolvedMax = Number(max);
-    const resolvedStep = step ?? defaultStep(resolvedMin, resolvedMax);
+    const resolvedStep = step != null ? Number(step) : defaultStep(resolvedMin, resolvedMax);
     return (
       <div className={cn("flex flex-col gap-1", className)}>
         {(label || showValue) && (
           <div className="flex items-center justify-between">
-            {label && <span className="text-sm text-fg">{label}</span>}
-            {showValue && <span className="text-sm text-muted font-mono">{String(value ?? 0)}</span>}
+            {label && <span className="text-sm text-fg truncate">{label}</span>}
+            {showValue && (
+              // `tabular-nums` + `shrink-0` so the readout keeps a constant
+              // width while dragging — otherwise the label reflows on every
+              // digit change.
+              <span className="text-sm text-muted font-mono tabular-nums shrink-0">
+                {Number(value ?? 0).toFixed(decimalsForStep(resolvedStep))}
+              </span>
+            )}
           </div>
         )}
         <input
