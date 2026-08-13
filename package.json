@@ -51,6 +51,16 @@
       "import": "./dist/present.js",
       "default": "./dist/present.js"
     },
+    "./present/player": {
+      "types": "./dist/present-player.d.ts",
+      "import": "./dist/present-player.js",
+      "default": "./dist/present-player.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.js",
+      "default": "./dist/video.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./styles.compiled.css": "./dist/styles.compiled.css"
   },

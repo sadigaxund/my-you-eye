@@ -77,9 +77,18 @@ export default tseslint.config(
               message: "src/ui/ must not import remotion — AGENTS.md §9b tier separation",
             },
             {
-              group: ["**/motion", "**/motion/**", "**/scenes", "**/scenes/**", "**/present", "**/present/**"],
+              group: [
+                "**/motion",
+                "**/motion/**",
+                "**/scenes",
+                "**/scenes/**",
+                "**/present",
+                "**/present/**",
+                "**/video",
+                "**/video/**",
+              ],
               message:
-                "src/ui/ must not import from src/motion, src/scenes, or src/present — AGENTS.md §9b tier separation",
+                "src/ui/ must not import from src/motion, src/scenes, src/present, or src/video — AGENTS.md §9b tier separation",
             },
           ],
         },
@@ -103,7 +112,7 @@ export default tseslint.config(
           ],
           patterns: [
             {
-              group: ["**/ui", "**/ui/**"],
+              group: ["**/ui", "**/ui/**", "**/video", "**/video/**"],
               message: "src/motion/ must stay child-agnostic — AGENTS.md §9c rule 3",
             },
           ],

@@ -38,6 +38,22 @@ import { join, relative } from "node:path";
  * addition, Phase F's tier table says nothing in `src/ui/`, `src/motion/` or
  * `src/scenes/` may import `src/present/` (present sits on top of all
  * three) — enforced below alongside the existing ui<->motion boundary.
+ *
+ * TODO.md Phase G adds a fifth tier, `src/video/` (VideoRoot — the module
+ * that actually assembles a `Video` into a Remotion `<TransitionSeries>`),
+ * which is NOT walked by this script the way the other four are: it is
+ * expected to import `remotion`/`@remotion/transitions` freely, the same way
+ * `src/motion/remotion.tsx` is the sole exception inside the motion tier.
+ * What IS enforced below is the other direction — nothing in
+ * `src/motion/`, `src/ui/`, `src/scenes/` or `src/present/`'s default entry
+ * may import `src/video/` (mirrors the existing `PRESENT_IMPORT_RE` check).
+ * Phase H then adds one narrowly-scoped exception inside `src/present/`
+ * itself: `player.tsx` (`PlayerEmbed`, published separately as
+ * `my-you-eye/present/player`) is allowed to import `remotion`-family
+ * packages AND `src/video/` directly — embedding the exact video timeline in
+ * a `<Player>` means rendering the exact same composition `VideoRoot`
+ * assembles, and duplicating that assembly logic would be exactly the kind
+ * of drift this whole guard exists to prevent.
  */
 
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -50,8 +66,13 @@ const REMOTION_ENTRY = join(MOTION_DIR, "remotion.tsx");
 // The ONE file allowed a wall-clock timer outside src/motion/core/ — see the
 // docblock above and this file's own comment (TODO.md Phase F).
 const PRESENT_TIMER_EXCEPTION = join(PRESENT_DIR, "speaker-view/SpeakerView.useElapsed.ts");
+// The ONE file inside src/present/ allowed to import remotion/@remotion/* and
+// src/video/ — see the docblock above (TODO.md Phase H).
+const PLAYER_ENTRY = join(PRESENT_DIR, "player.tsx");
 // Any relative import whose specifier reaches into src/present/.
 const PRESENT_IMPORT_RE = /from\s+["'][^"']*\.\.\/present(?:\/|["'])/;
+// Any relative import whose specifier reaches into src/video/.
+const VIDEO_IMPORT_RE = /from\s+["'][^"']*\.\.\/video(?:\/|["'])/;
 
 const errors = [];
 
@@ -118,6 +139,10 @@ for (const file of walk(MOTION_DIR)) {
   if (PRESENT_IMPORT_RE.test(src)) {
     errors.push(`${rel}: imports from src/present/. src/present/ sits on top of src/motion/ — nothing below it may depend on it (TODO.md Phase F tier rules).`);
   }
+
+  if (VIDEO_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/video/. src/video/ sits on top of src/motion/ — nothing below it may depend on it (TODO.md Phase G tier rules).`);
+  }
 }
 
 for (const file of walk(UI_DIR)) {
@@ -128,6 +153,9 @@ for (const file of walk(UI_DIR)) {
   }
   if (PRESENT_IMPORT_RE.test(src)) {
     errors.push(`${rel}: imports from src/present/. src/present/ sits on top of src/ui/ — nothing below it may depend on it (TODO.md Phase F tier rules).`);
+  }
+  if (VIDEO_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/video/. src/video/ sits on top of src/ui/ — nothing below it may depend on it (TODO.md Phase G tier rules).`);
   }
 }
 
@@ -158,18 +186,27 @@ for (const file of walk(SCENES_DIR)) {
   if (PRESENT_IMPORT_RE.test(src)) {
     errors.push(`${rel}: imports from src/present/. Scenes must not depend on the present tier — the interactivity context scenes read (src/scenes/interaction.ts) is defined here precisely so this import is never needed (TODO.md D2/Phase F tier rules).`);
   }
+
+  if (VIDEO_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/video/. src/video/ sits on top of src/scenes/ — nothing below it may depend on it (TODO.md Phase G tier rules).`);
+  }
 }
 
 // src/present/** (TODO.md Phase F): same clock/CSS-animation ban and the
 // same "must not import remotion" rule as src/scenes/** — the Presenter's
-// own DomDriver covers the live path; @remotion/player (PlayerEmbed) is
-// explicitly out of scope for this batch. One narrowly-scoped exception:
-// PRESENT_TIMER_EXCEPTION (the speaker view's elapsed-time timer) is
-// genuine wall-clock UI chrome, never part of a rendered scene/frame.
+// own DomDriver covers the live path. Two narrowly-scoped exceptions:
+// PRESENT_TIMER_EXCEPTION (the speaker view's elapsed-time timer) is genuine
+// wall-clock UI chrome, never part of a rendered scene/frame; PLAYER_ENTRY
+// (`player.tsx`, TODO.md Phase H) is the `@remotion/player` path and is
+// allowed to import remotion/@remotion/* AND src/video/ — see the docblock
+// at the top of this file for why that's the one deliberate hole in the
+// "present stays remotion-free" rule, and why it's `src/video/` not
+// re-implemented in `src/present/` to get it.
 for (const file of walk(PRESENT_DIR)) {
   const rel = relative(ROOT, file);
   const src = readFileSync(file, "utf-8");
   const isTimerException = file === PRESENT_TIMER_EXCEPTION;
+  const isPlayerEntry = file === PLAYER_ENTRY;
 
   if (!isTimerException) {
     for (const [re, label] of CLOCK_PATTERNS) {
@@ -185,8 +222,12 @@ for (const file of walk(PRESENT_DIR)) {
     }
   }
 
-  if (/from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
-    errors.push(`${rel}: imports remotion. src/present/ must stay remotion-free — the Presenter's own DomDriver covers the live path; @remotion/player (PlayerEmbed) is explicitly out of scope for this batch (TODO.md Phase F).`);
+  if (!isPlayerEntry && /from\s+["']remotion["']|from\s+["']@remotion\//.test(src)) {
+    errors.push(`${rel}: imports remotion. src/present/ must stay remotion-free outside the one documented exception (player.tsx, my-you-eye/present/player) — the Presenter's own DomDriver covers the live path (TODO.md Phase F/H).`);
+  }
+
+  if (!isPlayerEntry && VIDEO_IMPORT_RE.test(src)) {
+    errors.push(`${rel}: imports from src/video/. Only player.tsx (my-you-eye/present/player) may — it is the one place the present tier legitimately needs the exact video composition (TODO.md Phase H).`);
   }
 }
 
