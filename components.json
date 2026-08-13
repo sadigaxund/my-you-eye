@@ -1,11 +1,516 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 76,
+  "count": 114,
   "components": [
+    {
+      "name": "Beat",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/beat",
+      "props": {},
+      "demos": [
+        "hold between reveals"
+      ]
+    },
+    {
+      "name": "Camera",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/camera",
+      "props": {},
+      "demos": [
+        "pan between elements, fit zoom"
+      ]
+    },
+    {
+      "name": "Caption",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/caption",
+      "props": {},
+      "demos": [
+        "positions",
+        "bottom-center"
+      ]
+    },
+    {
+      "name": "CountUp",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/count-up",
+      "props": {},
+      "demos": [
+        "formats",
+        "signed + duration"
+      ]
+    },
+    {
+      "name": "Cursor",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/cursor",
+      "props": {},
+      "demos": [
+        "move, click, type"
+      ]
+    },
+    {
+      "name": "Draw",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/draw",
+      "props": {},
+      "demos": [
+        "basic path",
+        "colors + stroke widths"
+      ]
+    },
+    {
+      "name": "Highlight",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/highlight",
+      "props": {},
+      "demos": [
+        "modes",
+        "over rounded content"
+      ]
+    },
+    {
+      "name": "Morph",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/morph",
+      "props": {},
+      "demos": [
+        "reposition + resize"
+      ]
+    },
+    {
+      "name": "Motion Core",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/core",
+      "props": {},
+      "demos": [
+        "useTimeline / useProgress"
+      ]
+    },
+    {
+      "name": "Pulse",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/pulse",
+      "props": {},
+      "demos": [
+        "infinite",
+        "loop=3, then settles"
+      ]
+    },
+    {
+      "name": "Reveal",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/reveal",
+      "props": {},
+      "demos": [
+        "from variants",
+        "asChild (no layout box)"
+      ]
+    },
+    {
+      "name": "Ripple",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/ripple",
+      "props": {},
+      "demos": [
+        "single ripple",
+        "colors"
+      ]
+    },
+    {
+      "name": "Shake",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/shake",
+      "props": {},
+      "demos": [
+        "axis variants"
+      ]
+    },
+    {
+      "name": "Slide",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/slide",
+      "props": {},
+      "demos": [
+        "mode=\\",
+        "mode=\\"
+      ]
+    },
+    {
+      "name": "Spotlight",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/spotlight",
+      "props": {},
+      "demos": [
+        "focus rect"
+      ]
+    },
+    {
+      "name": "Stagger",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/stagger",
+      "props": {},
+      "demos": [
+        "from=\\",
+        "from=\\"
+      ]
+    },
+    {
+      "name": "TextSwap",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/text-swap",
+      "props": {},
+      "demos": [
+        "fade",
+        "roll"
+      ]
+    },
+    {
+      "name": "Trace",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/trace",
+      "props": {
+        "shape": [
+          "square"
+        ]
+      },
+      "demos": [
+        "single token, looping",
+        "multiple tokens, spaced"
+      ]
+    },
+    {
+      "name": "TypeText",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/type-text",
+      "props": {},
+      "demos": [
+        "char mode",
+        "word mode",
+        "preserveLayout (no reflow)"
+      ]
+    },
+    {
+      "name": "Unmask",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/unmask",
+      "props": {},
+      "demos": [
+        "directions + softness"
+      ]
+    },
+    {
+      "name": "Wipe",
+      "group": "motion",
+      "tier": "motion",
+      "entry": "my-you-eye/motion",
+      "folder": "motion/wipe",
+      "props": {
+        "variant": [
+          "radial"
+        ]
+      },
+      "demos": [
+        "linear — 4 directions",
+        "radial"
+      ]
+    },
+    {
+      "name": "Presenter",
+      "group": "scenes",
+      "tier": "present",
+      "entry": "my-you-eye/present",
+      "folder": "present/presenter",
+      "props": {},
+      "demos": [
+        "Click-through presenter"
+      ]
+    },
+    {
+      "name": "SpeakerView",
+      "group": "scenes",
+      "tier": "present",
+      "entry": "my-you-eye/present",
+      "folder": "present/speaker-view",
+      "props": {
+        "size": [
+          "sm"
+        ],
+        "variant": [
+          "primary",
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Now / next / notes / elapsed timer"
+      ]
+    },
+    {
+      "name": "useSteps",
+      "group": "scenes",
+      "tier": "present",
+      "entry": "my-you-eye/present",
+      "folder": "present/use-steps",
+      "props": {
+        "variant": [
+          "ghost",
+          "neutral",
+          "primary",
+          "secondary"
+        ],
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "Custom controls built from useSteps"
+      ]
+    },
+    {
+      "name": "BulletScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/bullet-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-sequence (frame 179/280)",
+        "Pinned at rest (frame 280/280)"
+      ]
+    },
+    {
+      "name": "ChartScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/chart-scene",
+      "props": {},
+      "demos": [
+        "Bar — playing",
+        "Pinned with only ",
+        "Pinned mid-reveal of ",
+        "Pinned with focus + callout, step 2 (frame ${step2.endFrame - 1}/${barTotal})",
+        "Gauge — no steps (single-beat draw-on)"
+      ]
+    },
+    {
+      "name": "CodeDiff",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/code-diff",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-transition (frame 70/150)",
+        "Pinned at rest (frame 150/150)"
+      ]
+    },
+    {
+      "name": "CodeScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/code-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-typing, step 1 (frame ${step0.startFrame + 15}/${total})",
+        "Pinned on focus + highlight, step 2 (frame ${step1.startFrame + 5}/${total})",
+        "Pinned mid-diff, step 3 (frame ${step2.startFrame + 5}/${total})",
+        "Pinned at rest, end of step 3 (frame ${step2.endFrame - 1}/${total})",
+        "Pinned with an Annotation callout, step 4 (frame ${step3.endFrame - 1}/${total})"
+      ]
+    },
+    {
+      "name": "CompareScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/compare-scene",
+      "props": {},
+      "demos": [
+        "Columns (code panes) — playing",
+        "Pinned mid-reveal, columns (frame ${Math.round((codeRange.startFrame + codeRange.endFrame) / 2)}/${codeTotal})",
+        "Wipe (image panes) — playing",
+        "Pinned mid-wipe (frame ${Math.round(wipeTotal * 0.4)}/${wipeTotal})"
+      ]
+    },
+    {
+      "name": "DiagramScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/diagram-scene",
+      "props": {},
+      "demos": [
+        "Architecture — playing",
+        "Pinned mid-connect, step 0 (frame ${step0.startFrame + 3}/${archTotal})",
+        "Pinned with the VPC group revealed, step 1 end (frame ${step1.endFrame - 1}/${archTotal})",
+        "Pinned with flow tokens in transit, step 2 (frame ${step2.startFrame + Math.round((step2.endFrame - step2.startFrame) / 2)}/${archTotal})",
+        "Pinned with a focus spotlight, step 3 (frame ${step3.endFrame - 1}/${archTotal})",
+        "Pinned with an Annotation callout, step 4 (frame ${step4.endFrame - 1}/${archTotal})",
+        "State machine (\\",
+        "Dataflow (\\"
+      ]
+    },
+    {
+      "name": "OutroScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/outro-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-stagger (frame 10/90)",
+        "Pinned at rest (frame 90/90)"
+      ]
+    },
+    {
+      "name": "SceneRenderer",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/scene-renderer",
+      "props": {},
+      "demos": [
+        "title",
+        "bullets",
+        "diagram + chart + stat"
+      ]
+    },
+    {
+      "name": "SequenceScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/sequence-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-message, step 3 (frame ${step2.endFrame + 3}/${total})",
+        "Pinned at rest (frame ${total}/${total})"
+      ]
+    },
+    {
+      "name": "StatScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/stat-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-count, tile 1 (frame ${step0.startFrame + 3}/${total})",
+        "Pinned at rest, all four tiles (frame ${step3.endFrame - 1}/${total})"
+      ]
+    },
+    {
+      "name": "TerminalScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/terminal-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned mid-typing, entry 1 (frame 12/160)",
+        "Pinned on entry 2",
+        "Pinned at rest (frame 160/160)"
+      ]
+    },
+    {
+      "name": "TitleScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/title-scene",
+      "props": {},
+      "demos": [
+        "Centered, playing",
+        "Left-aligned, no chapter/subtitle",
+        "Pinned mid-stagger (frame 12/90)",
+        "Pinned at rest (frame 90/90)"
+      ]
+    },
+    {
+      "name": "Validation",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/validation-demo",
+      "props": {
+        "style": [
+          "soft"
+        ]
+      },
+      "demos": [
+        "Deliberately broken video",
+        "A valid, minimal video"
+      ]
+    },
+    {
+      "name": "WalkthroughScene",
+      "group": "scenes",
+      "tier": "scenes",
+      "entry": "my-you-eye/scenes",
+      "folder": "scenes/walkthrough-scene",
+      "props": {},
+      "demos": [
+        "Playing",
+        "Pinned with a spotlight + Annotation, step 2 (frame ${step1.endFrame - 1}/${total})",
+        "Pinned mid-typing, step 3 (frame ${step2.startFrame + 5}/${total})",
+        "Pinned on the final click, step 4 (frame ${step3.startFrame + 2}/${total})"
+      ]
+    },
     {
       "name": "Annotation",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/annotation",
       "props": {
         "variant": [
@@ -28,6 +533,8 @@
     {
       "name": "Canvas",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/canvas",
       "props": {},
       "demos": [
@@ -37,6 +544,8 @@
     {
       "name": "ConnectionLayer",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/connection-layer",
       "props": {},
       "demos": [
@@ -48,6 +557,8 @@
     {
       "name": "ConnectionLine",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/connection-line",
       "props": {
         "variant": [
@@ -78,6 +589,8 @@
     {
       "name": "Graph",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/graph",
       "props": {
         "type": [
@@ -91,6 +604,8 @@
     {
       "name": "GraphGroup",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/graph-group",
       "props": {
         "variant": [
@@ -108,6 +623,8 @@
     {
       "name": "GraphNode",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/graph-node",
       "props": {
         "variant": [
@@ -145,6 +662,8 @@
     {
       "name": "Port",
       "group": "canvas",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/port",
       "props": {
         "state": [
@@ -171,6 +690,8 @@
     {
       "name": "BarChart",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/bar-chart",
       "props": {
         "orientation": [
@@ -192,6 +713,8 @@
     {
       "name": "ChartFrame",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/chart-frame",
       "props": {},
       "demos": [
@@ -203,6 +726,8 @@
     {
       "name": "Funnel",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/funnel",
       "props": {},
       "demos": [
@@ -216,6 +741,8 @@
     {
       "name": "Gauge",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/gauge",
       "props": {},
       "demos": [
@@ -230,6 +757,8 @@
     {
       "name": "Heatmap",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/heatmap",
       "props": {},
       "demos": [
@@ -243,6 +772,8 @@
     {
       "name": "Legend",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/legend",
       "props": {
         "orientation": [
@@ -259,6 +790,8 @@
     {
       "name": "LineChart",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/line-chart",
       "props": {},
       "demos": [
@@ -275,6 +808,8 @@
     {
       "name": "PieChart",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/pie-chart",
       "props": {},
       "demos": [
@@ -289,6 +824,8 @@
     {
       "name": "ScatterPlot",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/scatter-plot",
       "props": {},
       "demos": [
@@ -304,6 +841,8 @@
     {
       "name": "Sparkline",
       "group": "charts",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/sparkline",
       "props": {},
       "demos": [
@@ -318,6 +857,8 @@
     {
       "name": "CellType",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/cell-type",
       "props": {
         "type": [
@@ -363,6 +904,8 @@
     {
       "name": "DataList",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/data-list",
       "props": {
         "density": [
@@ -380,6 +923,8 @@
     {
       "name": "DataTable",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/data-table",
       "props": {
         "variant": [
@@ -408,6 +953,8 @@
     {
       "name": "Table",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/table",
       "props": {
         "align": [
@@ -430,6 +977,8 @@
     {
       "name": "Timeline",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/timeline",
       "props": {
         "orientation": [
@@ -446,6 +995,8 @@
     {
       "name": "TreeView",
       "group": "data",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/tree-view",
       "props": {
         "type": [
@@ -470,6 +1021,8 @@
     {
       "name": "Avatar",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/avatar",
       "props": {
         "size": [
@@ -489,6 +1042,8 @@
     {
       "name": "Badge",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/badge",
       "props": {
         "variant": [
@@ -510,6 +1065,8 @@
     {
       "name": "Card",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/card",
       "props": {
         "variant": [
@@ -534,6 +1091,8 @@
     {
       "name": "CodeBlock",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/code-block",
       "props": {
         "variant": [
@@ -561,6 +1120,8 @@
     {
       "name": "DeviceFrame",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/device-frame",
       "props": {
         "variant": [
@@ -578,6 +1139,8 @@
     {
       "name": "DiffBlock",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/diff-block",
       "props": {},
       "demos": [
@@ -590,6 +1153,8 @@
     {
       "name": "EmptyState",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/empty-state",
       "props": {
         "variant": [
@@ -604,6 +1169,8 @@
     {
       "name": "Image",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/image",
       "props": {},
       "demos": [
@@ -617,6 +1184,8 @@
     {
       "name": "Kbd",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/kbd",
       "props": {},
       "demos": [
@@ -627,6 +1196,8 @@
     {
       "name": "Markdown",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/markdown",
       "props": {},
       "demos": [
@@ -636,6 +1207,8 @@
     {
       "name": "ScrollArea",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/scroll-area",
       "props": {
         "orientation": [
@@ -653,6 +1226,8 @@
     {
       "name": "Separator",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/separator",
       "props": {
         "orientation": [
@@ -667,6 +1242,8 @@
     {
       "name": "StatusDot",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/status-dot",
       "props": {
         "variant": [
@@ -690,6 +1267,8 @@
     {
       "name": "Terminal",
       "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/terminal",
       "props": {
         "variant": [
@@ -706,6 +1285,8 @@
     {
       "name": "Alert",
       "group": "feedback",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/alert",
       "props": {
         "variant": [
@@ -735,6 +1316,8 @@
     {
       "name": "Progress",
       "group": "feedback",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/progress",
       "props": {
         "variant": [
@@ -752,6 +1335,8 @@
     {
       "name": "Skeleton",
       "group": "feedback",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/skeleton",
       "props": {
         "shape": [
@@ -767,6 +1352,8 @@
     {
       "name": "Spinner",
       "group": "feedback",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/spinner",
       "props": {
         "size": [
@@ -782,6 +1369,8 @@
     {
       "name": "Toast",
       "group": "feedback",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/toast",
       "props": {
         "variant": [
@@ -796,6 +1385,8 @@
     {
       "name": "Button",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/button",
       "props": {
         "variant": [
@@ -821,6 +1412,8 @@
     {
       "name": "Checkbox",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/checkbox",
       "props": {
         "size": [
@@ -836,6 +1429,8 @@
     {
       "name": "Combobox",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/combobox",
       "props": {},
       "demos": [
@@ -846,6 +1441,8 @@
     {
       "name": "FileDrop",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/file-drop",
       "props": {},
       "demos": [
@@ -856,6 +1453,8 @@
     {
       "name": "Input",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/input",
       "props": {
         "variant": [
@@ -875,6 +1474,8 @@
     {
       "name": "Label",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/label",
       "props": {},
       "demos": [
@@ -884,6 +1485,8 @@
     {
       "name": "MultiSelect",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/multi-select",
       "props": {},
       "demos": [
@@ -895,6 +1498,8 @@
     {
       "name": "RadioGroup",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/radio-group",
       "props": {},
       "demos": [
@@ -904,6 +1509,8 @@
     {
       "name": "Select",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/select",
       "props": {
         "size": [
@@ -920,6 +1527,8 @@
     {
       "name": "Slider",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/slider",
       "props": {
         "size": [
@@ -935,6 +1544,8 @@
     {
       "name": "Switch",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/switch",
       "props": {
         "size": [
@@ -950,6 +1561,8 @@
     {
       "name": "Textarea",
       "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/textarea",
       "props": {
         "variant": [
@@ -964,6 +1577,8 @@
     {
       "name": "Breadcrumbs",
       "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/breadcrumbs",
       "props": {},
       "demos": [
@@ -974,6 +1589,8 @@
     {
       "name": "Link",
       "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/link",
       "props": {
         "variant": [
@@ -988,6 +1605,8 @@
     {
       "name": "Pagination",
       "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/pagination",
       "props": {},
       "demos": [
@@ -998,6 +1617,8 @@
     {
       "name": "Tabs",
       "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/tabs",
       "props": {
         "variant": [
@@ -1015,6 +1636,8 @@
     {
       "name": "CommandPalette",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/command-palette",
       "props": {
         "variant": [
@@ -1029,6 +1652,8 @@
     {
       "name": "Dialog",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/dialog",
       "props": {
         "size": [
@@ -1048,6 +1673,8 @@
     {
       "name": "Drawer",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/drawer",
       "props": {
         "side": [
@@ -1069,6 +1696,8 @@
     {
       "name": "DropdownMenu",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/dropdown-menu",
       "props": {
         "variant": [
@@ -1082,6 +1711,8 @@
     {
       "name": "Popover",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/popover",
       "props": {
         "variant": [
@@ -1098,6 +1729,8 @@
     {
       "name": "Tooltip",
       "group": "overlay",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/tooltip",
       "props": {
         "side": [
@@ -1117,6 +1750,8 @@
     {
       "name": "Comparison",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/comparison",
       "props": {
         "tone": [
@@ -1133,6 +1768,8 @@
     {
       "name": "ConfirmDialog",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/confirm-dialog",
       "props": {
         "variant": [
@@ -1147,6 +1784,8 @@
     {
       "name": "FileTree",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/file-tree",
       "props": {
         "density": [
@@ -1161,6 +1800,8 @@
     {
       "name": "FormField",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/form-field",
       "props": {
         "type": [
@@ -1176,6 +1817,8 @@
     {
       "name": "PageShell",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/page-shell",
       "props": {
         "variant": [
@@ -1190,6 +1833,8 @@
     {
       "name": "SequenceDiagram",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/sequence-diagram",
       "props": {},
       "demos": [
@@ -1201,6 +1846,8 @@
     {
       "name": "StatCard",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/stat-card",
       "props": {
         "size": [
@@ -1219,6 +1866,8 @@
     {
       "name": "StatGrid",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/stat-grid",
       "props": {
         "size": [
@@ -1235,6 +1884,8 @@
     {
       "name": "TexturedSurface",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/textured-surface",
       "props": {
         "variant": [
@@ -1262,6 +1913,8 @@
     {
       "name": "Toolbar",
       "group": "patterns",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/patterns/toolbar",
       "props": {
         "size": [
@@ -1285,6 +1938,8 @@
     {
       "name": "Typography & Tokens",
       "group": "typography",
+      "tier": "ui",
+      "entry": "my-you-eye",
       "folder": "ui/typography",
       "props": {},
       "demos": [
@@ -1294,5 +1949,754 @@
         "Radius & spacing"
       ]
     }
-  ]
+  ],
+  "videoSchema": {
+    "video": [
+      {
+        "name": "meta",
+        "optional": true,
+        "type": "VideoMeta"
+      },
+      {
+        "name": "scenes",
+        "optional": false,
+        "type": "Scene[]"
+      }
+    ],
+    "meta": [
+      {
+        "name": "fps",
+        "optional": true,
+        "type": "24 | 30 | 60",
+        "description": "Frames per second. Default 30."
+      },
+      {
+        "name": "size",
+        "optional": true,
+        "type": "VideoSize",
+        "description": "Output dimensions. Default \"1080p\"."
+      },
+      {
+        "name": "theme",
+        "optional": true,
+        "type": "VideoTheme",
+        "description": "Theme profile. Default \"default\"."
+      },
+      {
+        "name": "appearance",
+        "optional": true,
+        "type": "\"light\" | \"dark\"",
+        "description": "Light or dark rendering of the chosen theme. Default \"dark\" — video content is watched on a bright screen in a dark room far more often than the reverse."
+      },
+      {
+        "name": "font",
+        "optional": true,
+        "type": "FontMode",
+        "description": "Typeface set, from the same list the showcase's font picker uses. Default \"sans\"."
+      },
+      {
+        "name": "watermark",
+        "optional": true,
+        "type": "string",
+        "description": "Persistent corner handle/watermark, e.g. \"@yourchannel\"."
+      },
+      {
+        "name": "progressBar",
+        "optional": true,
+        "type": "boolean",
+        "description": "Thin progress bar along the bottom edge of every frame. Default true."
+      },
+      {
+        "name": "chapters",
+        "optional": true,
+        "type": "boolean",
+        "description": "Chapter markers derived from `title` scenes. Default true."
+      }
+    ],
+    "sceneBase": [
+      {
+        "name": "id",
+        "optional": true,
+        "type": "string",
+        "description": "Stable id — used for chapter markers, presenter deep-links, and to name the scene in validation errors. Derived from the index when omitted."
+      },
+      {
+        "name": "pace",
+        "optional": true,
+        "type": "Pace",
+        "description": "Coarse pacing for every step in this scene. Default \"normal\". This is the only timing dial: everything else is derived from how much you wrote in `say`."
+      },
+      {
+        "name": "transition",
+        "optional": true,
+        "type": "SceneTransition",
+        "description": "Transition into this scene from the previous one. Default \"fade\"."
+      },
+      {
+        "name": "notes",
+        "optional": true,
+        "type": "string",
+        "description": "Speaker-view note for the scene as a whole. Never rendered on screen."
+      }
+    ],
+    "stepBase": [
+      {
+        "name": "say",
+        "optional": true,
+        "type": "string",
+        "description": "The narration line for this step. It does three jobs at once: speaker-view script, the content-length input that derives this step's duration (longer line → longer step), and the reserved anchor for narration/TTS timing later (TODO.md Phase G). Writing it is how you control pacing — there is no duration field."
+      },
+      {
+        "name": "hold",
+        "optional": true,
+        "type": "Beat",
+        "description": "Extra hold after the step's animation finishes, before the next step begins. For letting a reveal land."
+      },
+      {
+        "name": "caption",
+        "optional": true,
+        "type": "string",
+        "description": "Lower-third caption rendered on screen for this step's duration. Use for a key term, not for a transcript of `say`."
+      }
+    ],
+    "scenes": [
+      {
+        "kind": "title",
+        "interface": "TitleScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"title\""
+          },
+          {
+            "name": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "name": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "chapter",
+            "optional": true,
+            "type": "string",
+            "description": "Eyebrow above the title, e.g. \"Part 3\" or \"01\"."
+          },
+          {
+            "name": "align",
+            "optional": true,
+            "type": "\"center\" | \"left\""
+          }
+        ]
+      },
+      {
+        "kind": "bullets",
+        "interface": "BulletScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"bullets\""
+          },
+          {
+            "name": "heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "bullets",
+            "optional": false,
+            "type": "BulletItem[]"
+          }
+        ],
+        "stepInterface": "BulletItem",
+        "stepFields": [
+          {
+            "name": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "name": "children",
+            "optional": true,
+            "type": "string[]",
+            "description": "Sub-points revealed together with their parent."
+          },
+          {
+            "name": "emphasis",
+            "optional": true,
+            "type": "\"none\" | \"strong\"",
+            "description": "Marks the bullet that lands the point. Default \"none\"."
+          }
+        ]
+      },
+      {
+        "kind": "code",
+        "interface": "CodeScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"code\""
+          },
+          {
+            "name": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Source shown before the first step runs."
+          },
+          {
+            "name": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language id for the highlighter, e.g. \"ts\", \"tsx\", \"python\"."
+          },
+          {
+            "name": "file",
+            "optional": true,
+            "type": "string",
+            "description": "Filename shown in the header tab."
+          },
+          {
+            "name": "lineNumbers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the line-number gutter. Default true."
+          },
+          {
+            "name": "steps",
+            "optional": false,
+            "type": "CodeStep[]"
+          }
+        ],
+        "stepInterface": "CodeStep",
+        "stepFields": [
+          {
+            "name": "focus",
+            "optional": true,
+            "type": "LineRange",
+            "description": "Lines to focus. Everything else dims and the camera frames the range."
+          },
+          {
+            "name": "highlight",
+            "optional": true,
+            "type": "string[]",
+            "description": "Substrings inside the focused lines to highlight inline. Matched literally, not as a regex."
+          },
+          {
+            "name": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Replaces the source for this step. Rendered as an animated diff from whatever was on screen before it — that diff is the whole reason to split a walkthrough into steps rather than showing the final file."
+          },
+          {
+            "name": "typed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Types the source in character by character instead of cutting to it. Meaningful on the first step, or on any step that supplies `code`."
+          },
+          {
+            "name": "annotate",
+            "optional": true,
+            "type": "CodeAnnotation[]",
+            "description": "Leader-line callouts pinned to source lines."
+          }
+        ]
+      },
+      {
+        "kind": "terminal",
+        "interface": "TerminalScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"terminal\""
+          },
+          {
+            "name": "entries",
+            "optional": false,
+            "type": "TerminalStep[]"
+          },
+          {
+            "name": "cwd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Caption for the window title bar. Defaults to `cwd`."
+          },
+          {
+            "name": "prompt",
+            "optional": true,
+            "type": "\"$\" | \">\" | \"#\" | \"❯\""
+          }
+        ],
+        "stepInterface": "TerminalStep",
+        "stepFields": [
+          {
+            "name": "command",
+            "optional": true,
+            "type": "string",
+            "description": "Command typed after the prompt. Omit for an output-only entry (a banner, a log tail)."
+          },
+          {
+            "name": "output",
+            "optional": true,
+            "type": "string",
+            "description": "Output body shown under the command."
+          },
+          {
+            "name": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language id for highlighting `output`."
+          },
+          {
+            "name": "exitCode",
+            "optional": true,
+            "type": "number",
+            "description": "Process exit code — renders a badge (0 reads success, non-zero danger)."
+          },
+          {
+            "name": "spinner",
+            "optional": true,
+            "type": "string",
+            "description": "Shows a spinner with this label while the step runs, before `output` lands. For a step that should read as \"this takes a while\"."
+          }
+        ]
+      },
+      {
+        "kind": "diagram",
+        "interface": "DiagramScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"diagram\""
+          },
+          {
+            "name": "preset",
+            "optional": true,
+            "type": "DiagramPreset",
+            "description": "Default \"architecture\"."
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "nodes",
+            "optional": false,
+            "type": "DiagramNode[]"
+          },
+          {
+            "name": "edges",
+            "optional": false,
+            "type": "DiagramEdge[]"
+          },
+          {
+            "name": "groups",
+            "optional": true,
+            "type": "DiagramGroup[]"
+          },
+          {
+            "name": "layout",
+            "optional": true,
+            "type": "DiagramLayout",
+            "description": "Overrides the preset's default placement strategy."
+          },
+          {
+            "name": "steps",
+            "optional": false,
+            "type": "DiagramStep[]"
+          }
+        ],
+        "stepInterface": "DiagramStep",
+        "stepFields": [
+          {
+            "name": "reveal",
+            "optional": true,
+            "type": "string[]",
+            "description": "Node and group ids that appear on this step. Anything never named in any step's `reveal` is present from the first frame."
+          },
+          {
+            "name": "connect",
+            "optional": true,
+            "type": "string[]",
+            "description": "Edge ids whose line draws on this step."
+          },
+          {
+            "name": "flow",
+            "optional": true,
+            "type": "string[]",
+            "description": "Edge ids that carry animated flow tokens for this step's duration — the \"watch the request travel\" beat."
+          },
+          {
+            "name": "annotate",
+            "optional": true,
+            "type": "DiagramAnnotation[]",
+            "description": "Leader-line callouts pinned to nodes."
+          }
+        ]
+      },
+      {
+        "kind": "sequence",
+        "interface": "SequenceScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"sequence\""
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "participants",
+            "optional": false,
+            "type": "SequenceParticipantSpec[]"
+          },
+          {
+            "name": "messages",
+            "optional": false,
+            "type": "SequenceStep[]",
+            "description": "Ordered messages and notes. Order is both the vertical stacking order and the reveal order. Activation bars are derived from it."
+          }
+        ],
+        "stepVariants": [
+          {
+            "interface": "SequenceMessageStep",
+            "fields": [
+              {
+                "name": "type",
+                "optional": false,
+                "type": "\"message\""
+              },
+              {
+                "name": "from",
+                "optional": false,
+                "type": "string",
+                "description": "Participant id the message leaves from."
+              },
+              {
+                "name": "to",
+                "optional": false,
+                "type": "string",
+                "description": "Participant id it arrives at. Equal to `from` draws a self-call loop."
+              },
+              {
+                "name": "label",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "name": "kind",
+                "optional": true,
+                "type": "\"sync\" | \"async\" | \"data\" | \"error\"",
+                "description": "Default \"sync\". Use \"data\" for a return/reply and \"error\" for a failure path — that is what makes the diagram readable at a glance."
+              }
+            ]
+          },
+          {
+            "interface": "SequenceNoteStep",
+            "fields": [
+              {
+                "name": "type",
+                "optional": false,
+                "type": "\"note\""
+              },
+              {
+                "name": "text",
+                "optional": false,
+                "type": "string"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "chart",
+        "interface": "ChartScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"chart\""
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "chart",
+            "optional": false,
+            "type": "ChartSpec"
+          },
+          {
+            "name": "steps",
+            "optional": true,
+            "type": "ChartStep[]",
+            "description": "Omit for a single-beat scene that just draws the chart on."
+          }
+        ],
+        "stepInterface": "ChartStep",
+        "stepFields": [
+          {
+            "name": "series",
+            "optional": true,
+            "type": "string[]",
+            "description": "Series labels revealed on this step. Omitted on every step means the whole chart draws on over the scene's first step."
+          },
+          {
+            "name": "callout",
+            "optional": true,
+            "type": "{ value: number; label: string; format?: NumberFormat; }",
+            "description": "A number to pull out as a counted-up callout while this step runs."
+          },
+          {
+            "name": "focus",
+            "optional": true,
+            "type": "string",
+            "description": "Category label to spotlight — its bar/point/slice stays lit and the rest dim."
+          }
+        ]
+      },
+      {
+        "kind": "stat",
+        "interface": "StatScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"stat\""
+          },
+          {
+            "name": "heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "stats",
+            "optional": false,
+            "type": "StatItem[]"
+          },
+          {
+            "name": "columns",
+            "optional": true,
+            "type": "2 | 3 | 4 | 5 | 6",
+            "description": "Tiles per row at the widest breakpoint. Default 4."
+          }
+        ],
+        "stepInterface": "StatItem",
+        "stepFields": [
+          {
+            "name": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "name": "value",
+            "optional": true,
+            "type": "number",
+            "description": "Numeric target — counted up from zero."
+          },
+          {
+            "name": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Non-numeric value (\"Healthy\", \"us-east-1\"). Use instead of `value`."
+          },
+          {
+            "name": "format",
+            "optional": true,
+            "type": "NumberFormat"
+          },
+          {
+            "name": "delta",
+            "optional": true,
+            "type": "number",
+            "description": "Change against the previous period, signed."
+          },
+          {
+            "name": "positiveIsGood",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether a positive `delta` should read as good. Default true — set false for metrics like latency or error rate."
+          },
+          {
+            "name": "sparkline",
+            "optional": true,
+            "type": "number[]",
+            "description": "Trend series drawn as an inline sparkline."
+          }
+        ]
+      },
+      {
+        "kind": "compare",
+        "interface": "CompareScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"compare\""
+          },
+          {
+            "name": "heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "before",
+            "optional": false,
+            "type": "ComparePane"
+          },
+          {
+            "name": "after",
+            "optional": false,
+            "type": "ComparePane"
+          },
+          {
+            "name": "say",
+            "optional": true,
+            "type": "string",
+            "description": "Narration for the reveal of `after`."
+          }
+        ],
+        "typeAlias": {
+          "name": "ComparePane",
+          "raw": "| { content: \"code\"; label: string; code: string; lang?: string }\n  | { content: \"text\"; label: string; text: string }\n  | { content: \"image\"; label: string; src: string; alt?: string }"
+        }
+      },
+      {
+        "kind": "walkthrough",
+        "interface": "WalkthroughScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"walkthrough\""
+          },
+          {
+            "name": "frame",
+            "optional": true,
+            "type": "\"browser\" | \"window\" | \"phone\"",
+            "description": "Chrome drawn around the screenshot. Default \"browser\"."
+          },
+          {
+            "name": "image",
+            "optional": false,
+            "type": "string",
+            "description": "Image rendered inside the frame — a URL or a data URI."
+          },
+          {
+            "name": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Address shown in the browser chrome."
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Caption for window/phone chrome."
+          },
+          {
+            "name": "steps",
+            "optional": false,
+            "type": "WalkthroughStep[]"
+          }
+        ],
+        "stepInterface": "WalkthroughStep",
+        "stepFields": [
+          {
+            "name": "to",
+            "optional": true,
+            "type": "PercentPoint",
+            "description": "Where the cursor travels to, in percent of the frame."
+          },
+          {
+            "name": "action",
+            "optional": true,
+            "type": "\"none\" | \"click\" | \"double-click\" | \"drag\"",
+            "description": "What the cursor does on arrival. Default \"none\"."
+          },
+          {
+            "name": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Text typed after the action lands."
+          },
+          {
+            "name": "spotlight",
+            "optional": true,
+            "type": "PercentRect",
+            "description": "Region to spotlight — everything outside it dims."
+          },
+          {
+            "name": "annotate",
+            "optional": true,
+            "type": "string",
+            "description": "Callout pinned at the cursor."
+          }
+        ]
+      },
+      {
+        "kind": "outro",
+        "interface": "OutroScene",
+        "fields": [
+          {
+            "name": "kind",
+            "optional": false,
+            "type": "\"outro\""
+          },
+          {
+            "name": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "links",
+            "optional": true,
+            "type": "OutroLink[]"
+          },
+          {
+            "name": "cta",
+            "optional": true,
+            "type": "string",
+            "description": "Closing call to action, e.g. \"Subscribe for part 4\"."
+          }
+        ]
+      }
+    ]
+  }
 }
