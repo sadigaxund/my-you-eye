@@ -36,6 +36,7 @@ import "my-you-eye/styles.css";
 | `theme?` | `VideoTheme` | Theme profile. Default "default". |
 | `appearance?` | `"light" \| "dark"` | Light or dark rendering of the chosen theme. Default "dark" — video content is watched on a bright screen in a dark room far more often than the reverse. |
 | `font?` | `FontMode` | Typeface set, from the same list the showcase's font picker uses. Default "sans". |
+| `title?` | `string` | Video title. Used for the Remotion composition id and the presenter's document title; never rendered into a frame (author a `title` scene for that). |
 | `watermark?` | `string` | Persistent corner handle/watermark, e.g. "@yourchannel". |
 | `progressBar?` | `boolean` | Thin progress bar along the bottom edge of every frame. Default true. |
 | `chapters?` | `boolean` | Chapter markers derived from `title` scenes. Default true. |
@@ -53,6 +54,7 @@ import "my-you-eye/styles.css";
 
 | Field | Type | Description |
 |---|---|---|
+| `id?` | `string` | Stable id. Auto-derived from the step's index when omitted; only worth setting for a step you want to deep-link to from the presenter. |
 | `say?` | `string` | The narration line for this step. It does three jobs at once: speaker-view script, the content-length input that derives this step's duration (longer line → longer step), and the reserved anchor for narration/TTS timing later (TODO.md Phase G). Writing it is how you control pacing — there is no duration field. |
 | `hold?` | `Beat` | Extra hold after the step's animation finishes, before the next step begins. For letting a reveal land. |
 | `caption?` | `string` | Lower-third caption rendered on screen for this step's duration. Use for a key term, not for a transcript of `say`. |
@@ -150,6 +152,7 @@ Step (`DiagramStep`):
 | `reveal?` | `string[]` | Node and group ids that appear on this step. Anything never named in any step's `reveal` is present from the first frame. |
 | `connect?` | `string[]` | Edge ids whose line draws on this step. |
 | `flow?` | `string[]` | Edge ids that carry animated flow tokens for this step's duration — the "watch the request travel" beat. |
+| `focus?` | `string[]` | Node ids to spotlight; everything else dims. |
 | `annotate?` | `DiagramAnnotation[]` | Leader-line callouts pinned to nodes. |
 
 #### `kind: "sequence"` — `SequenceScene`
@@ -177,6 +180,7 @@ Step variant (`SequenceNoteStep`):
 |---|---|---|
 | `type` | `"note"` | — |
 | `text` | `string` | — |
+| `on` | `string[]` | Participant ids the note attaches to. One anchors it to that lane; two or more span from the leftmost to the rightmost. |
 
 #### `kind: "chart"` — `ChartScene`
 
@@ -222,6 +226,7 @@ Step (`StatItem`):
 | Field | Type | Description |
 |---|---|---|
 | `kind` | `"compare"` | — |
+| `mode?` | `"columns" \| "wipe"` | "columns" sets them side by side; "wipe" overlays them under a divider that sweeps across. Default "columns". |
 | `heading?` | `string` | — |
 | `before` | `ComparePane` | — |
 | `after` | `ComparePane` | — |

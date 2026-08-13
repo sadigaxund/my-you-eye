@@ -46,14 +46,43 @@ function extractTypeAliasRaw(src, name) {
   return null;
 }
 
-/** Splits an interface body into top-level `field: type;` segments — depth-
- * aware, so a nested object type's own internal `;`s don't split early. */
+/**
+ * Splits an interface body into top-level `field: type;` segments.
+ *
+ * Depth-aware, so a nested object type's own internal `;`s don't split
+ * early — and comment- and string-aware, which is not a nicety: a `;` in a
+ * doc comment used to split mid-comment, leaving a fragment that failed to
+ * parse as a field, and the field that comment documented **vanished from
+ * the manifest silently**. `DiagramStep.focus` ("Node ids to spotlight;
+ * everything else dims") was lost exactly this way. A missing field in
+ * COMPONENTS.md is worse than a wrong one: it's the file a consuming agent
+ * reads to learn what it may write, so an omission reads as "this feature
+ * doesn't exist."
+ */
 function splitTopLevelFields(body) {
   const parts = [];
   let depth = 0;
   let start = 0;
   for (let i = 0; i < body.length; i++) {
     const c = body[i];
+    // Skip whole comments and string literals — their contents are prose or
+    // data, never structure.
+    if (c === "/" && body[i + 1] === "*") {
+      const end = body.indexOf("*/", i + 2);
+      i = end === -1 ? body.length : end + 1;
+      continue;
+    }
+    if (c === "/" && body[i + 1] === "/") {
+      const end = body.indexOf("\n", i);
+      i = end === -1 ? body.length : end;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === "`") {
+      let j = i + 1;
+      while (j < body.length && body[j] !== c) j += body[j] === "\\" ? 2 : 1;
+      i = j;
+      continue;
+    }
     if (c === "{" || c === "(" || c === "[") depth++;
     else if (c === "}" || c === ")" || c === "]") depth--;
     else if (c === ";" && depth === 0) {

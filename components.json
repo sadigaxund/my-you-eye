@@ -1995,6 +1995,12 @@
         "description": "Typeface set, from the same list the showcase's font picker uses. Default \"sans\"."
       },
       {
+        "name": "title",
+        "optional": true,
+        "type": "string",
+        "description": "Video title. Used for the Remotion composition id and the presenter's document title; never rendered into a frame (author a `title` scene for that)."
+      },
+      {
         "name": "watermark",
         "optional": true,
         "type": "string",
@@ -2040,6 +2046,12 @@
       }
     ],
     "stepBase": [
+      {
+        "name": "id",
+        "optional": true,
+        "type": "string",
+        "description": "Stable id. Auto-derived from the step's index when omitted; only worth setting for a step you want to deep-link to from the presenter."
+      },
       {
         "name": "say",
         "optional": true,
@@ -2349,6 +2361,12 @@
             "description": "Edge ids that carry animated flow tokens for this step's duration — the \"watch the request travel\" beat."
           },
           {
+            "name": "focus",
+            "optional": true,
+            "type": "string[]",
+            "description": "Node ids to spotlight; everything else dims."
+          },
+          {
             "name": "annotate",
             "optional": true,
             "type": "DiagramAnnotation[]",
@@ -2428,6 +2446,12 @@
                 "name": "text",
                 "optional": false,
                 "type": "string"
+              },
+              {
+                "name": "on",
+                "optional": false,
+                "type": "string[]",
+                "description": "Participant ids the note attaches to. One anchors it to that lane; two or more span from the leftmost to the rightmost."
               }
             ]
           }
@@ -2564,6 +2588,12 @@
             "name": "kind",
             "optional": false,
             "type": "\"compare\""
+          },
+          {
+            "name": "mode",
+            "optional": true,
+            "type": "\"columns\" | \"wipe\"",
+            "description": "\"columns\" sets them side by side; \"wipe\" overlays them under a divider that sweeps across. Default \"columns\"."
           },
           {
             "name": "heading",
