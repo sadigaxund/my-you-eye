@@ -36,3 +36,7 @@ npm-debug.log*
 
 # Misc
 tmp/
+
+# Rendered video output (apps/video render command — build artifact, not source)
+apps/video/out/
+*.mp4
