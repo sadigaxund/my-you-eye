@@ -36,6 +36,10 @@ export interface LayeredOptions {
   layerGap?: number;
   /** Gap between nodes within a layer, in grid units (× GRID px). Default 3. */
   nodeGap?: number;
+  /** Footprint one node occupies, in grid units. Added to the gaps to get
+   * the placement PITCH — see the note on `NODE_W`/`NODE_H` below. */
+  nodeWidth?: number;
+  nodeHeight?: number;
   /** Barycenter ordering passes (alternating forward/backward sweeps). 0 skips
    * ordering entirely, leaving each layer in its naive input order — useful
    * to measure the *before* state (see scripts/prove-layout-crossings.mjs).
@@ -50,7 +54,25 @@ export interface GridOptions {
   columnGap?: number;
   /** Vertical gap between rows, in grid units (× GRID px). Default 4. */
   rowGap?: number;
+  /** Footprint one node occupies, in grid units. Added to the gaps to get
+   * the placement PITCH — see the note on `NODE_W`/`NODE_H` below. */
+  nodeWidth?: number;
+  nodeHeight?: number;
 }
+
+// Default node footprint, in grid units. These exist because every gap
+// option here is a GAP — the clear space BETWEEN two nodes — and a position
+// is therefore `index * (nodeSize + gap)`, not `index * gap`.
+//
+// Treating a gap as the whole pitch is what made every DiagramScene render
+// with its nodes piled in the top-left corner: layers sat 4 cells (64px)
+// apart while a diagram node is 12 cells (192px) wide, so consecutive
+// layers overlapped by 128px and the entire graph collapsed into roughly
+// one node's worth of space. Callers that know their real node size should
+// pass it; these defaults match DiagramScene's own NODE_WIDTH and its
+// tallest node band so the common case is right without being told.
+const DEFAULT_NODE_W = 12;
+const DEFAULT_NODE_H = 4;
 
 const DEFAULT_LAYER_GAP = 4;
 const DEFAULT_NODE_GAP = 3;
@@ -204,8 +226,14 @@ export function countCrossings(layers: string[][], edges: LayoutEdge[]): number 
  */
 export function layered(nodes: LayoutNode[], edges: LayoutEdge[], opts: LayeredOptions = {}): LayoutPosition[] {
   const direction = opts.direction ?? "horizontal";
-  const layerGap = (opts.layerGap ?? DEFAULT_LAYER_GAP) * GRID;
-  const nodeGap = (opts.nodeGap ?? DEFAULT_NODE_GAP) * GRID;
+  const nodeW = (opts.nodeWidth ?? DEFAULT_NODE_W) * GRID;
+  const nodeH = (opts.nodeHeight ?? DEFAULT_NODE_H) * GRID;
+  // Pitch, not gap: the main axis advances by one node's extent along that
+  // axis plus the gap, and likewise across.
+  const mainSize = direction === "horizontal" ? nodeW : nodeH;
+  const crossSize = direction === "horizontal" ? nodeH : nodeW;
+  const layerPitch = mainSize + (opts.layerGap ?? DEFAULT_LAYER_GAP) * GRID;
+  const nodePitch = crossSize + (opts.nodeGap ?? DEFAULT_NODE_GAP) * GRID;
   const iterations = opts.iterations ?? DEFAULT_ITERATIONS;
 
   const ids = new Set(nodes.map((n) => n.id));
@@ -221,8 +249,8 @@ export function layered(nodes: LayoutNode[], edges: LayoutEdge[], opts: LayeredO
   return nodes.map((node) => {
     const layerIndex = layerIndexOf.get(node.id) ?? 0;
     const indexInLayer = layers[layerIndex].indexOf(node.id);
-    const mainAxis = snap(layerIndex * layerGap);
-    const crossAxis = snap(indexInLayer * nodeGap);
+    const mainAxis = snap(layerIndex * layerPitch);
+    const crossAxis = snap(indexInLayer * nodePitch);
     const computedX = direction === "horizontal" ? mainAxis : crossAxis;
     const computedY = direction === "horizontal" ? crossAxis : mainAxis;
     return { id: node.id, x: node.x ?? computedX, y: node.y ?? computedY };
@@ -232,16 +260,17 @@ export function layered(nodes: LayoutNode[], edges: LayoutEdge[], opts: LayeredO
 /** Simple row-major grid placement. Explicit `x`/`y` on a node always wins, per-axis. */
 export function grid(nodes: LayoutNode[], opts: GridOptions = {}): LayoutPosition[] {
   const columns = opts.columns ?? Math.max(1, Math.ceil(Math.sqrt(nodes.length)));
-  const columnGap = (opts.columnGap ?? DEFAULT_COLUMN_GAP) * GRID;
-  const rowGap = (opts.rowGap ?? DEFAULT_ROW_GAP) * GRID;
+  // Pitch, not gap — same reasoning as `layered`.
+  const columnPitch = (opts.nodeWidth ?? DEFAULT_NODE_W) * GRID + (opts.columnGap ?? DEFAULT_COLUMN_GAP) * GRID;
+  const rowPitch = (opts.nodeHeight ?? DEFAULT_NODE_H) * GRID + (opts.rowGap ?? DEFAULT_ROW_GAP) * GRID;
 
   return nodes.map((node, i) => {
     const col = i % columns;
     const row = Math.floor(i / columns);
     return {
       id: node.id,
-      x: node.x ?? snap(col * columnGap),
-      y: node.y ?? snap(row * rowGap),
+      x: node.x ?? snap(col * columnPitch),
+      y: node.y ?? snap(row * rowPitch),
     };
   });
 }

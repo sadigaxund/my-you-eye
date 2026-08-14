@@ -19,7 +19,7 @@ import type { DiagramNode, DiagramEdge, DiagramGroup, DiagramPreset, DiagramLayo
  * elbow-routing margin, not an exact measurement (AGENTS.md §7 forbids
  * measuring inside a Canvas transform anyway: offsetWidth would be
  * post-zoom-irrelevant but still a second render pass we don't need here). */
-export const NODE_WIDTH = 12 * GRID;
+export const NODE_WIDTH = 10 * GRID;
 
 export interface NodeRect {
   id: string;
@@ -76,10 +76,24 @@ export function resolveNodeRects(
   }));
   const layoutEdges = edges.map((e) => ({ from: e.from, to: e.to }));
 
+  // The layout needs the real footprint to space nodes by pitch rather than
+  // by gap alone. Height is the TALLEST node's band, not each node's own:
+  // a layout grid has one pitch, and sizing it to the shortest node would
+  // let a taller neighbour overlap the row below.
+  const tallest = Math.max(...nodes.map((n) => nodeHeight(n, simple)), GRID);
+  const footprint = { nodeWidth: NODE_WIDTH / GRID, nodeHeight: tallest / GRID };
+
   const positions =
     layoutKind === "grid"
-      ? gridLayout(layoutNodes)
-      : layered(layoutNodes, layoutEdges, { direction: layoutKind === "layered-vertical" ? "vertical" : "horizontal" });
+      ? gridLayout(layoutNodes, footprint)
+      : layered(layoutNodes, layoutEdges, {
+          direction: layoutKind === "layered-vertical" ? "vertical" : "horizontal",
+          // A tighter inter-layer gap than layout.ts's default: now that the
+          // gap is a real gap on top of a 10-cell node, 4 cells of extra air
+          // pushed a routine 4-node chain past the width of a 16:9 stage.
+          layerGap: 3,
+          ...footprint,
+        });
 
   const positionOf = new Map(positions.map((p) => [p.id, p]));
   const rects = new Map<string, NodeRect>();
@@ -122,6 +136,36 @@ export function resolveGroupRects(groups: DiagramGroup[], nodeRects: Map<string,
       data: group,
     });
   }
+  return out;
+}
+
+/**
+ * Shifts every rect so the diagram sits in the MIDDLE of the canvas rather
+ * than pinned to its top-left origin. Layout necessarily produces
+ * origin-anchored coordinates (it has no idea how big the viewport is), and
+ * a scene canvas is usually far larger than the graph — so without this the
+ * whole diagram huddles in one corner of an empty frame, which is half of
+ * the owner's "all nodes are bunched up on the top left of canvas".
+ *
+ * Never negative: a diagram larger than its canvas stays at the origin and
+ * is panned/scrolled instead of being pushed off the top-left edge where it
+ * couldn't be reached. Offsets snap to GRID so every node stays grid-aligned
+ * (AGENTS.md §7) after centring.
+ */
+export function centerOffset(
+  bounds: { width: number; height: number },
+  canvas: { width: number; height: number },
+): { dx: number; dy: number } {
+  return {
+    dx: Math.max(0, snap((canvas.width - bounds.width) / 2)),
+    dy: Math.max(0, snap((canvas.height - bounds.height) / 2)),
+  };
+}
+
+export function shiftRects<T extends { x: number; y: number }>(rects: Map<string, T>, dx: number, dy: number): Map<string, T> {
+  if (dx === 0 && dy === 0) return rects;
+  const out = new Map<string, T>();
+  for (const [id, r] of rects) out.set(id, { ...r, x: r.x + dx, y: r.y + dy });
   return out;
 }
 

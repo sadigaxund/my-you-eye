@@ -13,7 +13,7 @@ import { Reveal, Trace } from "../../motion";
 import { useSequence, useTimeline } from "../../motion/core";
 import type { MotionColor } from "../../motion/core";
 import { sceneSteps, stepName } from "../timing";
-import { PRESET_DEFAULTS, resolveNodeRects, resolveGroupRects, contentBounds } from "./DiagramScene.layout";
+import { PRESET_DEFAULTS, resolveNodeRects, resolveGroupRects, contentBounds, centerOffset, shiftRects } from "./DiagramScene.layout";
 import type { NodeRect, GroupRect } from "./DiagramScene.layout";
 import { edgeEndpoints, obstaclesExcluding } from "./DiagramScene.geometry";
 import { useCanvasSize } from "./DiagramScene.useCanvasSize";
@@ -69,13 +69,21 @@ export function DiagramScene({ scene }: DiagramSceneProps) {
   // below that reads `live` falls through to its pre-existing behavior.
   const live = useLiveInteraction();
 
-  const nodeRects = useMemo(
+  const laidOutNodes = useMemo(
     () => resolveNodeRects(scene.nodes, scene.edges, preset, scene.layout),
     [scene.nodes, scene.edges, preset, scene.layout],
   );
-  const groupRects = useMemo(() => resolveGroupRects(scene.groups ?? [], nodeRects), [scene.groups, nodeRects]);
-  const bounds = useMemo(() => contentBounds(nodeRects, groupRects), [nodeRects, groupRects]);
+  const laidOutGroups = useMemo(() => resolveGroupRects(scene.groups ?? [], laidOutNodes), [scene.groups, laidOutNodes]);
+  const bounds = useMemo(() => contentBounds(laidOutNodes, laidOutGroups), [laidOutNodes, laidOutGroups]);
   const { ref: canvasRef, size: canvasSize } = useCanvasSize(bounds);
+
+  // Centre the whole diagram in the measured canvas. Applied to the rects
+  // themselves rather than to a wrapper transform, so edges, flow tokens and
+  // annotation callouts — all of which read these rects — stay in agreement
+  // without a second coordinate space to keep in sync.
+  const offset = useMemo(() => centerOffset(bounds, canvasSize), [bounds, canvasSize]);
+  const nodeRects = useMemo(() => shiftRects(laidOutNodes, offset.dx, offset.dy), [laidOutNodes, offset]);
+  const groupRects = useMemo(() => shiftRects(laidOutGroups, offset.dx, offset.dy), [laidOutGroups, offset]);
 
   const index = currentDiagramStepIndex(scene, ranges, frame);
   const currentStep = scene.steps[index] as DiagramSceneData["steps"][number] | undefined;
@@ -166,6 +174,12 @@ export function DiagramScene({ scene }: DiagramSceneProps) {
             <Reveal key={node.id} asChild from="scale" delay={revealRange?.startFrame ?? 0} duration={revealRange ? "normal" : "instant"}>
               <GraphNode
                 x={rect.x} y={rect.y}
+                // Render at exactly the width layout reserved. GraphNode is
+                // otherwise content-sized, so a short label produced a node
+                // far narrower than its own footprint — the spacing then
+                // read as arbitrary gaps, and every edge endpoint computed
+                // from `rect` missed the box it was supposed to touch.
+                style={{ width: rect.width }}
                 variant={isExpanded ? "selected" : rect.simple ? "simple" : "default"}
                 shape={preset.nodeShape}
                 header={node.label}
