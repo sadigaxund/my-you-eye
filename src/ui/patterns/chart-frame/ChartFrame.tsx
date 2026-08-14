@@ -2,8 +2,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "../../../lib/cn";
 import { EmptyState } from "../../empty-state";
-import { Skeleton } from "../../skeleton";
 import { Legend } from "../../legend";
+import { ChartGhost } from "./ChartGhost";
 import type { ChartFrameLegendItem, ChartFrameRenderCtx } from "./types";
 
 const DEFAULT_HEIGHT = 280;
@@ -118,12 +118,23 @@ function ChartFrame({
         </div>
       )}
       <div ref={wrapRef} className="relative w-full" style={{ height }}>
-        {loading ? (
-          <Skeleton shape="rect" className="size-full" />
-        ) : empty ? (
-          <div className="flex size-full items-center justify-center">
-            <EmptyState title={emptyTitle} description={emptyDescription} />
-          </div>
+        {loading || empty ? (
+          width > 0 && (
+            <>
+              {/* Ghost axes/gridlines/bars behind the message — reads as
+                  "this chart, with no data" instead of a stray sentence
+                  floating in a blank box (visual-review brief: empty states
+                  need chart-shaped chrome, not bare text). */}
+              <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 overflow-visible">
+                <ChartGhost plot={plot} animate={loading} />
+              </svg>
+              {empty && (
+                <div className="relative flex size-full items-center justify-center">
+                  <EmptyState title={emptyTitle} description={emptyDescription} />
+                </div>
+              )}
+            </>
+          )
         ) : (
           width > 0 && (
             <>
