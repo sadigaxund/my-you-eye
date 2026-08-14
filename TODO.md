@@ -320,8 +320,12 @@ built in Phase G/H, not Phase F.
   specific page and theme where the lag shows.
 - `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).
 - `CodeBlock.highlight.tsx` exceeds the 250-line lint warning (pre-existing).
-- Unbuilt guards: `check-tokens.mjs` (no raw px/hex), dead-CVA-variant check in `audit.mjs`.
-  **`check-tokens.mjs` is now the highest-value unbuilt guard.** `Timeline`'s span bars
+- Unbuilt guards: dead-CVA-variant check in `audit.mjs`. (`check-tokens.mjs` is BUILT — see below.)
+  **`check-tokens.mjs` — DONE.** Built and wired into `validate` (after `vite build`, since it
+  reads the emitted stylesheet). It checks that every colour utility written in `src/` has a
+  corresponding rule in the built CSS, which needs no model of Tailwind's namespace. It does
+  NOT yet cover raw px/hex literals, which was the other half of the original idea — that is
+  still unbuilt. Original motivation: `Timeline`'s span bars
   shipped with `bg-info/70`, and there is no `--color-info` token — `StatusDot`'s own `info`
   variant resolves to `bg-primary`. Tailwind emitted nothing for the class, so the active
   span simply had no bar, and nothing in `validate` noticed: it isn't a type error, isn't a
