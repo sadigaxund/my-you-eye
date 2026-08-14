@@ -1,10 +1,17 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".";
+import { CellType } from "../cell-type";
 
 const rows = [
   { name: "Alpha", role: "Admin", sessions: 128 },
   { name: "Beta", role: "Editor", sessions: 42 },
   { name: "Gamma", role: "Viewer", sessions: 7 },
+];
+
+const longRows = [
+  { name: "Alpha", note: "Owns the checkout flow, the payments webhook handler, and the fraud-review queue." },
+  { name: "Beta", note: "Short note." },
+  { name: "Gamma", note: "Backfilling the old analytics warehouse into the new event pipeline before the Q3 cutover." },
 ];
 
 const entry: ShowcaseEntry = {
@@ -102,6 +109,30 @@ const entry: ShowcaseEntry = {
               </TableBody>
             </Table>
           </div>
+        </div>
+      ),
+    },
+    {
+      name: "Truncation & expand",
+      description: "TableCell doesn't truncate on its own — it's a plain <td>. Put a CellType inside it (as DataTable does internally) and long content gets the same truncate + chevron + click-to-expand-popover behavior every other CellType consumer gets, anchored to the cell's own measured width.",
+      render: () => (
+        <div className="max-w-sm">
+          <Table variant="striped">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Note</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {longRows.map((r) => (
+                <TableRow key={r.name}>
+                  <TableCell>{r.name}</TableCell>
+                  <TableCell className="max-w-0"><CellType type="text" value={r.note} /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       ),
     },

@@ -66,7 +66,12 @@ const DataList = forwardRef<HTMLDListElement, DataListProps>(
           >
             <dt className="flex min-w-0 items-center gap-2 text-sm text-muted">
               {item.icon && <span className="shrink-0">{item.icon}</span>}
-              <span className="truncate">{item.label}</span>
+              {/* Reuses CellType's own truncate-and-expand (TruncatedCellValue)
+                  instead of a bare `truncate` span — a long label ("Autoscaling
+                  group desired capacity" at labelWidth="sm") used to clip with
+                  no way to read the rest. Same affordance the value column
+                  already had. */}
+              <CellType type="text" value={item.label} />
             </dt>
             <dd className="min-w-0 overflow-hidden text-sm text-fg font-medium">
               {item.value !== undefined ? (
