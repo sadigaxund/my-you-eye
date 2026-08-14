@@ -29,12 +29,45 @@ export interface CodeBlockHighlightGroup {
   color?: "primary" | "warning" | "success" | "danger";
 }
 
-export interface HighlightRangeDef {
+/**
+ * One substring highlight. Give it either a `match` (preferred) or an
+ * explicit `start`/`end` char offset pair.
+ *
+ * `match` exists because offsets are unverifiable by eye. Nobody reading
+ * `{ line: 2, start: 6, end: 18 }` can tell what it highlights without
+ * counting characters, so in practice they end up landing mid-token — which
+ * is exactly what the owner saw across the showcase ("highlighting random
+ * incomprehensible parts of the code"). `{ line: 2, match: "order.valid" }`
+ * says what it means and cannot be subtly wrong: if the text isn't on that
+ * line, nothing is highlighted rather than the wrong thing being
+ * highlighted.
+ */
+export type HighlightRangeDef = {
+  /** 1-based line number. */
   line: number;
-  start: number;
-  end: number;
   color?: "primary" | "warning" | "success" | "danger";
-}
+} & (
+  | {
+      /** Text to highlight. A string matches literally; a RegExp is applied
+       * to the line (the `g` flag is unnecessary — `occurrence` selects). */
+      match: string | RegExp;
+      /** Which occurrence to take when the line contains several, 1-based.
+       * Default 1. */
+      occurrence?: number;
+      start?: never;
+      end?: never;
+    }
+  | {
+      /** 0-based char offset, inclusive. Escape hatch for a span that no
+       * substring names — e.g. a run of whitespace, or a slice of a
+       * repeated token. Prefer `match`. */
+      start: number;
+      /** 0-based char offset, exclusive. */
+      end: number;
+      match?: never;
+      occurrence?: never;
+    }
+);
 
 export interface CodeBlockProps
   extends HTMLAttributes<HTMLPreElement>,

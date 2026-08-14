@@ -7,6 +7,7 @@
  *
  *   { name: "Foo", render: () => ( <JSX/> ) }
  *   { name: "Foo", render: () => <JSX/> }
+ *   { name: "Foo", render: () => { const data = …; return <JSX/>; } }
  *
  * It must fail SOFTLY: if a demo doesn't match this shape (or the scanner
  * gets confused by something exotic), return `null` rather than throwing or
@@ -177,13 +178,21 @@ export function extractDemoSource(fileSource: string, demoName: string): string 
     while (start < fileSource.length && /\s/.test(fileSource[start])) start++;
 
     const first = fileSource[start];
-    if (first !== "(" && first !== "<") return null;
+    // `{` is a BLOCK body — `render: () => { const x = …; return (<JSX/>); }`.
+    // Rejecting it was silently costing those demos their Preview/Code tabs
+    // entirely: `DemoSection` renders a plain box whenever `source` is null,
+    // which is why one demo in a page could look structurally different from
+    // every other (owner: "the filing container ... is not the tab filing
+    // type, and is just a simple div"). The body's own statements are worth
+    // showing — they are usually the sample data the JSX reads — so the
+    // whole block is emitted, minus its braces.
+    if (first !== "(" && first !== "<" && first !== "{") return null;
 
     const end = scanBalancedExpression(fileSource, start);
     if (end === -1) return null;
 
     let raw = fileSource.slice(start, end);
-    if (first === "(") raw = raw.slice(1, -1);
+    if (first === "(" || first === "{") raw = raw.slice(1, -1);
 
     const cleaned = dedent(raw);
     return cleaned.length > 0 ? cleaned : null;

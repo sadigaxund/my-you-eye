@@ -8,6 +8,40 @@ import type { HighlightRangeDef } from "./CodeBlock";
  * just a sampling size chosen for measurement precision. */
 const RULER_LEN = 40;
 
+/**
+ * Turns a `HighlightRangeDef` into concrete `[start, end)` char offsets on
+ * its own line. `start`/`end` pass through; `match` is searched for in the
+ * line text — a string literally, a RegExp by execution — and the requested
+ * occurrence is taken. Returns null when the text simply isn't there.
+ */
+function resolveRange(r: HighlightRangeDef, lineText: string): { start: number; end: number } | null {
+  if (r.match == null) {
+    return r.start == null || r.end == null ? null : { start: r.start, end: r.end };
+  }
+  const wanted = Math.max(1, r.occurrence ?? 1);
+  if (typeof r.match === "string") {
+    if (r.match.length === 0) return null;
+    let from = 0;
+    for (let n = 0; n < wanted; n++) {
+      const at = lineText.indexOf(r.match, from);
+      if (at === -1) return null;
+      if (n === wanted - 1) return { start: at, end: at + r.match.length };
+      from = at + 1; // +1, not +length: overlapping occurrences still count.
+    }
+    return null;
+  }
+  // Force `g` so `exec` advances; the caller's own flags are preserved.
+  const re = new RegExp(r.match.source, r.match.flags.includes("g") ? r.match.flags : r.match.flags + "g");
+  let m: RegExpExecArray | null;
+  let n = 0;
+  while ((m = re.exec(lineText)) !== null) {
+    n++;
+    if (n === wanted) return { start: m.index, end: m.index + m[0].length };
+    if (m[0].length === 0) re.lastIndex++; // never spin on a zero-width match
+  }
+  return null;
+}
+
 const COLOR_VARS: Record<string, string> = {
   primary: "var(--color-primary)",
   warning: "var(--color-warning)",
@@ -44,21 +78,27 @@ export function useHighlightOverlay(
     if (!ruler) return;
     const charW = ruler.scrollWidth / RULER_LEN;
     if (!charW) return;
+    const codeLines = code.split("\n");
     const map = new Map<string, Rect[]>();
     for (const r of highlightRanges) {
       const lineEl = lineRefs.current[r.line - 1];
       if (!lineEl) continue;
+      const span = resolveRange(r, codeLines[r.line - 1] ?? "");
+      // A `match` that isn't on the line resolves to nothing, and nothing is
+      // drawn — failing silent rather than highlighting the wrong span, which
+      // is the entire advantage of naming the text over counting to it.
+      if (!span) continue;
       const color = r.color ?? "primary";
       if (!map.has(color)) map.set(color, []);
       map.get(color)!.push({
-        x: lineEl.offsetLeft + r.start * charW,
+        x: lineEl.offsetLeft + span.start * charW,
         y: lineEl.offsetTop,
-        width: Math.max(0, r.end - r.start) * charW,
+        width: Math.max(0, span.end - span.start) * charW,
         height: lineEl.offsetHeight,
       });
     }
     setOverlayRectsByColor(map);
-  }, [highlightRanges]);
+  }, [highlightRanges, code]);
 
   useLayoutEffect(() => {
     recomputeRects();

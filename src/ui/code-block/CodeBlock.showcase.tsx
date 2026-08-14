@@ -174,10 +174,13 @@ const entry: ShowcaseEntry = {
             header="process.ts"
             showLineNumbers
             highlight
+            // `match` rather than char offsets — see HighlightRangeDef. Each
+            // of these names the token it highlights, so the demo is also
+            // readable as documentation.
             highlightRanges={[
-              { line: 2, start: 6, end: 18, color: "danger" },
-              { line: 3, start: 15, end: 45, color: "warning" },
-              { line: 4, start: 13, end: 33, color: "success" },
+              { line: 2, match: "!order.valid", color: "danger" },
+              { line: 3, match: "order.items.reduce((s, i) => s + i.price, 0)", color: "warning" },
+              { line: 4, match: "{ id: order.id, total, status: \"done\" }", color: "success" },
             ]}
           />
         );
@@ -193,8 +196,8 @@ const entry: ShowcaseEntry = {
           header="long.ts"
           showLineNumbers
           highlightRanges={[
-            { line: 1, start: 92, end: 111, color: "danger" },
-            { line: 2, start: 6, end: 8, color: "success" },
+            { line: 1, match: "computeSomethingExpensive", color: "danger" },
+            { line: 2, match: "ok", color: "success" },
           ]}
         />
       ),
@@ -209,13 +212,11 @@ const entry: ShowcaseEntry = {
           showLineNumbers
           highlight
           highlightRanges={[
-            { line: 2, start: 16, end: 41, color: "primary" },
-            { line: 3, start: 8, end: 34, color: "primary" },
-            { line: 4, start: 6, end: 28, color: "primary" },
-            { line: 5, start: 8, end: 30, color: "primary" },
-            { line: 7, start: 16, end: 36, color: "primary" },
-            { line: 8, start: 6, end: 36, color: "primary" },
-            { line: 9, start: 6, end: 44, color: "primary" },
+            { line: 3, match: "if (order.items.length === 0) {", color: "primary" },
+            { line: 4, match: "throw new ValidationError(", color: "primary" },
+            { line: 5, match: '"Order must have items"', color: "primary" },
+            { line: 6, match: ");", color: "primary" },
+            { line: 7, match: "}", color: "primary" },
           ]}
         />
       ),
