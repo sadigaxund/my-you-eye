@@ -22,7 +22,8 @@
       "folder": "motion/camera",
       "props": {},
       "demos": [
-        "pan between elements, fit zoom"
+        "pan between elements, fit zoom",
+        "spring=\\"
       ]
     },
     {
@@ -63,6 +64,7 @@
       "demos": [
         "move, click, type",
         "shapes",
+        "custom cursor node",
         "click effect variants"
       ]
     },

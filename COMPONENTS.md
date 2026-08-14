@@ -362,10 +362,10 @@ Step (`WalkthroughStep`):
 | Component | Tier | Variants | Demos |
 |---|---|---|---|
 | `Beat` | `my-you-eye/motion` | — | hold between reveals |
-| `Camera` | `my-you-eye/motion` | — | pan between elements, fit zoom |
+| `Camera` | `my-you-eye/motion` | — | pan between elements, fit zoom, spring=\ |
 | `Caption` | `my-you-eye/motion` | — | positions, bottom-center |
 | `CountUp` | `my-you-eye/motion` | — | formats, signed + duration |
-| `Cursor` | `my-you-eye/motion` | shape: dot | move, click, type, shapes, click effect variants |
+| `Cursor` | `my-you-eye/motion` | shape: dot | move, click, type, shapes, custom cursor node, click effect variants |
 | `Draw` | `my-you-eye/motion` | — | basic path, colors + stroke widths |
 | `Highlight` | `my-you-eye/motion` | — | modes, overlay radius is its own, never the child |
 | `Morph` | `my-you-eye/motion` | — | card moving + resizing between layout slots, cross-fade between two different elements, list item expanding into a detail panel |
