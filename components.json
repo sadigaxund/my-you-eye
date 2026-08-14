@@ -901,6 +901,7 @@
           "hash",
           "image",
           "json",
+          "markdown",
           "null",
           "number",
           "percentage",
@@ -988,12 +989,16 @@
         ],
         "density": [
           "compact"
+        ],
+        "type": [
+          "text"
         ]
       },
       "demos": [
         "Composition",
         "Variants",
         "Density",
+        "Truncation & expand",
         "Sticky header"
       ]
     },
@@ -1137,6 +1142,7 @@
         "Substring highlights on a long line (wrap forced off)",
         "Merged highlights",
         "Focus range (dims everything outside it)",
+        "Bare (embedded in another surface)",
         "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
       ]
     },

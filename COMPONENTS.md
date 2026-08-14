@@ -304,10 +304,10 @@ Step (`WalkthroughStep`):
 
 | Component | Tier | Variants | Demos |
 |---|---|---|---|
-| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / image / json / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
+| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / image / json / markdown / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
 | `DataList` | `my-you-eye` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | `my-you-eye` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
-| `Table` | `my-you-eye` | align: right<br>variant: striped<br>density: compact | Composition, Variants, Density, Sticky header |
+| `Table` | `my-you-eye` | align: right<br>variant: striped<br>density: compact<br>type: text | Composition, Variants, Density, Truncation & expand, Sticky header |
 | `Timeline` | `my-you-eye` | orientation: vertical | Horizontal — single lane, Horizontal — lanes, Vertical — single lane, Vertical — lanes |
 | `TreeView` | `my-you-eye` | type: button<br>density: compact<br>variant: condensed | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
@@ -318,7 +318,7 @@ Step (`WalkthroughStep`):
 | `Avatar` | `my-you-eye` | size: lg / md / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | `my-you-eye` | variant: danger / neutral / primary / success / warning<br>style: soft | Variants (solid), Variants (soft) |
 | `Card` | `my-you-eye` | variant: danger / default / elevated / ghost / outlined<br>size: lg / md / sm | Variants, With footer actions, Size |
-| `CodeBlock` | `my-you-eye` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `CodeBlock` | `my-you-eye` | variant: elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `DeviceFrame` | `my-you-eye` | variant: browser / phone / window | Browser, Window, Phone |
 | `DiffBlock` | `my-you-eye` | — | Unified, Unified — word diff, Split, Split — word diff |
 | `EmptyState` | `my-you-eye` | variant: secondary | Default, With icon and action |
