@@ -200,7 +200,12 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
           <span className="text-xs text-muted">Tree</span>
         </div>
         <ScrollArea className="max-h-72 p-2">
-          <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
+          {/* defaultExpandedDepth={0}: every node starts collapsed. Owner:
+              "the Tree type CellType start auto-expanded... I want the leaf
+              collapsed by default." TreeView's own default (1) auto-expands
+              the root level, which is exactly the behavior being opted out
+              of here. */}
+          <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={0} replacements={replacements} />
         </ScrollArea>
       </PopoverContent>
     </Popover>
