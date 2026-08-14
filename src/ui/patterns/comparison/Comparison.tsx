@@ -21,17 +21,12 @@ export interface ComparisonProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
    * src/motion/. In "wipe" mode it takes over the divider position
    * entirely (`pct = progress * 100`) and disables dragging, since the
    * divider is then a pure function of this prop rather than of drag
-   * state. In "side-by-side" mode it fades the ENTIRE `after` column in
-   * as one unit — label, border, and content together (`opacity:
-   * progress` on the pane's own outer wrapper) — rather than a caller
-   * wrapping just `after`'s content in its own opacity animation, which
-   * left the column's border/label at full opacity while only the
-   * content faded: the mismatch between a crisp, always-solid outer
-   * frame and a barely-there inner header separator read as the
-   * separator having "no border" partway through the fade (owner
-   * report, CompareScene "Columns — playing"). Omitted falls back to
-   * the interactive value/defaultValue divider (wipe) / full opacity
-   * (side-by-side).
+   * state. In "side-by-side" mode it WIPES the `after` column in with a
+   * left-to-right `clip-path` — never an opacity fade, so no border in
+   * that column is ever drawn at partial alpha (see the comment at the
+   * render site for why that distinction is the whole fix). Omitted falls
+   * back to the interactive value/defaultValue divider (wipe) / a fully
+   * revealed column (side-by-side).
    */
   progress?: number;
 }
@@ -107,7 +102,19 @@ const Comparison = forwardRef<HTMLDivElement, ComparisonProps>(
             {beforeLabel && <Badge variant="neutral" className="self-start">{beforeLabel}</Badge>}
             <div className="overflow-hidden rounded-ui border border-border">{before}</div>
           </div>
-          <div className="flex flex-col gap-tight min-w-0" style={progress !== undefined ? { opacity: progress } : undefined}>
+          {/* A CLIP, not an opacity fade. Fading the column dims every pixel
+              in it uniformly, and a 1px `border-border` hairline — the code
+              pane's header separator especially — falls below the eye's
+              threshold long before the text does. So mid-reveal the pane
+              looked like a box whose separator had glitched out rather than
+              like a pane fading in, and syncing the fade across the whole
+              column (the previous attempt) could not fix that: the problem is
+              partial alpha itself, not which elements share it. A clip means
+              every pixel that is drawn is drawn at full strength. */}
+          <div
+            className="flex flex-col gap-tight min-w-0"
+            style={progress !== undefined ? { clipPath: `inset(0 ${100 - pct}% 0 0)` } : undefined}
+          >
             {afterLabel && <Badge variant="primary" className="self-start">{afterLabel}</Badge>}
             <div className="overflow-hidden rounded-ui border border-border">{after}</div>
           </div>

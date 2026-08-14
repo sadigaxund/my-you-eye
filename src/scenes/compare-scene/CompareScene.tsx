@@ -38,17 +38,12 @@ function renderPane(pane: ComparePane): ReactNode {
  * from 0 to 100 over the beat *is* the reveal; in `"columns"` mode `after`
  * fades in over the same beat while `before` is already on screen, so the
  * comparison still reads as "here's what changed" rather than both panes
- * simply appearing at once. The fade is `Comparison`'s own `progress` prop
- * (extended to drive side-by-side's after-column opacity, not just wipe's
- * divider) rather than a `Reveal` wrapped around just `after`'s content:
- * wrapping only the content left Comparison's own label Badge and pane
- * border at full opacity while the CodeBlock inside faded, so its header
- * separator (a 1px border, low-contrast to begin with) crossed the
- * invisible threshold well before the rest of the pane looked "faded" —
- * reading as a missing/glitching separator rather than a smooth reveal.
- * Fading the whole labeled column as one unit (one `opacity` on one
- * element, no extra wrapping `<div>`) keeps every border in the column in
- * sync with itself.
+ * simply appearing at once. That reveal is `Comparison`'s own `progress`
+ * prop, which in side-by-side mode CLIPS the after column in from the left
+ * — never an opacity animation. A partially-faded pane loses its 1px header
+ * separator long before the pane itself looks faded, which is what read as a
+ * glitching separator; a clip only ever draws pixels at full strength. See
+ * Comparison's own comment at the render site.
  */
 export function CompareScene({ scene }: CompareSceneProps) {
   const ranges = useSequence(sceneSteps(scene), scene.pace);
