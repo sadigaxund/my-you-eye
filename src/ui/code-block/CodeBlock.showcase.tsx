@@ -228,6 +228,15 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Bare (embedded in another surface)",
+      description: "bare drops the header bar and the block's own background/border, leaving just a hover-revealed copy button — for embedding CodeBlock inside a surface (Popover, Card) that already provides its own chrome, e.g. CellType's JSON/code cell previews.",
+      render: () => (
+        <div className="rounded-ui border border-border bg-surface-elevated p-3">
+          <CodeBlock code={json} language="json" highlight bare />
+        </div>
+      ),
+    },
+    {
       name: "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
       render: () => (
         <div className="flex flex-col gap-4">

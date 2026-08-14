@@ -81,6 +81,17 @@ export interface CodeBlockProps
    * exactly as before.
    */
   lineId?: (lineNumber: number) => string;
+  /**
+   * Strips the persistent header bar (filename/language badge) and the
+   * block's own opaque background/border, leaving only a hover-revealed
+   * copy button in the corner. For embedding CodeBlock inside a surface
+   * that already provides its own chrome — e.g. a Popover — where a
+   * second header and a second opaque panel read as a redundant nested
+   * box (CellType's JSON/code cell previews). `language` is still used
+   * for syntax highlighting when `highlight` is set; it's just never
+   * displayed. Additive: omit for CodeBlock's normal framed appearance.
+   */
+  bare?: boolean;
 }
 
 function CopyIcon() {
@@ -128,7 +139,7 @@ const HIGHLIGHT_BG: Record<string, string> = {
 };
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, bare = false, ...props }, ref) => {
     const [copied, setCopied] = useState(false);
     const copy = useCallback(() => {
       if (!navigator.clipboard) return;
@@ -139,7 +150,10 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
     }, [code]);
 
     const lines = useMemo(() => code.split("\n"), [code]);
-    const hasHeader = Boolean(header || language);
+    // `bare` always suppresses the header bar, even if header/language were
+    // passed — `language` is still forwarded to the tokenizer below for
+    // highlighting, it's just never displayed as a badge.
+    const hasHeader = !bare && Boolean(header || language);
 
     const highlighted = useMemo(() => {
       if (!highlight) return null;
@@ -183,7 +197,17 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       || hasRanges;
 
     return (
-      <div className={cn(codeBlockVariants({ variant }), className)}>
+      <div
+        className={cn(
+          codeBlockVariants({ variant }),
+          // Overrides the base bg-code-bg/border-border pair (tailwind-merge
+          // resolves the conflict, last write wins) so the block blends into
+          // whatever surface it's embedded in instead of drawing a second,
+          // redundant panel — see the `bare` JSDoc above.
+          bare && "bg-transparent border-transparent",
+          className,
+        )}
+      >
         {hasRanges && (
           <span
             ref={rulerRef}
@@ -198,7 +222,10 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
         )}
         {!hasHeader && (
           <div className="absolute top-1 right-1 z-10 flex items-center gap-1">
-            {language && <LanguageBadge language={language} floating />}
+            {/* `bare` drops the floating language badge too — the point is
+                no persistent chrome at all, just the hover-revealed copy
+                button (CopyButton is opacity-0 until group-hover on its own). */}
+            {!bare && language && <LanguageBadge language={language} floating />}
             <CopyButton copied={copied} onCopy={copy} />
           </div>
         )}
