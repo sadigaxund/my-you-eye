@@ -95,14 +95,14 @@ export interface TerminalProps
   title?: string;
   /**
    * Fixed visible height, expressed as a whole number of text lines
-   * (owner feedback: "the size of terminal does not really change, but
-   * the content just gets scrolled up as something gets added — that
-   * would feel more natural"). When set, the entries body is capped at
-   * `rows` lines' worth of height (measured from the real rendered
-   * line-height, never a hardcoded px figure — AGENTS.md TODO A1) and
-   * scrolls internally; the box itself never grows with content. Newly
-   * revealed content auto-scrolls into view. Omit for the previous
-   * grows-with-content behavior.
+   * (owner feedback: "I want to see a constant height terminal that does
+   * not change or move, and the content gets added within it ... like a
+   * scrolling action"). When set, the entries body is EXACTLY `rows`
+   * lines tall — measured from the real rendered line-height plus the
+   * body's own padding, never a hardcoded px figure (AGENTS.md TODO A1)
+   * — from the first frame onward, and scrolls internally. Newly revealed
+   * content auto-scrolls into view. Omit for grows-with-content
+   * behaviour, which suits a static page but never a video frame.
    */
   rows?: number;
 }
@@ -179,20 +179,32 @@ function resolvePrompts(
  * the entries body uses, so `rows` caps the box at a real, current
  * line-height rather than a guessed constant (AGENTS.md TODO A1) — mirrors
  * the ruler pattern `CodeBlock`/`CodeDiff` already use for the same reason. */
-function useLineHeight(active: boolean): { ref: React.RefObject<HTMLDivElement | null>; height: number } {
+function useLineHeight(active: boolean): { ref: React.RefObject<HTMLDivElement | null>; height: number; padding: number } {
   const ref = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  // The entries body has its own vertical padding (`p-panel`). Sizing the
+  // viewport to `rows * lineHeight` alone would silently eat two lines of the
+  // requested height, so the padding is measured off the real element rather
+  // than assumed — same reason the line height is.
+  const [padding, setPadding] = useState(0);
   useLayoutEffect(() => {
     if (!active) return undefined;
     const el = ref.current;
     if (!el) return undefined;
-    const measure = () => setHeight((h) => (h === el.offsetHeight ? h : el.offsetHeight));
+    const measure = () => {
+      setHeight((h) => (h === el.offsetHeight ? h : el.offsetHeight));
+      const body = el.parentElement;
+      if (!body) return;
+      const cs = getComputedStyle(body);
+      const pad = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      setPadding((p) => (p === pad ? p : pad));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
     return () => observer.disconnect();
   }, [active]);
-  return { ref, height };
+  return { ref, height, padding };
 }
 
 const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
@@ -210,8 +222,15 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     );
 
     const hasFixedHeight = rows != null && rows > 0;
-    const { ref: rulerRef, height: lineHeight } = useLineHeight(hasFixedHeight);
-    const maxHeight = hasFixedHeight && lineHeight > 0 ? lineHeight * rows : undefined;
+    const { ref: rulerRef, height: lineHeight, padding: bodyPadding } = useLineHeight(hasFixedHeight);
+    // A FIXED height, not a max-height. Capping the box let it start short
+    // and grow line by line until it hit the cap — which is the very thing
+    // `rows` exists to stop (owner: "I dont like how the terminal's size gets
+    // bigger whenever a new line is added, I want to see a constant height
+    // terminal that does not change or move"). With a fixed height the frame
+    // is the same size on frame 0 as on the last frame and the content
+    // scrolls underneath it, which is how a real terminal behaves.
+    const bodyHeight = hasFixedHeight && lineHeight > 0 ? lineHeight * rows + bodyPadding : undefined;
 
     // Auto-scroll to the bottom whenever the entry count or the currently-
     // running entry's own revealed content grows — the box's height never
@@ -246,8 +265,13 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
         <ScrollArea
           ref={viewportRef}
           orientation="both"
-          className="flex-1 min-h-0"
-          style={maxHeight != null ? { maxHeight } : undefined}
+          // `flex-1` is `flex: 1 1 0%`, and in a column flex container a
+          // flex-basis of 0 wins over `height` — so a fixed height set
+          // alongside it is simply ignored and the box goes back to sizing
+          // itself from its content. The fixed-height case therefore opts out
+          // of growing entirely.
+          className={cn("min-h-0", bodyHeight == null ? "flex-1" : "shrink-0")}
+          style={bodyHeight != null ? { height: bodyHeight } : undefined}
         >
           <div className="flex flex-col gap-stack p-panel font-mono text-sm">
             {hasFixedHeight && (

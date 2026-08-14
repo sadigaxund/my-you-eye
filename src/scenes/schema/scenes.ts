@@ -120,10 +120,10 @@ export interface TerminalScene extends SceneBase {
   /** Window-chrome decorator — forwarded to `Terminal`'s `chrome`. Default "dots". */
   chrome?: "dots" | "none";
   /**
-   * Fixed visible height in lines — forwarded to `Terminal`'s `rows`
-   * (owner feedback: "the size of terminal does not really change, but
-   * the content just gets scrolled up as something gets added"). Omit
-   * for the previous grows-with-content behavior.
+   * Fixed visible height in lines — forwarded to `Terminal`'s `rows`.
+   * Defaults to 12: a scene draws into a fixed video frame, so the
+   * terminal always holds a constant height and scrolls its content
+   * rather than growing as it types. This only tunes how tall it holds.
    */
   rows?: number;
 }

@@ -8,6 +8,12 @@ export interface TerminalSceneProps {
   scene: TerminalSceneData;
 }
 
+/** Visible height, in lines, when a scene doesn't state one. A scene renders
+ * into a fixed video frame, so a terminal that grows as it types makes the
+ * whole composition jump — this default means every TerminalScene holds still
+ * and scrolls, and `scene.rows` only tunes how tall it holds. */
+const DEFAULT_ROWS = 12;
+
 type PhaseKey = "command" | "spinner" | "output" | "exit";
 type PhaseWindows = Partial<Record<PhaseKey, { start: number; end: number }>>;
 
@@ -116,7 +122,7 @@ export function TerminalScene({ scene }: TerminalSceneProps) {
         title={scene.title}
         scheme={scene.scheme}
         chrome={scene.chrome}
-        rows={scene.rows}
+        rows={scene.rows ?? DEFAULT_ROWS}
       />
     </div>
   );
