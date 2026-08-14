@@ -113,7 +113,12 @@ const Comparison = forwardRef<HTMLDivElement, ComparisonProps>(
         {...props}
       >
         <div className="relative">{before}</div>
-        <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
+        {/* `bg-surface-opaque` (the same token TableHeader's sticky background
+            uses — guaranteed non-translucent in every theme, unlike `bg-surface`)
+            — without it this layer has no background of its own, so `before`
+            shows straight through wherever `after`'s own content doesn't fully
+            paint over it (e.g. a lighter surface, gaps around text). */}
+        <div className="absolute inset-0 bg-surface-opaque" style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
           {after}
         </div>
         {beforeLabel && <Badge variant="neutral" className="absolute left-2 top-2 z-10">{beforeLabel}</Badge>}
