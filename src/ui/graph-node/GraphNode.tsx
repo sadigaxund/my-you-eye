@@ -227,7 +227,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                             not a full circle relying on this node's
                             `overflow-hidden` to clip away the inner half —
                             see Port.tsx and AGENTS.md TODO A6. */}
-                        <Port state={row.portLeft.state} side="in" shape="socket" />
+                        <Port state={row.portLeft.state} side="in" shape="socket" mount="inward" />
                       </div>
                     )}
                     {row.portRight && (
@@ -235,7 +235,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                         className="absolute pointer-events-auto"
                         style={{ right: "0px", top: portY(i, headerCells) - headerCells * GRID, transform: "translate(50%, -50%)" }}
                       >
-                        <Port state={row.portRight.state} side="out" shape="socket" />
+                        <Port state={row.portRight.state} side="out" shape="socket" mount="inward" />
                       </div>
                     )}
                   </div>

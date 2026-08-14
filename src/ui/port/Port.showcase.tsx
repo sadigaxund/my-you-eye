@@ -52,6 +52,33 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Socket mount — outward vs inward",
+      description:
+        "`mount` decides which way the disc faces from the border it's on; `side` still just says which border that is. Use `inward` whenever the mounting element clips its own overflow. GraphNode's root carries both `overflow-hidden` and `contain: [layout paint]`, and a descendant can escape neither — so an outward socket there loses its entire visible half and renders as a bare vertical line (the flat chord's stroke alone). That is exactly what GraphNode's row ports used to look like.",
+      render: () => (
+        <div className="flex justify-center gap-16">
+          {(["outward", "inward"] as const).map((mount) => (
+            <div key={mount} className="flex flex-col items-center gap-3">
+              {/* A real clipping ancestor, not a dashed rule: this is the
+                  condition the prop exists for, so the demo has to actually
+                  reproduce it or it proves nothing. */}
+              <div className="relative h-24 w-28 overflow-hidden rounded-ui border border-border bg-canvas-surface">
+                <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <Port shape="socket" side="in" state="connected" mount={mount} />
+                </div>
+                <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2">
+                  <Port shape="socket" side="out" state="connected" mount={mount} />
+                </div>
+              </div>
+              <span className="text-xs text-muted">
+                mount=&quot;{mount}&quot;{mount === "outward" && " — clipped to a sliver"}
+              </span>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
       name: "Socket shape — all states",
       render: () => (
         <div className="flex justify-center gap-10">

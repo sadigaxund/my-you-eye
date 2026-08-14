@@ -52,23 +52,39 @@ export interface PortProps
    * coincident with whatever border it's mounted against, rounded half
    * bulging outward. This is the deliberate version of what GraphNode's
    * row ports used to get by accident (a full circle straddling the node's
-   * border, half clipped away by the node's own `overflow-hidden`): same
-   * visual, but it no longer depends on an ancestor clipping it, so it
-   * survives anyone touching that ancestor's overflow. `side` controls
-   * which way the flat edge faces: "in" (left-mounted) bulges left,
-   * "out" (right-mounted) bulges right — matching GraphNode's existing
-   * `portLeft`/`portRight` → `side="in"`/`"out"` convention.
+   * border, half clipped away by the node's own `overflow-hidden`): the
+   * geometry is now explicit rather than an artifact of an ancestor's
+   * overflow. `side` says which border it's mounted on — "in" (left) /
+   * "out" (right), matching GraphNode's `portLeft`/`portRight` convention —
+   * and `mount` says which way the disc faces from there.
    */
   shape?: "circle" | "socket";
+  /**
+   * Which way a `socket`'s rounded half bulges, relative to the border it's
+   * mounted on. `"outward"` (default) bulges away from the node — correct
+   * for a freestanding mount where nothing clips it.
+   *
+   * `"inward"` bulges into the node. Required whenever the mounting element
+   * clips its own overflow: GraphNode's root carries both `overflow-hidden`
+   * AND `contain: [layout paint]`, and neither can be escaped by a
+   * descendant, so an outward socket there has its entire visible half
+   * clipped away and renders as a bare vertical line — the flat chord's
+   * stroke and nothing else. Inward keeps the flat edge exactly on the
+   * border and puts the disc where it can actually be seen.
+   */
+  mount?: "outward" | "inward";
 }
 
 function Socket({
-  side, state = "default", className, ...rest
-}: { side: PortProps["side"]; state: PortProps["state"]; className?: string } & HTMLAttributes<HTMLDivElement>) {
+  side, state = "default", mount = "outward", className, ...rest
+}: { side: PortProps["side"]; state: PortProps["state"]; mount?: PortProps["mount"]; className?: string } & HTMLAttributes<HTMLDivElement>) {
   const s = SOCKET_STYLE[state ?? "default"];
   // sweep-flag: 0 bulges toward -x (left), 1 bulges toward +x (right) — see
-  // Port.tsx module comment above for the derivation.
-  const sweep = side === "out" ? 1 : 0;
+  // Port.tsx module comment above for the derivation. `mount="inward"`
+  // simply inverts that, so `side` keeps meaning which border the port is
+  // on and never has to be lied about to get the disc facing the right way.
+  const outwardRight = side === "out";
+  const sweep = (mount === "inward" ? !outwardRight : outwardRight) ? 1 : 0;
   const d = `M ${SOCKET_C} ${SOCKET_C - SOCKET_R} A ${SOCKET_R} ${SOCKET_R} 0 0 ${sweep} ${SOCKET_C} ${SOCKET_C + SOCKET_R} Z`;
   return (
     <svg
@@ -87,10 +103,10 @@ function Socket({
 }
 
 const Port = forwardRef<HTMLDivElement, PortProps>(
-  ({ className, side, state, label, shape = "circle", ...props }, ref) => (
+  ({ className, side, state, label, shape = "circle", mount = "outward", ...props }, ref) => (
     <div ref={ref} className={cn("relative flex items-center gap-2", side === "in" ? "flex-row" : "flex-row-reverse")}>
       {shape === "socket" ? (
-        <Socket side={side} state={state} className={className} {...props} />
+        <Socket side={side} state={state} mount={mount} className={className} {...props} />
       ) : (
         <div className={cn(portVariants({ side, state }), className)} {...props} />
       )}

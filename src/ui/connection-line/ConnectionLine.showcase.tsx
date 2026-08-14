@@ -101,8 +101,8 @@ const entry: ShowcaseEntry = {
       name: "Label on a genuinely curved path",
       description: "labelPosition evaluates the actual rendered curve (closed-form cubic for bezier, walked polyline for stepped) instead of a straight-line lerp between endpoints — so the badge sits on the line at every position, not just at flat/degenerate edges. The edge's own stroke is gapped underneath its own label (not just an opaque badge on top), so it stays legible on every theme instead of reading as translucent.",
       render: () => (
-        <div className="flex flex-col items-center gap-6 py-4 h-auto">
-          <div className="relative" style={{ width: 300, height: 90 }}>
+        <div className="flex flex-col items-center gap-10 py-4 h-auto">
+          <div className="relative" style={{ width: 300, height: 110 }}>
             {/* Three labels on the SAME curve — rendered via ConnectionLayer
                 (not 3 stacked standalone ConnectionLines) so every label
                 paints above every edge's stroke, including the other two
@@ -114,15 +114,15 @@ const entry: ShowcaseEntry = {
                 { id: "75", from: { x: 10, y: 10 }, to: { x: 290, y: 80 }, variant: "bezier", state: "pending", label: "75%", labelPosition: 75 },
               ]}
             />
-            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">bezier, non-flat</span>
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-muted">bezier, non-flat</span>
           </div>
-          <div className="relative" style={{ width: 300, height: 90 }}>
+          <div className="relative" style={{ width: 300, height: 110 }}>
             <ConnectionLine from={{ x: 10, y: 10 }} to={{ x: 290, y: 80 }} variant="stepped" state="connected" arrowhead label="elbow" labelPosition={50} />
-            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">stepped, label at the elbow</span>
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-muted">stepped, label at the elbow</span>
           </div>
-          <div className="relative" style={{ width: 300, height: 60 }}>
+          <div className="relative" style={{ width: 300, height: 80 }}>
             <ConnectionLine from={{ x: 10, y: 30 }} to={{ x: 290, y: 30 }} variant="bezier" state="connected" label="非ASCIIラベル 🎯" />
-            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-xs text-muted">non-ASCII / wide-glyph label (measured, not guessed)</span>
+            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-muted">non-ASCII / wide-glyph label (measured, not guessed)</span>
           </div>
         </div>
       ),
