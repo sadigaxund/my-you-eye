@@ -33,7 +33,14 @@ export function Pulse({ children, loop, asChild, as: As = "div", className, ...t
   const totalFrames = loop != null ? periodFrames * loop : Infinity;
   const active = local < totalFrames;
 
-  const wave = active ? Math.sin(((local % periodFrames) / periodFrames) * Math.PI * 2) * 0.5 + 0.5 : 0;
+  // A single hump per period — sin(t·π) is 0 at t=0 AND t=1 (rest at both
+  // ends of every breath) and peaks at t=0.5 — not the previous sin(t·2π)
+  // rescaled to [0,1], which sat at 0.5 (already mid-breath) at t=0 and t=1
+  // and only reached true rest (0) a quarter-period late, at t=0.75. That
+  // mismatch was the owner-reported bug: frame 0 didn't start at rest, and
+  // a finite `loop` didn't end on the same (rest) value it started with, so
+  // the settle read as a snap/jump rather than a closed loop.
+  const wave = active ? Math.sin(((local % periodFrames) / periodFrames) * Math.PI) : 0;
   const style = {
     // scale3d (not scale) forces the browser onto its GPU compositing path
     // rather than the ambiguous 2D path some engines still rasterize on the

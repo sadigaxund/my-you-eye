@@ -54,7 +54,14 @@ export function Shake({ children, axis = "x", cycles = 5, seed = "shake", asChil
   const phase = applyEasing(progress, "out");
   const oscillation = Math.sin(phase * cycles * Math.PI * 2);
   const jitter = seededValueAt(seed, frame) * 2 - 1;
-  const value = (oscillation * 0.7 + jitter * 0.3) * decay;
+  // `oscillation` is naturally 0 at frame 0 (sin(0) = 0), but `jitter` is
+  // raw noise with no such property — scaling it by `decay` alone (which is
+  // 1, i.e. full strength, at progress=0) let a nonzero random offset leak
+  // into the very first frame, so the "rest" pose was already displaced
+  // (owner feedback: "the starting frame is already moved a bit"). Gating
+  // jitter by `phase` too (0 at progress=0, same as oscillation) closes
+  // that gap — both terms now start at exactly 0.
+  const value = (oscillation * 0.7 + jitter * phase * 0.3) * decay;
 
   const style: CSSProperties =
     axis === "rotate"

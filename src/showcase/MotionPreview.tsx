@@ -88,7 +88,17 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
           fps={fps}
           loop={loop}
           autoPlay
-          onFrame={setFrame}
+          // DomDriver's `onFrame` intentionally reports the raw, unrounded
+          // rAF-accumulated frame (real sub-frame precision, useful to a
+          // logic consumer like the Presenter's seek-target comparison) —
+          // TimelineContext is the one place that rounds it for rendering.
+          // This showcase readout is a *display*, not animation logic, so
+          // round here at the boundary rather than showing e.g.
+          // "40.99800000000001/120" (owner-reported: "the float large
+          // precision displayed on the slider's values… For example: Motion
+          // > Beat" — reproduced on Pulse/Spotlight too; every MotionPreview
+          // instance shares this one readout).
+          onFrame={(f) => setFrame(Math.round(f))}
         >
           {content}
         </MotionRoot>

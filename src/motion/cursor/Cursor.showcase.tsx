@@ -55,6 +55,19 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "custom cursor node",
+      description: "children replaces the built-in glyph entirely — any icon/element, centered on the tracked position by default.",
+      render: () => (
+        <MotionPreview durationInFrames={90} loop leadIn>
+          <div className="relative flex h-20 items-center justify-center overflow-hidden rounded-ui bg-surface">
+            <Cursor events={[{ at: 0, x: 44, y: 32 }, { at: 60, x: 44, y: 32, action: "click" }]}>
+              <span className="flex size-7 items-center justify-center rounded-full border-2 border-primary bg-surface text-xs font-bold text-primary shadow-card">A</span>
+            </Cursor>
+          </div>
+        </MotionPreview>
+      ),
+    },
+    {
       name: "click effect variants",
       description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple, so a click always reads clearly regardless of pointer shape.",
       render: () => (

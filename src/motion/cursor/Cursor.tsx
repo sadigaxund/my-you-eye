@@ -1,8 +1,8 @@
+import type { ReactNode } from "react";
 import { useTimeline } from "../core/TimelineContext";
 import { useProgress } from "../core/useProgress";
 import { resolveBeatFrames } from "../core/beats";
-import { applyEasing } from "../core/easing";
-import { applySpring } from "../core/springs";
+import { legEase } from "../core/legEase";
 import { colorVar } from "../core/tokens";
 import { Ripple } from "../ripple";
 import type { RippleVariant } from "../ripple";
@@ -27,29 +27,23 @@ export type CursorProps = Timing & {
   /** Timed positions/actions, in frame order. Position between events is linearly interpolated in time, but eased in motion (see `easing`/`spring` below) — never a raw constant-speed slide. */
   events: CursorEvent[];
   color?: MotionColor;
-  /** Pointer appearance. Default "arrow". */
+  /** Pointer appearance. Default "arrow". Ignored when `children` is supplied. */
   shape?: CursorShape;
   /** Ripple treatment rendered on click/dblclick — forwarded straight to `Ripple`'s `variant`, never a second, hand-rolled click effect. Default "ring". */
   clickEffect?: RippleVariant;
+  /**
+   * Escape hatch: a custom cursor node (an icon, an avatar, anything)
+   * replacing the built-in `shape` glyph entirely — `shape`/`color` are
+   * then ignored for the glyph itself (though `color` still tints the
+   * click `Ripple`). Centered on the tracked position by default (the same
+   * "symmetric hotspot" convention `shape="dot"`/`"crosshair"` already use)
+   * since an arbitrary node has no predictable "tip" the way a drawn arrow
+   * or hand does — pass your own `className`/`style` on the child to
+   * offset it if you need a different hotspot.
+   */
+  children?: ReactNode;
   className?: string;
 };
-
-/**
- * Builds the same ease/spring shaping every other primitive gets from
- * `useProgress()` — Cursor can't use `useProgress()` itself for *movement*
- * (each leg between two events has its own start/span, not one fixed
- * delay+duration), so it applies the same `easing`/`spring` curve by hand
- * via `applyEasing`/`applySpring` instead of re-deriving a curve shape.
- * Owner feedback: raw constant-speed interpolation "feels robotic."
- */
-function legEase(timing: Timing): (t: number) => number {
-  if (timing.spring) {
-    const spring = timing.spring;
-    return (t: number) => Math.min(1, Math.max(0, applySpring(t, spring)));
-  }
-  const easing = timing.easing ?? "standard";
-  return (t: number) => applyEasing(t, easing);
-}
 
 function interpolatePosition(events: CursorEvent[], frame: number, ease: (t: number) => number): { x: number; y: number } {
   if (events.length === 0) return { x: 0, y: 0 };
@@ -82,17 +76,25 @@ function CursorGlyph({ shape, color }: { shape: CursorShape; color: MotionColor 
   const stroke = "var(--color-surface)";
   switch (shape) {
     case "hand":
-      // A simplified pointing-hand/glove silhouette: a folded fist with one
-      // extended index finger, the same rough "click here" read as a
-      // native browser pointer cursor.
+      // A pointing-hand silhouette built from separated, bold primitives
+      // (own extended index finger + 2 folded-knuckle bumps + a palm/thumb
+      // path) rather than one intricate path — at an 18x18 glyph size a
+      // single thin outline collapses into an unreadable blob (owner
+      // feedback round 2: "I don't like the new hand cursor variation…
+      // the current one doesn't [read as a pointing hand] at small sizes").
+      // Each finger is its own rounded capsule with real gaps between them,
+      // the same "bold, few, distinct shapes" read a native OS link/pointer
+      // cursor uses at icon size.
       return (
-        <path
-          d="M7 2.2 a1.1 1.1 0 0 1 2.2 0 V8.2 h0.5 a1.1 1.1 0 0 1 2.2 0 V9 h0.5 a1.1 1.1 0 0 1 2.2 0 V12.3 c0 2.4 -1.9 3.9 -4.3 3.9 H9.2 c-1.3 0 -2.2 -0.5 -2.9 -1.4 L3.9 11.6 a1 1 0 0 1 1.5 -1.3 L7 11.9 V2.2 Z"
-          fill={fill}
-          stroke={stroke}
-          strokeWidth={0.75}
-          strokeLinejoin="round"
-        />
+        <g fill={fill} stroke={stroke} strokeWidth={0.75} strokeLinejoin="round" strokeLinecap="round">
+          {/* extended index finger, pointing straight up */}
+          <rect x="6.3" y="1.6" width="2.4" height="8.4" rx="1.2" />
+          {/* two folded knuckles (middle + ring/pinky) stepped down to the side */}
+          <rect x="8.9" y="5.6" width="2.3" height="6" rx="1.15" />
+          <rect x="11.4" y="6.6" width="2.2" height="5.4" rx="1.1" />
+          {/* palm + thumb */}
+          <path d="M4.7 11.9 c-.55 -.7 -1.65 -1.55 -.75 -2.4 c.7 -.65 1.55 -.35 2.15 .35 l.8 .95 v-1.1 h7.2 v3.1 c0 2.35 -1.85 3.7 -4.15 3.7 h-1.5 c-1.25 0 -2.15 -.45 -2.8 -1.35 Z" />
+        </g>
       );
     case "crosshair":
       return (
@@ -121,7 +123,7 @@ function CursorGlyph({ shape, color }: { shape: CursorShape; color: MotionColor 
  * `MotionRoot`/`RemotionDriver` timeline, consistent with `useSequence`'s
  * frame ranges.
  */
-export function Cursor({ events, color = "primary", shape = "arrow", clickEffect = "ring", className, ...timing }: CursorProps) {
+export function Cursor({ events, color = "primary", shape = "arrow", clickEffect = "ring", children, className, ...timing }: CursorProps) {
   const entrance = useProgress(timing);
   const { frame, fps } = useTimeline();
   const ease = legEase(timing);
@@ -138,14 +140,20 @@ export function Cursor({ events, color = "primary", shape = "arrow", clickEffect
   return (
     <div className={className} style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: entrance }}>
       {activeClick && <Ripple x={activeClick.x} y={activeClick.y} color={color} variant={activeClick.effect ?? clickEffect} duration="quick" />}
-      <svg
-        width={18}
-        height={18}
-        viewBox="0 0 18 18"
-        style={{ position: "absolute", left: pos.x, top: pos.y, transform: HOTSPOT_OFFSET[shape] }}
-      >
-        <CursorGlyph shape={shape} color={color} />
-      </svg>
+      {children ? (
+        <div style={{ position: "absolute", left: pos.x, top: pos.y, transform: "translate(-50%, -50%)" }}>
+          {children}
+        </div>
+      ) : (
+        <svg
+          width={18}
+          height={18}
+          viewBox="0 0 18 18"
+          style={{ position: "absolute", left: pos.x, top: pos.y, transform: HOTSPOT_OFFSET[shape] }}
+        >
+          <CursorGlyph shape={shape} color={color} />
+        </svg>
+      )}
       {activeType?.text && (
         <div
           style={{ position: "absolute", left: pos.x + 16, top: pos.y + 16 }}

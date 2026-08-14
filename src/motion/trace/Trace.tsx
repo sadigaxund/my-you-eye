@@ -57,6 +57,14 @@ export function Trace({
 
   const cycleFrames = Math.max(1, resolveBeatFrames(timing.duration ?? "slow", fps));
   const delayFrames = timing.delay != null ? resolveBeatFrames(timing.delay, fps) : 0;
+  // Deliberately raw/linear, not routed through applyEasing — this is the
+  // "constant-speed Trace token" case (AGENTS.md motion audit, owner
+  // feedback round 2): a looping data-flow token represents packets moving
+  // through a pipe at a steady rate. Easing a repeating cycle would make it
+  // visibly speed up and slow down every lap, which reads as stuttering
+  // flow, not motion design — constant speed is the *correct* physical
+  // model here, not an oversight. The one-shot (non-loop) case still goes
+  // through the normal eased `onceProgress` from `useProgress()`.
   const cycleProgress = loop ? (((frame - delayFrames) % cycleFrames) + cycleFrames) % cycleFrames / cycleFrames : onceProgress;
 
   const tokens = Array.from({ length: Math.max(1, count) }, (_, i) => {

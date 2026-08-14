@@ -42,13 +42,27 @@ export type SpotlightProps = Timing & {
  * feather and higher strength read as a harsh, hard-edged cutout rather
  * than a soft dim (owner feedback: "looks bad… the token values may simply
  * be too harsh").
+ *
+ * Defaults to `w-full h-full` on its own root (owner feedback round 2: two
+ * of the three showcase demos rendered as completely empty). Cause: a block
+ * box with `overflow: hidden` whose children are *all* `position: absolute`
+ * (a diagram's nodes, a dashboard's cards) has no normal-flow content to
+ * derive a height from, so it collapses to 0px and `overflow: hidden` then
+ * clips its own (correctly positioned!) scrim and children out of
+ * existence — nothing renders, not even the "black cutout" the owner did
+ * see on the one demo whose children happened to be normal-flow text.
+ * Filling the immediate parent by default fixes every "absolutely-
+ * positioned overlay content" usage without requiring a `className`, and
+ * is a no-op for normal-flow content: `height: 100%` against an `auto`-
+ * height parent (e.g. this component's first showcase demo) resolves to
+ * `auto` per spec, so content-driven sizing is unaffected.
  */
 export function Spotlight({ children, focus, feather = "lg", dim = 0.6, className, ...timing }: SpotlightProps) {
   const progress = useProgress(timing);
   const opacity = dim * progress;
 
   return (
-    <div className={className} style={{ position: "relative", overflow: "hidden" }}>
+    <div className={["relative overflow-hidden w-full h-full", className].filter(Boolean).join(" ")}>
       {children}
       <div
         aria-hidden

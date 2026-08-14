@@ -1,19 +1,21 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useTimeline } from "../core/TimelineContext";
+import { legEase } from "../core/legEase";
+import type { MovementTiming } from "../core/legEase";
 import { measureRelative, fitZoom, interpolateCamera, cameraTransform, rectRecordsEqual } from "./measure";
 import type { CameraRect, CameraKeyframe, ResolvedKeyframe } from "./measure";
 
 export type { CameraRect, CameraKeyframe };
 
-export interface CameraProps {
+export type CameraProps = {
   children: ReactNode;
   /** Camera moves, in frame order. `focus` is an explicit rect or the `id` of a descendant element to measure. */
   keyframes: CameraKeyframe[];
   /** Compute zoom automatically to fit the focused rect when a keyframe doesn't specify one. Default true. */
   fit?: boolean;
   className?: string;
-}
+} & MovementTiming;
 
 /**
  * Pan + zoom over `children`, subsuming CameraPan/CameraZoom (TODO.md C3).
@@ -22,9 +24,16 @@ export interface CameraProps {
  * contract). `focus: elementId` targets are measured via `measure.ts`'s
  * `offsetLeft`/`offsetTop` walk, not `getBoundingClientRect()` — see that
  * file's comment for why (a previous batch shipped exactly that bug).
+ *
+ * Movement between keyframes is eased via `core/legEase.ts` (default
+ * `easing: "standard"`), the same curve-selection every other primitive's
+ * movement goes through — previously this was the one raw-linear `t` left
+ * in the keyframe interpolation (owner feedback round 2: "add similar
+ * smooth movements that you added to other elements into Motion > Camera").
  */
-export function Camera({ children, keyframes, fit = true, className }: CameraProps) {
+export function Camera({ children, keyframes, fit = true, className, ...movement }: CameraProps) {
   const { frame } = useTimeline();
+  const ease = legEase(movement);
   const rootRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [measuredRects, setMeasuredRects] = useState<Record<string, CameraRect>>({});
@@ -69,7 +78,7 @@ export function Camera({ children, keyframes, fit = true, className }: CameraPro
     });
   }, [keyframes, measuredRects, containerSize, fit]);
 
-  const { rect, zoom } = interpolateCamera(resolved, frame);
+  const { rect, zoom } = interpolateCamera(resolved, frame, ease);
   const { panX, panY } = cameraTransform(rect, zoom, containerSize.width, containerSize.height);
 
   return (

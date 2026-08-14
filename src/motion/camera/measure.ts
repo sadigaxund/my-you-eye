@@ -102,11 +102,22 @@ export function fitZoom(rect: CameraRect, containerWidth: number, containerHeigh
 }
 
 /**
- * Linear interpolation across resolved keyframes at `frame`. Frames before
+ * Eased interpolation across resolved keyframes at `frame`. Frames before
  * the first keyframe hold its value; frames after the last hold its value.
  * Pure function — no DOM, no React — so it's directly unit-testable.
+ *
+ * `ease` shapes each keyframe-to-keyframe leg (default: identity, i.e. the
+ * previous raw-linear behavior) — Camera.tsx passes `core/legEase.ts`'s
+ * `legEase(...)`, the same curve-selection `Cursor` uses between its own
+ * events, so a pan/zoom move reads as motion rather than a robotic constant-
+ * speed slide (owner feedback: "standardize the definitions of those
+ * movements so they don't scatter all around codebase").
  */
-export function interpolateCamera(keyframes: ResolvedKeyframe[], frame: number): { rect: CameraRect; zoom: number } {
+export function interpolateCamera(
+  keyframes: ResolvedKeyframe[],
+  frame: number,
+  ease: (t: number) => number = (t) => t,
+): { rect: CameraRect; zoom: number } {
   if (keyframes.length === 0) return { rect: { x: 0, y: 0, width: 0, height: 0 }, zoom: 1 };
   const first = keyframes[0];
   if (frame <= first.at) return { rect: first.rect, zoom: first.zoom };
@@ -118,7 +129,7 @@ export function interpolateCamera(keyframes: ResolvedKeyframe[], frame: number):
   const a = keyframes[i];
   const b = keyframes[i + 1];
   const span = b.at - a.at;
-  const t = span <= 0 ? 1 : (frame - a.at) / span;
+  const t = span <= 0 ? 1 : ease((frame - a.at) / span);
 
   return {
     rect: {

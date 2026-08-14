@@ -11,6 +11,8 @@ export type { Beat, EasingName, SpringName, Timing, TimelineValue } from "./type
 export { resolveBeatFrames } from "./beats";
 export { applyEasing } from "./easing";
 export { applySpring } from "./springs";
+export { legEase } from "./legEase";
+export type { MovementTiming } from "./legEase";
 export { mulberry32, hashSeed, seededValueAt } from "./prng";
 export { Slot } from "./Slot";
 export type { SlotProps } from "./Slot";
