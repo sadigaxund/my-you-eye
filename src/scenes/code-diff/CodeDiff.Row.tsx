@@ -92,8 +92,9 @@ export interface CodeDiffRowProps {
  * motion component reads); a removed-only line collapses out the same way,
  * reversed; a changed pair (a removed line immediately followed by an added
  * line — `pairDiffLines`' definition of "paired") cross-fades between old
- * and new via two absolutely-stacked layers, each word-diffed with
- * `wordDiff` so only the changed tokens are called out.
+ * and new via two absolutely-stacked layers whose fades do not overlap (see
+ * the comment on the branch), each word-diffed with `wordDiff` so only the
+ * changed tokens are called out.
  */
 export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHeight, charWidth }: CodeDiffRowProps) {
   const progress = useProgress({ delay: delayFrames, duration: durationFrames });
@@ -117,11 +118,22 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
   );
 
   if (isChanged && diff) {
+    // A dissolve, NOT a cross-fade. The two layers are stacked on the same
+    // pixels, so any window where both are partly visible paints two
+    // different strings of monospace text on top of each other — the row
+    // becomes "let sum = 0;bl = items.reduce((sum, item)…", which is
+    // unreadable garbage rather than a transition (owner, on the playing
+    // CodeScene: "the 'Playing' scene is weird, i dont understand what it
+    // tries to convey"). Fading the old line fully OUT before the new one
+    // starts coming IN costs one blank beat in the middle and buys a row
+    // that is legible at every single frame.
+    const oldOpacity = Math.max(0, 1 - progress / 0.45);
+    const newOpacity = Math.max(0, (progress - 0.55) / 0.45);
     return (
       <div className="relative">
         <div
           className={cn("flex px-panel font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.removed)}
-          style={{ opacity: 1 - progress }}
+          style={{ opacity: oldOpacity }}
         >
           <span ref={markerRef} className={cn("w-5 shrink-0 text-center", MARKER_TEXT.removed)}>{MARKER_GLYPH.removed}</span>
           {diff.oldSegments.map((seg) => seg.text).join("")}
@@ -129,7 +141,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
         </div>
         <div
           className={cn("absolute inset-0 flex px-panel font-mono text-xs leading-relaxed whitespace-pre", ROW_BG.added)}
-          style={{ opacity: progress }}
+          style={{ opacity: newOpacity }}
         >
           <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.added)}>{MARKER_GLYPH.added}</span>
           {diff.newSegments.map((seg) => seg.text).join("")}

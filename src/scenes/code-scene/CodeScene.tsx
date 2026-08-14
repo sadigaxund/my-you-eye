@@ -14,6 +14,13 @@ export interface CodeSceneProps {
   scene: CodeSceneData;
 }
 
+/** Fraction of a rewriting step spent in `CodeDiff` before it settles into a
+ * plain `CodeBlock` of the new source. Not a prop: a scene author picks the
+ * step's pace, and how that budget splits between "show the change" and "let
+ * the result be read" is a property of the scene format, not of one call
+ * site (AGENTS.md D5 — the schema is the API). */
+const DIFF_SHARE = 0.55;
+
 /** Which step is "current" at `frame`: the last one whose own range has
  * started. Only this one step's code/diff/typing is rendered — earlier
  * steps are already fully settled into whatever source they left behind
@@ -86,7 +93,14 @@ export function CodeScene({ scene }: CodeSceneProps) {
     [nextSource, step.focus, step.highlight],
   );
 
-  const isDiff = !step.typed && nextSource !== prevSource;
+  // A step that rewrites the code spends only its first `DIFF_SHARE` showing
+  // the diff, then settles into the ordinary CodeBlock for the rest. Running
+  // the diff for the whole step left the viewer staring at red/green gutter
+  // chrome until the step ended, so "the code now" was never actually shown
+  // — the step's own `focus` framing and highlights had nothing to land on,
+  // and the next step began from what still looked like a pending change.
+  const diffFrames = Math.max(1, Math.round((range.endFrame - range.startFrame) * DIFF_SHARE));
+  const isDiff = !step.typed && nextSource !== prevSource && frame < range.startFrame + diffFrames;
   const isTyped = Boolean(step.typed);
   const typedCode = isTyped ? nextSource.slice(0, Math.floor(nextSource.length * stepProgress)) : nextSource;
 
@@ -94,6 +108,15 @@ export function CodeScene({ scene }: CodeSceneProps) {
     <div className="flex h-full w-full flex-col gap-stack bg-bg p-panel-xl text-fg">
       <div ref={containerRef} className="relative min-h-0 flex-1">
         <Camera keyframes={keyframes} className="h-full w-full">
+          {/* Camera's transformed layer is a plain 100%×100% block, so a
+              short file used to sit pinned to its top edge with the rest of
+              the 16:9 frame empty. Centring the panel (and letting it size to
+              its content via `max-h-full` instead of `h-full`) is what makes
+              the frame read as composed rather than as a half-filled page.
+              The Annotations stay outside this wrapper: they are
+              `absolute inset-0` against Camera's own positioned root, which
+              is the coordinate space `useCodeAnnotations` measures in. */}
+          <div className="flex h-full w-full items-center justify-center">
           {isDiff ? (
             <CodeDiff
               key={index}
@@ -102,8 +125,8 @@ export function CodeScene({ scene }: CodeSceneProps) {
               language={scene.lang}
               header={scene.file}
               delay={range.startFrame}
-              duration={Math.max(1, range.endFrame - range.startFrame)}
-              className="h-full"
+              duration={diffFrames}
+              className="max-h-full"
             />
           ) : (
             <CodeBlock
@@ -116,9 +139,10 @@ export function CodeScene({ scene }: CodeSceneProps) {
               focusRange={step.focus}
               highlightRanges={highlightRanges.length > 0 ? highlightRanges : undefined}
               lineId={(n) => lineElementId(blockId, n)}
-              className="h-full"
+              className="max-h-full"
             />
           )}
+          </div>
           {annotations.map((a, i) => (
             <Annotation
               key={i}

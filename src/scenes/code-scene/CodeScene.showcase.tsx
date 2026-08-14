@@ -57,6 +57,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Playing",
+      description: "The whole four-step scene, running. Step 1 types the file in; step 2 dims everything outside the loop and highlights each \"sum\"; step 3 rewrites it — the diff plays for the first half of the step and then settles into the plain new source so it can actually be read; step 4 frames line 1 and points a callout at the new parameter. Every frame below is one moment out of this same timeline.",
       render: () => (
         <MotionPreview durationInFrames={total} fps={FPS}>
           <Frame><CodeScene scene={scene} /></Frame>
