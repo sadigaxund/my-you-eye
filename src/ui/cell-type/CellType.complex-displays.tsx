@@ -4,9 +4,8 @@ import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
 import { Badge } from "../badge";
-import { DataList } from "../data-list";
-import { useTruncated, EllipsisBadge } from "./CellType.shared";
-import type { CellValueType } from "./CellType";
+import { useTruncated, ExpandIndicator, EXPAND_POPOVER_STYLE } from "./CellType.shared";
+import type { UrlReplacement } from "./CellType";
 
 function safeStringify(value: unknown): string {
   const seen = new WeakSet();
@@ -103,16 +102,17 @@ export function JsonDisplay({ value }: { value: unknown }) {
                 <span key={i} className={tokenStyles[t.type]}>{t.value}</span>
               ))}
             </span>
-            <EllipsisBadge />
+            <ExpandIndicator />
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
-        <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-xs text-muted">JSON</span>
-        </div>
+      <PopoverContent side="bottom" align="start" className="p-2 overflow-hidden" style={EXPAND_POPOVER_STYLE}>
         <ScrollArea className="max-h-72">
-          <CodeBlock code={preview.full} language="json" highlight />
+          {/* `bare`: no persistent "JSON" header duplicating this popover's
+              own framing — just a hover-revealed copy button, and a
+              transparent background so the block reads as part of the
+              popover surface rather than a second nested panel. */}
+          <CodeBlock code={preview.full} language="json" highlight bare />
         </ScrollArea>
       </PopoverContent>
     </Popover>
@@ -153,7 +153,7 @@ function detectType(val: unknown): "text" | "number" | "boolean" | "null" | "ema
   return "text";
 }
 
-export function TreeDisplay({ value, replacements }: { value: unknown; replacements?: unknown[] }) {
+export function TreeDisplay({ value, replacements }: { value: unknown; replacements?: UrlReplacement[] }) {
   if (typeof value !== "object" || value === null) return <span className="truncate inline-block max-w-full align-middle">{String(value)}</span>;
   const nodes = objToTreeNodes(value);
   const isArray = Array.isArray(value);
@@ -162,7 +162,10 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
     ? []
     : Object.keys(value as Record<string, unknown>);
 
-  const [previewRef, isTruncated] = useTruncated<HTMLSpanElement>([value]);
+  // Truncation detection isn't needed here anymore (the indicator is now
+  // unconditional, see below) but the ref still drives the preview span's
+  // overflow clipping, so the hook stays — just its boolean is unused.
+  const [previewRef] = useTruncated<HTMLSpanElement>([value]);
 
   return (
     <Popover>
@@ -184,85 +187,20 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
                 ))}
               </span>
             )}
-            {isTruncated && <EllipsisBadge />}
+            {/* Tree is always expandable (the preview only shows top-level
+                keys, never nested values), so the indicator isn't gated on
+                isTruncated the way plain-text truncation is — same
+                reasoning as JsonDisplay just above. */}
+            <ExpandIndicator />
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
+      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={EXPAND_POPOVER_STYLE}>
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">Tree</span>
         </div>
         <ScrollArea className="max-h-72 p-2">
           <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
-        </ScrollArea>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-// Maps each array item to a DataList row value/type — primitives keep
-// their own CellType rendering (numbers, booleans stay typed rather than
-// stringified), anything else (nested objects/arrays) falls back to a
-// stringified "badge" pill, matching what String(item) rendered before.
-function arrayItemValue(item: unknown): string | number | boolean | null {
-  if (item === null || item === undefined) return null;
-  if (typeof item === "number" || typeof item === "boolean" || typeof item === "string") return item;
-  return String(item);
-}
-function arrayItemType(item: unknown): CellValueType {
-  if (item === null || item === undefined) return "null";
-  if (typeof item === "number") return "number";
-  if (typeof item === "boolean") return "boolean";
-  return "badge";
-}
-
-export function ArrayDisplay({ value }: { value: unknown }) {
-  const arr = Array.isArray(value) ? value : [];
-  const count = arr.length;
-
-  const [previewRef, isTruncated] = useTruncated<HTMLSpanElement>([value]);
-
-  return (
-    <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
-        {count === 0 ? (
-          <span className="text-muted italic">empty</span>
-        ) : (
-          <>
-            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
-              {count} items
-            </Badge>
-            <span
-              ref={previewRef}
-              className="block min-w-0 overflow-hidden whitespace-nowrap text-secondary-fg"
-            >
-              {arr.map((item, i) => (
-                <span key={i}>{i > 0 && <span className="text-muted">, </span>}{String(item)}</span>
-              ))}
-            </span>
-            {isTruncated && <EllipsisBadge />}
-          </>
-        )}
-      </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
-        <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-xs text-muted">List ({count})</span>
-        </div>
-        <ScrollArea className="max-h-72">
-          {/* Reuses DataList instead of a hand-rolled pill list (AGENTS.md
-              §1 Step A) — each item gets an index label so it's still a
-              proper label/value row, not just a bare list of badges. */}
-          <DataList
-            density="compact"
-            labelWidth="sm"
-            items={arr.map((item, i) => ({
-              label: `[${i}]`,
-              value: arrayItemValue(item),
-              type: arrayItemType(item),
-              badgeVariant: "neutral",
-              badgeStyle: "soft",
-            }))}
-          />
         </ScrollArea>
       </PopoverContent>
     </Popover>

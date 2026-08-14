@@ -9,6 +9,7 @@ import { Button } from "../button";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { ScrollArea } from "../scroll-area";
 import { PercentageDisplay } from "./CellType.numeric-displays";
+import { useTruncated, ExpandIndicator, EXPAND_POPOVER_STYLE } from "./CellType.shared";
 
 // ─── sparkline ───────────────────────────────────────────────────────────
 // A trend inside a cell. Reuses Sparkline as-is (no forked chart math) —
@@ -45,15 +46,22 @@ export function TagsDisplay({ value }: { value: unknown }) {
 // the exact same syntax highlighting CellType's "json" type does.
 export function CodeDisplay({ value, language }: { value: unknown; language?: string }) {
   const code = String(value);
-  const firstLine = code.split("\n")[0];
+  const lines = code.split("\n");
+  const firstLine = lines[0];
+  const [previewRef, isTruncated] = useTruncated<HTMLSpanElement>([value]);
+  // Multi-line code always has "more" below the first-line preview, even
+  // when that first line itself isn't clipped — so the indicator isn't
+  // gated on isTruncated alone the way plain single-line text is.
+  const hasMore = isTruncated || lines.length > 1;
   return (
     <Popover>
       <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
-        <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left">{firstLine}</span>
+        <span ref={previewRef} className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left">{firstLine}</span>
+        {hasMore && <ExpandIndicator />}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "min(32rem, 90vw)" }}>
+      <PopoverContent side="bottom" align="start" className="p-2 overflow-hidden" style={EXPAND_POPOVER_STYLE}>
         <ScrollArea className="max-h-72">
-          <CodeBlock code={code} language={language ?? "text"} highlight={Boolean(language)} wrap={false} />
+          <CodeBlock code={code} language={language ?? "text"} highlight={Boolean(language)} wrap={false} bare />
         </ScrollArea>
       </PopoverContent>
     </Popover>

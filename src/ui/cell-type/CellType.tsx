@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react";
+import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
@@ -14,19 +15,22 @@ import {
   NumberDisplay, PercentageDisplay, BytesDisplay, DurationDisplay,
   CurrencyDisplay, SignedDisplay,
 } from "./CellType.numeric-displays";
-import { JsonDisplay, TreeDisplay, ArrayDisplay } from "./CellType.complex-displays";
+import { JsonDisplay, TreeDisplay } from "./CellType.complex-displays";
+import { ArrayDisplay } from "./CellType.array-display";
+import { MarkdownDisplay } from "./CellType.markdown-display";
 import {
   SparklineDisplay, TagsDisplay, CodeDisplay, ColorDisplay,
   HashDisplay, UserDisplay, ProgressCellDisplay, SecretDisplay,
 } from "./CellType.misc-displays";
-import { useTruncated, EllipsisBadge } from "./CellType.shared";
+import { useTruncated, ExpandIndicator, EXPAND_POPOVER_STYLE } from "./CellType.shared";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
   | "number" | "percentage" | "date-human" | "date-system" | "datetime-tz"
   | "bytes" | "duration" | "currency" | "signed" | "array"
   | "image" | "audio" | "tree"
-  | "sparkline" | "tags" | "code" | "color" | "hash" | "user" | "progress" | "secret";
+  | "sparkline" | "tags" | "code" | "color" | "hash" | "user" | "progress" | "secret"
+  | "markdown";
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
 
@@ -71,6 +75,42 @@ function applyReplacements(str: string, replacements?: UrlReplacement[]) {
   let r = str;
   for (const x of replacements) r = r.replaceAll(x.pattern, x.label);
   return r;
+}
+
+function GoToIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim">
+      <path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-none stroke-current opacity-dim" strokeWidth="1.1">
+      <rect x="1.5" y="2.5" width="9" height="7" rx="0.75" />
+      <path d="M1.75 3.25 6 6.25l4.25-3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Shared by "url" and "email": both are an anchor with a truncated label
+// and a small trailing action glyph — the "go to"/"mail me" icon. One
+// component with an icon slot instead of two near-identical hand-rolled
+// `<a>` tags, per the owner's ask to reuse the URL type's mechanism rather
+// than parallel it for Email.
+function LinkCellValue({ href, label, icon, external }: { href: string; label: string; icon: ReactNode; external?: boolean }) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full"
+    >
+      <span className="truncate">{label}</span>
+      {icon}
+    </a>
+  );
 }
 
 function ImageDisplay({ value, compact }: { value: unknown; compact?: boolean }) {
@@ -181,10 +221,13 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
           >
             {value}
           </span>
-          {isTruncated && <EllipsisBadge />}
+          {isTruncated && <ExpandIndicator />}
         </span>
       </PopoverTrigger>
-      <PopoverContent className="max-w-sm p-3 text-sm whitespace-pre-wrap break-words">
+      <PopoverContent
+        className="p-3 text-sm whitespace-pre-wrap break-words"
+        style={EXPAND_POPOVER_STYLE}
+      >
         {value}
       </PopoverContent>
     </Popover>
@@ -198,10 +241,8 @@ export function CellType({
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
     case "boolean": return <BooleanDisplay value={value} />;
-    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline inline-flex min-w-0 w-full"><span className="truncate">{String(value)}</span></a>;
-    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full">
-      <span className="truncate">{applyReplacements(String(value), replacements)}</span>
-      <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim"><path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" /></svg></a>;
+    case "email": return <LinkCellValue href={`mailto:${String(value)}`} label={String(value)} icon={<MailIcon />} />;
+    case "url": return <LinkCellValue href={String(value)} label={applyReplacements(String(value), replacements)} icon={<GoToIcon />} external />;
     case "json": return <JsonDisplay value={value} />;
     case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
@@ -226,6 +267,7 @@ export function CellType({
     case "user": return <UserDisplay value={value} avatarSrc={avatarSrc} />;
     case "progress": return <ProgressCellDisplay value={value} />;
     case "secret": return <SecretDisplay value={value} />;
+    case "markdown": return <MarkdownDisplay value={value} />;
     default: return <TruncatedCellValue value={String(value)} />;
   }
 }
