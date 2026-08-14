@@ -5,6 +5,7 @@ import { themeGroups } from "../lib/themes";
 import type { ThemeProfile } from "../lib/themes";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
+import type { TextureName } from "../ui/patterns/textured-surface";
 import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/patterns/textured-surface/svg-utils";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
@@ -22,7 +23,7 @@ export default function App() {
   const [theme, setTheme] = useState<ThemeProfile>("default");
   const [activeSlug, setActiveSlug] = useState<string | undefined>(initialSlug);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [texture, setTexture] = useState("theme");
+  const [texture, setTexture] = useState<TextureName>("theme");
 
   const toggleDark = () => {
     setDark((d) => {

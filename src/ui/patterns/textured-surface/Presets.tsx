@@ -58,7 +58,7 @@ const PRESETS: PresetDef[] = [
     texture: "brushed-aluminium",
     mode: "tiled",
     rotated: 45,
-    ...(() => { const s = tileableMetallicSvg({ freqX: 0.3, freqY: 0.003, octaves: 3, stretch: 3.0, tile: 250, opacity: 0 }); return { svg: s, tileSize: 250, opacity: 0.30 }; })(),
+    ...(() => { const s = tileableMetallicSvg({ freqX: 0.3, freqY: 0.003, angle: 45, octaves: 3, stretch: 3.0, tile: 250, opacity: 0 }); return { svg: s, tileSize: 250, opacity: 0.30 }; })(),
   },
   {
     name: "Micro texture",

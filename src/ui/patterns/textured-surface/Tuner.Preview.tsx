@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, type React } from "react";
+import { useRef, useState, useEffect } from "react";
+import type React from "react";
 
 const FEATHER_A = "repeating-linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%)";
 const FEATHER_B = "repeating-linear-gradient(to bottom, black 0%, transparent 50%, black 100%)";

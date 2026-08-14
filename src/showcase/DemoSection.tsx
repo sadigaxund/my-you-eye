@@ -1,13 +1,14 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { CodeBlock } from "../ui/code-block";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
+import type { TextureName } from "../ui/patterns/textured-surface";
 import { cn } from "../lib/cn";
 import type { RegistryDemo } from "./registry";
 
 const overflowClass = (v: NonNullable<RegistryDemo["overflow"]>) =>
   v === "auto" ? "overflow-auto" : v === "hidden" ? "overflow-hidden" : "overflow-visible";
 
-export function DemoSection({ demo, texture }: { demo: RegistryDemo; texture: string }) {
+export function DemoSection({ demo, texture }: { demo: RegistryDemo; texture: TextureName }) {
   const hasSource = Boolean(demo.source);
   const ov = demo.overflow ?? "visible";
 

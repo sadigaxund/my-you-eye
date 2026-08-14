@@ -2,10 +2,11 @@ import { useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { cn } from "../lib/cn";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
+import type { TextureName } from "../ui/patterns/textured-surface";
 import { GROUPS, pages } from "./registry";
 
 interface SidebarProps {
-  texture: string;
+  texture: TextureName;
   activeSlug: string | undefined;
   onSelect: (slug: string) => void;
   mobileOpen: boolean;

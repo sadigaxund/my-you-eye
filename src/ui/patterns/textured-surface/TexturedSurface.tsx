@@ -91,11 +91,16 @@ const texturedSurfaceVariants = cva(
   },
 );
 
+/** The material a surface renders. Named so callers holding it in state can
+ * type that state properly — a bare `useState("theme")` infers `string` and
+ * silently stops being checked against this union at every call site. */
+export type TextureName = "paper-grain" | "frosted-glass" | "brushed-aluminium" | "theme";
+
 export interface TexturedSurfaceProps
   extends VariantProps<typeof texturedSurfaceVariants>,
     Omit<HTMLAttributes<HTMLDivElement>, "color"> {
   color?: string;
-  texture?: "paper-grain" | "frosted-glass" | "brushed-aluminium" | "theme";
+  texture?: TextureName;
   strength?: "subtle" | "medium" | "strong";
   layer?: TextureLayer;
   alignToViewport?: boolean;

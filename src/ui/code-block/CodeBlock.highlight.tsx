@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 const KEYWORDS = new Set([
   "break", "case", "catch", "class", "const", "continue", "debugger", "default",
   "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for",
@@ -273,7 +275,7 @@ export function tokenize(code: string, language?: string): Token[] | null {
   return TOKENIZERS[lang](code);
 }
 
-export function renderHighlighted(tokens: Token[]): JSX.Element {
+export function renderHighlighted(tokens: Token[]): ReactElement {
   return (
     <>
       {tokens.map((t, i) => (
@@ -304,7 +306,7 @@ export function splitTokensByLine(tokens: Token[]): Token[][] {
 }
 
 /** Render a single line of tokens. */
-export function renderHighlightedLine(tokens: Token[]): JSX.Element {
+export function renderHighlightedLine(tokens: Token[]): ReactElement {
   return (
     <>
       {tokens.map((t, i) => (

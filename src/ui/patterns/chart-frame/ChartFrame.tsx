@@ -41,7 +41,11 @@ export interface ChartFrameProps {
    * the measured plot rect and scale helpers so no chart re-derives axis
    * math (AGENTS.md instruction: "if you find yourself writing axis code
    * twice, stop and push it into ChartFrame"). */
-  children: (ctx: ChartFrameRenderCtx) => ReactNode;
+  /** Optional because `loading` and `empty` short-circuit before the plot
+   * is ever rendered — a caller in either of those states has no marks to
+   * draw and was previously forced to pass a dummy render function to
+   * satisfy the type. */
+  children?: (ctx: ChartFrameRenderCtx) => ReactNode;
   /** Tooltip content for the current hover target; ChartFrame owns
    * positioning, the chart owns content and calls `onHover` from its marks. */
   tooltip?: ReactNode;
@@ -160,7 +164,7 @@ function ChartFrame({
                     {label}
                   </text>
                 ))}
-                {children(ctx)}
+                {children?.(ctx)}
               </svg>
               {tooltip && hover && (
                 <div

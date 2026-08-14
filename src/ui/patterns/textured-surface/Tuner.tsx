@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import type { TextureKey } from "./svg-utils";
+import type { TextureKey, PaperState, FrostedBlurState, MetallicState } from "./svg-utils";
 import {
   DEFAULT_PAPER, DEFAULT_FROSTED_BLUR, DEFAULT_METALLIC,
 } from "./svg-utils";
