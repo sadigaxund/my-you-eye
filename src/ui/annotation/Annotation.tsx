@@ -170,7 +170,16 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
             strokeDashoffset={length * (1 - lineT)}
           />
           {head && lineT >= 1 && (
-            <g className={cn(FILL[accentColor], STROKE[accentColor])} transform={`translate(${target.x},${target.y}) rotate(${angle})`}>
+            // `text-*`, not `fill-*`/`stroke-*`: every shape in ARROWHEADS
+            // paints with the `fill="currentColor"` ATTRIBUTE, which resolves
+            // against the inherited `color` property — a `fill-primary` class
+            // on this <g> sets the g's own fill and is simply ignored by a
+            // child that declares its own. That left every Annotation head
+            // rendering in the page's default text colour (owner: "why do the
+            // triangle arrowheads have smaller black arrowheads within them")
+            // while the leader line beside it was correctly accented.
+            // ConnectionPath already colours its head this way (`arrowColor`).
+            <g className={TEXT[accentColor]} transform={`translate(${target.x},${target.y}) rotate(${angle})`}>
               {head.render()}
             </g>
           )}
