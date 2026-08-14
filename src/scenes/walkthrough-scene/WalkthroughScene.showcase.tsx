@@ -18,8 +18,13 @@ const scene: WalkthroughSceneData = {
   image: placeholderScreenshot(),
   steps: [
     { say: "Open the profile card.", to: { x: 25, y: 35 }, action: "click" },
-    { say: "This is where you rename your workspace.", to: { x: 25, y: 35 }, spotlight: { x: 4, y: 22, width: 44, height: 33 }, annotate: "Rename here" },
-    { say: "Type the new name.", to: { x: 25, y: 35 }, type: "Jordan Lee" },
+    // No `to` here on purpose — when `spotlight` is set, the cursor's
+    // target IS the spotlight rect's own center (WalkthroughScene's
+    // resolveTarget()), so the cursor always lands exactly inside the
+    // highlighted region instead of a hand-typed `to` that has to be kept
+    // in sync with the rect by eye.
+    { say: "This is where you rename your workspace.", spotlight: { x: 4, y: 22, width: 44, height: 33 }, annotate: "Rename here" },
+    { say: "Type the new name.", to: { x: 26, y: 38.5 }, type: "Jordan Lee" },
     { say: "Save the change.", to: { x: 90, y: 91 }, action: "click" },
   ],
 };

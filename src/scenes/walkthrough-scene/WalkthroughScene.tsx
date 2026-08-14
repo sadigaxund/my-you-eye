@@ -1,7 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { DeviceFrame } from "../../ui/device-frame";
 import { Image } from "../../ui/image";
-import { Annotation } from "../../ui/annotation";
 import { Cursor, Spotlight } from "../../motion";
 import type { CursorEvent, CursorAction } from "../../motion";
 import { useProgress, useSequence, useTimeline } from "../../motion/core";
@@ -60,6 +59,23 @@ function rectToPx(r: PercentRect, size: { width: number; height: number }) {
 }
 
 /**
+ * The one place a step's target point is derived (TODO.md D1: one
+ * computation, not two independently-authored ones that can drift). When a
+ * step sets `spotlight`, that rect's own center IS the target — the cursor
+ * moves there and an `annotate` label anchors there, so the cursor always
+ * ends up inside the highlighted region by construction, never a hand-typed
+ * `to` that happens to land close to (but not exactly at) the spotlight's
+ * center (owner report: "the cursor does not end up at the highlighted
+ * circle area"). `to` is still the target for steps with no spotlight.
+ */
+function resolveTarget(step: WalkthroughStep): PercentPoint | undefined {
+  if (step.spotlight) {
+    return { x: step.spotlight.x + step.spotlight.width / 2, y: step.spotlight.y + step.spotlight.height / 2 };
+  }
+  return step.to;
+}
+
+/**
  * `DeviceFrame` + the `Cursor` primitive + `Spotlight` (TODO.md Phase E) —
  * a simulated UI walkthrough over a static screenshot, the alternative to a
  * screen recording. `Cursor` already renders a `Ripple` on click/double-click
@@ -85,8 +101,9 @@ export function WalkthroughScene({ scene }: WalkthroughSceneProps) {
     if (size.width === 0) return [];
     const out: CursorEvent[] = [];
     scene.steps.forEach((s, i) => {
-      if (!s.to) return;
-      const { x, y } = toPx(s.to, size);
+      const target = resolveTarget(s);
+      if (!target) return;
+      const { x, y } = toPx(target, size);
       const at = ranges[stepName(s.id, i)].startFrame;
       const action = s.action && s.action !== "none" ? ACTION_MAP[s.action] : undefined;
       out.push({ at, x, y, action });
@@ -95,8 +112,22 @@ export function WalkthroughScene({ scene }: WalkthroughSceneProps) {
     return out;
   }, [scene.steps, ranges, size]);
 
-  const spotlightRect = step?.spotlight && size.width > 0 ? rectToPx(step.spotlight, size) : undefined;
-  const annotateTarget = step?.annotate && step.to && size.width > 0 ? toPx(step.to, size) : undefined;
+  // Spotlight stays mounted on every frame — including steps with no
+  // `spotlight` rect (`dim: 0`, an inert overlay) — rather than being
+  // conditionally swapped in/out around `screenshot`. Toggling which
+  // element wraps `screenshot` unmounts and remounts the Image itself at
+  // the exact frame a step with a spotlight starts/ends, which is what was
+  // causing the reported twitch: React tears down and rebuilds the image's
+  // DOM node (and this component's `useFrameSize` ResizeObserver briefly
+  // re-measures a freshly-mounted node), producing a one-frame layout
+  // hiccup right at that step boundary. A stable wrapper means `screenshot`
+  // never remounts, no matter how many steps toggle their spotlight on and
+  // off.
+  const spotlightFocus = step?.spotlight && size.width > 0 ? rectToPx(step.spotlight, size) : { x: 0, y: 0, width: 0, height: 0 };
+  const spotlightDim = step?.spotlight ? 0.6 : 0;
+
+  const target = step ? resolveTarget(step) : undefined;
+  const annotateTarget = step?.annotate && target && size.width > 0 ? toPx(target, size) : undefined;
 
   const screenshot = <Image src={scene.image} alt={scene.title ?? "screenshot"} fit="cover" radius="none" className="h-full w-full" />;
 
@@ -105,16 +136,28 @@ export function WalkthroughScene({ scene }: WalkthroughSceneProps) {
       <div className="w-full max-w-4xl">
         <DeviceFrame variant={scene.frame ?? "browser"} url={scene.url} title={scene.title} className="aspect-video w-full">
           <div ref={frameRef} className="relative h-full w-full">
-            {spotlightRect ? (
-              <Spotlight focus={spotlightRect} delay={range.startFrame} duration="normal" className="h-full w-full">
-                {screenshot}
-              </Spotlight>
-            ) : (
-              screenshot
-            )}
+            <Spotlight focus={spotlightFocus} dim={spotlightDim} delay={range.startFrame} duration="normal" className="h-full w-full">
+              {screenshot}
+            </Spotlight>
             <Cursor events={events} />
+            {/* A label only, never a second leader line pointing at the same
+                spot the Cursor is already at (owner report: "no need to add
+                another pointing line if there is a cursor, kinda
+                duplication") — `Annotation`'s leader-line is always drawn
+                (no "line-less" mode to opt into), so this renders a plain
+                floating callout instead of importing that component. */}
             {annotateTarget && (
-              <Annotation target={annotateTarget} label={step!.annotate} progress={stepProgress} containerWidth={size.width} />
+              <div
+                className="pointer-events-none absolute rounded-ui-sm bg-surface-opaque px-tight py-compact-y text-xs text-fg shadow-card"
+                style={{
+                  left: annotateTarget.x,
+                  top: annotateTarget.y,
+                  opacity: stepProgress,
+                  transform: "translate(-50%, calc(-100% - var(--spacing-tight)))",
+                }}
+              >
+                {step!.annotate}
+              </div>
             )}
           </div>
         </DeviceFrame>
