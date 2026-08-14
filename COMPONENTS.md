@@ -304,7 +304,7 @@ Step (`WalkthroughStep`):
 
 | Component | Tier | Variants | Demos |
 |---|---|---|---|
-| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / html / image / json / markdown / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
+| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / html / image / json / markdown / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types, Column alignment |
 | `DataList` | `my-you-eye` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | `my-you-eye` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
 | `Table` | `my-you-eye` | align: right<br>variant: striped<br>density: compact<br>type: text | Composition, Variants, Density, Truncation & expand, Sticky header |

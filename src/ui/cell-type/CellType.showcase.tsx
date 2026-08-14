@@ -121,6 +121,46 @@ const entry: ShowcaseEntry = {
         </TableGrid>
       ),
     },
+    {
+      name: "Column alignment",
+      description: "Several rows of the same numeric/date type, stacked in a fixed-width column — tabular-nums (equal digit advance width) plus a structural number/unit (or date/time/zone) split keep the constant-width parts lined up with pure CSS, no measurement.",
+      render: () => (
+        <div className="flex flex-wrap gap-8">
+          <div className="flex flex-col gap-1 w-24">
+            <div className="text-xs font-medium text-muted mb-1">Percentage</div>
+            <CellType type="percentage" value={0.4} />
+            <CellType type="percentage" value={0.123} />
+            <CellType type="percentage" value={0.98} />
+            <CellType type="percentage" value={0.05} />
+          </div>
+          <div className="flex flex-col gap-1 w-28">
+            <div className="text-xs font-medium text-muted mb-1">Bytes</div>
+            <CellType type="bytes" value={2048} />
+            <CellType type="bytes" value={1073741824} />
+            <CellType type="bytes" value={512} />
+            <CellType type="bytes" value={9876543} />
+          </div>
+          <div className="flex flex-col gap-1 w-32">
+            <div className="text-xs font-medium text-muted mb-1">Currency</div>
+            <CellType type="currency" value={1234.56} />
+            <CellType type="currency" value={9.5} />
+            <CellType type="currency" value={102345.1} />
+          </div>
+          <div className="flex flex-col gap-1 w-28">
+            <div className="text-xs font-medium text-muted mb-1">Duration</div>
+            <CellType type="duration" value={3661} />
+            <CellType type="duration" value={45} />
+            <CellType type="duration" value={7325} />
+          </div>
+          <div className="flex flex-col gap-1 w-48">
+            <div className="text-xs font-medium text-muted mb-1">DateTime TZ</div>
+            <CellType type="datetime-tz" value="2026-07-17T12:00:00Z" />
+            <CellType type="datetime-tz" value="2026-11-03T09:05:00Z" />
+            <CellType type="datetime-tz" value="2026-01-05T23:45:00Z" />
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;
