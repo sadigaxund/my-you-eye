@@ -76,7 +76,28 @@ export const DomDriver = forwardRef<DomDriverHandle, DomDriverProps>(function Do
 
   const tick = useCallback(
     (ts: number) => {
-      if (lastTsRef.current == null) lastTsRef.current = ts;
+      // The first tick after mount — or after any play()/seek() call resets
+      // lastTsRef to null — has no previous timestamp to diff against, so
+      // dtSeconds/deltaFrames are meaningless zero here, not a real "no
+      // movement this frame" reading. Priming lastTsRef and bailing before
+      // the boundary check matters: without it, `next = frameRef.current +
+      // 0` starting exactly at frame 0 satisfies `next <= 0` on this very
+      // first tick, which the boundary logic below reads as "played
+      // backward into frame 0, stop" and immediately sets playingRef.current
+      // = false — pausing forward playback before it ever moves. Harmless
+      // (masked) whenever `loop` is true (the non-loop-only pause branch
+      // never fires), which is why every MotionPreview showcase demo
+      // (loop=true by default) never showed this; Presenter's stage plays
+      // with loop=false to hold at each step, so every scene entered at
+      // frame 0 auto-paused on frame 1 — the scene's whole entrance
+      // animation never advanced past its opacity-0/translated starting
+      // state (owner report: "the controls work fine... I don't really see
+      // the scenes").
+      if (lastTsRef.current == null) {
+        lastTsRef.current = ts;
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
       const dtSeconds = (ts - lastTsRef.current) / 1000;
       lastTsRef.current = ts;
 
