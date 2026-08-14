@@ -291,6 +291,27 @@ built in Phase G/H, not Phase F.
 
 ### Known issues
 
+- **TexturedSurface lag is reported but not yet explained.** Owner: "the UI becomes laggy when
+  TexturedSurface style is applied, and it's noticeable." Two candidate causes have been tested
+  and rejected:
+  - *Per-tile `feTurbulence` re-evaluation.* Rasterizing the textures to cached bitmaps was
+    implemented and then removed. With `background-size` varied per frame to force genuine
+    re-rasterization, the SVG source ran ~17.5ms/frame against ~22.3ms for the equivalent
+    cached PNG — 5-octave fractal noise cannot beat a bitmap resample unless the browser is
+    already caching the filtered result. (Also measured: `toDataURL` on the 1000px frosted page
+    tile at dpr 2 blocks the main thread for 724ms and yields a 6.8MB string. If bitmap caching
+    is ever revisited, it must use `toBlob`.)
+  - *Unconditional `getComputedStyle` per render.* Real, and fixed, but far too small to
+    account for visible lag on its own.
+
+  Remaining suspects, in order: (a) `mix-blend-mode: hard-light` on 2–3 stacked full-size
+  layers per surface, which forces backdrop readback and off the fast compositing path —
+  AGENTS.md §7 already names "compositing through the complex HTML background layer" as the
+  documented cost; (b) `alignToViewport`, which sets `background-attachment: fixed`, the exact
+  pattern §0.12 rule 12 bans in theme files, here reachable as a component prop (currently
+  unused anywhere in `src/`); (c) sheer layer count. Headless software rendering was too noisy
+  to discriminate between these — next step needs a trace on the owner's own machine, with the
+  specific page and theme where the lag shows.
 - `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).
 - `CodeBlock.highlight.tsx` exceeds the 250-line lint warning (pre-existing).
 - Unbuilt guards: `check-tokens.mjs` (no raw px/hex), dead-CVA-variant check in `audit.mjs`.
