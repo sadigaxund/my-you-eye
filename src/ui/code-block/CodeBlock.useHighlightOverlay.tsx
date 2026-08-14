@@ -90,8 +90,18 @@ export function useHighlightOverlay(
       if (!span) continue;
       const color = r.color ?? "primary";
       if (!map.has(color)) map.set(color, []);
+      // `offsetLeft` is the line div's BORDER-box left, and that div carries
+      // `px-panel` — so the first character actually starts one padding-left
+      // (16px ≈ 2.2 monospace chars) further in. Leaving it out shifted every
+      // highlight two characters to the left of the text it was naming, which
+      // is what made them look like they landed on arbitrary spans (owner:
+      // "the 'highlight substrings' examples are highlighting random
+      // incomprehensible parts of the code"). Read from computed style rather
+      // than hardcoding the token's value: the padding is a theme variable and
+      // this hook's whole premise is measuring real geometry (AGENTS.md A1).
+      const padLeft = parseFloat(getComputedStyle(lineEl).paddingLeft) || 0;
       map.get(color)!.push({
-        x: lineEl.offsetLeft + span.start * charW,
+        x: lineEl.offsetLeft + lineEl.clientLeft + padLeft + span.start * charW,
         y: lineEl.offsetTop,
         width: Math.max(0, span.end - span.start) * charW,
         height: lineEl.offsetHeight,
