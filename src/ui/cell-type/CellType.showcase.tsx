@@ -3,6 +3,22 @@ import type { ReactNode } from "react";
 import { CellType } from ".";
 import { cn } from "../../lib/cn";
 
+const HTML_RICH =
+  '<p>Invoice for <b>Acme Corp</b> &mdash; see the <a href="https://example.com">portal</a>.</p>';
+
+// Deliberately hostile, so the demo PROVES the sanitiser rather than
+// asserting it: a javascript: href, an onerror image, an inline script and a
+// style tag. Expand the cell — the paragraph and the safe link survive, the
+// hostile link loses its href entirely, and nothing else renders or runs.
+const HTML_HOSTILE =
+  '<p>Rich <b>text</b> from a CMS.</p>' +
+  '<p><a href="https://example.com">safe link</a> &middot; ' +
+  '<a href="javascript:alert(document.cookie)">hostile link</a></p>' +
+  '<img src=x onerror="alert(1)">' +
+  '<script>alert(2)</' + 'script>' +
+  '<style>body{display:none}</' + 'style>' +
+  '<table><tr><th>key</th><td>value</td></tr></table>';
+
 function TableGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
@@ -50,7 +66,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "New data types",
-      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal), markdown (reuses the Markdown component — inline formatting in the cell, full block rendering in the expand popover).",
+      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal), markdown (reuses the Markdown component — inline formatting in the cell, full block rendering in the expand popover; link targets are scheme-checked, so the javascript: link in the multi-block row renders with no href at all), html (sanitised through DOMPurify on BOTH render paths before anything reaches the DOM — the \"hostile input\" row carries a javascript: link, an onerror image, a script tag and a style tag, and none of them survive).",
       render: () => (
         <TableGrid>
           <div role="row" className="contents">
@@ -67,7 +83,9 @@ const entry: ShowcaseEntry = {
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Progress</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="progress" value={68} /></div></div>
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Secret</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="secret" value="sk_live_51H8x9fJ2mN3qR7vT" /></div></div>
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"Ships with **bold**, *italic*, `inline code`, and [links](https://example.com)."} /></div></div>
-          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown (multi-block)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"# Release notes\n\n- Fixed the **login** bug\n- Added `dark mode`\n\nSee the [changelog](https://example.com) for details."} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown (multi-block)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"# Release notes\n\n- Fixed the **login** bug\n- Added `dark mode`\n\nSee the [changelog](https://example.com) for details, and note that a [hostile link](javascript:alert(1)) is rendered inert."} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">HTML</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="html" value={HTML_RICH} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">HTML (hostile input)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="html" value={HTML_HOSTILE} /></div></div>
         </TableGrid>
       ),
     },

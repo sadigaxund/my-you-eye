@@ -706,6 +706,7 @@
       "demos": [
         "States (circle)",
         "Socket shape — mounted on a border",
+        "Socket mount — outward vs inward",
         "Socket shape — all states",
         "Circle vs socket, side by side"
       ]
@@ -899,6 +900,7 @@
           "duration",
           "email",
           "hash",
+          "html",
           "image",
           "json",
           "markdown",
@@ -1016,6 +1018,11 @@
       "demos": [
         "Horizontal — single lane",
         "Horizontal — lanes",
+        "Spans — events with a duration",
+        "Shared scale across lanes",
+        "Label placement",
+        "Density",
+        "Progress (playhead reveal)",
         "Vertical — single lane",
         "Vertical — lanes"
       ]

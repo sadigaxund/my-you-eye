@@ -18,6 +18,7 @@ import {
 import { JsonDisplay, TreeDisplay } from "./CellType.complex-displays";
 import { ArrayDisplay } from "./CellType.array-display";
 import { MarkdownDisplay } from "./CellType.markdown-display";
+import { HtmlDisplay } from "./CellType.html-display";
 import {
   SparklineDisplay, TagsDisplay, CodeDisplay, ColorDisplay,
   HashDisplay, UserDisplay, ProgressCellDisplay, SecretDisplay,
@@ -30,7 +31,7 @@ export type CellValueType =
   | "bytes" | "duration" | "currency" | "signed" | "array"
   | "image" | "audio" | "tree"
   | "sparkline" | "tags" | "code" | "color" | "hash" | "user" | "progress" | "secret"
-  | "markdown";
+  | "markdown" | "html";
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
 
@@ -268,6 +269,7 @@ export function CellType({
     case "progress": return <ProgressCellDisplay value={value} />;
     case "secret": return <SecretDisplay value={value} />;
     case "markdown": return <MarkdownDisplay value={value} />;
+    case "html": return <HtmlDisplay value={value} />;
     default: return <TruncatedCellValue value={String(value)} />;
   }
 }

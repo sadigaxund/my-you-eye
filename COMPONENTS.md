@@ -283,7 +283,7 @@ Step (`WalkthroughStep`):
 | `Graph` | `my-you-eye` | type: button | Pipeline editor (drag nodes, connect ports, delete selected) |
 | `GraphGroup` | `my-you-eye` | variant: success<br>size: sm | Architecture boundaries, Label placement |
 | `GraphNode` | `my-you-eye` | variant: ghost / muted / selected / simple / success<br>type: button<br>size: icon-sm<br>shape: pill<br>style: soft | Variants, Simple variant, Legacy ports on a tall node, Free-form body, Header variations, Accent bar color, Footer variations, Shape (state-machine pill), All variations together |
-| `Port` | `my-you-eye` | state: connected / default / highlighted<br>shape: circle / socket<br>side: in / out | States (circle), Socket shape — mounted on a border, Socket shape — all states, Circle vs socket, side by side |
+| `Port` | `my-you-eye` | state: connected / default / highlighted<br>shape: circle / socket<br>side: in / out | States (circle), Socket shape — mounted on a border, Socket mount — outward vs inward, Socket shape — all states, Circle vs socket, side by side |
 
 ## charts
 
@@ -304,11 +304,11 @@ Step (`WalkthroughStep`):
 
 | Component | Tier | Variants | Demos |
 |---|---|---|---|
-| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / image / json / markdown / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
+| `CellType` | `my-you-eye` | type: array / audio / badge / boolean / bytes / code / color / currency / date-human / date-system / datetime-tz / duration / email / hash / html / image / json / markdown / null / number / percentage / progress / secret / signed / sparkline / status / tags / text / tree / url / user | Data Types, Project X, Project X, New data types, Numeric types |
 | `DataList` | `my-you-eye` | density: compact | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | `my-you-eye` | variant: striped<br>density: compact | Default, Striped, Scrolling + sticky header, Alignment, Row A, Row B, Row C, Row D, Alpha, Beta, Alpha, Beta, Truncation |
 | `Table` | `my-you-eye` | align: right<br>variant: striped<br>density: compact<br>type: text | Composition, Variants, Density, Truncation & expand, Sticky header |
-| `Timeline` | `my-you-eye` | orientation: vertical | Horizontal — single lane, Horizontal — lanes, Vertical — single lane, Vertical — lanes |
+| `Timeline` | `my-you-eye` | orientation: vertical | Horizontal — single lane, Horizontal — lanes, Spans — events with a duration, Shared scale across lanes, Label placement, Density, Progress (playhead reveal), Vertical — single lane, Vertical — lanes |
 | `TreeView` | `my-you-eye` | type: button<br>density: compact<br>variant: condensed | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
 
 ## display
