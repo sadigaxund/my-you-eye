@@ -50,7 +50,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "New data types",
-      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal).",
+      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal), markdown (reuses the Markdown component — inline formatting in the cell, full block rendering in the expand popover).",
       render: () => (
         <TableGrid>
           <div role="row" className="contents">
@@ -66,6 +66,8 @@ const entry: ShowcaseEntry = {
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">User (with photo)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="user" value="Sam Rivera" avatarSrc="https://picsum.photos/seed/user/64/64" /></div></div>
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Progress</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="progress" value={68} /></div></div>
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Secret</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="secret" value="sk_live_51H8x9fJ2mN3qR7vT" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"Ships with **bold**, *italic*, `inline code`, and [links](https://example.com)."} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown (multi-block)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"# Release notes\n\n- Fixed the **login** bug\n- Added `dark mode`\n\nSee the [changelog](https://example.com) for details."} /></div></div>
         </TableGrid>
       ),
     },

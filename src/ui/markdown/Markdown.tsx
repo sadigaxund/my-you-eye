@@ -19,7 +19,14 @@ function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function renderInline(text: string): ReactNode {
+/**
+ * Exported (not just used internally) so CellType's "markdown" cell type can
+ * render a single-line inline preview — bold/italic/code/links only, no
+ * block structure — without re-implementing this regex against a second
+ * inline-formatting spec. The full `<Markdown>` component (block-aware) is
+ * used for that cell's expanded popover instead of this function directly.
+ */
+export function renderInline(text: string): ReactNode {
   const parts: ReactNode[] = [];
   const regex = /(`[^`]+`)|(\*\*(.+?)\*\*)|(\*(.+?)\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
   let lastIndex = 0;
