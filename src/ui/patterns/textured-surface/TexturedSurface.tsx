@@ -2,6 +2,7 @@ import { forwardRef, useMemo, type CSSProperties, type HTMLAttributes } from "re
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/cn";
 import { LAYER_SVGS, FROSTED_DITHER, type TextureLayer, type TextureStrength } from "./svg-utils";
+import { TextureTileLayer, TextureCoverLayer } from "./TextureLayers";
 
 const TEXTURE_STRENGTHS: Record<string, Record<string, number>> = {
   "paper-grain":    { subtle: 0.30, medium: 0.50, strong: 0.75 },
@@ -19,6 +20,7 @@ interface LayerConf {
   uri: string;
   opacity: number;
   blend: string;
+  /** CSS `background-size` for a repeating tile layer. Absent => renders as a container-filling cover layer instead (see `coverLayers` below). */
   tileSize?: number;
 }
 
@@ -30,30 +32,33 @@ const TEXTURE_CONFS: Record<string, (opacity: number, layer: TextureLayer, stren
   "paper-grain": (op, layer, strength) => {
     const a = LAYER_SVGS["paper-grain"]?.[layer]?.[strength];
     if (!a) return null;
+    const secTile = Math.round(a.tileSize * 0.65);
     return {
       layers: [
         { uri: a.primary,   opacity: op,           blend: "hard-light", tileSize: a.tileSize },
-        { uri: a.secondary, opacity: op * 0.15,     blend: "hard-light", tileSize: Math.round(a.tileSize * 0.65) },
+        { uri: a.secondary, opacity: op * 0.15,     blend: "hard-light", tileSize: secTile },
       ],
     };
   },
   "brushed-aluminium": (op, layer, strength) => {
     const a = LAYER_SVGS["brushed-aluminium"]?.[layer]?.[strength];
     if (!a) return null;
+    const secTile = Math.round(a.tileSize * 0.65);
     return {
       layers: [
         { uri: a.primary,   opacity: op,           blend: "hard-light", tileSize: a.tileSize },
-        { uri: a.secondary, opacity: op * 0.15,     blend: "hard-light", tileSize: Math.round(a.tileSize * 0.65) },
+        { uri: a.secondary, opacity: op * 0.15,     blend: "hard-light", tileSize: secTile },
       ],
     };
   },
   "frosted-glass": (op, layer, strength) => {
     const a = LAYER_SVGS["frosted-glass"]?.[layer]?.[strength];
     if (!a) return null;
+    const secTile = Math.round(a.tileSize * 0.65);
     return {
       layers: [
         { uri: a.primary,   opacity: op,     blend: "hard-light" },
-        { uri: a.secondary, opacity: op * 0.08, blend: "hard-light", tileSize: Math.round(a.tileSize * 0.65) },
+        { uri: a.secondary, opacity: op * 0.08, blend: "hard-light", tileSize: secTile },
         { uri: FROSTED_DITHER, opacity: 0.03, blend: "hard-light", tileSize: 64 },
       ],
     };
@@ -105,9 +110,15 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
       return TEXTURE_CONFS[texture]?.(baseOp * layerOp, layer, strength) ?? null;
     }, [texture, strength, layer]);
 
-    const textureType = (typeof document !== 'undefined'
+    // Only read the theme's noise family when we're actually going to use it
+    // — `conf` truthy means an explicit material was requested and this
+    // value is never consulted, so skip the forced synchronous style read
+    // entirely in that branch (was previously unconditional every render).
+    const textureType = (!conf && typeof document !== 'undefined'
       ? getComputedStyle(document.documentElement).getPropertyValue('--texture-type').trim()
       : '') || 'paper-grain';
+
+    const themeSvgs = conf ? undefined : LAYER_SVGS[textureType]?.[layer]?.[strength];
 
     const rootStyle = useMemo(() => {
       if (conf) {
@@ -115,16 +126,15 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
       }
       const lo = LAYER_OPACITY[layer];
       const overrides: Record<string, string> = {};
-      const svgs = LAYER_SVGS[textureType]?.[layer]?.[strength];
-      if (svgs) {
-        overrides["--texture-paper-resolved"] = `url("${svgs.primary}")`;
-        overrides["--texture-size-resolved"] = `${svgs.tileSize}px`;
+      if (themeSvgs) {
+        overrides["--texture-paper-resolved"] = `url("${themeSvgs.primary}")`;
+        overrides["--texture-size-resolved"] = `${themeSvgs.tileSize}px`;
       }
       if (lo !== 1) {
         overrides["--texture-opacity-resolved"] = `calc(var(--texture-opacity-surface) * ${lo})`;
       }
       return { ...overrides, ...style } as CSSProperties;
-    }, [conf, layer, style, textureType]);
+    }, [conf, layer, style, themeSvgs]);
 
     if (conf) {
       const tileLayers = conf.layers.filter(l => l.tileSize);
@@ -138,35 +148,23 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
         >
           <div className="absolute inset-0 pointer-events-none -z-10" style={{ backgroundColor: `var(${color})` }} />
           {tileLayers.map((l, i) => (
-            <div
+            <TextureTileLayer
               key={i}
-              aria-hidden
-              className="absolute inset-0 pointer-events-none -z-10"
-              style={{
-                backgroundImage: `url("${l.uri}")`,
-                backgroundSize: `${l.tileSize}px`,
-                backgroundRepeat: "repeat",
-                opacity: l.opacity,
-                mixBlendMode: l.blend as CSSProperties["mixBlendMode"],
-                ...(alignToViewport ? { backgroundAttachment: "fixed" as const } : {}),
-              }}
+              uri={l.uri}
+              tileSize={l.tileSize as number}
+              opacity={l.opacity}
+              blend={l.blend as CSSProperties["mixBlendMode"]}
+              alignToViewport={alignToViewport}
             />
           ))}
           {coverLayers.length > 0 && (
             <div className="absolute inset-0 pointer-events-none -z-10" style={{ containerType: "size" }}>
               {coverLayers.map((l, i) => (
-                <div
+                <TextureCoverLayer
                   key={i}
-                  aria-hidden
-                  className="absolute pointer-events-none"
-                  style={{
-                    top: "50%", left: "50%",
-                    width: "calc(100cqw + 100cqh)", height: "calc(100cqw + 100cqh)",
-                    transform: "translate(-50%, -50%)", transformOrigin: "center",
-                    backgroundImage: `url("${l.uri}")`, backgroundSize: "100% 100%",
-                    backgroundRepeat: "no-repeat", opacity: l.opacity,
-                    mixBlendMode: l.blend as CSSProperties["mixBlendMode"],
-                  }}
+                  uri={l.uri}
+                  opacity={l.opacity}
+                  blend={l.blend as CSSProperties["mixBlendMode"]}
                 />
               ))}
             </div>
