@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { EmptyState } from "../empty-state";
-import { Skeleton } from "../skeleton";
 import { Legend } from "../legend";
-import { chartColorToken, chartFill, formatTickNumber, niceTicks } from "../patterns/chart-frame";
+import { ChartGhost, chartColorToken, chartFill, formatTickNumber, niceTicks } from "../patterns/chart-frame";
 import type { ChartColorToken } from "../patterns/chart-frame";
 
 export interface ScatterPoint {
@@ -97,11 +96,21 @@ function ScatterPlot({
           {subtitle && <p className="text-xs text-muted">{subtitle}</p>}
         </div>
       )}
-      {loading ? (
-        <Skeleton shape="rect" style={{ width, height }} />
-      ) : empty ? (
-        <div style={{ width, height }} className="flex items-center justify-center">
-          <EmptyState title="No data" description="This chart has no points to display." />
+      {loading || empty ? (
+        // Same ghost axes/gridlines/dots either way — animated (shimmering)
+        // while loading, static behind the message once we know it's truly
+        // empty. Previously `loading` fell back to a generic Skeleton rect
+        // that gave no hint this was a scatter plot ("what is this example
+        // supposed to showcase?"), and `empty` was bare centered text.
+        <div className="relative" style={{ width, height }}>
+          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+            <ChartGhost plot={plot} variant="dots" animate={loading} />
+          </svg>
+          {empty && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <EmptyState title="No data" description="This chart has no points to display." />
+            </div>
+          )}
         </div>
       ) : (
         <div className="relative" style={{ width, height }}>
