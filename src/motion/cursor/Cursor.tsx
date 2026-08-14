@@ -139,7 +139,24 @@ export function Cursor({ events, color = "primary", shape = "arrow", clickEffect
 
   return (
     <div className={className} style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: entrance }}>
-      {activeClick && <Ripple x={activeClick.x} y={activeClick.y} color={color} variant={activeClick.effect ?? clickEffect} duration="quick" />}
+      {activeClick && (
+        <Ripple
+          x={activeClick.x}
+          y={activeClick.y}
+          color={color}
+          variant={activeClick.effect ?? clickEffect}
+          duration="quick"
+          // Anchor the ripple's own progress to the click's absolute frame.
+          // useProgress() reads the timeline's global frame with `delay`
+          // defaulting to 0, so without this the ripple's local clock is
+          // already far past its "quick" duration by the time a click fires
+          // at frame 30+ — it renders permanently at progress=1 (opacity 0,
+          // fully expanded), i.e. invisible. Passing delay=activeClick.at
+          // makes the ripple's local frame start at 0 exactly when the
+          // click event is reached.
+          delay={activeClick.at}
+        />
+      )}
       {children ? (
         <div style={{ position: "absolute", left: pos.x, top: pos.y, transform: "translate(-50%, -50%)" }}>
           {children}

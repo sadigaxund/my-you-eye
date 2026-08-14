@@ -69,18 +69,18 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "click effect variants",
-      description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple, so a click always reads clearly regardless of pointer shape.",
+      description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple. Each cell moves the cursor in from the side, then clicks, so the press and the ripple firing both read as an actual click rather than a static glyph.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="grid grid-cols-3 gap-panel">
             <div className="relative flex h-20 items-center justify-center overflow-hidden rounded-ui bg-surface">
-              <Cursor shape="dot" clickEffect="ring" events={[{ at: 0, x: 44, y: 32 }, { at: 60, x: 44, y: 32, action: "click" }]} />
+              <Cursor shape="dot" clickEffect="ring" events={[{ at: 0, x: 8, y: 60 }, { at: 35, x: 44, y: 32, action: "click" }, { at: 55, x: 44, y: 32 }]} />
             </div>
             <div className="relative flex h-20 items-center justify-center overflow-hidden rounded-ui bg-surface">
-              <Cursor shape="dot" clickEffect="solid" color="success" events={[{ at: 0, x: 44, y: 32 }, { at: 60, x: 44, y: 32, action: "click" }]} />
+              <Cursor shape="dot" clickEffect="solid" color="success" events={[{ at: 0, x: 8, y: 60 }, { at: 35, x: 44, y: 32, action: "click" }, { at: 55, x: 44, y: 32 }]} />
             </div>
             <div className="relative flex h-20 items-center justify-center overflow-hidden rounded-ui bg-surface">
-              <Cursor shape="dot" clickEffect="double" color="warning" events={[{ at: 0, x: 44, y: 32 }, { at: 60, x: 44, y: 32, action: "click" }]} />
+              <Cursor shape="dot" clickEffect="double" color="warning" events={[{ at: 0, x: 8, y: 60 }, { at: 35, x: 44, y: 32, action: "click" }, { at: 55, x: 44, y: 32 }]} />
             </div>
           </div>
         </MotionPreview>
