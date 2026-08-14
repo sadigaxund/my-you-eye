@@ -52,12 +52,23 @@ export function generateGappedPath(
   sLabel: number | null,
   gapHalfLen: number,
   opts?: PathOptions,
+  trimEnd = 0,
 ): string {
-  if (sLabel == null || gapHalfLen <= 0) return generatePath(from, to, variant, opts);
+  // Nothing to cut out and nothing to trim: emit the exact path, which for
+  // `bezier` means real `C` commands rather than a sampled polyline.
+  if ((sLabel == null || gapHalfLen <= 0) && trimEnd <= 0) return generatePath(from, to, variant, opts);
+
   const pts = getRoutePoints(from, to, variant as ConnectionVariant, opts);
   const lens = cumulativeLengths(pts);
-  const before = sliceByArcLength(pts, lens, 0, sLabel - gapHalfLen);
-  const after = sliceByArcLength(pts, lens, sLabel + gapHalfLen, lens[lens.length - 1]);
+  // `trimEnd` is where the route STOPS — an arrowhead's `lineInset`, so the
+  // stroke ends at the marker's back edge instead of running through it and
+  // squeezing out past its tip. Never trim past the start.
+  const end = Math.max(0, lens[lens.length - 1] - Math.max(0, trimEnd));
+
+  if (sLabel == null || gapHalfLen <= 0) return buildPolylineD(sliceByArcLength(pts, lens, 0, end));
+
+  const before = sliceByArcLength(pts, lens, 0, Math.min(sLabel - gapHalfLen, end));
+  const after = sliceByArcLength(pts, lens, sLabel + gapHalfLen, end);
   return [buildPolylineD(before), buildPolylineD(after)].filter(Boolean).join(" ");
 }
 

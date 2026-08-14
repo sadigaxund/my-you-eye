@@ -2,14 +2,17 @@ import { createContext, useContext, useLayoutEffect, useMemo, useRef, useState }
 import { createPortal } from "react-dom";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { ARROWHEAD_POINTS, getArrowAngle, getPointAtT } from "./geometry";
+import { getArrowAngle, getPointAtT } from "./geometry";
 import type { ConnectionKind, ConnectionVariant, ObstacleRect, Point } from "./geometry";
 import { generateGappedPath, getRouteLength, truncatePathByFraction } from "./gapped-path";
 import { resolveEnds } from "./anchors";
+import { resolveArrowhead } from "./arrowheads";
+import type { ArrowheadProp, ArrowheadShape } from "./arrowheads";
 import type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd } from "./anchors";
 
 export type { Point, ObstacleRect, ConnectionKind, ConnectionVariant };
 export type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd };
+export type { ArrowheadProp, ArrowheadShape };
 
 const lineVariants = cva("fill-none", {
   variants: {
@@ -61,7 +64,11 @@ export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
    * arrowhead touches instead of penetrating. See `anchors.ts`. */
   from: EdgeEnd;
   to: EdgeEnd;
-  arrowhead?: boolean;
+  /** `true` draws the default solid triangle; a shape name selects another
+   * terminator (`"open"`, `"circle"`, `"diamond"`, `"bar"`, `"crow"`, …).
+   * Each shape declares how far the route must stop short of the endpoint,
+   * so the stroke never protrudes through or past it — see arrowheads.tsx. */
+  arrowhead?: ArrowheadProp;
   label?: string;
   /** Position along the actual rendered path (0–100), default 50 (midpoint).
    * Evaluated in closed form on the cubic for `bezier`, walked by cumulative
@@ -226,6 +233,13 @@ function ConnectionPath({
   // (and z-order relative to every OTHER edge sharing the svg) to hide it.
   // This is what actually fixes "the label reads as translucent and the
   // line shows through" on a curved path: there is no line there anymore.
+  const head = resolveArrowhead(arrowhead);
+  // The route must physically end at the marker's back edge. Only applied
+  // once the edge is fully drawn: mid-draw there is no arrowhead to make
+  // room for (see `drawn`), and trimming then would visibly shorten the
+  // growing stroke.
+  const trimEnd = head && drawn ? head.lineInset : 0;
+
   const sLabel = label && drawn ? t * routeLength : null;
 
   // The gap runs from the badge's center to its own BORDER, measured along
@@ -261,8 +275,8 @@ function ConnectionPath({
   // no-op path, not a bug: there's nothing to draw once the badge covers
   // the whole edge.
   const d = useMemo(
-    () => (drawn ? generateGappedPath(from, to, v, sLabel, gapHalfLen, opts) : truncatePathByFraction(from, to, v, drawProgress, opts)),
-    [drawn, from, to, v, sLabel, gapHalfLen, opts, drawProgress],
+    () => (drawn ? generateGappedPath(from, to, v, sLabel, gapHalfLen, opts, trimEnd) : truncatePathByFraction(from, to, v, drawProgress, opts)),
+    [drawn, from, to, v, sLabel, gapHalfLen, opts, drawProgress, trimEnd],
   );
 
   const strokeClassName = kind ? KIND_STYLES[kind] : lineVariants({ variant: v, state });
@@ -297,13 +311,10 @@ function ConnectionPath({
   return (
     <>
       <path d={d} className={cn("fill-none", strokeClassName, stateDecoration, className)} />
-      {arrowhead && drawn && (
-        <polygon
-          points={ARROWHEAD_POINTS}
-          fill="currentColor"
-          className={arrowColor}
-          transform={`translate(${to.x},${to.y}) rotate(${arrowAngle})`}
-        />
+      {head && drawn && (
+        <g className={arrowColor} transform={`translate(${to.x},${to.y}) rotate(${arrowAngle})`}>
+          {head.render()}
+        </g>
       )}
       {label && drawn && (portalTarget ? createPortal(labelNode, portalTarget) : labelNode)}
     </>

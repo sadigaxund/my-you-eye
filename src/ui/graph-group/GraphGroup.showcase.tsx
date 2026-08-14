@@ -4,6 +4,7 @@ import { Canvas } from "../canvas";
 import { GraphNode } from "../graph-node";
 import { ConnectionLayer } from "../connection-layer";
 import { StatusDot } from "../status-dot";
+import { GRID, nodeHeightPx } from "../graph-node/grid";
 
 function CloudIcon() {
   return (
@@ -21,6 +22,18 @@ function LockIcon() {
     </svg>
   );
 }
+
+// Node boxes declared once and used for BOTH placement and edge anchoring,
+// so the two can't disagree. Width is set explicitly (a GRID multiple)
+// because a GraphNode's width is otherwise content-driven, and an anchor
+// needs a known rect — the height comes from the grid formula rather than a
+// guess: 2 rows, no footer.
+const NODE_W = 11 * GRID; // 176
+const NODE_H = nodeHeightPx(2, false); // 96
+const PG = { x: 5 * GRID, y: 8 * GRID };
+const API = { x: 26 * GRID, y: 8 * GRID };
+const PG_RECT = { ...PG, width: NODE_W, height: NODE_H };
+const API_RECT = { ...API, width: NODE_W, height: NODE_H };
 
 /** Every coordinate here is a multiple of GRID (16) — see AGENTS.md §7. */
 const entry: ShowcaseEntry = {
@@ -49,7 +62,7 @@ const entry: ShowcaseEntry = {
             label="Public subnet" accentColor="success" border="solid"
           />
           <GraphNode
-            x={80} y={128}
+            {...PG} style={{ width: PG_RECT.width }}
             header="postgres" headerStatus={<StatusDot variant="success" size="sm" />} accent
             rows={[
               { label: "Role", value: "primary", portLeft: { side: "left", state: "connected" } },
@@ -57,16 +70,22 @@ const entry: ShowcaseEntry = {
             ]}
           />
           <GraphNode
-            x={416} y={128}
+            {...API} style={{ width: API_RECT.width }}
             header="api" headerStatus={<StatusDot variant="success" size="sm" />} accent
             rows={[
               { label: "Replicas", value: "3" },
               { label: "p99", value: "42 ms", portRight: { side: "right", state: "connected" } },
             ]}
           />
+          {/* Endpoints are the node RECTS, not hand-picked coordinates. The
+              edge previously ran from {416,208} to {240,176} — two numbers
+              eyeballed against the nodes, which is exactly what the anchor
+              system exists to remove: they were already slightly off, so the
+              stroke entered the api node and the arrowhead landed inside
+              postgres. */}
           <ConnectionLayer
             edges={[
-              { id: "db", from: { x: 416, y: 208 }, to: { x: 240, y: 176 }, kind: "sync", label: "5432", arrowhead: true, variant: "stepped" },
+              { id: "db", from: { rect: API_RECT }, to: { rect: PG_RECT }, kind: "sync", label: "5432", arrowhead: true },
             ]}
           />
         </Canvas>

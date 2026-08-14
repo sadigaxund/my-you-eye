@@ -78,13 +78,29 @@ function bezierControlPoints(from: Point, to: Point, fromNormal?: Point, toNorma
     const cp = Math.max(Math.abs(to.x - from.x) * 0.5, 30);
     return { p0: from, p1: { x: from.x + cp, y: from.y }, p2: { x: to.x - cp, y: to.y }, p3: to };
   }
-  // The handle length scales with the true endpoint distance, not just its x
-  // component: an anchored edge is routinely vertical (bottom -> top), where
-  // dx is 0 and an x-derived handle would flatten the curve to the 30px
-  // floor regardless of how far apart the shapes actually are.
-  const cp = Math.max(Math.hypot(to.x - from.x, to.y - from.y) * 0.4, 30);
+  const dist = Math.hypot(to.x - from.x, to.y - from.y);
   const nf = fromNormal ?? { x: 1, y: 0 };
   const nt = toNormal ?? { x: -1, y: 0 };
+
+  // The handle length is proportional to distance AND to how much turning
+  // the curve actually has to do. A flat `max(dist * 0.4, 30)` produced a
+  // visible S-kink on every short edge (owner: "the drawing of lines is
+  // kind of ugly and angle sharply"): on a 60px gap the 30px floor is HALF
+  // the distance, pushed out along two different directions, so the curve
+  // bulges away from the straight line it should have been.
+  //
+  // `turn` is 0 when both normals already point along the chord — the curve
+  // wants to be nearly straight, so the handles stay short — and 1 when
+  // they're perpendicular or worse, where long handles are exactly what
+  // makes the corner round instead of creased. Same dot products the anchor
+  // selection scores with, so the curve agrees with the choice that produced
+  // it. No floor: a floor is what broke this.
+  const ux = dist === 0 ? 1 : (to.x - from.x) / dist;
+  const uy = dist === 0 ? 0 : (to.y - from.y) / dist;
+  const alignFrom = nf.x * ux + nf.y * uy;
+  const alignTo = nt.x * -ux + nt.y * -uy;
+  const turn = Math.max(0, Math.min(1, (2 - alignFrom - alignTo) / 2));
+  const cp = dist * (0.25 + 0.28 * turn);
   return {
     p0: from,
     p1: { x: from.x + nf.x * cp, y: from.y + nf.y * cp },
@@ -100,7 +116,23 @@ function segNormals(opts: PathOptions | undefined, i: number, lastIndex: number)
   return [i === 0 ? opts?.fromNormal : undefined, i === lastIndex ? opts?.toNormal : undefined] as const;
 }
 
-function sampleCubic(p0: Point, p1: Point, p2: Point, p3: Point, steps = 32): Point[] {
+/**
+ * Step count for `sampleCubic`, from the control polygon's length (a cheap
+ * upper bound on the curve's own length). A fixed 32 is too coarse for a
+ * long curve — ~10px facets on a 300px edge, visible as creasing — and
+ * wasteful on a short one. Every consumer that gaps or trims a bezier
+ * renders the SAMPLED polyline rather than a `C` command, so this is
+ * literally the curve's rendered smoothness.
+ */
+function cubicSteps(p0: Point, p1: Point, p2: Point, p3: Point): number {
+  const len =
+    Math.hypot(p1.x - p0.x, p1.y - p0.y) +
+    Math.hypot(p2.x - p1.x, p2.y - p1.y) +
+    Math.hypot(p3.x - p2.x, p3.y - p2.y);
+  return Math.max(16, Math.min(128, Math.ceil(len / 3)));
+}
+
+function sampleCubic(p0: Point, p1: Point, p2: Point, p3: Point, steps = cubicSteps(p0, p1, p2, p3)): Point[] {
   const pts: Point[] = [];
   for (let i = 0; i <= steps; i++) {
     const u = i / steps;
@@ -253,19 +285,6 @@ export function generatePath(from: Point, to: Point, variant: ConnectionVariant 
   return d.trim();
 }
 
-/**
- * Arrowhead polygon in "arrow space": the tip sits at the LOCAL ORIGIN and
- * the body extends backwards along -x, so `translate(to) rotate(angle)`
- * lands the tip exactly on `to` — the route's own endpoint, and the point
- * every anchor/border calculation already targets.
- *
- * The obvious-looking `0,-4 8,0 0,4` (base at the origin, tip 8px *past*
- * it) is wrong for every real diagram: `to` is a point on the target node's
- * border, so a tip 8px beyond it visibly penetrates the node, and the
- * marker reads as appended after the line rather than as its termination.
- * Shared by `ConnectionPath` and `Annotation` so the two can't drift.
- */
-export const ARROWHEAD_POINTS = "-8,-4 0,0 -8,4";
 
 /** Rotation (degrees) for an arrowhead at `to`. With no waypoints, this
  * preserves each variant's original, hand-tuned behavior exactly (bezier

@@ -1,5 +1,7 @@
 import type { ShowcaseDemo } from "../../showcase/types";
 import { ConnectionLayer } from "../connection-layer";
+import { ConnectionLine } from ".";
+import { ARROWHEAD_SHAPES } from "./arrowheads";
 
 // The shape-anchoring demos, split out of ConnectionLine.showcase.tsx purely
 // to keep that file under the repo's 250-line guideline (AGENTS.md §2) — the
@@ -73,4 +75,19 @@ export const anchoringDemos: ShowcaseDemo[] = [
         );
       },
     },
+  {
+    name: "Arrowhead shapes",
+    description:
+      "Every shape declares how far the ROUTE must stop short of the endpoint, and the stroke is trimmed to exactly that. A solid head absorbs the line (it ends ~1px inside, so no hairline seam shows under antialiasing); an open head is drawn AROUND the line and needs it to reach the tip, so nothing is trimmed. Without this the stroke squeezes out past a tapering tip — one pixel behind an 8px triangle's point the shape is 0.5px tall and the 2px stroke is not.",
+    render: () => (
+      <div className="flex flex-col items-center gap-8 py-4 h-auto">
+        {ARROWHEAD_SHAPES.map((shape) => (
+          <div key={shape} className="relative" style={{ width: 300, height: 44 }}>
+            <ConnectionLine from={{ x: 10, y: 22 }} to={{ x: 250, y: 22 }} variant="straight" kind="sync" arrowhead={shape} />
+            <span className="absolute left-[260px] top-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-xs text-muted">{shape}</span>
+          </div>
+        ))}
+      </div>
+    ),
+  },
 ];

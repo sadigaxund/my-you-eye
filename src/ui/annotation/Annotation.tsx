@@ -1,7 +1,8 @@
 import { forwardRef, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/cn";
-import { ARROWHEAD_POINTS, generatePath, getArrowAngle, getRouteLength } from "../connection-line";
+import { generateGappedPath, getArrowAngle, getRouteLength, resolveArrowhead } from "../connection-line";
+import type { ArrowheadShape } from "../connection-line";
 import type { ConnectionVariant, Point } from "../connection-line";
 
 // Literal class names (not template interpolation) — same rule as
@@ -33,8 +34,12 @@ export interface AnnotationProps extends Omit<HTMLAttributes<HTMLDivElement>, "c
   side?: "left" | "right" | "top" | "bottom";
   /** Distance (px) from `target` to the label's near edge, before flip. Default 64. */
   distance?: number;
-  /** Pointer-end decoration at `target`. Default "arrow". */
-  marker?: "none" | "arrow" | "pin";
+  /** Pointer-end decoration at `target`. Default "arrow".
+   * `"arrow"` is the solid triangle (unchanged default); any `ArrowheadShape`
+   * selects another terminator, sharing ConnectionLine's marker table so the
+   * two can't drift. `"pin"` is Annotation's own concentric-circle target
+   * mark, which has no ConnectionLine equivalent. */
+  marker?: "none" | "arrow" | "pin" | ArrowheadShape;
   /** Leader-line shape — reuses `connection-line/geometry.ts`'s own variant
    * names (a subset: a callout leader is either direct or right-angled,
    * never a curve). Default "straight". */
@@ -58,6 +63,11 @@ export interface AnnotationProps extends Omit<HTMLAttributes<HTMLDivElement>, "c
 // under a shared `progress` driver, since length only affects dash length,
 // not the fraction of `progress` consumed).
 const LINE_PHASE = 0.6;
+
+/** Outer radius of the `pin` marker's ring. Named because the leader has to
+ * stop there — the pin is centred ON the target rather than pointing at it
+ * from outside, so a leader running to the target would cross its own ring. */
+const PIN_RADIUS = 7;
 
 function clamp01(n: number): number {
   return Math.max(0, Math.min(1, n));
@@ -123,8 +133,23 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
       return { x: resolvedSide === "right" ? target.x + distance : target.x - distance, y: target.y };
     }, [resolvedSide, target.x, target.y, distance]);
 
-    const d = useMemo(() => generatePath(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
-    const length = useMemo(() => getRouteLength(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
+    // The leader stops at the marker's back edge rather than running to the
+    // target underneath it — the same protrusion ConnectionPath fixes, and
+    // for the same reason: a tapering head is narrower than the stroke near
+    // its tip, so the stroke squeezes out around it. `pin` is centred ON the
+    // target, so the leader stops at its outer radius.
+    const head = useMemo(() => (marker === "arrow" ? resolveArrowhead(true) : marker === "pin" || marker === "none" ? null : resolveArrowhead(marker)), [marker]);
+    const trimEnd = marker === "pin" ? PIN_RADIUS : head?.lineInset ?? 0;
+    const d = useMemo(
+      () => generateGappedPath(anchor, target, leaderVariant, null, 0, undefined, trimEnd),
+      [anchor, target, leaderVariant, trimEnd],
+    );
+    // Dash length must match the DRAWN path, not the untrimmed route, or the
+    // draw-on animation finishes early and leaves a stub.
+    const length = useMemo(
+      () => Math.max(0, getRouteLength(anchor, target, leaderVariant) - trimEnd),
+      [anchor, target, leaderVariant, trimEnd],
+    );
     const angle = useMemo(() => getArrowAngle(anchor, target, leaderVariant), [anchor, target, leaderVariant]);
 
     // Horizontal sides position the label's near edge at the anchor and
@@ -144,16 +169,14 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
             strokeDasharray={length}
             strokeDashoffset={length * (1 - lineT)}
           />
-          {marker === "arrow" && lineT >= 1 && (
-            <polygon
-              points={ARROWHEAD_POINTS}
-              className={FILL[accentColor]}
-              transform={`translate(${target.x},${target.y}) rotate(${angle})`}
-            />
+          {head && lineT >= 1 && (
+            <g className={cn(FILL[accentColor], STROKE[accentColor])} transform={`translate(${target.x},${target.y}) rotate(${angle})`}>
+              {head.render()}
+            </g>
           )}
           {marker === "pin" && lineT >= 1 && (
             <g className={STROKE[accentColor]}>
-              <circle cx={target.x} cy={target.y} r={7} className="fill-none stroke-[1.5px]" />
+              <circle cx={target.x} cy={target.y} r={PIN_RADIUS} className="fill-none stroke-[1.5px]" />
               <circle cx={target.x} cy={target.y} r={2} className={FILL[accentColor]} />
             </g>
           )}
