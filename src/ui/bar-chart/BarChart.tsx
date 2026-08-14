@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "../../lib/cn";
 import {
   ChartFrame,
@@ -6,6 +6,8 @@ import {
   chartFill,
   niceTicks,
   formatTickNumber,
+  measureTextWidth,
+  truncateToWidth,
 } from "../patterns/chart-frame";
 import type { ChartColorToken } from "../patterns/chart-frame";
 
@@ -39,6 +41,15 @@ export interface BarChartProps {
 
 const MAX_BAR_THICKNESS = 24;
 const GAP = 2;
+// Horizontal orientation's category labels get their own reserved gutter
+// (mirrors ChartFrame's Y_AXIS_BAND for numeric ticks) — previously they
+// were drawn at a fixed x inside the plot, which put them directly under
+// the bars (bars start at the same x) and got painted over since the bars
+// render after the label in SVG document order. Reserving a gutter keeps
+// the label outside every bar, at any bar length, permanently.
+const LABEL_GUTTER_MIN = 60;
+const LABEL_GUTTER_MAX = 160;
+const LABEL_GUTTER_PAD = 16;
 
 interface HoverInfo {
   label: string;
@@ -70,6 +81,16 @@ function BarChart({
   const ticks = niceTicks(dataMax || 1, 5);
   const legend = series.map((s, i) => ({ label: s.label, token: s.token ?? chartColorToken(i) }));
 
+  // Size the category-label gutter off the actual label text, not a fixed
+  // guess — a short label set ("NA", "EU") shouldn't waste plot width, and
+  // a long one ("Enterprise plan renewals") still needs room before it's
+  // truncated by ChartGhost's sibling, truncateToWidth, below.
+  const labelGutter = useMemo(() => {
+    if (orientation !== "horizontal" || categories.length === 0) return undefined;
+    const widest = Math.max(...categories.map((c) => measureTextWidth(c)));
+    return Math.min(LABEL_GUTTER_MAX, Math.max(LABEL_GUTTER_MIN, widest + LABEL_GUTTER_PAD));
+  }, [orientation, categories]);
+
   function barKey(categoryIndex: number, seriesIndex: number): string {
     return String(categoryIndex) + "-" + String(seriesIndex);
   }
@@ -85,6 +106,7 @@ function BarChart({
       xLabels={orientation === "vertical" ? categories : undefined}
       yTicks={orientation === "vertical" ? ticks : undefined}
       yDomain={orientation === "vertical" ? [0, ticks[ticks.length - 1]] : undefined}
+      yAxisWidth={labelGutter}
       formatYTick={valueFormat}
       legend={series.length > 1 ? legend : undefined}
       className={className}
@@ -124,10 +146,16 @@ function BarChart({
                 const thickness = stacked
                   ? Math.min(MAX_BAR_THICKNESS, rowHeight * 0.6)
                   : Math.min(MAX_BAR_THICKNESS, (rowHeight * 0.7 - GAP * (series.length - 1)) / series.length);
+                // Right-aligned inside the reserved gutter (mirrors
+                // ChartFrame's y-axis tick labels) — never inside the plot,
+                // so it can never sit under a bar regardless of bar length.
+                const labelMaxWidth = Math.max(plot.x - 12, 0);
+                const labelText = truncateToWidth(cat, labelMaxWidth);
                 return (
                   <g key={cat}>
-                    <text x={4} y={rowY + rowHeight / 2} dominantBaseline="middle" className="fill-muted text-xs">
-                      {cat}
+                    <text x={plot.x - 8} y={rowY + rowHeight / 2} textAnchor="end" dominantBaseline="middle" className="fill-muted text-xs">
+                      {labelText}
+                      <title>{cat}</title>
                     </text>
                     {series.map((s, si) => {
                       const value = s.data[ci] ?? 0;
