@@ -16,5 +16,16 @@ export interface ShowcaseEntry {
   parent?: string;
   /** Short one/two-sentence blurb shown under the title in the docs main pane. Optional. */
   description?: string;
-  demos: { name: string; description?: string; render: () => ReactNode; layout?: "fill" | "center"; overflow?: "visible" | "auto" | "hidden" }[];
+  demos: ShowcaseDemo[];
+}
+
+/** One demo within an entry. Named separately so a showcase whose demos no
+ * longer fit the 250-line file guideline can move a coherent group of them
+ * into a sibling file and spread it back into `demos`. */
+export interface ShowcaseDemo {
+  name: string;
+  description?: string;
+  render: () => ReactNode;
+  layout?: "fill" | "center";
+  overflow?: "visible" | "auto" | "hidden";
 }

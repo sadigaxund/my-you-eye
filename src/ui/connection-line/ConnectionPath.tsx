@@ -5,8 +5,11 @@ import { cn } from "../../lib/cn";
 import { ARROWHEAD_POINTS, getArrowAngle, getPointAtT } from "./geometry";
 import type { ConnectionKind, ConnectionVariant, ObstacleRect, Point } from "./geometry";
 import { generateGappedPath, getRouteLength, truncatePathByFraction } from "./gapped-path";
+import { resolveEnds } from "./anchors";
+import type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd } from "./anchors";
 
 export type { Point, ObstacleRect, ConnectionKind, ConnectionVariant };
+export type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd };
 
 const lineVariants = cva("fill-none", {
   variants: {
@@ -51,8 +54,13 @@ const KIND_TEXT_COLOR: Record<ConnectionKind, string> = {
 };
 
 export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
-  from: Point;
-  to: Point;
+  /** A bare `{x, y}` (the route starts exactly there), or an `AnchoredEnd`
+   * `{ rect, anchor?, inset? }` — a shape the edge attaches to. With a shape,
+   * the endpoint is chosen ON the shape's border and the route leaves along
+   * that side's normal, so the stroke never runs into the node and the
+   * arrowhead touches instead of penetrating. See `anchors.ts`. */
+  from: EdgeEnd;
+  to: EdgeEnd;
   arrowhead?: boolean;
   label?: string;
   /** Position along the actual rendered path (0–100), default 50 (midpoint).
@@ -152,8 +160,8 @@ export const ConnectionLabelPortalContext = createContext<SVGGElement | null>(nu
 function ConnectionPath({
   variant = "bezier",
   state = "connected",
-  from,
-  to,
+  from: fromEnd,
+  to: toEnd,
   arrowhead,
   label,
   labelPosition = 50,
@@ -166,7 +174,16 @@ function ConnectionPath({
   className,
 }: ConnectionLineProps) {
   const v = (variant ?? "bezier") as ConnectionVariant;
-  const opts = useMemo(() => ({ waypoints, obstacles, offset }), [waypoints, obstacles, offset]);
+  // Anchor resolution happens once, here, and everything downstream — path,
+  // gap, label anchor, arrow angle — works off the resolved points. That's
+  // what keeps a shape-attached edge from needing a single special case
+  // anywhere else in this component.
+  const ends = useMemo(() => resolveEnds(fromEnd, toEnd), [fromEnd, toEnd]);
+  const { from, to } = ends;
+  const opts = useMemo(
+    () => ({ waypoints, obstacles, offset, fromNormal: ends.fromNormal, toNormal: ends.toNormal }),
+    [waypoints, obstacles, offset, ends.fromNormal, ends.toNormal],
+  );
   const drawProgress = clamp01(progress);
   const drawn = drawProgress >= 1;
 

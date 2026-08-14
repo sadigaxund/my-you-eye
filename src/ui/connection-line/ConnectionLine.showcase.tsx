@@ -2,6 +2,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 import { ConnectionLine } from ".";
 import { ConnectionLayer } from "../connection-layer";
 import { Edge } from "../canvas";
+import { anchoringDemos } from "./ConnectionLine.anchoring";
 
 const entry: ShowcaseEntry = {
   title: "ConnectionLine",
@@ -141,6 +142,7 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    ...anchoringDemos,
     {
       name: "Orthogonal routing avoids obstacles",
       description: "variant=\"orthogonal\" is real right-angle routing: given a list of obstacle rects, it detours around them instead of running straight through — unlike stepped's naive mid-X elbow (top row), which happily cuts through whatever sits in the middle.",

@@ -31,6 +31,12 @@ export const ROW_H = 4 * GRID; // 64
  * doubling back down the same lane. */
 export const LOOP_OUT = 3 * GRID; // 48
 
+/** Width of an activation bar. Lives here rather than in the component
+ * because `build-edges.ts` needs it too: a message that touches a
+ * participant while it's active must terminate on the BAR's edge, not on the
+ * lifeline behind it, or the arrowhead lands inside the bar. */
+export const ACTIVATION_W = GRID * 0.75; // 12
+
 export function laneX(index: number, laneWidth: number = DEFAULT_LANE_W): number {
   return index * laneWidth + laneWidth / 2;
 }

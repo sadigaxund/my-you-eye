@@ -3,7 +3,7 @@ import { cn } from "../../../lib/cn";
 import { GRID } from "../../graph-node/grid";
 import { ConnectionLayer } from "../../connection-layer";
 import { Alert } from "../../alert";
-import { DEFAULT_LANE_W, HEADER_H, laneX, diagramWidth, diagramHeight } from "./layout";
+import { ACTIVATION_W, DEFAULT_LANE_W, HEADER_H, laneX, diagramWidth, diagramHeight } from "./layout";
 import { buildMessagesAndNotes, buildActivations } from "./build-edges";
 import type { SequenceActivation, SequenceDiagramProps } from "./types";
 
@@ -19,8 +19,6 @@ const ACTIVATION_BORDER: Record<NonNullable<SequenceActivation["accentColor"]>, 
   danger: "border-danger",
   muted: "border-muted",
 };
-
-const ACTIVATION_W = GRID * 0.75; // 12px
 
 function clamp01(n: number): number {
   return Math.max(0, Math.min(1, n));
@@ -51,8 +49,8 @@ const SequenceDiagram = forwardRef<HTMLDivElement, SequenceDiagramProps>(
     const itemIndex = useMemo(() => new Map(items.map((it, i) => [it.id, i])), [items]);
 
     const { edges, notes } = useMemo(
-      () => buildMessagesAndNotes(items, laneIndex, laneWidth, p),
-      [items, laneIndex, laneWidth, p],
+      () => buildMessagesAndNotes(items, laneIndex, laneWidth, p, activations, itemIndex),
+      [items, laneIndex, laneWidth, p, activations, itemIndex],
     );
     const activationRects = useMemo(
       () => buildActivations(activations, laneIndex, itemIndex, laneWidth, items.length, p),

@@ -7,6 +7,7 @@ import {
   computeBundleOffsets,
   findClearLabelT,
   getRoutePoints,
+  resolveEnds,
 } from "../connection-line";
 import type { ConnectionLineProps, ConnectionVariant } from "../connection-line";
 
@@ -58,21 +59,38 @@ const ConnectionLayer = forwardRef<SVGSVGElement, ConnectionLayerProps>(
   ({ className, edges, bundleParallelEdges = true, autoLabelPlacement = true, ...props }, ref) => {
     const [labelLayer, setLabelLayer] = useState<SVGGElement | null>(null);
 
+    // An edge's ends may be shapes rather than points (see anchors.ts), and
+    // every layer-level calculation below — which edges are parallel, where
+    // each route actually runs, where a label can sit clear of the others —
+    // needs the resolved border points, not the shapes. Resolved once here
+    // and reused by all three. `ConnectionPath` resolves again from the
+    // original ends, which costs ~64 float comparisons and keeps it
+    // correct when used standalone as `ConnectionLine`.
+    const resolved = useMemo(() => edges.map((e) => resolveEnds(e.from, e.to)), [edges]);
+
     const bundleOffsets = useMemo(
-      () => (bundleParallelEdges ? computeBundleOffsets(edges) : edges.map(() => 0)),
-      [edges, bundleParallelEdges],
+      () => (bundleParallelEdges ? computeBundleOffsets(resolved) : edges.map(() => 0)),
+      [edges, resolved, bundleParallelEdges],
+    );
+
+    const pathOpts = useMemo(
+      () =>
+        edges.map((e, i) => ({
+          waypoints: e.waypoints,
+          obstacles: e.obstacles,
+          offset: e.offset ?? bundleOffsets[i],
+          fromNormal: resolved[i].fromNormal,
+          toNormal: resolved[i].toNormal,
+        })),
+      [edges, resolved, bundleOffsets],
     );
 
     const routes = useMemo(
       () =>
         edges.map((e, i) =>
-          getRoutePoints(e.from, e.to, (e.variant ?? "bezier") as ConnectionVariant, {
-            waypoints: e.waypoints,
-            obstacles: e.obstacles,
-            offset: e.offset ?? bundleOffsets[i],
-          }),
+          getRoutePoints(resolved[i].from, resolved[i].to, (e.variant ?? "bezier") as ConnectionVariant, pathOpts[i]),
         ),
-      [edges, bundleOffsets],
+      [edges, resolved, pathOpts],
     );
 
     const labelPositions = useMemo(
@@ -80,13 +98,9 @@ const ConnectionLayer = forwardRef<SVGSVGElement, ConnectionLayerProps>(
         edges.map((e, i) => {
           if (!autoLabelPlacement || !e.label || e.labelPosition != null) return e.labelPosition;
           const others = routes.filter((_, j) => j !== i);
-          return findClearLabelT(e.from, e.to, e.variant ?? "bezier", {
-            waypoints: e.waypoints,
-            obstacles: e.obstacles,
-            offset: e.offset ?? bundleOffsets[i],
-          }, others);
+          return findClearLabelT(resolved[i].from, resolved[i].to, e.variant ?? "bezier", pathOpts[i], others);
         }),
-      [edges, routes, bundleOffsets, autoLabelPlacement],
+      [edges, resolved, routes, pathOpts, autoLabelPlacement],
     );
 
     return (

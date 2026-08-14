@@ -34,6 +34,13 @@ export interface PathOptions {
    * pair, so parallel/duplicate edges don't render as one indistinguishable
    * stroke. */
   offset?: number;
+  /** Outward normal at `from`/`to` — set by `resolveEnds` when that end was
+   * given as a shape. A bezier leaves and arrives along these instead of
+   * always horizontally, which is what makes the curve look attached to the
+   * side it touches rather than merely ending near it. Absent (the bare-point
+   * case) reproduces the previous horizontal-tangent behaviour exactly. */
+  fromNormal?: Point;
+  toNormal?: Point;
 }
 
 // Matches GraphNode's GRID unit intentionally (not imported directly, to
@@ -62,15 +69,35 @@ function resolveChain(from: Point, to: Point, opts?: PathOptions): Point[] {
 /** Shared control-point rule for a single bezier segment — the closed-form
  * cubic both path generation and point-at-t evaluation read from, so they
  * can never drift apart. */
-function bezierControlPoints(from: Point, to: Point) {
-  const dx = Math.abs(to.x - from.x);
-  const cp = Math.max(dx * 0.5, 30);
+function bezierControlPoints(from: Point, to: Point, fromNormal?: Point, toNormal?: Point) {
+  // No normals => bare-point endpoints, and the original always-horizontal
+  // tangents are reproduced exactly. Kept as its own branch rather than
+  // folded into the general case so this stays provably unchanged for every
+  // call site that predates `anchors.ts`.
+  if (!fromNormal && !toNormal) {
+    const cp = Math.max(Math.abs(to.x - from.x) * 0.5, 30);
+    return { p0: from, p1: { x: from.x + cp, y: from.y }, p2: { x: to.x - cp, y: to.y }, p3: to };
+  }
+  // The handle length scales with the true endpoint distance, not just its x
+  // component: an anchored edge is routinely vertical (bottom -> top), where
+  // dx is 0 and an x-derived handle would flatten the curve to the 30px
+  // floor regardless of how far apart the shapes actually are.
+  const cp = Math.max(Math.hypot(to.x - from.x, to.y - from.y) * 0.4, 30);
+  const nf = fromNormal ?? { x: 1, y: 0 };
+  const nt = toNormal ?? { x: -1, y: 0 };
   return {
     p0: from,
-    p1: { x: from.x + cp, y: from.y },
-    p2: { x: to.x - cp, y: to.y },
+    p1: { x: from.x + nf.x * cp, y: from.y + nf.y * cp },
+    p2: { x: to.x + nt.x * cp, y: to.y + nt.y * cp },
     p3: to,
   };
+}
+
+/** Normals apply only where the route actually meets a shape — the first
+ * segment's start and the last segment's end. Intermediate waypoint joins
+ * keep the default tangents so a pinned route still reads as one curve. */
+function segNormals(opts: PathOptions | undefined, i: number, lastIndex: number) {
+  return [i === 0 ? opts?.fromNormal : undefined, i === lastIndex ? opts?.toNormal : undefined] as const;
 }
 
 function sampleCubic(p0: Point, p1: Point, p2: Point, p3: Point, steps = 32): Point[] {
@@ -189,7 +216,8 @@ export function getRoutePoints(from: Point, to: Point, variant: ConnectionVarian
   // bezier
   const pts: Point[] = [];
   for (let i = 0; i < chain.length - 1; i++) {
-    const { p0, p1, p2, p3 } = bezierControlPoints(chain[i], chain[i + 1]);
+    const [nf, nt] = segNormals(opts, i, chain.length - 2);
+    const { p0, p1, p2, p3 } = bezierControlPoints(chain[i], chain[i + 1], nf, nt);
     const seg = sampleCubic(p0, p1, p2, p3);
     pts.push(...(i === 0 ? seg : seg.slice(1)));
   }
@@ -218,7 +246,8 @@ export function generatePath(from: Point, to: Point, variant: ConnectionVariant 
   // bezier
   let d = `M ${chain[0].x} ${chain[0].y} `;
   for (let i = 0; i < chain.length - 1; i++) {
-    const { p1, p2, p3 } = bezierControlPoints(chain[i], chain[i + 1]);
+    const [nf, nt] = segNormals(opts, i, chain.length - 2);
+    const { p1, p2, p3 } = bezierControlPoints(chain[i], chain[i + 1], nf, nt);
     d += `C ${p1.x} ${p1.y}, ${p2.x} ${p2.y}, ${p3.x} ${p3.y} `;
   }
   return d.trim();
@@ -245,6 +274,14 @@ export const ARROWHEAD_POINTS = "-8,-4 0,0 -8,4";
  * final segment, which is unambiguous once there's a real last leg. */
 export function getArrowAngle(from: Point, to: Point, variant: ConnectionVariant | string, opts?: PathOptions): number {
   const v = variant as ConnectionVariant;
+  // An anchored end knows exactly which side of the shape it meets, so the
+  // arrow points straight INTO that side (-normal). This beats every
+  // route-derived estimate below and is the only way a bezier arrowhead can
+  // be right at all: `bezier`'s fallback here is a flat 0° that was only
+  // ever correct for left-to-right edges.
+  if (opts?.toNormal) {
+    return Math.atan2(-opts.toNormal.y, -opts.toNormal.x) * (180 / Math.PI);
+  }
   const hasWaypoints = Boolean(opts?.waypoints && opts.waypoints.length > 0);
   if (!hasWaypoints) {
     switch (v) {

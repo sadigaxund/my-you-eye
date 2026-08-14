@@ -291,9 +291,15 @@ built in Phase G/H, not Phase F.
 
 ### Known issues
 
-- **TexturedSurface lag is reported but not yet explained.** Owner: "the UI becomes laggy when
-  TexturedSurface style is applied, and it's noticeable." Two candidate causes have been tested
-  and rejected:
+- **TexturedSurface lag — RESOLVED (2026-08-14), cause never positively identified.** Owner
+  confirms "texture lag is kinda gone" after the changes below landed. Since the one change
+  that *could* have fixed it (dropping the unconditional `getComputedStyle`) was measured as
+  far too small to explain visible lag, the resolution is not fully understood — so this note
+  stays as-is. If the lag returns, do not re-litigate the two rejected causes; start from the
+  remaining suspects at the bottom.
+
+  Original report: "the UI becomes laggy when TexturedSurface style is applied, and it's
+  noticeable." Two candidate causes were tested and rejected:
   - *Per-tile `feTurbulence` re-evaluation.* Rasterizing the textures to cached bitmaps was
     implemented and then removed. With `background-size` varied per frame to force genuine
     re-rasterization, the SVG source ran ~17.5ms/frame against ~22.3ms for the equivalent

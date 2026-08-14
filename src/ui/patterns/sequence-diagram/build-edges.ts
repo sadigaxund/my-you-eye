@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import type { ConnectionLayerEdge } from "../../connection-layer";
 import type { Point } from "../../connection-line";
 import { GRID } from "../../graph-node/grid";
-import { HEADER_H, ROW_H, LOOP_OUT, laneX, rowCenterY, rowTop, truncateChain } from "./layout";
+import { ACTIVATION_W, HEADER_H, ROW_H, LOOP_OUT, laneX, rowCenterY, rowTop, truncateChain } from "./layout";
 import type { SequenceItem, SequenceActivation } from "./types";
 
 const NOTE_MARGIN = GRID;
@@ -47,10 +47,29 @@ export function buildMessagesAndNotes(
   laneIndex: Map<string, number>,
   laneWidth: number,
   progress: number,
+  activations: SequenceActivation[] = [],
+  itemIndex: Map<string, number> = new Map(),
 ): { edges: ConnectionLayerEdge[]; notes: NoteRect[] } {
   const n = items.length;
   const edges: ConnectionLayerEdge[] = [];
   const notes: NoteRect[] = [];
+
+  // Row spans, per participant, over which an activation bar is drawn. A
+  // message touching a participant inside one of these spans must terminate
+  // on the BAR's edge; outside them it terminates on the lifeline, which is
+  // a zero-width rule so the lane centre is already its border.
+  const activeSpans = new Map<string, [number, number][]>();
+  for (const a of activations) {
+    const start = itemIndex.get(a.start);
+    if (start == null) continue;
+    const end = a.end != null ? itemIndex.get(a.end) ?? items.length - 1 : items.length - 1;
+    const spans = activeSpans.get(a.participant);
+    if (spans) spans.push([start, end]);
+    else activeSpans.set(a.participant, [[start, end]]);
+  }
+  /** Half-width of whatever the message actually attaches to at this row. */
+  const attachHalfWidth = (participantId: string, row: number): number =>
+    (activeSpans.get(participantId) ?? []).some(([s, e]) => row >= s && row <= e) ? ACTIVATION_W / 2 : 0;
 
   items.forEach((item, i) => {
     const windowStart = i / n;
@@ -85,8 +104,19 @@ export function buildMessagesAndNotes(
     if (fromIdx == null || toIdx == null) return;
 
     const isSelf = fromIdx === toIdx;
-    const from: Point = isSelf ? { x: laneX(fromIdx, laneWidth), y: y - GRID } : { x: laneX(fromIdx, laneWidth), y };
-    const to: Point = isSelf ? { x: laneX(toIdx, laneWidth), y: y + GRID } : { x: laneX(toIdx, laneWidth), y };
+    // Terminate on the border of whatever is actually drawn at each end
+    // rather than on the lane centre. Without this the arrow starts inside
+    // the sender's activation bar and its head lands *inside* the
+    // receiver's — the "lines slapped on top of the shapes" look. A
+    // self-message loops out to the right, so both of its ends sit on the
+    // bar's right edge.
+    const fromHalf = attachHalfWidth(item.from, i);
+    const toHalf = attachHalfWidth(item.to, i);
+    const dir = isSelf ? 1 : Math.sign(toIdx - fromIdx);
+    const fromX = laneX(fromIdx, laneWidth) + fromHalf * dir;
+    const toX = laneX(toIdx, laneWidth) - toHalf * (isSelf ? -1 : dir);
+    const from: Point = isSelf ? { x: fromX, y: y - GRID } : { x: fromX, y };
+    const to: Point = isSelf ? { x: toX, y: y + GRID } : { x: toX, y };
     const waypoints: Point[] | undefined = isSelf
       ? [{ x: from.x + LOOP_OUT, y: from.y }, { x: to.x + LOOP_OUT, y: to.y }]
       : undefined;
