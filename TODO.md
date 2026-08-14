@@ -321,6 +321,19 @@ built in Phase G/H, not Phase F.
 - `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).
 - `CodeBlock.highlight.tsx` exceeds the 250-line lint warning (pre-existing).
 - Unbuilt guards: `check-tokens.mjs` (no raw px/hex), dead-CVA-variant check in `audit.mjs`.
+  **`check-tokens.mjs` is now the highest-value unbuilt guard.** `Timeline`'s span bars
+  shipped with `bg-info/70`, and there is no `--color-info` token — `StatusDot`'s own `info`
+  variant resolves to `bg-primary`. Tailwind emitted nothing for the class, so the active
+  span simply had no bar, and nothing in `validate` noticed: it isn't a type error, isn't a
+  lint error, and the class name is a perfectly well-formed string. Caught by eye in a
+  screenshot. A guard that resolves every `bg-*`/`text-*`/`border-*`/`stroke-*`/`fill-*`
+  literal in `src/` against the actual token set would have caught it at author time, and is
+  the only mechanism that can.
+- **Overlapping spans in one `Timeline` lane draw on top of each other.** A lane is a single
+  row, so two spans covering the same `at` range collide. In the deploy-trace demo this
+  happens to read well (the "flake" error bar visibly sits inside the "test" span), but it's
+  luck, not layout. A real fix is sub-rows within a lane, packed greedily by start time —
+  worth doing only if spans turn out to be used densely.
 
 ---
 
