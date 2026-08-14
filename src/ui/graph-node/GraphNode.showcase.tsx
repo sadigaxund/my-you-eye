@@ -133,7 +133,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Header variations",
-      description: "headerIcon, headerStatus, subtitle and headerDots={false} compose independently — mix any of them. subtitle adds one grid cell to the header's height (still whole-number cells, so rows/ports stay grid-aligned); everything else stays inside the standard 2-cell header.",
+      description: "headerIcon, headerStatus and subtitle compose independently — mix any of them. headerIcon renders in a tinted tile in accentColor and is the node's type mark. subtitle adds one grid cell to the header's height (still whole-number cells, so rows/ports stay grid-aligned); everything else stays inside the standard 2-cell header. headerDots — the mac window buttons — is off by default and belongs only on a node that depicts an actual app window.",
       render: () => (
         <div className="flex flex-wrap items-start justify-center gap-4">
           <GraphNode
@@ -156,8 +156,8 @@ const entry: ShowcaseEntry = {
           />
           <GraphNode
             x={0} y={0} className="static"
-            header="cache"
-            headerDots={false}
+            header="app.example.com"
+            headerDots
             rows={[{ label: "Hit rate", value: "94%" }]}
           />
         </div>

@@ -17,6 +17,19 @@ const ACCENT_BORDER: Record<NonNullable<GraphNodeProps["accentColor"]>, string> 
   muted: "border-muted",
 };
 
+/**
+ * Tint for the `headerIcon` tile — the slot that replaced the traffic-light
+ * dots. Kept in the same accent vocabulary as `ACCENT_BORDER` so a node with
+ * `accent` set reads as one colour, not two.
+ */
+const ACCENT_TILE: Record<NonNullable<GraphNodeProps["accentColor"]>, string> = {
+  primary: "bg-primary/10 text-primary",
+  success: "bg-success/10 text-success",
+  warning: "bg-warning/10 text-warning",
+  danger: "bg-danger/10 text-danger",
+  muted: "bg-muted/10 text-muted",
+};
+
 const graphNodeVariants = cva(
   // `bg-canvas-surface` (never `bg-surface`): nodes render an opaque,
   // blur-free surface regardless of theme — see the "Canvas surface
@@ -76,8 +89,10 @@ export interface GraphNodeProps
   ports?: PortDef[];
   footer?: ReactNode;
   rows?: GraphNodeRow[];
-  /** Icon shown at the start of the header, before the title (after the
-   * traffic-light dots, when shown). */
+  /** Icon shown at the start of the header, before the title — rendered in a
+   * small tinted tile in `accentColor`. This is the node's type mark: what a
+   * reader uses to tell a service from a queue from a database at a glance.
+   * It occupies the slot the traffic-light dots used to own by default. */
   headerIcon?: ReactNode;
   /** Status/badge slot shown at the end of the header, after the title —
    * e.g. a `StatusDot` or `Badge`. */
@@ -86,9 +101,16 @@ export interface GraphNodeProps
    * header's height (still a whole number of cells, so rows and ports stay
    * grid-aligned — AGENTS.md §7). */
   subtitle?: ReactNode;
-  /** Hides the traffic-light dots without switching to `variant="simple"`
-   * (which also disables ports/footer/accent). Default true whenever
-   * `header` is set and `variant` isn't "simple". */
+  /** Mac-style red/amber/green window buttons at the start of the header.
+   *
+   * **Off by default**, and deliberately so: they are the chrome of a macOS
+   * window, and on a service/queue/database node they say nothing — three
+   * decorations sitting in the one place a reader looks first (owner: "they
+   * kinda feel random ... they are usually used for window decorators native
+   * to mac"). `headerIcon` now owns that slot and says what the node *is*.
+   *
+   * Turn this on only when the node genuinely depicts an application window
+   * (a browser/app mock in a walkthrough), where the chrome is the point. */
   headerDots?: boolean;
   /** Accent bar color, only visible when `accent` is true. Default
    * "primary" — matches the original look exactly when omitted. */
@@ -122,7 +144,7 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
     const headerCells = subtitle && !isSimple ? HEADER + 1 : HEADER;
     const height = hasRows ? nodeHeightPx(rows!.length, !!footer && !isSimple, headerCells) : undefined;
     const hasLegacyPorts = Boolean(ports && ports.length > 0 && !hasRows && !isSimple);
-    const showDots = !isSimple && (headerDots ?? true);
+    const showDots = !isSimple && (headerDots ?? false);
 
     // Legacy `ports` (no `rows`) sit on a node whose height is intrinsic —
     // driven by header/children/footer, not the grid formula in grid.ts.
@@ -191,7 +213,14 @@ const GraphNode = forwardRef<HTMLDivElement, GraphNodeProps>(
                   </div>
                 )}
                 {headerIcon && !isSimple && (
-                  <span className="shrink-0 flex items-center justify-center text-muted [&_svg]:size-icon-sm">{headerIcon}</span>
+                  <span
+                    className={cn(
+                      "shrink-0 flex items-center justify-center rounded-ui-sm size-5 [&_svg]:size-icon-sm",
+                      ACCENT_TILE[accentColor ?? "primary"],
+                    )}
+                  >
+                    {headerIcon}
+                  </span>
                 )}
                 <span className="text-xs font-semibold truncate flex-1 min-w-0">{header}</span>
                 {headerStatus && !isSimple && <span className="shrink-0 flex items-center">{headerStatus}</span>}
