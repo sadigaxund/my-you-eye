@@ -19,25 +19,52 @@ export type CodeDiffProps = Timing & {
   className?: string;
 };
 
-/** Every row shares one measured line height (all rows use the same
- * font/leading, so one reference measurement covers all of them) — the
- * same "measure real geometry instead of a hardcoded metric" discipline
- * CodeBlock's own substring-highlight overlay uses (AGENTS.md TODO A1),
- * applied here to size the grow/collapse animation on added/removed rows.
- * `absolute` + `invisible` keeps it out of layout and out of sight. */
-function useLineHeight(): { ref: React.RefObject<HTMLDivElement | null>; height: number } {
-  const ref = useRef<HTMLDivElement>(null);
+// Sample length for the char-width ruler, same technique (and constant) as
+// CodeBlock's own substring-highlight ruler (CodeBlock.useHighlightOverlay)
+// — scrollWidth over many repeated characters divided by the count, rather
+// than offsetWidth on a single character, avoids rounding error.
+const CHAR_RULER_LEN = 40;
+
+/** Every row shares one measured line height AND one measured monospace
+ * character width (all rows use the same font/leading, so one reference
+ * measurement covers all of them) — the same "measure real geometry instead
+ * of a hardcoded metric" discipline CodeBlock's own substring-highlight
+ * overlay uses (AGENTS.md TODO A1), applied here to size the grow/collapse
+ * animation on added/removed rows AND to position the merged word-diff
+ * highlight outline (CodeDiff.Row.tsx) in real pixels.
+ *
+ * Two separate rulers, not one: the height ruler carries `px-panel` so its
+ * offsetHeight matches a real row's line box, but that same horizontal
+ * padding would corrupt a width measurement (offsetWidth would include the
+ * padding box, not just the "0" glyph) — so char width comes from its own
+ * `size-0 overflow-hidden` ruler with no padding, reading `scrollWidth`
+ * instead, exactly like CodeBlock's ruler. */
+function useLineMetrics(): {
+  heightRef: React.RefObject<HTMLDivElement | null>;
+  widthRef: React.RefObject<HTMLSpanElement | null>;
+  height: number;
+  charWidth: number;
+} {
+  const heightRef = useRef<HTMLDivElement>(null);
+  const widthRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState(0);
+  const [charWidth, setCharWidth] = useState(0);
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const measure = () => setHeight((h) => (h === el.offsetHeight ? h : el.offsetHeight));
+    const heightEl = heightRef.current;
+    const widthEl = widthRef.current;
+    if (!heightEl || !widthEl) return undefined;
+    const measure = () => {
+      setHeight((h) => (h === heightEl.offsetHeight ? h : heightEl.offsetHeight));
+      const w = widthEl.scrollWidth / CHAR_RULER_LEN;
+      setCharWidth((prev) => (prev === w ? prev : w));
+    };
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    observer.observe(heightEl);
+    observer.observe(widthEl);
     return () => observer.disconnect();
   }, []);
-  return { ref, height };
+  return { heightRef, widthRef, height, charWidth };
 }
 
 /**
@@ -58,7 +85,7 @@ function useLineHeight(): { ref: React.RefObject<HTMLDivElement | null>; height:
 export function CodeDiff({ from, to, language, header, className, ...timing }: CodeDiffProps) {
   const { fps } = useTimeline();
   const rows = useMemo(() => pairDiffLines(linesDiff(from, to)), [from, to]);
-  const { ref: rulerRef, height: lineHeight } = useLineHeight();
+  const { heightRef, widthRef, height: lineHeight, charWidth } = useLineMetrics();
 
   const baseDelay = timing.delay != null ? resolveBeatFrames(timing.delay, fps) : 0;
   const totalDuration = Math.max(1, resolveBeatFrames(timing.duration ?? "normal", fps));
@@ -73,9 +100,12 @@ export function CodeDiff({ from, to, language, header, className, ...timing }: C
     <div className={cn(codeBlockVariants(), "w-full text-code-fg", className)}>
       {header && <CodeHeaderBar header={header} language={language} />}
       <ScrollArea orientation="both" className="flex-1 min-h-0 py-panel">
-        <div ref={rulerRef} aria-hidden className="invisible absolute px-panel font-mono text-xs leading-relaxed whitespace-pre">
+        <div ref={heightRef} aria-hidden className="invisible absolute px-panel font-mono text-xs leading-relaxed whitespace-pre">
           0
         </div>
+        <span ref={widthRef} aria-hidden className="invisible absolute size-0 overflow-hidden whitespace-pre font-mono text-xs leading-relaxed">
+          {"0".repeat(CHAR_RULER_LEN)}
+        </span>
         {rows.map((row, i) => (
           <CodeDiffRow
             key={i}
@@ -84,6 +114,7 @@ export function CodeDiff({ from, to, language, header, className, ...timing }: C
             delayFrames={baseDelay + i * eachFrames}
             durationFrames={rowDuration}
             lineHeight={lineHeight}
+            charWidth={charWidth}
           />
         ))}
       </ScrollArea>
