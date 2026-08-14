@@ -224,6 +224,20 @@ export function generatePath(from: Point, to: Point, variant: ConnectionVariant 
   return d.trim();
 }
 
+/**
+ * Arrowhead polygon in "arrow space": the tip sits at the LOCAL ORIGIN and
+ * the body extends backwards along -x, so `translate(to) rotate(angle)`
+ * lands the tip exactly on `to` — the route's own endpoint, and the point
+ * every anchor/border calculation already targets.
+ *
+ * The obvious-looking `0,-4 8,0 0,4` (base at the origin, tip 8px *past*
+ * it) is wrong for every real diagram: `to` is a point on the target node's
+ * border, so a tip 8px beyond it visibly penetrates the node, and the
+ * marker reads as appended after the line rather than as its termination.
+ * Shared by `ConnectionPath` and `Annotation` so the two can't drift.
+ */
+export const ARROWHEAD_POINTS = "-8,-4 0,0 -8,4";
+
 /** Rotation (degrees) for an arrowhead at `to`. With no waypoints, this
  * preserves each variant's original, hand-tuned behavior exactly (bezier
  * always points along +x — the curve's true end tangent was never modeled).

@@ -1,7 +1,7 @@
 import { forwardRef, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/cn";
-import { generatePath, getArrowAngle, getRouteLength } from "../connection-line";
+import { ARROWHEAD_POINTS, generatePath, getArrowAngle, getRouteLength } from "../connection-line";
 import type { ConnectionVariant, Point } from "../connection-line";
 
 // Literal class names (not template interpolation) — same rule as
@@ -146,7 +146,7 @@ const Annotation = forwardRef<HTMLDivElement, AnnotationProps>(
           />
           {marker === "arrow" && lineT >= 1 && (
             <polygon
-              points="0,-4 8,0 0,4"
+              points={ARROWHEAD_POINTS}
               className={FILL[accentColor]}
               transform={`translate(${target.x},${target.y}) rotate(${angle})`}
             />
