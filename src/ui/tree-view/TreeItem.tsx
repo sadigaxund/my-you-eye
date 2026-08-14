@@ -136,12 +136,21 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
               "text-sm leading-normal truncate flex-1 min-w-0",
               arrIndex && "font-mono text-muted text-xs",
             )}>{node.label}</span>
+            {/* `trailing` renders BEFORE `value` so the value (e.g. FileTree's
+                git-status badge) is the last flex child and lands flush
+                against the row's right edge every time — previously value
+                came first and trailing's varying width (file sizes, line
+                counts) pushed the badge to a different x per row. The right
+                edge itself is depth-independent: this content div is
+                flex-1 inside the row, so it always fills out to the same
+                right edge regardless of how many guide/elbow columns the
+                row's indent consumed on the left. See AGENTS.md TODO A1 for
+                why value keeps its own truncation-detecting CellType instead
+                of an outer clip. */}
+            {node.trailing && (
+              <span className="shrink-0 text-xs text-muted tabular-nums">{node.trailing}</span>
+            )}
             {node.value && (
-              // Width constraint only — CellType's own TruncatedCellValue owns
-              // truncation detection (scrollWidth > clientWidth) internally.
-              // An outer `truncate overflow-hidden` here used to clip first,
-              // so CellType's "…" affordance and popover never saw an overflow
-              // to react to. See TODO.md A1 "TreeItem double-truncates".
               <span className="shrink min-w-0 text-right">
                 <CellType
                   {...node.value}
@@ -158,9 +167,6 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
                   replacements={replacements}
                 />
               </span>
-            )}
-            {node.trailing && (
-              <span className="shrink-0 text-xs text-muted tabular-nums">{node.trailing}</span>
             )}
           </div>
         </div>
