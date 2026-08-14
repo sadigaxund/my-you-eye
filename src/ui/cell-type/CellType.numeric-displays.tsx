@@ -31,12 +31,26 @@ const common = "font-mono tabular-nums truncate inline-block max-w-full align-mi
  * strings, no per-row width measurement (AGENTS.md §7 / owner's explicit
  * "DO NOT measure text and pad" instruction).
  */
-function NumberUnitRow({ number, unit, unitPosition = "suffix" }: { number: ReactNode; unit?: ReactNode; unitPosition?: "prefix" | "suffix" }) {
-  if (!unit) return <span className={common}>{number}</span>;
+function NumberUnitRow({ number, unit, unitPosition = "suffix", className }: { number: ReactNode; unit?: ReactNode; unitPosition?: "prefix" | "suffix"; className?: string }) {
   const numberCol = <span className="text-right">{number}</span>;
-  const unitCol = <span className="text-left">{unit}</span>;
+  // A suffix unit reads as a separate token ("2.0 kB", "12.3 %") and takes a
+  // thin space; a prefix unit is part of the numeral ("$1,234.56") and must
+  // not. Grid `gap` can't express that — it would space both — so the space
+  // belongs to the unit cell.
+  const unitCol = unit ? <span className={unitPosition === "suffix" ? "pl-1" : undefined}>{unit}</span> : null;
   return (
-    <span className={cn(common, "inline-grid grid-cols-[1fr_auto] items-baseline gap-1 align-middle")}>
+    <span className={cn(common, "inline-grid grid-cols-[1fr_auto_auto] items-baseline align-middle", className)}>
+      {/* The empty leading `1fr` is the whole layout. Every other track is
+          `auto`, so the number and its unit form one right-aligned group that
+          stays glued together however wide the cell is. The first version put
+          the `1fr` on the NUMBER instead, which works for a suffix but tears a
+          prefix apart: `$` sat pinned to the cell's left edge with the digits
+          flung to the right (owner: "Currency type has dollar sign on the
+          left, and the value on the right, is it purposely done?"). It also
+          left every no-unit type (`number`, `duration`, `signed`) rendering as
+          a plain left-aligned inline-block, so one column mixed both
+          alignments. The spacer gives all of them the same behaviour. */}
+      <span aria-hidden />
       {unitPosition === "prefix" ? <>{unitCol}{numberCol}</> : <>{numberCol}{unitCol}</>}
     </span>
   );
@@ -46,9 +60,9 @@ export function NumberDisplay({ value, compact, fractionDigits }: { value: unkno
   const r = formatNumberParts(value, { fractionDigits, compact });
   if (!r) return <span className="text-muted">—</span>;
   return (
-    <span className={common}>
-      {styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
-    </span>
+    <NumberUnitRow
+      number={styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+    />
   );
 }
 
@@ -84,8 +98,8 @@ export function DurationDisplay({ value }: { value: unknown }) {
   const segs = formatDurationParts(value);
   if (!segs) return <span className="text-muted">—</span>;
   return (
-    <span className={common}>
-      {segs.map((seg, i) => (
+    <NumberUnitRow number={
+      segs.map((seg, i) => (
         <span key={i}>
           {i > 0 && <span className="text-muted text-xs"> </span>}
           <span className={i === 0 ? "font-medium" : "text-muted text-xs"}>
@@ -100,8 +114,8 @@ export function DurationDisplay({ value }: { value: unknown }) {
             {i === 0 ? seg.v : seg.v.padStart(2, "0")}{seg.u}
           </span>
         </span>
-      ))}
-    </span>
+      ))
+    } />
   );
 }
 
@@ -130,7 +144,7 @@ export function SignedDisplay({ value }: { value: unknown }) {
   const negative = r.sign === "negative";
   const color = positive ? "text-success" : negative ? "text-danger" : "text-muted";
   return (
-    <span className={`${common} ${color}`}>
+    <NumberUnitRow className={color} number={
       <span className="inline-flex items-center gap-0.5">
         {positive && (
           <svg viewBox="0 0 12 12" className="size-icon-sm fill-current">
@@ -146,6 +160,6 @@ export function SignedDisplay({ value }: { value: unknown }) {
           {styledParts(r.parts, { integer: "font-semibold", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
         </span>
       </span>
-    </span>
+    } />
   );
 }
