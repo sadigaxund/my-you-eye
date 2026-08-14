@@ -17,6 +17,27 @@ const scene: TerminalSceneData = {
   ],
 };
 
+const sshScene: TerminalSceneData = {
+  kind: "terminal",
+  cwd: "~",
+  user: "dev",
+  host: "laptop",
+  title: "deploy session",
+  scheme: "matrix",
+  rows: 8,
+  entries: [
+    { command: "ssh deploy@prod-1", say: "SSH into the production host." },
+    { output: "Welcome to prod-1 (Ubuntu 22.04)" },
+    // Every following entry inherits user/host/cwd/promptGlyph from
+    // whichever entry last set them — the scene forwards this straight
+    // through to Terminal's own carry-forward resolution (TODO.md D4/
+    // owner feedback: "a cd changing the directory for subsequent
+    // lines"), it isn't reimplemented here.
+    { user: "deploy", host: "prod-1", promptGlyph: "#", cwd: "/var/www/app", command: "cd /var/www/app && ls", output: "index.html  app.js  package.json", say: "Once logged in, the prompt switches to the deploy user on prod-1." },
+    { command: "pm2 restart app", output: "app restarted", exitCode: 0, say: "Restart the app — still deploy@prod-1, still /var/www/app." },
+  ],
+};
+
 function Frame({ children }: { children: ReactNode }) {
   return <div className="aspect-video w-full overflow-hidden rounded-ui border border-border">{children}</div>;
 }
@@ -58,6 +79,15 @@ const entry: ShowcaseEntry = {
       render: () => (
         <PinnedFrame frame={160} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>
+        </PinnedFrame>
+      ),
+    },
+    {
+      name: "Mid-session prompt change (rows + scheme)",
+      description: "scene.rows caps the box height so it never grows; scene.scheme=\"matrix\" retints it; the third entry's own user/host/cwd/promptGlyph override — carried through from TerminalStep straight to Terminal's entries — changes the prompt for every entry after it, exactly like a real `ssh` login.",
+      render: () => (
+        <PinnedFrame frame={220} durationInFrames={220}>
+          <Frame><TerminalScene scene={sshScene} /></Frame>
         </PinnedFrame>
       ),
     },

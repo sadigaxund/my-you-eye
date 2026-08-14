@@ -56,6 +56,10 @@ function currentEntryView(entry: TerminalStep, localProgress: number): TerminalE
     output: outputVisible ? entry.output : undefined,
     language: entry.language,
     exitCode: exitVisible ? entry.exitCode : undefined,
+    cwd: entry.cwd,
+    user: entry.user,
+    host: entry.host,
+    promptGlyph: entry.promptGlyph,
   };
 }
 
@@ -83,7 +87,16 @@ export function TerminalScene({ scene }: TerminalSceneProps) {
   for (let i = 0; i <= currentIndex; i++) {
     const entry = scene.entries[i];
     if (i < currentIndex) {
-      visible.push({ command: entry.command, output: entry.output, language: entry.language, exitCode: entry.exitCode });
+      visible.push({
+        command: entry.command,
+        output: entry.output,
+        language: entry.language,
+        exitCode: entry.exitCode,
+        cwd: entry.cwd,
+        user: entry.user,
+        host: entry.host,
+        promptGlyph: entry.promptGlyph,
+      });
       continue;
     }
     const range = ranges[stepName(entry.id, i)];
@@ -101,6 +114,9 @@ export function TerminalScene({ scene }: TerminalSceneProps) {
         user={scene.user}
         host={scene.host}
         title={scene.title}
+        scheme={scene.scheme}
+        chrome={scene.chrome}
+        rows={scene.rows}
       />
     </div>
   );

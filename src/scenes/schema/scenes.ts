@@ -92,6 +92,18 @@ export interface TerminalStep extends StepBase {
   /** Shows a spinner with this label while the step runs, before `output`
    * lands. For a step that should read as "this takes a while". */
   spinner?: string;
+  /**
+   * Per-entry overrides of the prompt chrome — each independently
+   * optional, and each PERSISTS to every following entry until overridden
+   * again, mirroring `Terminal`'s own per-entry override semantics (a
+   * real shell's `cd`/`ssh` changes the prompt for every command after
+   * it, not just that one line). Falls back to the scene-level prop of
+   * the same name when never set by any entry up to this point.
+   */
+  cwd?: string;
+  user?: string;
+  host?: string;
+  promptGlyph?: "$" | ">" | "#" | "❯";
 }
 
 export interface TerminalScene extends SceneBase {
@@ -103,6 +115,17 @@ export interface TerminalScene extends SceneBase {
   /** Caption for the window title bar. Defaults to `cwd`. */
   title?: string;
   prompt?: "$" | ">" | "#" | "❯";
+  /** Color decorator — forwarded to `Terminal`'s `scheme`. Default "default". */
+  scheme?: "default" | "matrix" | "amber";
+  /** Window-chrome decorator — forwarded to `Terminal`'s `chrome`. Default "dots". */
+  chrome?: "dots" | "none";
+  /**
+   * Fixed visible height in lines — forwarded to `Terminal`'s `rows`
+   * (owner feedback: "the size of terminal does not really change, but
+   * the content just gets scrolled up as something gets added"). Omit
+   * for the previous grows-with-content behavior.
+   */
+  rows?: number;
 }
 
 /** One side of a `compare` scene. A discriminated union rather than four

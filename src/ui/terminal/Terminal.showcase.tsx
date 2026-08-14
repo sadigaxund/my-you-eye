@@ -66,6 +66,79 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Color schemes",
+      description: "scheme: \"default\" | \"matrix\" | \"amber\" — retints the command line and border from existing success/warning tokens, never new ones.",
+      render: () => (
+        <div className="flex flex-col gap-4 max-w-lg mx-auto">
+          <Terminal scheme="default" prompt="$" entries={[{ command: "uptime", output: "up 14 days, load average: 0.08" }]} />
+          <Terminal scheme="matrix" prompt="❯" entries={[{ command: "whoami", output: "neo" }]} />
+          <Terminal scheme="amber" prompt=">" entries={[{ command: "dir", output: "AUTOEXEC.BAT" }]} />
+        </div>
+      ),
+    },
+    {
+      name: "Chrome decorator",
+      description: "chrome: \"dots\" (default macOS traffic lights) | \"none\" (flat caption bar, no dots).",
+      render: () => (
+        <div className="flex flex-col gap-4 max-w-lg mx-auto">
+          <Terminal chrome="dots" title="session — bash" entries={[{ command: "echo hi", output: "hi" }]} />
+          <Terminal chrome="none" title="session — bash" entries={[{ command: "echo hi", output: "hi" }]} />
+        </div>
+      ),
+    },
+    {
+      name: "Fixed height, scrolls as content grows",
+      description: "rows caps the box at that many lines' worth of height (measured, never hardcoded) instead of growing with content — new entries scroll into view, older ones scroll up out of the fixed frame, like a real terminal.",
+      render: () => (
+        <div className="max-w-lg mx-auto">
+          <Terminal
+            title="build.log"
+            rows={6}
+            entries={[
+              { command: "npm run build" },
+              { output: "compiling src/index.ts" },
+              { output: "compiling src/ui/button.tsx" },
+              { output: "compiling src/ui/card.tsx" },
+              { output: "compiling src/ui/terminal.tsx" },
+              { output: "bundling dist/index.js" },
+              { output: "bundling dist/index.mjs" },
+              { output: "writing dist/index.d.ts" },
+              { output: "done in 4.8s", exitCode: 0 },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      name: "Prompt segments, changed mid-session",
+      description: "user/host/cwd/promptGlyph are each independently settable per entry, and — like a real shell's cd — persist to every following entry until overridden again, not just that one line.",
+      render: () => (
+        <div className="max-w-lg mx-auto">
+          <Terminal
+            title="ssh session"
+            entries={[
+              { user: "dev", host: "laptop", cwd: "~", promptGlyph: "$", command: "ssh deploy@prod-1" },
+              { output: "Welcome to prod-1 (Ubuntu 22.04)" },
+              // The next entry's overrides — different user/host/glyph — now
+              // apply to it AND every entry after it, exactly like a real
+              // `ssh` login changing who "you are" for the rest of the
+              // session.
+              { user: "deploy", host: "prod-1", cwd: "~", promptGlyph: "#", command: "cd /var/www/app" },
+              // The `cd` command's own line still shows the OLD cwd (you
+              // type `cd` from where you currently are) — this next entry
+              // is the first one that's actually IN the new directory, so
+              // it's the one that sets cwd: "/var/www/app", which then
+              // persists to every entry after it too.
+              { cwd: "/var/www/app", command: "ls", output: "index.html  app.js  package.json" },
+              // Only cwd changes this time — user/host/glyph all persist
+              // unchanged, exactly like typing `cd` alone in a real shell.
+              { cwd: "/var/www/app/dist", command: "cd dist && ls", output: "bundle.js  bundle.js.map" },
+            ]}
+          />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;
