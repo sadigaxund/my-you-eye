@@ -16,13 +16,22 @@ export interface ComparisonProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
   defaultValue?: number;
   onValueChange?: (value: number) => void;
   /**
-   * 0→1 animation-in progress for the wipe divider (TODO.md D4's
-   * progress-in convention) — lets a video/live scene animate the reveal
-   * without ever importing src/motion/. When provided it takes over the
-   * divider position entirely (`pct = progress * 100`) and disables
-   * dragging, since the divider is then a pure function of this prop
-   * rather than of drag state. Omitted falls back to the interactive
-   * value/defaultValue divider. No effect in "side-by-side" mode.
+   * 0→1 animation-in progress (TODO.md D4's progress-in convention) — lets
+   * a video/live scene animate the reveal without ever importing
+   * src/motion/. In "wipe" mode it takes over the divider position
+   * entirely (`pct = progress * 100`) and disables dragging, since the
+   * divider is then a pure function of this prop rather than of drag
+   * state. In "side-by-side" mode it fades the ENTIRE `after` column in
+   * as one unit — label, border, and content together (`opacity:
+   * progress` on the pane's own outer wrapper) — rather than a caller
+   * wrapping just `after`'s content in its own opacity animation, which
+   * left the column's border/label at full opacity while only the
+   * content faded: the mismatch between a crisp, always-solid outer
+   * frame and a barely-there inner header separator read as the
+   * separator having "no border" partway through the fade (owner
+   * report, CompareScene "Columns — playing"). Omitted falls back to
+   * the interactive value/defaultValue divider (wipe) / full opacity
+   * (side-by-side).
    */
   progress?: number;
 }
@@ -98,7 +107,7 @@ const Comparison = forwardRef<HTMLDivElement, ComparisonProps>(
             {beforeLabel && <Badge variant="neutral" className="self-start">{beforeLabel}</Badge>}
             <div className="overflow-hidden rounded-ui border border-border">{before}</div>
           </div>
-          <div className="flex flex-col gap-tight min-w-0">
+          <div className="flex flex-col gap-tight min-w-0" style={progress !== undefined ? { opacity: progress } : undefined}>
             {afterLabel && <Badge variant="primary" className="self-start">{afterLabel}</Badge>}
             <div className="overflow-hidden rounded-ui border border-border">{after}</div>
           </div>

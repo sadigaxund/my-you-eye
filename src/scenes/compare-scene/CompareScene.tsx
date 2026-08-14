@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Comparison } from "../../ui/patterns/comparison";
 import { CodeBlock } from "../../ui/code-block";
 import { Image } from "../../ui/image";
-import { Reveal } from "../../motion";
 import { useProgress, useSequence } from "../../motion/core";
 import { sceneSteps } from "../timing";
 import type { CompareScene as CompareSceneData, ComparePane } from "../schema";
@@ -37,9 +36,19 @@ function renderPane(pane: ComparePane): ReactNode {
  * step named "compare", paced off `say`/`heading`/both labels) — `after`'s
  * reveal is that beat's entire content: in `"wipe"` mode the divider sweep
  * from 0 to 100 over the beat *is* the reveal; in `"columns"` mode `after`
- * fades in via `Reveal` over the same beat while `before` is already on
- * screen, so the comparison still reads as "here's what changed" rather
- * than both panes simply appearing at once.
+ * fades in over the same beat while `before` is already on screen, so the
+ * comparison still reads as "here's what changed" rather than both panes
+ * simply appearing at once. The fade is `Comparison`'s own `progress` prop
+ * (extended to drive side-by-side's after-column opacity, not just wipe's
+ * divider) rather than a `Reveal` wrapped around just `after`'s content:
+ * wrapping only the content left Comparison's own label Badge and pane
+ * border at full opacity while the CodeBlock inside faded, so its header
+ * separator (a 1px border, low-contrast to begin with) crossed the
+ * invisible threshold well before the rest of the pane looked "faded" —
+ * reading as a missing/glitching separator rather than a smooth reveal.
+ * Fading the whole labeled column as one unit (one `opacity` on one
+ * element, no extra wrapping `<div>`) keeps every border in the column in
+ * sync with itself.
  */
 export function CompareScene({ scene }: CompareSceneProps) {
   const ranges = useSequence(sceneSteps(scene), scene.pace);
@@ -49,14 +58,7 @@ export function CompareScene({ scene }: CompareSceneProps) {
 
   const mode = scene.mode ?? "columns";
   const beforeNode = renderPane(scene.before);
-  const afterNode =
-    mode === "wipe" ? (
-      renderPane(scene.after)
-    ) : (
-      <Reveal from="fade" delay={range.startFrame} duration={duration}>
-        {renderPane(scene.after)}
-      </Reveal>
-    );
+  const afterNode = renderPane(scene.after);
 
   return (
     <div className="flex h-full w-full flex-col justify-center gap-stack bg-bg p-panel-xl text-fg">
@@ -67,7 +69,7 @@ export function CompareScene({ scene }: CompareSceneProps) {
         after={afterNode}
         beforeLabel={scene.before.label}
         afterLabel={scene.after.label}
-        progress={mode === "wipe" ? progress : undefined}
+        progress={progress}
         className="w-full"
       />
     </div>
