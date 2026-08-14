@@ -482,7 +482,8 @@
         "Playing",
         "Pinned mid-typing, entry 1 (frame 12/160)",
         "Pinned on entry 2",
-        "Pinned at rest (frame 160/160)"
+        "Pinned at rest (frame 160/160)",
+        "Mid-session prompt change (rows + scheme)"
       ]
     },
     {
@@ -1316,7 +1317,11 @@
       "demos": [
         "Prompt glyphs",
         "Title bar",
-        "Variant"
+        "Variant",
+        "Color schemes",
+        "Chrome decorator",
+        "Fixed height, scrolls as content grows",
+        "Prompt segments, changed mid-session"
       ]
     },
     {
@@ -2294,6 +2299,24 @@
             "name": "prompt",
             "optional": true,
             "type": "\"$\" | \">\" | \"#\" | \"❯\""
+          },
+          {
+            "name": "scheme",
+            "optional": true,
+            "type": "\"default\" | \"matrix\" | \"amber\"",
+            "description": "Color decorator — forwarded to `Terminal`'s `scheme`. Default \"default\"."
+          },
+          {
+            "name": "chrome",
+            "optional": true,
+            "type": "\"dots\" | \"none\"",
+            "description": "Window-chrome decorator — forwarded to `Terminal`'s `chrome`. Default \"dots\"."
+          },
+          {
+            "name": "rows",
+            "optional": true,
+            "type": "number",
+            "description": "Fixed visible height in lines — forwarded to `Terminal`'s `rows` (owner feedback: \"the size of terminal does not really change, but the content just gets scrolled up as something gets added\"). Omit for the previous grows-with-content behavior."
           }
         ],
         "stepInterface": "TerminalStep",
@@ -2327,6 +2350,27 @@
             "optional": true,
             "type": "string",
             "description": "Shows a spinner with this label while the step runs, before `output` lands. For a step that should read as \"this takes a while\"."
+          },
+          {
+            "name": "cwd",
+            "optional": true,
+            "type": "string",
+            "description": "Per-entry overrides of the prompt chrome — each independently optional, and each PERSISTS to every following entry until overridden again, mirroring `Terminal`'s own per-entry override semantics (a real shell's `cd`/`ssh` changes the prompt for every command after it, not just that one line). Falls back to the scene-level prop of the same name when never set by any entry up to this point."
+          },
+          {
+            "name": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "promptGlyph",
+            "optional": true,
+            "type": "\"$\" | \">\" | \"#\" | \"❯\""
           }
         ]
       },

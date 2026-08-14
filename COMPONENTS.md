@@ -121,6 +121,9 @@ Step (`CodeStep`):
 | `host?` | `string` | — |
 | `title?` | `string` | Caption for the window title bar. Defaults to `cwd`. |
 | `prompt?` | `"$" \| ">" \| "#" \| "❯"` | — |
+| `scheme?` | `"default" \| "matrix" \| "amber"` | Color decorator — forwarded to `Terminal`'s `scheme`. Default "default". |
+| `chrome?` | `"dots" \| "none"` | Window-chrome decorator — forwarded to `Terminal`'s `chrome`. Default "dots". |
+| `rows?` | `number` | Fixed visible height in lines — forwarded to `Terminal`'s `rows` (owner feedback: "the size of terminal does not really change, but the content just gets scrolled up as something gets added"). Omit for the previous grows-with-content behavior. |
 
 Step (`TerminalStep`):
 
@@ -131,6 +134,10 @@ Step (`TerminalStep`):
 | `language?` | `string` | Language id for highlighting `output`. |
 | `exitCode?` | `number` | Process exit code — renders a badge (0 reads success, non-zero danger). |
 | `spinner?` | `string` | Shows a spinner with this label while the step runs, before `output` lands. For a step that should read as "this takes a while". |
+| `cwd?` | `string` | Per-entry overrides of the prompt chrome — each independently optional, and each PERSISTS to every following entry until overridden again, mirroring `Terminal`'s own per-entry override semantics (a real shell's `cd`/`ssh` changes the prompt for every command after it, not just that one line). Falls back to the scene-level prop of the same name when never set by any entry up to this point. |
+| `user?` | `string` | — |
+| `host?` | `string` | — |
+| `promptGlyph?` | `"$" \| ">" \| "#" \| "❯"` | — |
 
 #### `kind: "diagram"` — `DiagramScene`
 
@@ -328,7 +335,7 @@ Step (`WalkthroughStep`):
 | `ScrollArea` | `my-you-eye` | orientation: horizontal / vertical | Vertical scroll, Horizontal scroll, Rounded corners (radius on ScrollArea itself, not a wrapper), Edge fade |
 | `Separator` | `my-you-eye` | orientation: vertical | Horizontal, Vertical |
 | `StatusDot` | `my-you-eye` | variant: danger / info / neutral / success / warning<br>size: md / sm | Variants, Sizes, Pulsing |
-| `Terminal` | `my-you-eye` | variant: default / elevated | Prompt glyphs, Title bar, Variant |
+| `Terminal` | `my-you-eye` | variant: default / elevated | Prompt glyphs, Title bar, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
 
 ## feedback
 
@@ -435,7 +442,7 @@ Step (`WalkthroughStep`):
 | `SceneRenderer` | `my-you-eye/scenes` | — | title, bullets, diagram + chart + stat |
 | `SequenceScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-message, step 3 (frame ${step2.endFrame + 3}/${total}), Pinned at rest (frame ${total}/${total}) |
 | `StatScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-count, tile 1 (frame ${step0.startFrame + 3}/${total}), Pinned at rest, all four tiles (frame ${step3.endFrame - 1}/${total}) |
-| `TerminalScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-typing, entry 1 (frame 12/160), Pinned on entry 2, Pinned at rest (frame 160/160) |
+| `TerminalScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-typing, entry 1 (frame 12/160), Pinned on entry 2, Pinned at rest (frame 160/160), Mid-session prompt change (rows + scheme) |
 | `TitleScene` | `my-you-eye/scenes` | — | Centered, playing, Left-aligned, no chapter/subtitle, Pinned mid-stagger (frame 12/90), Pinned at rest (frame 90/90) |
 | `Validation` | `my-you-eye/scenes` | style: soft | Deliberately broken video, A valid, minimal video |
 | `WalkthroughScene` | `my-you-eye/scenes` | — | Playing, Pinned with a spotlight + Annotation, step 2 (frame ${step1.endFrame - 1}/${total}), Pinned mid-typing, step 3 (frame ${step2.startFrame + 5}/${total}), Pinned on the final click, step 4 (frame ${step3.startFrame + 2}/${total}) |
