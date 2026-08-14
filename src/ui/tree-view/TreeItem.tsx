@@ -151,7 +151,26 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
               <span className="shrink-0 text-xs text-muted tabular-nums">{node.trailing}</span>
             )}
             {node.value && (
-              <span className="shrink min-w-0 text-right">
+              <span
+                className="shrink min-w-0 text-right"
+                // Badge (and Kbd) size themselves off --density-chip-min-h
+                // (1.375rem ≈ 22px), which is taller than the compact row
+                // itself (--spacing-tree-row-compact, 16px — the row's
+                // content box opts out of the flex min-height floor, see
+                // the comment above, so nothing stretches it). At compact
+                // density that overflow made adjacent rows' right-aligned
+                // badges visually touch/overlap. Overriding the custom
+                // property here — not forking Badge or adding a new size
+                // variant — cascades to whatever CellType renders inside,
+                // the same "override the var, let descendants read it"
+                // structural pattern Canvas uses for --backdrop-blur
+                // (AGENTS.md §0.12). `0` for the vertical padding mirrors
+                // that same precedent (a bare unitless zero needs no token).
+                style={compact ? {
+                  ["--density-chip-min-h" as string]: "var(--spacing-tree-row-compact)",
+                  ["--density-chip-py" as string]: "0",
+                } : undefined}
+              >
                 <CellType
                   {...node.value}
                   // "image" is the one CellType value TreeView can't fit at
