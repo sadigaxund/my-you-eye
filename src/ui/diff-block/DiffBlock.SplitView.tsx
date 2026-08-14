@@ -1,5 +1,5 @@
 import { cn } from "../../lib/cn";
-import { LineContent, ROW_BG, MARKER_TEXT, MARKER_BORDER, MARKER_GLYPH } from "./DiffBlock";
+import { LineContent, ROW_BG, ROW_LEADING, MARKER_TEXT, MARKER_BORDER, MARKER_GLYPH } from "./DiffBlock";
 import type { DiffLine, DiffRow } from "./DiffBlock";
 import { wordDiff } from "./DiffBlock.wordDiff";
 import type { WordDiffSegment } from "./DiffBlock.wordDiff";
@@ -18,10 +18,10 @@ function SideCell({ line, language, highlight, segments, side }: {
   const lineNo = side === "old" ? line.oldLine : line.newLine;
   return (
     <div className={cn("flex flex-1 min-w-0", ROW_BG[line.type])}>
-      <span className={cn("w-9 shrink-0 text-right pr-1.5 font-mono text-xs text-code-muted tabular-nums select-none", ROW_BG[line.type] || "bg-code-bg")}>
+      <span className={cn("w-9 shrink-0 text-right pr-1.5 font-mono text-xs text-code-muted tabular-nums select-none", ROW_LEADING, ROW_BG[line.type] || "bg-code-bg")}>
         {lineNo ?? ""}
       </span>
-      <span className={cn("shrink-0 w-5 text-center border-l-2 font-mono text-xs", MARKER_BORDER[line.type], MARKER_TEXT[line.type])}>
+      <span className={cn("shrink-0 w-5 text-center border-l-2 font-mono text-xs", ROW_LEADING, MARKER_BORDER[line.type], MARKER_TEXT[line.type])}>
         {MARKER_GLYPH[line.type]}
       </span>
       <span className="min-w-0 flex-1 px-2 whitespace-pre font-mono text-xs leading-relaxed">

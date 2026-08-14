@@ -124,16 +124,30 @@ export const MARKER_BORDER: Record<DiffLineType, string> = {
 };
 export const MARKER_GLYPH: Record<DiffLineType, string> = { added: "+", removed: "-", context: " " };
 
+/**
+ * Every cell in a diff row — line numbers, the +/- marker, the code — must
+ * carry this. The row is a flex container, so a cell whose line box is
+ * shorter than the row's stretches to the row height but paints its glyph at
+ * the TOP of that box. `text-xs` alone gives a 16px line box while the code
+ * column's `leading-relaxed` gives ~19.5px, so the markers and line numbers
+ * sat ~2px high against the code beside them (owner: "the '+' and '-' is
+ * still not properly center aligned within the row, it feels kind of on the
+ * upper side"). Matching the line-height is what actually aligns them:
+ * identical font-size + identical line-height puts the cells on a shared
+ * baseline, which vertical centring would only approximate.
+ */
+export const ROW_LEADING = "leading-relaxed";
+
 function UnifiedRow({ line, language, highlight, segments, side }: {
   line: DiffLine; language?: string; highlight?: boolean; segments?: WordDiffSegment[]; side?: "old" | "new";
 }) {
   return (
     <div className={cn("flex", ROW_BG[line.type])}>
-      <span className={cn("sticky left-0 z-10 flex shrink-0 font-mono text-xs text-code-muted tabular-nums select-none", ROW_BG[line.type] || "bg-code-bg")}>
+      <span className={cn("sticky left-0 z-10 flex shrink-0 font-mono text-xs text-code-muted tabular-nums select-none", ROW_LEADING, ROW_BG[line.type] || "bg-code-bg")}>
         <span className="w-9 text-right pr-1.5">{line.oldLine ?? ""}</span>
         <span className="w-9 text-right pr-1.5">{line.newLine ?? ""}</span>
       </span>
-      <span className={cn("shrink-0 w-5 text-center border-l-2 font-mono text-xs", MARKER_BORDER[line.type], MARKER_TEXT[line.type])}>
+      <span className={cn("shrink-0 w-5 text-center border-l-2 font-mono text-xs", ROW_LEADING, MARKER_BORDER[line.type], MARKER_TEXT[line.type])}>
         {MARKER_GLYPH[line.type]}
       </span>
       <span className="px-2 whitespace-pre font-mono text-xs leading-relaxed">
