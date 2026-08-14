@@ -36,12 +36,19 @@ function polar(cx: number, cy: number, r: number, angleDeg: number) {
 
 function arcPath(cx: number, cy: number, rOuter: number, rInner: number, startDeg: number, endDeg: number) {
   const large = endDeg - startDeg > 180 ? 1 : 0;
+  // A single arc command can't express a full 360° sweep — start and end
+  // points coincide, so the arc is degenerate and browsers paint nothing
+  // (the bug behind "single category renders as no visible shape at all").
+  // Clamping just short of a full turn keeps the arc command valid while
+  // leaving a seam under a hundredth of a degree — imperceptible at any
+  // radius this component renders, so it still reads as a solid circle.
+  const clampedEnd = Math.min(endDeg, startDeg + 359.99);
   const p0 = polar(cx, cy, rOuter, startDeg);
-  const p1 = polar(cx, cy, rOuter, endDeg);
+  const p1 = polar(cx, cy, rOuter, clampedEnd);
   if (rInner <= 0) {
     return `M ${cx} ${cy} L ${p0.x} ${p0.y} A ${rOuter} ${rOuter} 0 ${large} 1 ${p1.x} ${p1.y} Z`;
   }
-  const q0 = polar(cx, cy, rInner, endDeg);
+  const q0 = polar(cx, cy, rInner, clampedEnd);
   const q1 = polar(cx, cy, rInner, startDeg);
   return [
     `M ${p0.x} ${p0.y}`,
@@ -83,11 +90,37 @@ function PieChart({
     return { slice: s, index: i, start, end: start + drawnSpan, fraction };
   });
 
+  // A single 100%-share category needs its own defined edge: the usual
+  // stroke-surface (matched to the page/card background, meant to separate
+  // adjacent slices) reads as "no border at all" when there's only one
+  // slice and nothing to separate it from — the complaint that it "just
+  // looks like text on the screen". stroke-border is a real, visible
+  // outline so the ring/disc reads as a shape even with one category.
+  const visibleSlices = arcs.filter((a) => a.end - a.start > 0.001).length;
+  const singleSlice = visibleSlices <= 1;
+
   return (
     <div className={cn("flex flex-col items-center gap-stack", className)}>
       {title && <h3 className="text-sm font-semibold text-fg">{title}</h3>}
       {empty ? (
-        <EmptyState title="No data" description="This chart has no slices to display." />
+        <div className="relative" style={{ width: size, height: size }}>
+          {/* Ghost ring behind the message — an empty pie/donut should
+              still read as a pie/donut, not a stray sentence. */}
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="absolute inset-0">
+            <circle
+              cx={cx}
+              cy={cy}
+              r={(rOuter + rInner) / 2}
+              fill="none"
+              className="stroke-muted"
+              strokeWidth={innerRadius > 0 ? rOuter - rInner : rOuter}
+              opacity={0.18}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <EmptyState title="No data" description="This chart has no slices to display." />
+          </div>
+        </div>
       ) : (
         <div className="relative" style={{ width: size, height: size }}>
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={title}>
@@ -98,7 +131,12 @@ function PieChart({
                 <path
                   key={slice.label}
                   d={arcPath(cx, cy, rOuter, rInner, start, end)}
-                  className={cn(chartFill(token), "stroke-surface transition-opacity", hoverIndex !== null && hoverIndex !== index && "opacity-60")}
+                  className={cn(
+                    chartFill(token),
+                    singleSlice ? "stroke-border" : "stroke-surface",
+                    "transition-opacity",
+                    hoverIndex !== null && hoverIndex !== index && "opacity-60",
+                  )}
                   strokeWidth={2}
                   onPointerEnter={() => setHoverIndex(index)}
                   onPointerLeave={() => setHoverIndex(null)}
