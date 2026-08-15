@@ -28,4 +28,14 @@ export interface ShowcaseDemo {
   render: () => ReactNode;
   layout?: "fill" | "center";
   overflow?: "visible" | "auto" | "hidden";
+  /**
+   * Demo cards carry `contain: paint` so an animating or hovering preview
+   * never repaints through the page's textured/backdrop-filtered background.
+   * Paint containment also makes the card the containing block for `position:
+   * fixed` descendants and clips them to it — correct for every demo whose
+   * content lives inside its own box, wrong for one that deliberately renders
+   * to a viewport corner (`Toast`'s `Toaster` viewport is the only such demo
+   * in the library). Set `contain: false` there. Default true.
+   */
+  contain?: boolean;
 }

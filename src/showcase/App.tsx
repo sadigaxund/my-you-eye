@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fontOptions } from "../lib/fonts";
 import type { FontMode } from "../lib/fonts";
 import { themeGroups } from "../lib/themes";
@@ -11,9 +11,23 @@ import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
 
+/**
+ * Routing is still nothing but the URL hash (AGENTS.md §4) — it just carries
+ * one more level now: `#button` opens a page, `#button--sizes` opens the same
+ * page *and* scrolls to that demo's card. Everything before the `--` is the
+ * page slug (see `demoAnchor()`), so a demo anchor is a valid deep link from
+ * a cold load, not only an in-page jump.
+ */
+function parseHash(): { slug?: string; anchor?: string } {
+  const raw = window.location.hash.replace(/^#/, "");
+  if (!raw) return {};
+  const [slug] = raw.split("--");
+  return { slug, anchor: raw.includes("--") ? raw : undefined };
+}
+
 function initialSlug(): string | undefined {
-  const fromHash = window.location.hash.replace(/^#/, "");
-  if (fromHash && findPage(fromHash)) return fromHash;
+  const { slug } = parseHash();
+  if (slug && findPage(slug)) return slug;
   return pages[0]?.slug;
 }
 
@@ -22,8 +36,33 @@ export default function App() {
   const [font, setFont] = useState<FontMode>("sans");
   const [theme, setTheme] = useState<ThemeProfile>("default");
   const [activeSlug, setActiveSlug] = useState<string | undefined>(initialSlug);
+  const [anchor, setAnchor] = useState<string | undefined>(() => parseHash().anchor);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [texture, setTexture] = useState<TextureName>("theme");
+
+  // The only history listener in the app. A TOC link, a demo's own `#`
+  // anchor and the prev/next footer all navigate by writing the hash, so
+  // they all land here.
+  useEffect(() => {
+    const onHashChange = () => {
+      const parsed = parseHash();
+      if (parsed.slug && findPage(parsed.slug)) setActiveSlug(parsed.slug);
+      setAnchor(parsed.anchor);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  // Runs after the page for `activeSlug` has committed, which is what makes
+  // a cross-page demo link work: the anchor element doesn't exist until the
+  // new page renders, so the browser's own hash scroll fires too early.
+  useEffect(() => {
+    if (!anchor) {
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    document.getElementById(anchor)?.scrollIntoView({ block: "start" });
+  }, [anchor, activeSlug]);
 
   const toggleDark = () => {
     setDark((d) => {

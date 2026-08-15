@@ -25,6 +25,8 @@ export interface RegistryDemo {
   source: string | null;
   layout?: "fill" | "center";
   overflow?: "visible" | "auto" | "hidden";
+  /** See `ShowcaseDemo.contain` — opts a demo out of the card's paint containment. */
+  contain?: boolean;
 }
 
 export interface RegistryEntry {
@@ -50,11 +52,28 @@ export interface RegistryPage {
   entries: RegistryEntry[];
 }
 
-function slugify(title: string): string {
+export function slugify(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+/**
+ * The `id` of one demo's card heading, and the hash a TOC entry links to.
+ * Namespaced by the entry slug so a parent page holding several entries
+ * (Table / DataTable / DataList) can't collide two demos that share a name
+ * ("Default" exists three times there), and so the leading segment is still
+ * a page slug — `App.tsx`'s hash router reads everything before `--` as the
+ * page to open, which is what makes a demo anchor deep-linkable.
+ */
+export function demoAnchor(entrySlug: string, demoName: string): string {
+  return `${entrySlug}--${slugify(demoName)}`;
+}
+
+/** The `id` of an entry's generated API section. Same namespacing rules. */
+export function apiAnchor(entrySlug: string): string {
+  return `${entrySlug}--api`;
 }
 
 // Auto-discovery: every `*.showcase.tsx` under src/ui/ (and, once they exist,
@@ -105,6 +124,7 @@ export const entries: RegistryEntry[] = Object.entries(modules)
         source: raw ? extractDemoSource(raw, demo.name) : null,
         layout: demo.layout,
         overflow: demo.overflow,
+        contain: demo.contain,
       })),
     };
   })
@@ -138,4 +158,20 @@ export const pages: RegistryPage[] = (() => {
 
 export function findPage(slug: string): RegistryPage | undefined {
   return pages.find((p) => p.slug === slug);
+}
+
+/**
+ * Every page in the order the sidebar shows them: `GROUPS` order first, then
+ * the alphabetical `pages` order within each group. This is the sequence the
+ * prev/next footer walks, so "next" always means "the next thing down the
+ * sidebar" rather than some second, invisible ordering.
+ */
+export const orderedPages: RegistryPage[] = GROUPS.flatMap((group) =>
+  pages.filter((page) => page.group === group),
+);
+
+export function pageNeighbours(slug: string): { prev?: RegistryPage; next?: RegistryPage } {
+  const index = orderedPages.findIndex((page) => page.slug === slug);
+  if (index < 0) return {};
+  return { prev: orderedPages[index - 1], next: orderedPages[index + 1] };
 }

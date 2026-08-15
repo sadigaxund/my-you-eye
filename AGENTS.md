@@ -178,19 +178,60 @@ component, not a single scrolling wall:
 
 | File | Responsibility |
 |---|---|
-| `src/showcase/registry.ts` | Auto-discovery + the `GROUPS` order. Globs every `*.showcase.tsx`, slugifies titles, collapses entries sharing a `parent` into one page. |
+| `src/showcase/registry.ts` | Auto-discovery + the `GROUPS` order. Globs every `*.showcase.tsx`, slugifies titles, collapses entries sharing a `parent` into one page. Also owns `demoAnchor()`/`apiAnchor()` and `orderedPages`/`pageNeighbours()` (the sidebar's global order). |
 | `src/showcase/App.tsx` | Shell: header (theme / font / dark toggle), sidebar, `<main>`. Owns routing. |
 | `src/showcase/Sidebar.tsx` | Grouped, filterable nav list. The filter matches title, group, description and demo names. |
-| `src/showcase/ComponentPage.tsx` | Renders the selected page: one `<section>` per entry, one `DemoSection` per demo. |
+| `src/showcase/ComponentPage.tsx` | Composes one page out of the parts below. The only place page layout is decided. |
+| `src/showcase/PageHeader.tsx` | Group badge + title, and `EntryIntro` (blurb at `max-w-prose` + the copyable import line). |
+| `src/showcase/DemoSection.tsx` | One demo, one card. Same card every time. |
+| `src/showcase/ApiReference.tsx` | The generated "API" section: CVA axes as Badge chips + the props table. |
+| `src/showcase/manifest.ts` | Typed read-only view of the root `components.json`, plus the import-line derivation. |
+| `src/showcase/PageToc.tsx` / `PageNav.tsx` | The right-hand "On this page" rail and the prev/next footer. |
+| `src/showcase/MotionPreview.tsx` + `.gate.ts` | Live-preview chrome, and the shared offscreen/hidden-tab gating every preview's driver is paused by. |
+
+**Page anatomy** (do not fork it per component):
+
+1. **Header** — group `Badge`, title, the entry's `description` at `max-w-prose`, and a
+   one-line copyable import statement. The import is *derived* in `manifest.ts` from the
+   manifest record's `entry` subpath + name, never written by hand; it is suppressed
+   when the entry title isn't the exported symbol (topic pages like "Motion Core").
+2. **Demo cards** — every demo gets the identical card: a `TexturedSurface` panel
+   (`layer="surface" strength="subtle"`, `contain-paint`) with a header row (anchored
+   name + optional description + a ghost "Code" toggle when source was extracted), the
+   preview, and — when toggled — the extracted `CodeBlock` inside the same card. There is
+   no second presentation for demos without source, and no Tabs box. A demo that renders
+   `position: fixed` content which must reach the viewport (only `Toast`) sets
+   `contain: false` on itself; nothing else opts out.
+3. **API** — `ApiReference`, generated from `components.json` (which
+   `scripts/gen-manifest.mjs` derives from the component's own source). Renders nothing
+   when the manifest has no record or the record documents neither variants nor props.
+4. **Prev/next** — through `orderedPages`, i.e. exactly the sidebar's order.
+5. **"On this page"** — the sticky right rail, only above `xl` and only when a page has
+   more than four demos.
+
+A parent page (entries sharing a `parent`) repeats 2–3 per entry under that entry's own
+heading; 1, 4 and 5 stay page-level.
 
 **Routing is the URL hash.** `App.tsx` reads `window.location.hash` on mount
 (`initialSlug()`) and writes it back on every sidebar selection, so `#button` deep-links
-straight to the Button page. Nothing else touches history — do not add a router.
+straight to the Button page. The hash carries one optional second level: everything
+before `--` is the page slug, so `#button--sizes` opens the page *and* scrolls to that
+demo's card once it has rendered (`demoAnchor()` builds those ids; App's single
+`hashchange` listener resolves them). Nothing else touches history — do not add a router.
 
-A component contributes demos, never layout. `ComponentPage` already emits the
-`<section>`, heading and description wrapper for each entry — never add per-component
-layout hacks (col-span, margins, positioning, custom widths) around them. Layout
-`className`s inside a single demo's own `render` are fine and expected.
+A component contributes demos, never layout. `ComponentPage` already emits the section,
+heading, card and description wrapper for each entry — never add per-component layout
+hacks (col-span, margins, positioning, custom widths) around them. Layout `className`s
+inside a single demo's own `render` are fine and expected.
+
+**Live previews must stay gated.** `MotionPreview` mounts a real `MotionRoot mode="live"`
+and the showcase mounts dozens of them at once. Its driver is paused whenever the preview
+is off screen or the tab is hidden (one shared `IntersectionObserver` + one shared
+`visibilitychange` listener in `MotionPreview.gate.ts`), resumed only if the reader hadn't
+paused it themselves, and its own scrub/frame chrome updates at ~10fps rather than once
+per animation frame. Keep all three properties if you touch that file — without them
+every page repaints continuously through the active theme's texture/backdrop-filter
+layers.
 
 The app auto-discovers every `*.showcase.tsx` under `src/ui/`, `src/motion/`,
 `src/scenes/` and `src/present/` via `import.meta.glob` (patterns must stay written

@@ -1,5 +1,7 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { useState } from "react";
+import { Button } from "../ui/button";
 import { CodeBlock } from "../ui/code-block";
+import { Link } from "../ui/link";
 import { TexturedSurface } from "../ui/patterns/textured-surface";
 import type { TextureName } from "../ui/patterns/textured-surface";
 import { cn } from "../lib/cn";
@@ -8,55 +10,84 @@ import type { RegistryDemo } from "./registry";
 const overflowClass = (v: NonNullable<RegistryDemo["overflow"]>) =>
   v === "auto" ? "overflow-auto" : v === "hidden" ? "overflow-hidden" : "overflow-visible";
 
-export function DemoSection({ demo, texture }: { demo: RegistryDemo; texture: TextureName }) {
+export interface DemoSectionProps {
+  demo: RegistryDemo;
+  texture: TextureName;
+  /** Stable `id` for this card's heading — see `demoAnchor()` in registry.ts. */
+  anchor: string;
+}
+
+/**
+ * One demo, one card — the same card every time.
+ *
+ * Previously a demo that had extractable source rendered in a plain filing
+ * `Tabs` box and a demo that didn't rendered in a `TexturedSurface` panel, so
+ * two demos on the same page sat on visibly different materials for a reason
+ * (whether the source extractor was confident) that means nothing to a
+ * reader. Now every demo gets the panel, and source — when there is any —
+ * unfolds *inside* the same card under the preview, the way a component
+ * library's docs page does it.
+ *
+ * Anatomy: header row (anchored name + description + code toggle) / preview /
+ * optional code. `layout: "center"` and `overflow` still control the preview
+ * box exactly as before.
+ */
+export function DemoSection({ demo, texture, anchor }: DemoSectionProps) {
+  const [showCode, setShowCode] = useState(false);
   const hasSource = Boolean(demo.source);
   const ov = demo.overflow ?? "visible";
 
-  const renderDemo = () => {
-    if (demo.layout === "center") {
-      return <div className={cn("flex items-center justify-center", overflowClass(ov))}>{demo.render()}</div>;
-    }
-    return <div className={overflowClass(ov)}>{demo.render()}</div>;
-  };
-
   return (
-    // mb-20 (not the old mb-12): each demo's own name/description sits
-    // directly above its own render (mb-3 below), but that same caption is
-    // also the first thing after the PREVIOUS demo's rendered box — with
-    // too little separation there, a caption reads as belonging to the
-    // demo above it instead of the one it's actually describing (owner
-    // feedback: "the bottom descriptors are too close to the element").
-    // Widening the gap between sections while keeping the caption-to-its-
-    // own-demo gap comparatively tight is what makes the pairing
-    // unambiguous — proximity communicates the grouping.
-    <section className="mb-20">
-      <div className="mb-3">
-        <h3 className="inline-flex flex-col text-xs uppercase tracking-widest font-semibold text-fg before:content-[''] before:w-full before:h-px before:bg-border before:mb-1.5">
-          {demo.name}
-        </h3>
-        {demo.description && (
-          <p className="text-xs text-muted mt-1 max-w-[36ch]">{demo.description}</p>
+    <TexturedSurface
+      texture={texture}
+      layer="surface"
+      strength="subtle"
+      color="--color-surface-elevated"
+      radius="lg"
+      // contain-paint: the panel already clips its own overflow, so this is
+      // visually inert — it just stops a repaint inside the card (every
+      // animated MotionPreview, every hover state) from being composited
+      // against the page's textured/backdrop-filtered background. See
+      // `ShowcaseDemo.contain` for the one demo that has to opt out.
+      className={cn(demo.contain !== false && "contain-paint")}
+    >
+      <div className="flex items-start justify-between gap-inline border-b border-border px-panel py-3">
+        <div className="group min-w-0">
+          <h3 id={anchor} className="scroll-mt-6 text-sm font-semibold text-fg">
+            {demo.name}
+            <Link
+              href={`#${anchor}`}
+              variant="muted"
+              aria-label={`Link to ${demo.name}`}
+              className="ml-2 align-middle text-xs opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            >
+              #
+            </Link>
+          </h3>
+          {demo.description && <p className="mt-1 max-w-prose text-xs leading-relaxed text-muted">{demo.description}</p>}
+        </div>
+        {hasSource && (
+          <Button
+            size="sm"
+            variant="ghost"
+            aria-expanded={showCode}
+            onClick={() => setShowCode((open) => !open)}
+            className="shrink-0"
+          >
+            {showCode ? "Hide code" : "Code"}
+          </Button>
         )}
       </div>
 
-      {hasSource ? (
-        <Tabs defaultValue="preview" variant="filing">
-          <TabsList>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="code">Code</TabsTrigger>
-          </TabsList>
-          <TabsContent value="preview">{renderDemo()}</TabsContent>
-          <TabsContent value="code">
-            <CodeBlock code={demo.source ?? ""} language="tsx" wrap={false} />
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <TexturedSurface texture={texture} layer="surface" strength="subtle" color="--color-surface-elevated" radius="lg">
-          <div className={cn("p-panel", overflowClass(ov))}>
-            {renderDemo()}
-          </div>
-        </TexturedSurface>
+      <div className={cn("p-panel", demo.layout === "center" && "flex items-center justify-center", overflowClass(ov))}>
+        {demo.render()}
+      </div>
+
+      {hasSource && showCode && (
+        <div className="border-t border-border p-panel">
+          <CodeBlock code={demo.source ?? ""} language="tsx" wrap={false} />
+        </div>
       )}
-    </section>
+    </TexturedSurface>
   );
 }
