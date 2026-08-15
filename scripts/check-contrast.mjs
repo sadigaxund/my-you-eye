@@ -96,13 +96,28 @@ function relativeLuminance(value) {
   return { lum: 0.2126 * r + 0.7152 * g + 0.0722 * b, alpha: parsed.A };
 }
 
+// Returns { ratio } on success, or { error } describing why no honest ratio
+// can be produced. Alpha is a hard error rather than a silent approximation:
+// the WCAG formula is defined on composited colours, and this script has no
+// model of what a translucent token would actually be composited over (it
+// varies per component, per theme, and per stacking context). Treating
+// `oklch(... / 0.6)` as opaque would report a ratio the user never sees, so a
+// checked pair carrying alpha must be either made opaque or removed from
+// PAIRS — never quietly rounded up to 1.
 function contrastRatio(fgValue, bgValue) {
   const fg = relativeLuminance(fgValue);
   const bg = relativeLuminance(bgValue);
-  if (!fg || !bg) return null;
+  if (!fg || !bg) return { error: "could not parse oklch" };
+  for (const [role, parsed, raw] of [["fg", fg, fgValue], ["bg", bg, bgValue]]) {
+    if (parsed.alpha < 1) {
+      return {
+        error: `${role} token is translucent (alpha ${parsed.alpha}) — contrast is undefined without knowing what it composites over. Make it opaque, or drop the pair from PAIRS. (${raw})`,
+      };
+    }
+  }
   const l1 = Math.max(fg.lum, bg.lum);
   const l2 = Math.min(fg.lum, bg.lum);
-  return (l1 + 0.05) / (l2 + 0.05);
+  return { ratio: (l1 + 0.05) / (l2 + 0.05) };
 }
 
 // --- Build effective token maps per theme/mode --------------------------
@@ -140,10 +155,10 @@ for (const theme of themes) {
         );
         continue;
       }
-      const ratio = contrastRatio(fgVal, bgVal);
-      if (ratio === null) {
+      const { ratio, error } = contrastRatio(fgVal, bgVal);
+      if (error) {
         failures.push(
-          `${theme.name} (${mode}): could not parse oklch for color-${fgKey}/color-${bgKey}`,
+          `${theme.name} (${mode}): color-${fgKey}/color-${bgKey} — ${error}`,
         );
         continue;
       }

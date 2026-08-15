@@ -56,6 +56,23 @@ function cmdInit(force) {
   }
 }
 
+// Groups a component may belong to, in the order they read best. This is a
+// *preference*, not the source of truth: any group present in components.json
+// but missing here is appended rather than silently dropped — the previous
+// hardcoded list predated the motion/scenes/charts groups and hid 48 of 114
+// components from `list`.
+const PREFERRED_GROUP_ORDER = [
+  "inputs", "display", "feedback", "overlay", "navigation",
+  "canvas", "charts", "data", "patterns", "typography",
+  "motion", "scenes",
+];
+
+function orderGroups(present) {
+  const known = PREFERRED_GROUP_ORDER.filter((g) => present.has(g));
+  const unknown = [...present].filter((g) => !PREFERRED_GROUP_ORDER.includes(g)).sort();
+  return [...known, ...unknown];
+}
+
 function cmdList() {
   const raw = readFileSync(COMPONENTS_JSON, "utf-8");
   const { components } = JSON.parse(raw);
@@ -65,19 +82,21 @@ function cmdList() {
     (groups[c.group] ??= []).push(c);
   }
 
-  const groupOrder = ["inputs", "display", "feedback", "overlay", "navigation", "canvas", "data", "patterns", "typography"];
-
-  for (const group of groupOrder) {
-    if (!groups[group]) continue;
+  for (const group of orderGroups(new Set(Object.keys(groups)))) {
     console.log(`\n  ${group}`);
     console.log(`  ${"-".repeat(group.length)}`);
     for (const c of groups[group]) {
-      const variants = Object.entries(c.props)
+      // `variants` is the CVA axis map; `props` is the full prop signature.
+      const variants = Object.entries(c.variants ?? {})
         .map(([k, v]) => `${k}: ${v.join(" | ")}`)
         .join(", ");
-      console.log(`    ${c.name}${variants ? `  (${variants})` : ""}`);
+      const propCount = Object.keys(c.props ?? {}).length;
+      const suffix = [variants, propCount ? `${propCount} prop${propCount === 1 ? "" : "s"}` : ""]
+        .filter(Boolean).join(", ");
+      console.log(`    ${c.name}${suffix ? `  (${suffix})` : ""}`);
     }
   }
+  console.log(`\n  ${components.length} components. Full signatures: COMPONENTS.md / components.json\n`);
 }
 
 function cmdSync() {

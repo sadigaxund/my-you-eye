@@ -9,6 +9,7 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { buildVideoSchema } from "./gen-manifest.schema.mjs";
+import { parseComponentApi, parseShowcaseEntry } from "./gen-manifest.parse.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const UI_DIR = join(ROOT, "src/ui");
@@ -16,13 +17,6 @@ const MOTION_DIR = join(ROOT, "src/motion");
 const SCENES_DIR = join(ROOT, "src/scenes");
 const PRESENT_DIR = join(ROOT, "src/present");
 const SCHEMA_DIR = join(ROOT, "src/scenes/schema");
-
-// Attributes we treat as design variants when scanning demos. Everything else
-// (className, onClick, style, ...) is ignored so the manifest stays signal-only.
-const VARIANT_ATTRS = new Set([
-  "variant", "size", "state", "style", "side", "density",
-  "shape", "align", "type", "orientation", "tone",
-]);
 
 const TIER_ENTRY = {
   ui: "my-you-eye",
@@ -42,33 +36,30 @@ function walk(dir) {
   return out;
 }
 
+// One manifest record per showcase file. `title`/`group`/`demos` come from the
+// showcase's own `entry` object; `props`/`variants` come from the component
+// source it documents — never from scanning the demo JSX, which could only ever
+// report the values a demo happened to use.
 function parseShowcase(file, tier) {
-  const src = readFileSync(file, "utf-8");
-
-  // Restrict title/group extraction to after the `const entry:` declaration
-  // to avoid matching JSX props (e.g. toast({ title: "Saved" })).
-  const entryIdx = src.search(/\bconst entry:/);
-  const afterEntry = entryIdx >= 0 ? src.slice(entryIdx) : src;
-
-  const title = afterEntry.match(/title:\s*["'`]([^"'`]+)["'`]/)?.[1];
-  const group = afterEntry.match(/group:\s*["'`]([^"'`]+)["'`]/)?.[1];
-  if (!title || !group) return null;
-
-  const demos = [...afterEntry.matchAll(/name:\s*["'`]([^"'`]+)["'`]/g)].map((m) => m[1]);
-
-  // Scan the full file for UI component props (CVA variant values).
-  const props = {};
-  for (const m of src.matchAll(/(\w+)=["']([\w-]+)["']/g)) {
-    const [, attr, value] = m;
-    if (!VARIANT_ATTRS.has(attr)) continue;
-    (props[attr] ??= new Set()).add(value);
-  }
-  const propsOut = Object.fromEntries(
-    Object.entries(props).map(([k, v]) => [k, [...v].sort()]),
-  );
-
+  const entry = parseShowcaseEntry(file);
+  if (!entry) return null;
+  const api = parseComponentApi(file);
   const folder = relative(join(ROOT, "src"), file).replace(/\/[^/]+$/, "");
-  return { name: title, group, tier, entry: TIER_ENTRY[tier], folder, props: propsOut, demos };
+  const record = {
+    name: entry.title,
+    group: entry.group,
+    tier,
+    entry: TIER_ENTRY[tier],
+    folder,
+    variants: api.variants,
+    props: api.props,
+    demos: entry.demos,
+  };
+  if (entry.description) record.description = entry.description;
+  if (entry.parent) record.parent = entry.parent;
+  if (Object.keys(api.variantDefaults).length > 0) record.variantDefaults = api.variantDefaults;
+  if (api.extends.length > 0) record.extends = api.extends;
+  return record;
 }
 
 const components = [
@@ -165,17 +156,53 @@ for (const s of videoSchema.scenes) {
   }
 }
 
-// Per-group component tables.
+// --- Per-group component sections ---------------------------------------
+// A scan table per group, then one props block per component. The props come
+// from each component's own exported `<Name>Props` declaration, so this is the
+// real signature, not a sample of what the demos happened to pass.
+
+const esc = (s) => String(s).replace(/\|/g, "\\|");
+
+function variantSummary(c) {
+  const axes = Object.entries(c.variants ?? {});
+  if (axes.length === 0) return "—";
+  return axes
+    .map(([axis, values]) => {
+      const dflt = c.variantDefaults?.[axis];
+      const rendered = values.map((v) => (v === dflt ? `**${v}**` : v)).join(" / ");
+      return `${axis}: ${rendered}`;
+    })
+    .join("<br>");
+}
+
+function propsBlock(c) {
+  const entries = Object.entries(c.props ?? {});
+  if (entries.length === 0 && !c.extends?.length) return "";
+  let out = `#### \`${c.name}\`\n\n`;
+  if (c.extends?.length) {
+    out += `Also accepts everything from ${c.extends.map((e) => "`" + esc(e) + "`").join(", ")}.\n\n`;
+  }
+  if (entries.length === 0) return out;
+  out += `| Prop | Type | Description |\n|---|---|---|\n`;
+  for (const [name, p] of entries) {
+    out += `| \`${name}${p.optional ? "?" : ""}\` | \`${esc(p.type)}\` | ${p.doc ? esc(p.doc) : "—"} |\n`;
+  }
+  return out + "\n";
+}
+
 for (const group of Object.keys(byGroup).sort()) {
   md += `## ${group}\n\n`;
-  md += `| Component | Tier | Variants | Demos |\n|---|---|---|---|\n`;
+  md += `| Component | Tier | Variants (**default**) | Demos |\n|---|---|---|---|\n`;
   for (const c of byGroup[group]) {
-    const variants = Object.entries(c.props)
-      .map(([k, v]) => `${k}: ${v.join(" / ")}`)
-      .join("<br>") || "—";
-    md += `| \`${c.name}\` | \`${c.entry}\` | ${variants} | ${c.demos.join(", ")} |\n`;
+    md += `| \`${c.name}\` | \`${c.entry}\` | ${variantSummary(c)} | ${esc(c.demos.join(", "))} |\n`;
   }
   md += `\n`;
+
+  const blocks = byGroup[group].map(propsBlock).filter(Boolean);
+  if (blocks.length > 0) {
+    md += `### ${group} — props\n\n`;
+    md += blocks.join("");
+  }
 }
 
 writeFileSync(join(ROOT, "COMPONENTS.md"), md);
