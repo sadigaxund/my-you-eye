@@ -25,7 +25,7 @@ const entry: ShowcaseEntry = {
   description: "The single switch(scene.kind) consumers never touch. All eleven SceneKinds render for real — there is no placeholder branch.",
   demos: [
     {
-      name: "title",
+      name: "Title",
       render: () => (
         <MotionPreview durationInFrames={60}>
           <Frame><SceneRenderer scene={title} /></Frame>
@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "bullets",
+      name: "Bullets",
       render: () => (
         <MotionPreview durationInFrames={90}>
           <Frame><SceneRenderer scene={bullets} /></Frame>
@@ -41,8 +41,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "diagram + chart + stat",
-      description: "Three of the harder kinds (diagram/chart/stat), dispatched through the exact same switch as title/bullets above — every scene folder under src/scenes/ is reachable from this one function.",
+      name: "Diagram, chart, stat",
+      description: "Three harder kinds dispatched through the exact same switch as title and bullets above.",
       render: () => (
         <div className="flex flex-col gap-4">
           <MotionPreview durationInFrames={90}><Frame><SceneRenderer scene={diagram} /></Frame></MotionPreview>

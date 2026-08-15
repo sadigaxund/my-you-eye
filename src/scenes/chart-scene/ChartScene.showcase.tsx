@@ -55,7 +55,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "ChartScene",
   group: "scenes",
-  description: "Wraps whichever chart ChartSpec.type selects, driving its progress prop. ChartStep.series accumulates revealed series; callout renders a CountUp readout; focus spotlights a category (bar/line only). Numbers resolve against src/lib/format.ts via a NumberFormat name, never a format string.",
+  description: "Wraps whichever chart ChartSpec.type selects, driving its progress prop step by step.",
   demos: [
     {
       name: "Bar — playing",
@@ -85,7 +85,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with focus + callout, step 2 (frame ${step2.endFrame - 1}/${barTotal})`,
-      description: "Fri's bars stay lit, every other day dims to opacity-muted, and a \"Fri · Organic\" CountUp readout has settled on 58 in the top-right corner.",
+      description: "Fri's bars stay lit, every other day dims, and the callout has counted up to 58.",
       render: () => (
         <PinnedFrame frame={step2.endFrame - 1} durationInFrames={barTotal}>
           <Frame><ChartScene scene={barScene} /></Frame>
@@ -94,7 +94,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Gauge — no steps (single-beat draw-on)",
-      description: "A chart scene with no `steps` array at all draws the whole chart on over one implicit beat.",
+      description: "A chart scene with no `steps` array draws the whole chart on over one implicit beat.",
       render: () => (
         <MotionPreview durationInFrames={gaugeTotal} fps={FPS}>
           <Frame><ChartScene scene={gaugeScene} /></Frame>

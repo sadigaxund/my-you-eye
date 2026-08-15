@@ -6,11 +6,11 @@ import { Beat } from ".";
 const entry: ShowcaseEntry = {
   title: "Beat",
   group: "motion",
-  description: "A no-op hold — renders children unchanged, so a pause between two reveals reads as intentional rather than a missing animation.",
+  description: "A no-op hold, so a deliberate pause reads as intentional rather than a missing animation.",
   demos: [
     {
-      name: "hold between reveals",
-      description: 'The gap between "step one" and "step two" is a deliberate Beat, hold="slow" — not a missing animation.',
+      name: "Hold between reveals",
+      description: 'The gap here is a deliberate Beat, hold="slow" — not a missing animation.',
       render: () => (
         <MotionPreview durationInFrames={120} center leadIn>
           <div className="flex flex-col items-center gap-tight">

@@ -43,7 +43,7 @@ const entry: ShowcaseEntry = {
   title: "useSteps",
   group: "scenes",
   description:
-    "Headless step-navigation hook (my-you-eye/present) — the flattened (scene, step) list across a whole Video, derived from sceneSteps so it agrees with the video timeline by construction. Presenter is built entirely from this; this demo builds its own controls from it instead, to prove the navigation logic works standalone.",
+    "Headless step-navigation hook — the flattened (scene, step) list across a whole Video.",
   demos: [{ name: "Custom controls built from useSteps", render: () => <CustomControls /> }],
 };
 export default entry;

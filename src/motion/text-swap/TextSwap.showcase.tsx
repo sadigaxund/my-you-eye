@@ -5,10 +5,10 @@ import { TextSwap } from ".";
 const entry: ShowcaseEntry = {
   title: "TextSwap",
   group: "motion",
-  description: "Cross-fade or roll between two strings without a layout jump — a hidden sizer reserves space for the longer string.",
+  description: "Cross-fade or roll between two strings without a layout jump — a hidden sizer reserves the space.",
   demos: [
     {
-      name: "fade",
+      name: "Fade",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <TextSwap from="Draft" to="Published" mode="fade" duration="slow" className="text-lg text-fg" />
@@ -16,7 +16,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "roll",
+      name: "Roll",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <TextSwap from="42 views" to="1,204 views" mode="roll" duration="slow" className="font-mono text-lg text-fg" />

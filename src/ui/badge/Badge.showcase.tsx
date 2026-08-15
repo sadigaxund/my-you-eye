@@ -21,11 +21,11 @@ const entry: ShowcaseEntry = {
       name: "Variants (soft)",
       render: () => (
         <div className="flex flex-wrap justify-center gap-2">
-          <Badge variant="neutral" style="soft">Neutral</Badge>
-          <Badge variant="primary" style="soft">Primary</Badge>
-          <Badge variant="success" style="soft">Success</Badge>
-          <Badge variant="warning" style="soft">Warning</Badge>
-          <Badge variant="danger" style="soft">Danger</Badge>
+          <Badge variant="neutral" tone="soft">Neutral</Badge>
+          <Badge variant="primary" tone="soft">Primary</Badge>
+          <Badge variant="success" tone="soft">Success</Badge>
+          <Badge variant="warning" tone="soft">Warning</Badge>
+          <Badge variant="danger" tone="soft">Danger</Badge>
         </div>
       ),
     },

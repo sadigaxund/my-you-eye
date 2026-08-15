@@ -33,7 +33,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "StatScene",
   group: "scenes",
-  description: "StatGrid with per-tile staggered CountUp, delta arrows (respecting positiveIsGood) and an inline Sparkline. Each StatItem is its own step — the row reads as a sequence of claims, not a wall of numbers at once.",
+  description: "StatGrid with per-tile staggered CountUp, delta arrows and inline Sparklines — one step per tile.",
   demos: [
     {
       name: "Playing",
@@ -45,7 +45,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-count, tile 1 (frame ${step0.startFrame + 3}/${total})`,
-      description: "Only the Revenue tile has appeared; its number is still counting up toward 48.2k. The other three tiles haven't faded in yet.",
+      description: "Only the Revenue tile has appeared, still counting up toward 48.2k.",
       render: () => (
         <PinnedFrame frame={step0.startFrame + 3} durationInFrames={total}>
           <Frame><StatScene scene={scene} /></Frame>
@@ -54,7 +54,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned at rest, all four tiles (frame ${step3.endFrame - 1}/${total})`,
-      description: "Every tile is settled: Revenue/Active users/Churn read success-green deltas, Latency reads a danger-red delta even though its number went up — positiveIsGood: false flips only the color, not the ↑ glyph.",
+      description: "All settled. Latency reads danger-red despite rising: positiveIsGood: false flips the colour, not the glyph.",
       render: () => (
         <PinnedFrame frame={step3.endFrame - 1} durationInFrames={total}>
           <Frame><StatScene scene={scene} /></Frame>

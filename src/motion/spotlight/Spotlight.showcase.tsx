@@ -45,10 +45,10 @@ const entry: ShowcaseEntry = {
   title: "Spotlight",
   group: "motion",
   description:
-    "Dims everything except a focused rect via a box-shadow cut-out — never backdrop-filter (forbidden inside a Canvas transforming subtree, AGENTS.md §0.12). Real use is dimming a dense surface (code, a diagram, a dashboard) down to the one thing being talked about, not an empty grid of boxes.",
+    "Dims everything except a focused rect via a box-shadow cut-out — never backdrop-filter.",
   demos: [
     {
-      name: "one line of code",
+      name: "One line of code",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative w-full max-w-md rounded-ui bg-code-bg p-panel-sm font-mono text-xs">
@@ -65,7 +65,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "one node in a diagram",
+      name: "One node in a diagram",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-16 w-full max-w-md">
@@ -81,7 +81,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "one card in a dashboard",
+      name: "One card in a dashboard",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-44 w-full max-w-md">

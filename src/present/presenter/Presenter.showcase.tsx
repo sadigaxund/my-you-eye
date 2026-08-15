@@ -46,7 +46,7 @@ const entry: ShowcaseEntry = {
   title: "Presenter",
   group: "scenes",
   description:
-    "Click-through presentation of a Video (my-you-eye/present). Click or →/Space to advance, ← to reverse, Esc for an overview grid, f for fullscreen — try hovering/clicking the diagram scene's nodes for the live-only interactivity TODO.md D2 describes.",
+    "Click-through presentation of a Video: → or Space advances, ← reverses, Esc overviews, f fullscreens.",
   demos: [
     {
       name: "Click-through presenter",

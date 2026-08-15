@@ -53,11 +53,11 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "CodeScene",
   group: "scenes",
-  description: "CodeBlock with the filename tab, per-step focus dimming + Camera framing, highlight substrings, typed character reveal, and a CodeDiff cross-fade for any step that supplies new code.",
+  description: "CodeBlock with per-step focus dimming, Camera framing, highlights, typing and diff cross-fades.",
   demos: [
     {
       name: "Playing",
-      description: "The whole four-step scene, running. Step 1 types the file in; step 2 dims everything outside the loop and highlights each \"sum\"; step 3 rewrites it — the diff plays for the first half of the step and then settles into the plain new source so it can actually be read; step 4 frames line 1 and points a callout at the new parameter. Every frame below is one moment out of this same timeline.",
+      description: "The whole four-step scene: type in, focus, rewrite, annotate. Every frame below comes from this timeline.",
       render: () => (
         <MotionPreview durationInFrames={total} fps={FPS}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -66,7 +66,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-typing, step 1 (frame ${step0.startFrame + 15}/${total})`,
-      description: "The file types in character by character — roughly the first third of the source is visible, syntax-highlighted as it grows.",
+      description: "The file types in character by character, syntax-highlighted as it grows.",
       render: () => (
         <PinnedFrame frame={step0.startFrame + 15} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned on focus + highlight, step 2 (frame ${step1.startFrame + 5}/${total})`,
-      description: "Lines 2–5 (the sum accumulator) are at full contrast; the rest of the file is dimmed via opacity-muted. Every \"sum\" substring inside that range is highlighted. Camera has zoomed/panned to frame lines 2–5.",
+      description: "Lines 2–5 stay at full contrast with every \"sum\" highlighted; the camera has framed them.",
       render: () => (
         <PinnedFrame frame={step1.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -84,7 +84,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-diff, step 3 (frame ${step2.startFrame + 5}/${total})`,
-      description: "CodeDiff is cross-fading the old loop body into the new reduce() call — some rows are still fading/growing/collapsing, not yet settled.",
+      description: "CodeDiff is cross-fading the old loop body into the new reduce() call, not yet settled.",
       render: () => (
         <PinnedFrame frame={step2.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -102,7 +102,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with an Annotation callout, step 4 (frame ${step3.endFrame - 1}/${total})`,
-      description: "A leader line points from mid-panel out to a \"Optional param, defaults to 0\" label, pinned to line 1 — mounted inside Camera's own transformed layer, so it stays attached to the line as the camera frames it.",
+      description: "A leader line points at line 1, mounted inside Camera's layer so it stays attached.",
       render: () => (
         <PinnedFrame frame={step3.endFrame - 1} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>

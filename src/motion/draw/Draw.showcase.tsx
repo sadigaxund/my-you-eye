@@ -6,10 +6,10 @@ const entry: ShowcaseEntry = {
   title: "Draw",
   group: "motion",
   description:
-    "stroke-dashoffset reveal on any SVG path, normalised via pathLength so it's resolution-independent. Pairs with ConnectionLine/ConnectionLayer for animating diagram edges.",
+    "stroke-dashoffset reveal on any SVG path, normalised via pathLength. Pairs with ConnectionLine for diagram edges.",
   demos: [
     {
-      name: "basic path",
+      name: "Basic path",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <Draw d="M10,50 C 30,10 70,10 90,50" viewBox="0 0 100 60" duration="slow" className="h-24 w-64" />
@@ -17,7 +17,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "colors + stroke widths",
+      name: "Colors & stroke widths",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <div className="flex gap-panel">

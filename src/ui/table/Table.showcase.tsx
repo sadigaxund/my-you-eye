@@ -1,11 +1,12 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".";
 import { CellType } from "../cell-type";
+import { StatusDot } from "../status-dot";
 
 const rows = [
-  { name: "Alpha", role: "Admin", sessions: 128 },
-  { name: "Beta", role: "Editor", sessions: 42 },
-  { name: "Gamma", role: "Viewer", sessions: 7 },
+  { name: "Alpha", role: "Admin", status: "success" as const, sessions: 128 },
+  { name: "Beta", role: "Editor", status: "warning" as const, sessions: 42 },
+  { name: "Gamma", role: "Viewer", status: "neutral" as const, sessions: 7 },
 ];
 
 const longRows = [
@@ -22,12 +23,14 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Composition",
+      description: "align is per-cell: left by default, center for a glyph column, right for numbers.",
       render: () => (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead align="center">Status</TableHead>
               <TableHead align="right">Sessions</TableHead>
             </TableRow>
           </TableHeader>
@@ -36,6 +39,7 @@ const entry: ShowcaseEntry = {
               <TableRow key={r.name}>
                 <TableCell>{r.name}</TableCell>
                 <TableCell>{r.role}</TableCell>
+                <TableCell align="center"><StatusDot variant={r.status} size="sm" /></TableCell>
                 <TableCell align="right" className="font-mono tabular-nums">{r.sessions}</TableCell>
               </TableRow>
             ))}

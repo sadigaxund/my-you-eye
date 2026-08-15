@@ -5,10 +5,10 @@ import { Highlight } from ".";
 const entry: ShowcaseEntry = {
   title: "Highlight",
   group: "motion",
-  description: "Five treatments over inline content, all token-coloured and progress-driven — the overlay always has an explicit rounded-ui-sm radius, never inherited, and sits a little proud of the glyph bounds (-inset-highlight) rather than hugging them.",
+  description: "Five token-coloured, progress-driven treatments over inline content.",
   demos: [
     {
-      name: "modes",
+      name: "Modes",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <div className="flex flex-wrap items-center justify-center gap-panel text-base text-fg">
@@ -22,9 +22,9 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "overlay radius is its own, never the child's",
+      name: "Overlay radius",
       description:
-        "The box overlay always draws with rounded-ui-sm, deliberately NOT matching this pill's own fully-rounded corners — proof the radius is the overlay's own explicit token, not something inherited or measured from the child.",
+        "The box overlay always draws rounded-ui-sm, never inheriting this pill's fully-rounded corners.",
       render: () => (
         <MotionPreview durationInFrames={60} center leadIn>
           <Highlight mode="box" color="primary" duration="slow">

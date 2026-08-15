@@ -6,11 +6,11 @@ const entry: ShowcaseEntry = {
   title: "Morph",
   group: "motion",
   description:
-    "Lerps position/size/opacity between two caller-supplied snapshots — a simplified FLIP, not shape morphing. It cannot turn one object into a visually different one or morph images; it repositions/resizes a box, and (with toChildren) cross-fades what's inside it.",
+    "Lerps position/size/opacity between two caller-supplied snapshots — a simplified FLIP, not shape morphing.",
   demos: [
     {
-      name: "card moving + resizing between layout slots",
-      description: "The most literal use: the same card content sliding from a small slot to a larger one.",
+      name: "Between layout slots",
+      description: "The same card content sliding from a small slot to a larger one.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-32 w-full">
@@ -24,8 +24,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "cross-fade between two different elements",
-      description: "toChildren swaps the content entirely mid-box — a genuinely different element occupying the same space, not a scaled copy of the first.",
+      name: "Cross-fade two elements",
+      description: "toChildren swaps the content mid-box — a different element in the same space.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-16 w-full">
@@ -48,8 +48,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "list item expanding into a detail panel",
-      description: "Box grows and its content swaps in the same motion — a row becoming its own detail view.",
+      name: "Row expanding into a panel",
+      description: "Box grows and its content swaps in one motion — a row becoming its detail view.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-40 w-full">

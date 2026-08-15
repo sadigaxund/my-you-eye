@@ -42,7 +42,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "WalkthroughScene",
   group: "scenes",
-  description: "DeviceFrame + the Cursor primitive (which renders a Ripple on click internally) + Spotlight, over a static screenshot — the alternative to a screen recording. PercentPoint/PercentRect step coordinates convert to pixels against the measured device-frame content box.",
+  description: "DeviceFrame, Cursor and Spotlight over a static screenshot — the alternative to a screen recording.",
   demos: [
     {
       name: "Playing",
@@ -54,7 +54,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with a spotlight + Annotation, step 2 (frame ${step1.endFrame - 1}/${total})`,
-      description: "The profile card region is lit; everything else in the screenshot dims. A \"Rename here\" callout is pinned at the cursor's position.",
+      description: "The profile card is lit, everything else dims, and a \"Rename here\" callout is pinned.",
       render: () => (
         <PinnedFrame frame={step1.endFrame - 1} durationInFrames={total}>
           <Frame><WalkthroughScene scene={scene} /></Frame>

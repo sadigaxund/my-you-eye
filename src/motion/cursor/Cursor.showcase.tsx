@@ -13,10 +13,10 @@ const entry: ShowcaseEntry = {
   title: "Cursor",
   group: "motion",
   description:
-    "A fake pointer for simulated UI walkthroughs — movement between events is eased (not a raw constant-speed slide), with 4 appearance variants and click feedback rendered via Ripple (see Ripple's own showcase for the click variants themselves).",
+    "A fake pointer for simulated UI walkthroughs — eased movement, four shapes, Ripple click feedback.",
   demos: [
     {
-      name: "move, click, type",
+      name: "Move, click, type",
       description: "Eased movement (spring=\"snappy\" here) between 4 timed events, ending on a click.",
       render: () => (
         <MotionPreview durationInFrames={150} leadIn>
@@ -39,8 +39,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "shapes",
-      description: "shape: \"arrow\" | \"hand\" | \"crosshair\" | \"dot\" — each still eases in and clicks so the appearance reads against real motion, not a static glyph.",
+      name: "Shapes",
+      description: "shape: \"arrow\" | \"hand\" | \"crosshair\" | \"dot\" — each eases in, then clicks.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="grid grid-cols-4 gap-panel">
@@ -55,8 +55,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "custom cursor node",
-      description: "children replaces the built-in glyph entirely — any icon/element, centered on the tracked position by default.",
+      name: "Custom cursor node",
+      description: "children replaces the built-in glyph entirely, centered on the tracked position.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="relative flex h-20 items-center justify-center overflow-hidden rounded-ui bg-surface">
@@ -68,8 +68,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "click effect variants",
-      description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple. Each cell moves the cursor in from the side, then clicks, so the press and the ripple firing both read as an actual click rather than a static glyph.",
+      name: "Click effect variants",
+      description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="grid grid-cols-3 gap-panel">

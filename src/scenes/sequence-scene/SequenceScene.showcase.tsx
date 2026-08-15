@@ -37,7 +37,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "SequenceScene",
   group: "scenes",
-  description: "Wraps SequenceDiagram, one message/note per step. Activation bars are derived — a participant is busy from the message that reaches it until the message it next sends — never authored.",
+  description: "Wraps SequenceDiagram, one message or note per step. Activation bars are derived, never authored.",
   demos: [
     {
       name: "Playing",
@@ -49,7 +49,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-message, step 3 (frame ${step2.endFrame + 3}/${total})`,
-      description: "api→db and db→api (with its \"data\"-kind styling) are settled; the note is up; the api→client reply is drawing in. Two activation bars are visible: api's first span (closed by its own call to db) and db's span.",
+      description: "api→db and db→api are settled, the note is up, and the api→client reply is drawing in.",
       render: () => (
         <PinnedFrame frame={step2.endFrame + 3} durationInFrames={total}>
           <Frame><SequenceScene scene={scene} /></Frame>
@@ -58,7 +58,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned at rest (frame ${total}/${total})`,
-      description: "Every message and the note are fully drawn; api has two separate activation bars (split by its own call out to db) and db has one — none of this was authored, all derived from message order.",
+      description: "Everything is drawn: api has two activation bars (split by its own call to db), db has one.",
       render: () => (
         <PinnedFrame frame={total} durationInFrames={total}>
           <Frame><SequenceScene scene={scene} /></Frame>

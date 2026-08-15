@@ -6,10 +6,10 @@ const entry: ShowcaseEntry = {
   title: "Shake",
   group: "motion",
   description:
-    "Decaying-amplitude oscillation, deterministic via a seeded PRNG (core/prng.ts) — never an unseeded random source. Defaults to duration=\"slow\" with an eased phase, so cycles bunch up and settle rather than ticking at one constant frequency.",
+    "Decaying-amplitude oscillation, deterministic via a seeded PRNG — never an unseeded random source.",
   demos: [
     {
-      name: "axis variants",
+      name: "Axis variants",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <div className="flex gap-panel">

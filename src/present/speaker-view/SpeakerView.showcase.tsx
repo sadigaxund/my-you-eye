@@ -49,7 +49,7 @@ const entry: ShowcaseEntry = {
   title: "SpeakerView",
   group: "scenes",
   description:
-    "Current + next step side by side, an elapsed timer, and notes from step.say / scene.notes. A plain controlled component (sceneIndex/stepIndex props) so it can be opened in a second window — Presenter's own 'Speaker view' button does exactly that via window.open + a React portal.",
+    "Current and next step side by side, an elapsed timer, and notes from step.say / scene.notes.",
   demos: [{ name: "Now / next / notes / elapsed timer", render: () => <Demo /> }],
 };
 export default entry;

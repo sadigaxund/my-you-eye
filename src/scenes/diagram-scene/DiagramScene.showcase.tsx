@@ -96,7 +96,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "DiagramScene",
   group: "scenes",
-  description: "Canvas + GraphGroup regions + GraphNodes + a ConnectionLayer, driven by DiagramScene data. Node placement honours explicit x/y and falls back to layered()/grid() layout; group rectangles are computed from member-node bounds. Steps reveal nodes/groups, draw edges on, run flow tokens, spotlight nodes, and pin Annotation callouts.",
+  description: "Canvas, GraphGroups, GraphNodes and a ConnectionLayer, revealed step by step from diagram data.",
   demos: [
     {
       name: "Architecture — playing",
@@ -108,7 +108,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-connect, step 0 (frame ${step0.startFrame + 3}/${archTotal})`,
-      description: "client and api have just been revealed; the client→api edge is partway through drawing on (no arrowhead/label yet — those land once the edge completes).",
+      description: "client and api are revealed; their edge is partway drawn, so no arrowhead or label yet.",
       render: () => (
         <PinnedFrame frame={step0.startFrame + 3} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>
@@ -117,7 +117,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with the VPC group revealed, step 1 end (frame ${step1.endFrame - 1}/${archTotal})`,
-      description: "The VPC boundary region (computed from its member nodes' bounds, not authored) and the queue node are both settled, api→queue is fully drawn with its label.",
+      description: "The VPC region — computed from its member nodes' bounds — and the queue node are settled.",
       render: () => (
         <PinnedFrame frame={step1.endFrame - 1} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>
@@ -126,7 +126,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with flow tokens in transit, step 2 (frame ${step2.startFrame + Math.round((step2.endFrame - step2.startFrame) / 2)}/${archTotal})`,
-      description: "worker and db have been revealed, both new edges are drawing on, and two Trace tokens are travelling along queue→worker for this step's duration.",
+      description: "worker and db are revealed, both new edges drawing, two Trace tokens crossing queue→worker.",
       render: () => (
         <PinnedFrame frame={step2.startFrame + Math.round((step2.endFrame - step2.startFrame) / 2)} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>
@@ -144,7 +144,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with an Annotation callout, step 4 (frame ${step4.endFrame - 1}/${archTotal})`,
-      description: "A leader line points up from the api node to a \"Rate-limited at 500 rps\" label — rendered inside Canvas's own transformed layer, so it pans/zooms with the node it points at.",
+      description: "A leader line points at the api node, rendered inside Canvas's layer so it pans and zooms with it.",
       render: () => (
         <PinnedFrame frame={step4.endFrame - 1} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>
@@ -152,7 +152,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "State machine (\"state\" preset — pill nodes, grid layout, curved edges)",
+      name: "State machine (\"state\" preset)",
       render: () => (
         <MotionPreview durationInFrames={stateTotal} fps={FPS}>
           <Frame><DiagramScene scene={stateScene} /></Frame>
@@ -160,7 +160,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "Dataflow (\"dataflow\" preset — data-kind edges, continuous flow tokens)",
+      name: "Dataflow (\"dataflow\" preset)",
       render: () => (
         <MotionPreview durationInFrames={dataflowTotal} fps={FPS}>
           <Frame><DiagramScene scene={dataflowScene} /></Frame>

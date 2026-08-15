@@ -14,10 +14,10 @@ const VIEW_BOX = "0 0 160 60";
 const entry: ShowcaseEntry = {
   title: "Trace",
   group: "motion",
-  description: "Tokens travelling along an SVG path — the data-flow primitive for architecture diagrams. Overlaid here on a static Draw path for visual reference.",
+  description: "Tokens travelling along an SVG path — the data-flow primitive for architecture diagrams.",
   demos: [
     {
-      name: "single token, looping",
+      name: "Single token, looping",
       render: () => (
         <MotionPreview durationInFrames={90}>
           <div className="relative w-full" style={{ aspectRatio: "8 / 3" }}>
@@ -28,7 +28,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "multiple tokens, spaced",
+      name: "Multiple tokens, spaced",
       render: () => (
         <MotionPreview durationInFrames={90}>
           <div className="relative w-full" style={{ aspectRatio: "8 / 3" }}>

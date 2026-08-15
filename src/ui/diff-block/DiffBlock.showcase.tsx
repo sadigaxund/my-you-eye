@@ -59,6 +59,14 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Elevated",
+      render: () => (
+        <div className="max-w-xl mx-auto">
+          <DiffBlock header="greet.js" language="js" highlight variant="elevated" lines={basic} />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

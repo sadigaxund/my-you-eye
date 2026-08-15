@@ -17,11 +17,11 @@ const entry: ShowcaseEntry = {
   title: "Stagger",
   group: "motion",
   description:
-    "Orchestrates a per-child Reveal with offset timing — first-to-last, last-to-first, or outward from the center. Stagger IS Reveal: it renders one Reveal per child, each with its own delay offset by each; see \"Reveal vs Stagger\" below for the same children run through both.",
+    "Orchestrates a per-child Reveal with offset timing: first-to-last, last-to-first, or from the center.",
   demos: [
     {
       name: "Reveal vs Stagger",
-      description: "Same 5 chips, same Reveal underneath both rows — the only difference is Stagger giving each child its own delay instead of one shared Timing.",
+      description: "Same 5 chips, same Reveal underneath — Stagger just gives each child its own delay.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="flex flex-col gap-panel">

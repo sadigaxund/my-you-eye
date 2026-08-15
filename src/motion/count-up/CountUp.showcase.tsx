@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
   description: "Numeric tween that reuses src/lib/format.ts for every formatting mode — never reimplements Intl formatting.",
   demos: [
     {
-      name: "formats",
+      name: "Formats",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <div className="grid grid-cols-2 place-items-center gap-panel font-mono text-2xl text-fg">
@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "signed + duration",
+      name: "Signed & duration",
       render: () => (
         <MotionPreview durationInFrames={90} center leadIn>
           <div className="flex gap-panel font-mono text-2xl text-fg">

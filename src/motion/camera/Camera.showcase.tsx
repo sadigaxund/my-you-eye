@@ -18,11 +18,11 @@ const entry: ShowcaseEntry = {
   title: "Camera",
   group: "motion",
   description:
-    "Pan + zoom over children via GPU-composited transform only. focus: elementId measures descendants with offsetLeft/offsetTop (never getBoundingClientRect, which would already be scaled once the scene layer is transformed). Movement between keyframes is eased by default (easing/spring, same as every other primitive) — never a raw constant-speed slide.",
+    "Pan and zoom over children via GPU-composited transform only, eased between keyframes.",
   demos: [
     {
-      name: "pan between elements, fit zoom",
-      description: "Camera moves from a full overview to node-a, then to node-c, fitting the zoom to each — default easing=\"standard\".",
+      name: "Pan and fit zoom",
+      description: "Camera moves from an overview to node-a, then node-c, fitting the zoom to each.",
       render: () => (
         <MotionPreview durationInFrames={150} leadIn>
           <div style={{ height: 220 }}>
@@ -45,7 +45,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "spring=\"bouncy\"",
-      description: "The same easing/spring vocabulary every other primitive's movement uses (core/legEase.ts) — a springy camera move overshoots slightly before settling on node-b.",
+      description: "A springy camera move overshoots slightly before settling on node-b.",
       render: () => (
         <MotionPreview durationInFrames={150} loop leadIn>
           <div style={{ height: 220 }}>

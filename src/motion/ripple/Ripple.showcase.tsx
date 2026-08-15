@@ -5,10 +5,10 @@ import { Ripple } from ".";
 const entry: ShowcaseEntry = {
   title: "Ripple",
   group: "motion",
-  description: "Click feedback at a point — an expanding ring, filled disc, or double pulse, all fading out. This is what Cursor's clickEffect renders on click/dblclick; standalone it also marks any other timed event.",
+  description: "Click feedback at a point: an expanding ring, filled disc, or double pulse.",
   demos: [
     {
-      name: "click — ring",
+      name: "Click — ring",
       description: "The default: a single outline expands and fades.",
       render: () => (
         <MotionPreview durationInFrames={60} loop leadIn>
@@ -19,8 +19,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "click — solid vs double",
-      description: "solid: a filled disc, for a firmer tap. double: a second, phase-delayed ring for a richer pulse.",
+      name: "Click — solid vs double",
+      description: "solid is a filled disc; double adds a second, phase-delayed ring.",
       render: () => (
         <MotionPreview durationInFrames={60} loop leadIn>
           <div className="relative flex h-24 w-full gap-panel overflow-hidden rounded-ui bg-surface p-panel">

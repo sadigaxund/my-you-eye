@@ -58,7 +58,7 @@ const SEVERITY_VARIANT: Record<ValidationIssue["severity"], "danger" | "warning"
 function IssueRow({ issue }: { issue: ValidationIssue }) {
   return (
     <li className="flex items-start gap-inline py-compact-y">
-      <Badge variant={SEVERITY_VARIANT[issue.severity]} style="soft" className="mt-0.5 shrink-0 uppercase">
+      <Badge variant={SEVERITY_VARIANT[issue.severity]} tone="soft" className="mt-0.5 shrink-0 uppercase">
         {issue.severity}
       </Badge>
       <div className="flex flex-col gap-tight min-w-0">
@@ -90,14 +90,14 @@ function IssueList({ video }: { video: Video }) {
 const entry: ShowcaseEntry = {
   title: "Validation",
   group: "scenes",
-  description: "validateVideo(video) run against a deliberately broken Video — every check the runtime validator performs, made visible: unknown scene kind, dangling diagram/chart references, an out-of-bounds code focus range, duplicate scene/step ids, and warnings for a too-long bullet list and a scene with no narration.",
+  description: "validateVideo(video) run against a deliberately broken Video — every runtime check, made visible.",
   demos: [
     {
       name: "Deliberately broken video",
       render: () => <IssueList video={broken} />,
     },
     {
-      name: "A valid, minimal video",
+      name: "Valid, minimal video",
       description: "The same call against well-formed data returns an empty list.",
       render: () => (
         <IssueList

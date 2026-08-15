@@ -20,11 +20,11 @@ const entry: ShowcaseEntry = {
   title: "CodeDiff",
   group: "scenes",
   description:
-    "Animates between two full sources inside a CodeBlock-styled frame: added rows grow in, removed rows collapse out, changed rows cross-fade word-by-word (via DiffBlock's wordDiff). The scenes-tier CodeScene renders this for any step whose code differs from what was on screen before it.",
+    "Animates between two sources: added rows grow in, removed rows collapse out, changed rows cross-fade.",
   demos: [
     {
       name: "Playing",
-      description: "The full change plays out — two lines are removed and rewritten as one reduce() call, the signature grows a taxRate parameter, and the return statement's math changes.",
+      description: "A loop is rewritten as one reduce() call, the signature grows a taxRate parameter.",
       render: () => (
         <MotionPreview durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />
@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned mid-transition (frame 70/150)",
-      description: "Paused partway through: the changed lines are mid-crossfade, the removed loop lines are partway collapsed, and the added reduce()/taxRate text is partway grown in.",
+      description: "Changed lines mid-crossfade, removed lines partway collapsed, added text partway grown in.",
       render: () => (
         <PinnedFrame frame={70} durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />

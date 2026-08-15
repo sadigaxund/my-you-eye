@@ -12,7 +12,7 @@ const entry: ShowcaseEntry = {
   description: "clip-path reveal — linear (hard edge, 4 directions) or radial (circle growing from the direction's edge).",
   demos: [
     {
-      name: "linear — 4 directions",
+      name: "Linear — 4 directions",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="grid grid-cols-2 gap-panel">
@@ -25,7 +25,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "radial",
+      name: "Radial",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <Wipe variant="radial" direction="left" duration="slow">{panel("radial from left")}</Wipe>

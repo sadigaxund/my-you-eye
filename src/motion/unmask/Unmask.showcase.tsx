@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
   description: "Soft-edged mask sweep — a gentler alternative to Wipe's hard clip-path edge, for headings and pull-quotes.",
   demos: [
     {
-      name: "directions + softness",
+      name: "Directions & softness",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="flex flex-col gap-panel">

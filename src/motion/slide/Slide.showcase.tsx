@@ -10,10 +10,10 @@ const entry: ShowcaseEntry = {
   title: "Slide",
   group: "motion",
   description:
-    "Real clipping parent + a separately-translating inner element — overflow:hidden now actually clips, unlike the deprecated SlideTransition it replaces.",
+    "Real clipping parent plus a separately-translating inner element, so overflow:hidden actually clips.",
   demos: [
     {
-      name: "mode=\"in\" — all 4 directions",
+      name: "mode=\"in\" — 4 directions",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="grid grid-cols-2 gap-panel">

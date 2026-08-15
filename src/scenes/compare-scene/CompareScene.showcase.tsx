@@ -40,7 +40,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "CompareScene",
   group: "scenes",
-  description: "Wraps Comparison. mode \"columns\" (default) sets two panes side by side with `after` fading in; mode \"wipe\" overlays them under a divider driven entirely by the scene's own beat progress. Panes are the ComparePane union — code, text, or image.",
+  description: "Wraps Comparison: two panes side by side (\"columns\") or under a moving divider (\"wipe\").",
   demos: [
     {
       name: "Columns (code panes) — playing",
@@ -69,7 +69,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-wipe (frame ${Math.round(wipeTotal * 0.4)}/${wipeTotal})`,
-      description: "The wipe divider sits partway across the frame, driven by the scene's own beat progress — no drag handle (a video/live frame is not an interactive control surface).",
+      description: "The divider sits partway across, driven by the scene's own beat progress — never dragged.",
       render: () => (
         <PinnedFrame frame={Math.round(wipeTotal * 0.4)} durationInFrames={wipeTotal}>
           <Frame><CompareScene scene={wipeScene} /></Frame>

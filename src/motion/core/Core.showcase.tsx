@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
   title: "Motion Core",
   group: "motion",
   description:
-    "The foundation every primitive is built on: useTimeline() / useProgress() reading from whichever driver is mounted. Scrub to see the raw numbers update — this is what proves DomDriver and RemotionDriver agree.",
+    "The foundation every primitive builds on: useTimeline() / useProgress(), reading from whichever driver is mounted.",
   demos: [
     {
       name: "useTimeline / useProgress",
@@ -86,7 +86,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "Beat values, side by side",
+      name: "Beat values",
       description: 'The 4 named Beat durations racing to progress=1 at once — "instant" (0.15s) through "slow" (0.9s).',
       render: () => (
         <MotionPreview durationInFrames={60}>
@@ -95,8 +95,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "easing vs spring",
-      description: "Every EasingName and SpringName at the same duration — springs may briefly overshoot past 1.00, eases never do.",
+      name: "Easing vs spring",
+      description: "Every EasingName and SpringName at one duration — springs may overshoot past 1.00.",
       render: () => (
         <MotionPreview durationInFrames={60}>
           <EasingSpringMatrix />
@@ -104,9 +104,9 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "seek & scrub (DomDriverHandle)",
+      name: "Seek & scrub",
       description:
-        "Not a separate mechanism — the Play/Pause/Replay buttons and the scrub slider under every demo on this page already ARE DomDriverHandle.play()/.pause()/.seek() calls. Drag the slider below and watch these same numbers jump.",
+        "Every demo's Play/Pause/Replay buttons and scrub slider already ARE DomDriverHandle calls.",
       render: () => (
         <MotionPreview durationInFrames={90}>
           <TimelineReadout />

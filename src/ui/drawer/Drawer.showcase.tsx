@@ -1,5 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerBody, DrawerFooter } from ".";
+import { Drawer, DrawerTrigger, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerBody, DrawerFooter } from ".";
 import { Button } from "../button";
 
 const entry: ShowcaseEntry = {
@@ -45,6 +45,55 @@ const entry: ShowcaseEntry = {
                 <DrawerTrigger asChild>
                   <Button variant="secondary">Close</Button>
                 </DrawerTrigger>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
+      ),
+    },
+    {
+      name: "Sizes",
+      render: () => (
+        <div className="flex flex-wrap justify-center gap-3">
+          <Drawer>
+            <DrawerTrigger asChild><Button size="sm">Small</Button></DrawerTrigger>
+            <DrawerContent size="sm">
+              <DrawerHeader>
+                <DrawerTitle>Filters</DrawerTitle>
+                <DrawerDescription>A narrow panel for a short control list.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerBody>
+                <p className="text-sm text-muted">288px wide — status, owner, date range.</p>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+          <Drawer>
+            <DrawerTrigger asChild><Button>Medium</Button></DrawerTrigger>
+            <DrawerContent size="md">
+              <DrawerHeader>
+                <DrawerTitle>Deployment details</DrawerTitle>
+                <DrawerDescription>The default width for record detail panels.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerBody>
+                <p className="text-sm text-muted">384px wide — labelled fields and a log excerpt.</p>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+          <Drawer>
+            <DrawerTrigger asChild><Button>Large</Button></DrawerTrigger>
+            <DrawerContent size="lg">
+              <DrawerHeader>
+                <DrawerTitle>Edit pipeline</DrawerTitle>
+                <DrawerDescription>Room for a full form without cramping labels.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerBody>
+                <p className="text-sm text-muted">480px wide — multi-column forms and tables fit here.</p>
+              </DrawerBody>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button variant="secondary">Cancel</Button>
+                </DrawerClose>
+                <Button>Save changes</Button>
               </DrawerFooter>
             </DrawerContent>
           </Drawer>

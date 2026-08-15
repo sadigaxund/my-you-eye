@@ -16,10 +16,26 @@ interface SidebarProps {
 export function Sidebar({ texture, activeSlug, onSelect, mobileOpen, onCloseMobile }: SidebarProps) {
   const [filter, setFilter] = useState("");
 
+  // Search matches on everything a reader could plausibly remember about a
+  // component: its page/entry title, its group, its blurb, and the names of
+  // its demos — so "elevated", "overlay" or "matrix" all find their page.
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
     if (!q) return pages;
-    return pages.filter((p) => p.title.toLowerCase().includes(q));
+    return pages.filter((page) => {
+      const haystack = [
+        page.title,
+        page.group,
+        ...page.entries.flatMap((entry) => [
+          entry.title,
+          entry.description ?? "",
+          ...entry.demos.map((demo) => demo.name),
+        ]),
+      ]
+        .join("\n")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
   }, [filter]);
 
   return (

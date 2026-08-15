@@ -229,7 +229,7 @@ const entry: ShowcaseEntry = {
             x={0} y={0} className="static"
             header="payments-svc"
             headerIcon={<ServerIcon />}
-            headerStatus={<Badge variant="success" style="soft" className="px-1.5 py-0 text-xs leading-none">live</Badge>}
+            headerStatus={<Badge variant="success" tone="soft" className="px-1.5 py-0 text-xs leading-none">live</Badge>}
             subtitle="eu-west-1 · v2.4.1"
             accent
             accentColor="success"

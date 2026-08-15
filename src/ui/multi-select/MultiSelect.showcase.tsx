@@ -38,6 +38,20 @@ const entry: ShowcaseEntry = {
       render: () => <BasicDemo />,
     },
     {
+      name: "Uncontrolled",
+      description:
+        "No `value`/`onChange` — `defaultValue` seeds the selection and the component keeps it internally. Open it and use ArrowUp/ArrowDown, Home/End, Enter to toggle, Escape to close.",
+      render: () => (
+        <div className="max-w-xs mx-auto">
+          <MultiSelect
+            options={fruits}
+            defaultValue={["banana", "fig"]}
+            placeholder="Pick fruits..."
+          />
+        </div>
+      ),
+    },
+    {
       name: "Empty",
       render: () => (
         <div className="max-w-xs mx-auto">

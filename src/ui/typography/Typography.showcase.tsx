@@ -1,4 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
+import { Typography } from ".";
 import { fontOptions } from "../../lib/fonts";
 
 const fontVar: Record<string, string> = {
@@ -26,7 +27,30 @@ function Swatch({ name, color }: { name: string; color: string }) {
 const entry: ShowcaseEntry = {
   title: "Typography & Tokens",
   group: "typography",
+  description: "The Typography prose wrapper, plus a live reference for the font, size, colour, radius and spacing tokens.",
   demos: [
+    {
+      name: "Prose block",
+      description: "Typography is the vertical-rhythm wrapper: it applies the shared space-y-4 stack so headings, paragraphs and lists sit at one consistent interval.",
+      render: () => (
+        <Typography className="max-w-prose">
+          <h2 className="text-2xl font-semibold text-fg">Release notes — 0.3.2</h2>
+          <p className="text-sm text-muted">
+            Canvas nodes now read their corner radius from a dedicated token, so no theme can
+            round them differently from the grid they sit on.
+          </p>
+          <h3 className="text-lg font-semibold text-fg">Fixed</h3>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-fg">
+            <li>Terminal honours a fixed row count instead of growing with its output.</li>
+            <li>Comparison wipes the after column in rather than cross-fading it.</li>
+          </ul>
+          <p className="text-sm text-muted">
+            Everything above is plain markup — Typography contributes spacing only, never colour
+            or type scale, so it composes with any token-driven text classes.
+          </p>
+        </Typography>
+      ),
+    },
     {
       name: "Font families",
       render: () => (

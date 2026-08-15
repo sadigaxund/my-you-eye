@@ -6,7 +6,7 @@ const entry: ShowcaseEntry = {
   title: "Reveal",
   group: "motion",
   description:
-    "Generic entrance animation — fade, directional slide, scale or blur — driven entirely by useProgress(). Wraps any single child without injecting a layout box when asChild is set. Stagger builds directly on top of this: it's just Reveal run once per child with offset delays — see Reveal vs Stagger on Stagger's own page.",
+    "Generic entrance animation — fade, directional slide, scale or blur — driven entirely by useProgress().",
   demos: [
     {
       name: "from variants",

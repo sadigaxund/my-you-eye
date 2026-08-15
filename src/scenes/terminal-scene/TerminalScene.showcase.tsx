@@ -45,7 +45,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "TerminalScene",
   group: "scenes",
-  description: "Wraps Terminal, revealing one entry per step: the command types in, the spinner (if set) holds, then output appears, then the exit-code badge lands — all inside that entry's own step range.",
+  description: "Wraps Terminal, revealing one entry per step: command types in, spinner holds, output and badge land.",
   demos: [
     {
       name: "Playing",
@@ -57,7 +57,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned mid-typing, entry 1 (frame 12/160)",
-      description: "\"npm install my-you-eye\" is partway typed after the prompt; nothing else is visible yet — entries 2 and 3 haven't started.",
+      description: "\"npm install my-you-eye\" is partway typed; entries 2 and 3 haven't started.",
       render: () => (
         <PinnedFrame frame={12} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>
@@ -66,7 +66,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned on entry 2's spinner (frame 72/160)",
-      description: "Entry 1 (install) is fully settled with its exit-0 badge. Entry 2's full command \"npm run build\" is typed, and its spinner (\"Building…\") is showing in place of output — the output and badge haven't appeared yet.",
+      description: "Entry 1 is settled with its exit-0 badge; entry 2's spinner is showing in place of output.",
       render: () => (
         <PinnedFrame frame={72} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>
@@ -83,8 +83,8 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "Mid-session prompt change (rows + scheme)",
-      description: "scene.rows caps the box height so it never grows; scene.scheme=\"matrix\" retints it; the third entry's own user/host/cwd/promptGlyph override — carried through from TerminalStep straight to Terminal's entries — changes the prompt for every entry after it, exactly like a real `ssh` login.",
+      name: "Prompt change (rows + scheme)",
+      description: "scene.rows fixes the height, scheme=\"matrix\" retints it, and entry 3 changes the prompt onward.",
       render: () => (
         <PinnedFrame frame={220} durationInFrames={220}>
           <Frame><TerminalScene scene={sshScene} /></Frame>

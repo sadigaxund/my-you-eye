@@ -26,7 +26,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "BulletScene",
   group: "scenes",
-  description: "Heading plus bullets, each revealed as its own step — a bullet's own SequenceRange (from useSequence) drives its Reveal, so longer narration gets proportionally more time before the next bullet lands.",
+  description: "Heading plus bullets, each revealed as its own step and paced by its own narration length.",
   demos: [
     {
       name: "Playing",
@@ -38,7 +38,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned mid-sequence (frame 179/280)",
-      description: "Bullets 1 and 2 (including bullet 2's three sub-points) are fully revealed and opaque; bullet 3 — the emphasis=\"strong\" dead-letter bullet — has just started its own Reveal (its step starts at frame 172) and is roughly half-faded/half-risen in.",
+      description: "Bullets 1 and 2 are settled; the emphasis=\"strong\" bullet 3 is halfway through its own Reveal.",
       render: () => (
         <PinnedFrame frame={179} durationInFrames={280}>
           <Frame><BulletScene scene={scene} /></Frame>
@@ -47,7 +47,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned at rest (frame 280/280)",
-      description: "All three bullets fully revealed; bullet 3's text sits under a solid primary-color underline (the emphasis=\"strong\" treatment).",
+      description: "All three bullets revealed; bullet 3 sits under the emphasis=\"strong\" underline.",
       render: () => (
         <PinnedFrame frame={280} durationInFrames={280}>
           <Frame><BulletScene scene={scene} /></Frame>

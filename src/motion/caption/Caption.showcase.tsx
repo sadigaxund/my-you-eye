@@ -8,7 +8,7 @@ const entry: ShowcaseEntry = {
   description: "Timed lower-third text tied to a step's Timing range. Requires a position: relative ancestor.",
   demos: [
     {
-      name: "positions",
+      name: "Positions",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-32 rounded-ui bg-secondary">
@@ -18,7 +18,7 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
-      name: "bottom-center",
+      name: "Bottom center",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-32 rounded-ui bg-secondary">
