@@ -29,7 +29,7 @@ const GROUP_TEXT: Record<NonNullable<GraphGroupProps["accentColor"]>, string> = 
   muted: "text-muted",
 };
 
-const groupVariants = cva(
+const graphGroupVariants = cva(
   // `pointer-events-none`: a boundary region is decorative, never an
   // interaction target — clicks/hover must pass straight through to
   // whatever GraphNode/ConnectionLayer content sits above it (or the
@@ -53,7 +53,7 @@ const groupVariants = cva(
 
 export interface GraphGroupProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "children">,
-    VariantProps<typeof groupVariants> {
+    VariantProps<typeof graphGroupVariants> {
   /** Canvas-space position/size, same coordinate space as `GraphNode`'s
    * `x`/`y`. Snapped to `GRID` (from `graph-node/grid.ts`) so a group's
    * edges land on the same grid lines as the nodes it encloses. */
@@ -113,7 +113,7 @@ const GraphGroup = forwardRef<HTMLDivElement, GraphGroupProps>(
   ) => (
     <div
       ref={ref}
-      className={cn(groupVariants({ border }), GROUP_FILL[accentColor], GROUP_BORDER[accentColor], className)}
+      className={cn(graphGroupVariants({ border }), GROUP_FILL[accentColor], GROUP_BORDER[accentColor], className)}
       style={{ left: snap(x), top: snap(y), width: snap(width), height: snap(height), ...style }}
       {...props}
     >
@@ -134,4 +134,4 @@ const GraphGroup = forwardRef<HTMLDivElement, GraphGroupProps>(
 );
 GraphGroup.displayName = "GraphGroup";
 
-export { GraphGroup, groupVariants };
+export { GraphGroup, graphGroupVariants };

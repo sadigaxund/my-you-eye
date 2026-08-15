@@ -39,6 +39,10 @@ export interface DataTableProps extends HTMLAttributes<HTMLDivElement>, VariantP
    *  to content and enables horizontal scroll — use for rows with divergent content
    *  widths (e.g. a type smoke test) where fixed columns would clip legitimate content. */
   layout?: "fixed" | "auto";
+  /** Stable React key for a row. Provide it whenever `rows` can be reordered,
+   *  filtered, or spliced — without it rows are keyed by index, so React reuses
+   *  the wrong DOM (and any cell state inside it) after the array shifts. */
+  rowKey?: (row: Record<string, unknown>, index: number) => string | number;
 }
 
 const dataTableVariants = cva("", {
@@ -59,7 +63,7 @@ const dataTableVariants = cva("", {
 });
 
 const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
-  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", ...props }, ref) => (
+  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", rowKey, ...props }, ref) => (
     // `density` is intentionally NOT forwarded to Table/TableRow — that variant
     // was a no-op there (see TODO.md A2) and was removed. TableHead/TableCell
     // are the real owners of row density; it reaches them below.
@@ -90,7 +94,7 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
         </TableHeader>
         <TableBody>
           {rows.map((row, i) => (
-            <TableRow key={i}>
+            <TableRow key={rowKey ? rowKey(row, i) : i}>
               {columns.map((col) => (
                 <TableCell key={col.key} density={density} align={col.align}>
                   <CellType

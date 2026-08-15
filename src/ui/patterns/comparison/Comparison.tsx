@@ -2,6 +2,7 @@ import { forwardRef, useRef, useState } from "react";
 import type { HTMLAttributes, KeyboardEvent, PointerEvent, ReactNode, Ref } from "react";
 import { cn } from "../../../lib/cn";
 import { Badge } from "../../badge";
+import { clamp } from "../../../lib/math";
 
 export interface ComparisonProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   before: ReactNode;
@@ -29,10 +30,6 @@ export interface ComparisonProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
    * revealed column (side-by-side).
    */
   progress?: number;
-}
-
-function clamp(n: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, n));
 }
 
 function GripIcon() {

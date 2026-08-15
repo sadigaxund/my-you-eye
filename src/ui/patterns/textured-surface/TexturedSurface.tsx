@@ -103,11 +103,10 @@ export interface TexturedSurfaceProps
   texture?: TextureName;
   strength?: "subtle" | "medium" | "strong";
   layer?: TextureLayer;
-  alignToViewport?: boolean;
 }
 
 const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
-  ({ className, variant, radius, color = "--color-surface", texture = "theme", strength = "medium", layer = "page", alignToViewport = false, style, children, ...props }, ref) => {
+  ({ className, variant, radius, color = "--color-surface", texture = "theme", strength = "medium", layer = "page", style, children, ...props }, ref) => {
     const conf = useMemo<TextureConf | null>(() => {
       if (texture === "theme") return null;
       const baseOp = TEXTURE_STRENGTHS[texture]?.[strength] ?? 0.5;
@@ -159,7 +158,6 @@ const TexturedSurface = forwardRef<HTMLDivElement, TexturedSurfaceProps>(
               tileSize={l.tileSize as number}
               opacity={l.opacity}
               blend={l.blend as CSSProperties["mixBlendMode"]}
-              alignToViewport={alignToViewport}
             />
           ))}
           {coverLayers.length > 0 && (

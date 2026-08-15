@@ -4,6 +4,7 @@ import { cn } from "../../lib/cn";
 import { generateGappedPath, getArrowAngle, getRouteLength, resolveArrowhead } from "../connection-line";
 import type { ArrowheadShape } from "../connection-line";
 import type { ConnectionVariant, Point } from "../connection-line";
+import { clamp01 } from "../../lib/math";
 
 // Literal class names (not template interpolation) — same rule as
 // GraphGroup's GROUP_BORDER / connection-line's KIND_STYLES.
@@ -68,10 +69,6 @@ const LINE_PHASE = 0.6;
  * stop there — the pin is centred ON the target rather than pointing at it
  * from outside, so a leader running to the target would cross its own ring. */
 const PIN_RADIUS = 7;
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
-}
 
 /**
  * A callout/leader-line pointing at a target point — highlighting part of a

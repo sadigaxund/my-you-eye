@@ -22,11 +22,15 @@ export interface TileLayerProps {
   tileSize: number;
   opacity: number;
   blend: CSSProperties["mixBlendMode"];
-  alignToViewport?: boolean;
 }
 
-/** A repeating tile layer (paper-grain / brushed-aluminium / the frosted dither). */
-export function TextureTileLayer({ uri, tileSize, opacity, blend, alignToViewport }: TileLayerProps) {
+/** A repeating tile layer (paper-grain / brushed-aluminium / the frosted dither).
+ *
+ * Never add `background-attachment: fixed` here. It pins the tile to the
+ * viewport, which forces the texture to repaint as part of the document's own
+ * paint — the exact pattern AGENTS.md §0.12 rule 12 bans, and the failure mode
+ * `backdrop-filter` and `Canvas` panning both pay for. */
+export function TextureTileLayer({ uri, tileSize, opacity, blend }: TileLayerProps) {
   return (
     <div
       aria-hidden
@@ -37,7 +41,6 @@ export function TextureTileLayer({ uri, tileSize, opacity, blend, alignToViewpor
         backgroundRepeat: "repeat",
         opacity,
         mixBlendMode: blend,
-        ...(alignToViewport ? { backgroundAttachment: "fixed" as const } : {}),
       }}
     />
   );

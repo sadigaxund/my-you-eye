@@ -1,2 +1,2 @@
-export { GraphGroup } from "./GraphGroup";
+export { GraphGroup, graphGroupVariants } from "./GraphGroup";
 export type { GraphGroupProps } from "./GraphGroup";

@@ -1,2 +1,2 @@
-export { GraphNode } from "./GraphNode";
+export { GraphNode, graphNodeVariants } from "./GraphNode";
 export type { GraphNodeProps, PortDef, GraphNodeRow } from "./GraphNode";

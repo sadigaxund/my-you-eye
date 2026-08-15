@@ -47,7 +47,7 @@ export function ArrayDisplay({ value }: { value: unknown }) {
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" tone="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} items
             </Badge>
             <span

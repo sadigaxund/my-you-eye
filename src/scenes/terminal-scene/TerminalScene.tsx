@@ -3,6 +3,7 @@ import { Terminal } from "../../ui/terminal";
 import type { TerminalEntry } from "../../ui/terminal";
 import { sceneSteps, stepName } from "../timing";
 import type { TerminalScene as TerminalSceneData, TerminalStep } from "../schema";
+import { clamp01 } from "../../lib/math";
 
 export interface TerminalSceneProps {
   scene: TerminalSceneData;
@@ -16,10 +17,6 @@ const DEFAULT_ROWS = 12;
 
 type PhaseKey = "command" | "spinner" | "output" | "exit";
 type PhaseWindows = Partial<Record<PhaseKey, { start: number; end: number }>>;
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
-}
 
 /** Splits one entry's local 0→1 progress into ordered sub-phases — command
  * types in, then the spinner (if any) holds, then output appears, then the

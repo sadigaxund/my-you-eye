@@ -6,6 +6,7 @@ import { Alert } from "../../alert";
 import { ACTIVATION_W, DEFAULT_LANE_W, HEADER_H, laneX, diagramWidth, diagramHeight } from "./layout";
 import { buildMessagesAndNotes, buildActivations } from "./build-edges";
 import type { SequenceActivation, SequenceDiagramProps } from "./types";
+import { clamp01 } from "../../../lib/math";
 
 export type {
   SequenceParticipant, SequenceMessage, SequenceNote, SequenceItem,
@@ -19,10 +20,6 @@ const ACTIVATION_BORDER: Record<NonNullable<SequenceActivation["accentColor"]>, 
   danger: "border-danger",
   muted: "border-muted",
 };
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
-}
 
 /**
  * UML-style sequence diagram — participants as vertical lanes with dashed

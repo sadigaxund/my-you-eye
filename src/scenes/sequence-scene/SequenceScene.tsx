@@ -5,13 +5,10 @@ import type { SequenceRange } from "../../motion/core";
 import { sceneSteps, stepName } from "../timing";
 import { sequenceItems, deriveActivations } from "./SequenceScene.activations";
 import type { SequenceScene as SequenceSceneData } from "../schema";
+import { clamp01 } from "../../lib/math";
 
 export interface SequenceSceneProps {
   scene: SequenceSceneData;
-}
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
 }
 
 /** Last message/note whose own step range has started, mirroring

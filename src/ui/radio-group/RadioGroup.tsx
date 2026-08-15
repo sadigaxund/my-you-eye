@@ -3,7 +3,7 @@ import { Root, Item, Indicator } from "@radix-ui/react-radio-group";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
-const radioVariants = cva(
+const radioGroupItemVariants = cva(
   "aspect-square size-4 rounded-full border border-border bg-bg ring-offset-bg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary",
 );
 
@@ -18,11 +18,11 @@ RadioGroup.displayName = "RadioGroup";
 
 export interface RadioGroupItemProps
   extends React.ComponentPropsWithoutRef<typeof Item>,
-    VariantProps<typeof radioVariants> {}
+    VariantProps<typeof radioGroupItemVariants> {}
 
 const RadioGroupItem = forwardRef<React.ComponentRef<typeof Item>, RadioGroupItemProps>(
   ({ className, ...props }, ref) => (
-    <Item ref={ref} className={cn(radioVariants(), className)} {...props}>
+    <Item ref={ref} className={cn(radioGroupItemVariants(), className)} {...props}>
       <Indicator className="flex items-center justify-center">
         <span className="size-2 rounded-full bg-primary" />
       </Indicator>
@@ -31,4 +31,4 @@ const RadioGroupItem = forwardRef<React.ComponentRef<typeof Item>, RadioGroupIte
 );
 RadioGroupItem.displayName = "RadioGroupItem";
 
-export { RadioGroup, RadioGroupItem, radioVariants };
+export { RadioGroup, RadioGroupItem, radioGroupItemVariants };

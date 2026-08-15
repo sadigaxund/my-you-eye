@@ -22,7 +22,7 @@ export interface ToolbarProps extends HTMLAttributes<HTMLDivElement> {
 
 function FilterChip({ label, onRemove }: Omit<ToolbarFilterChip, "key">) {
   return (
-    <Badge variant="neutral" style="soft" className="gap-1 pr-1">
+    <Badge variant="neutral" tone="soft" className="gap-1 pr-1">
       <span>{label}</span>
       {onRemove && (
         <Button

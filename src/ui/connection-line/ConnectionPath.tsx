@@ -9,12 +9,13 @@ import { resolveEnds } from "./anchors";
 import { resolveArrowhead } from "./arrowheads";
 import type { ArrowheadProp, ArrowheadShape } from "./arrowheads";
 import type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd } from "./anchors";
+import { clamp01 } from "../../lib/math";
 
 export type { Point, ObstacleRect, ConnectionKind, ConnectionVariant };
 export type { AnchoredEnd, AnchorName, AnchorRect, EdgeEnd };
 export type { ArrowheadProp, ArrowheadShape };
 
-const lineVariants = cva("fill-none", {
+const connectionLineVariants = cva("fill-none", {
   variants: {
     variant: {
       bezier: "",
@@ -56,7 +57,7 @@ const KIND_TEXT_COLOR: Record<ConnectionKind, string> = {
   error: "text-danger",
 };
 
-export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
+export interface ConnectionLineProps extends VariantProps<typeof connectionLineVariants> {
   /** A bare `{x, y}` (the route starts exactly there), or an `AnchoredEnd`
    * `{ rect, anchor?, inset? }` — a shape the edge attaches to. With a shape,
    * the endpoint is chosen ON the shape's border and the route leaves along
@@ -104,10 +105,6 @@ export interface ConnectionLineProps extends VariantProps<typeof lineVariants> {
    * as broken, not "drawing on". */
   progress?: number;
   className?: string;
-}
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
 }
 
 const ARROWHEAD_COLOR: Record<string, string> = {
@@ -279,7 +276,7 @@ function ConnectionPath({
     [drawn, from, to, v, sLabel, gapHalfLen, opts, drawProgress, trimEnd],
   );
 
-  const strokeClassName = kind ? KIND_STYLES[kind] : lineVariants({ variant: v, state });
+  const strokeClassName = kind ? KIND_STYLES[kind] : connectionLineVariants({ variant: v, state });
   const stateDecoration = kind
     ? cn(state === "highlighted" && "drop-shadow-[0_0_4px_var(--color-primary)]", state === "pending" && "opacity-60")
     : undefined;
@@ -321,4 +318,4 @@ function ConnectionPath({
   );
 }
 
-export { ConnectionPath, lineVariants };
+export { ConnectionPath, connectionLineVariants };

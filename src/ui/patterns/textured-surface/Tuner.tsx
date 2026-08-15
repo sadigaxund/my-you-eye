@@ -8,16 +8,13 @@ import type { Texture } from "./texture-factory";
 import { Preview } from "./Tuner.Preview";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../select";
 import { CodeBlock } from "../../code-block";
+import { clamp } from "../../../lib/math";
 
 const TEXTURE_LABELS: Record<TextureKey, string> = {
   "paper-grain": "Paper Grain",
   "frosted-glass": "Frosted Glass",
   "brushed-aluminium": "Brushed Aluminium",
 };
-
-function clamp(v: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, v));
-}
 
 function Slider({ label, value, min, max, step, onChange, format }: {
   label: string; value: number; min: number; max: number; step: number;

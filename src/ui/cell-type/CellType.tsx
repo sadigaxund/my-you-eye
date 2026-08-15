@@ -39,7 +39,7 @@ export interface CellTypeProps {
   type?: CellValueType;
   value?: unknown;
   badgeVariant?: BadgeProps["variant"];
-  badgeStyle?: BadgeProps["style"];
+  badgeStyle?: BadgeProps["tone"];
   statusVariant?: StatusDotProps["variant"];
   statusPulse?: boolean;
   replacements?: UrlReplacement[];
@@ -245,7 +245,7 @@ export function CellType({
     case "email": return <LinkCellValue href={`mailto:${String(value)}`} label={String(value)} icon={<MailIcon />} />;
     case "url": return <LinkCellValue href={String(value)} label={applyReplacements(String(value), replacements)} icon={<GoToIcon />} external />;
     case "json": return <JsonDisplay value={value} />;
-    case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
+    case "badge": return <Badge variant={badgeVariant ?? "neutral"} tone={badgeStyle ?? "solid"}>{String(value)}</Badge>;
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
     case "number": return <NumberDisplay value={value} compact={compact} fractionDigits={fractionDigits} />;
     case "percentage": return <PercentageDisplay value={value} fractionDigits={fractionDigits} />;

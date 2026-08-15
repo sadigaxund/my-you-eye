@@ -18,10 +18,9 @@ const Tooltip = ({ content, side = "top", children }: TooltipProps) => (
         side={side}
         sideOffset={4}
         className={cn(
-          "z-[var(--z-overlay)] overflow-hidden rounded-ui-sm bg-bg text-fg border border-border px-2.5 py-1 text-xs shadow-lg",
+          "backdrop-blur-ui z-[var(--z-overlay)] overflow-hidden rounded-ui-sm bg-bg text-fg border border-border px-2.5 py-1 text-xs shadow-lg",
           "data-[state=delayed-open]:animate-in data-[state=closed]:animate-out",
         )}
-        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
       >
         {content}
       </Content>
@@ -35,11 +34,10 @@ const TooltipContent = forwardRef<React.ComponentRef<typeof Content>, React.Comp
       ref={ref}
       sideOffset={4}
       className={cn(
-        "z-[var(--z-overlay)] overflow-hidden rounded-ui-sm bg-bg text-fg border border-border px-2.5 py-1 text-xs shadow-lg",
+        "backdrop-blur-ui z-[var(--z-overlay)] overflow-hidden rounded-ui-sm bg-bg text-fg border border-border px-2.5 py-1 text-xs shadow-lg",
         "data-[state=delayed-open]:animate-in data-[state=closed]:animate-out",
         className,
       )}
-      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
       {...props}
     />
   ),

@@ -111,6 +111,19 @@ html {
   scrollbar-color: var(--color-scrollbar) transparent;
 }
 
+/* The single definition of the library's translucent-surface blur. Every
+   surface that used to carry `style={{ backdropFilter: "blur(var(--backdrop-blur))" }}`
+   inline now writes `backdrop-blur-ui` instead.
+
+   It MUST keep reading `--backdrop-blur` through `var()`. Canvas's performance
+   contract (AGENTS.md §0.12) works by setting `--backdrop-blur: 0` as an inline
+   custom property on its transforming layer; that override only reaches
+   descendants because they resolve the token at use time. Baking a literal
+   length in here would silently break the whole mechanism. */
+@utility backdrop-blur-ui {
+  backdrop-filter: blur(var(--backdrop-blur));
+}
+
 /* ScrollArea edge-fade masks (opt-in via the `fade` prop). Token-sized via
    --scrollarea-fade-size so a scrollable region visibly reads as scrollable
    without any per-component scrollbar styling (AGENTS.md §0.10 — this masks

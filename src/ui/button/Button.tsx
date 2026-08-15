@@ -48,8 +48,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, loading, disabled, children, ...props }, ref) => (
     <button
       ref={ref}
-      className={cn(buttonVariants({ variant, size }), className)}
-      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
+      className={cn("backdrop-blur-ui", buttonVariants({ variant, size }), className)}
       disabled={disabled || loading}
       {...props}
     >

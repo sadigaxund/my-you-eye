@@ -1,6 +1,6 @@
 export { ConnectionLine } from "./ConnectionLine";
 export type { ConnectionLineProps } from "./ConnectionLine";
-export { ConnectionPath, lineVariants, ConnectionLabelPortalContext } from "./ConnectionPath";
+export { ConnectionPath, connectionLineVariants, ConnectionLabelPortalContext } from "./ConnectionPath";
 export type { Point, ObstacleRect, ConnectionKind, ConnectionVariant } from "./ConnectionPath";
 export {
   generatePath,

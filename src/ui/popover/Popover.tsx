@@ -10,11 +10,10 @@ const PopoverContent = forwardRef<React.ComponentRef<typeof Content>, React.Comp
         sideOffset={4}
         updatePositionStrategy="always"
         className={cn(
-          "z-[var(--z-overlay)] w-72 rounded-ui border border-border bg-surface-elevated p-panel shadow-lg outline-none",
+          "backdrop-blur-ui z-[var(--z-overlay)] w-72 rounded-ui border border-border bg-surface-elevated p-panel shadow-lg outline-none",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           className,
         )}
-        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         {...props}
       />
     </Portal>

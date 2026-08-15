@@ -10,6 +10,7 @@ import type { Point } from "../../connection-line";
 import { GRID } from "../../graph-node/grid";
 import { ACTIVATION_W, HEADER_H, ROW_H, LOOP_OUT, laneX, rowCenterY, rowTop, truncateChain } from "./layout";
 import type { SequenceItem, SequenceActivation } from "./types";
+import { clamp01 } from "../../../lib/math";
 
 const NOTE_MARGIN = GRID;
 const NOTE_HALF_W = 2.5 * GRID;
@@ -29,10 +30,6 @@ export interface ActivationRect {
   top: number;
   bottom: number;
   accentColor: NonNullable<SequenceActivation["accentColor"]>;
-}
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
 }
 
 /**

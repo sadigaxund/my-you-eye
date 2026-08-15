@@ -143,7 +143,7 @@ const SCHEME_COMMAND_TEXT: Record<TerminalScheme, string> = {
 
 function ExitBadge({ code }: { code: number }) {
   return (
-    <Badge variant={code === 0 ? "success" : "danger"} style="soft" className="font-mono">
+    <Badge variant={code === 0 ? "success" : "danger"} tone="soft" className="font-mono">
       exit {code}
     </Badge>
   );

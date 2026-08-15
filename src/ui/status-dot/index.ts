@@ -1,2 +1,2 @@
-export { StatusDot } from "./StatusDot";
+export { StatusDot, statusDotVariants } from "./StatusDot";
 export type { StatusDotProps } from "./StatusDot";

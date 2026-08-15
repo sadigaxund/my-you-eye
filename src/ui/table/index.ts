@@ -1,6 +1,7 @@
-export { Table } from "./Table";
+export { Table, tableVariants } from "./Table";
 export type { TableProps } from "./Table";
 export { TableHeader } from "./TableHeader";
+export type { TableHeaderProps } from "./TableHeader";
 export { TableBody } from "./TableBody";
 export { TableRow } from "./TableRow";
 export type { TableRowProps } from "./TableRow";

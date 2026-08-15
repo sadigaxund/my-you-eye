@@ -9,3 +9,4 @@ export {
   DrawerBody,
   DrawerFooter,
 } from "./Drawer";
+export type { DrawerContentProps } from "./Drawer";

@@ -1,4 +1,5 @@
-import { forwardRef, useState, useMemo, useRef } from "react";
+import { forwardRef, useState, useMemo, useRef, useEffect, useId } from "react";
+import type { KeyboardEvent } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Input } from "../input";
 import { ScrollArea } from "../scroll-area";
@@ -11,7 +12,10 @@ export interface ComboboxOption {
 
 export interface ComboboxProps {
   options: ComboboxOption[];
+  /** Controlled selection. Pass `onChange` with it. Omit for uncontrolled use. */
   value?: string;
+  /** Initial selection for uncontrolled use. Ignored when `value` is provided. */
+  defaultValue?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
   emptyText?: string;
@@ -21,19 +25,77 @@ export interface ComboboxProps {
 
 export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
   function Combobox(
-    { options, value, onChange, placeholder = "Search...", emptyText = "No results found", className, disabled },
+    { options, value, defaultValue, onChange, placeholder = "Search...", emptyText = "No results found", className, disabled },
     ref,
   ) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  // Controlled/uncontrolled fallback, the same shape every other input in the
+  // library uses: `value` wins when provided, otherwise internal state does,
+  // and `onChange` fires in both modes.
+  const [internalValue, setInternalValue] = useState(defaultValue ?? "");
+  const isControlled = value !== undefined;
+  const selected = isControlled ? value : internalValue;
 
   const filtered = useMemo(
     () => options.filter((o) => o.label.toLowerCase().includes(query.toLowerCase())),
     [options, query],
   );
 
-  const selectedLabel = options.find((o) => o.value === value)?.label ?? "";
+  const selectedLabel = options.find((o) => o.value === selected)?.label ?? "";
+
+  // Opening anchors the active option to the current selection. Deliberately
+  // keyed on `open` alone: `filtered` is a fresh array whenever the caller
+  // passes an inline `options` literal, so depending on it would re-anchor —
+  // and undo arrow-key navigation — on every render. Typing re-anchors to 0
+  // from the input's own onChange instead.
+  useEffect(() => {
+    if (!open) return;
+    const i = filtered.findIndex((o) => o.value === selected);
+    setActiveIndex(i >= 0 ? i : 0);
+  }, [open]);
+
+  const activeId = filtered.length > 0 ? `${listId}-opt-${activeIndex}` : undefined;
+
+  useEffect(() => {
+    if (!open || !activeId) return;
+    listRef.current?.querySelector(`#${CSS.escape(activeId)}`)?.scrollIntoView({ block: "nearest" });
+  }, [open, activeId]);
+
+  const commit = (next: string) => {
+    if (!isControlled) setInternalValue(next);
+    onChange?.(next);
+    setOpen(false);
+    setQuery("");
+  };
+
+  const move = (delta: number) => {
+    if (filtered.length === 0) return;
+    setActiveIndex((i) => (i + delta + filtered.length) % filtered.length);
+  };
+
+  const onListKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowDown": e.preventDefault(); move(1); break;
+      case "ArrowUp": e.preventDefault(); move(-1); break;
+      case "Home": e.preventDefault(); setActiveIndex(0); break;
+      case "End": e.preventDefault(); setActiveIndex(Math.max(0, filtered.length - 1)); break;
+      case "Enter": {
+        const option = filtered[activeIndex];
+        if (!option) return;
+        e.preventDefault();
+        commit(option.value);
+        break;
+      }
+      case "Escape": e.preventDefault(); setOpen(false); setQuery(""); break;
+      default: break;
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setQuery(""); }}>
@@ -42,6 +104,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           ref={ref}
           type="button"
           role="combobox"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
           disabled={disabled}
           className={cn(
             "flex w-full items-center justify-between rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg",
@@ -50,6 +115,13 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             !selectedLabel && "text-muted",
             className,
           )}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              setOpen(true);
+              setTimeout(() => inputRef.current?.focus(), 0);
+            }
+          }}
           onClick={() => {
             setOpen(true);
             setTimeout(() => inputRef.current?.focus(), 0);
@@ -70,9 +142,12 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           <Input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setActiveIndex(0); }}
+            onKeyDown={onListKeyDown}
             placeholder={placeholder}
             variant="filled"
+            aria-controls={listId}
+            aria-activedescendant={activeId}
             className="border-0 rounded-none ring-0 focus-visible:ring-0"
           />
         </div>
@@ -80,23 +155,25 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             radius so this ScrollArea's own scrollbar clips in sync with the
             curve instead of a mismatched ancestor clip. See AGENTS.md §0.10. */}
         <ScrollArea className="max-h-60 rounded-b-[inherit]">
-          <div className="p-1">
+          <div className="p-1" ref={listRef} role="listbox" id={listId}>
             {filtered.length === 0 ? (
               <p className="px-2 py-4 text-sm text-muted text-center">{emptyText}</p>
             ) : (
-              filtered.map((option) => (
+              filtered.map((option, i) => (
                 <button
                   key={option.value}
+                  id={`${listId}-opt-${i}`}
                   type="button"
+                  role="option"
+                  aria-selected={option.value === selected}
+                  tabIndex={-1}
                   className={cn(
                     "w-full text-left px-2 py-1.5 rounded-ui-sm text-sm hover:bg-secondary focus:bg-secondary outline-none",
-                    option.value === value && "bg-primary/10 text-primary font-medium",
+                    i === activeIndex && "bg-secondary",
+                    option.value === selected && "bg-primary/10 text-primary font-medium",
                   )}
-                  onClick={() => {
-                    onChange?.(option.value);
-                    setOpen(false);
-                    setQuery("");
-                  }}
+                  onMouseEnter={() => setActiveIndex(i)}
+                  onClick={() => commit(option.value)}
                 >
                   {option.label}
                 </button>

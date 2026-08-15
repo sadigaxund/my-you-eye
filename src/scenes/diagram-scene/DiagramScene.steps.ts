@@ -9,6 +9,7 @@ import { applyEasing } from "../../motion/core";
 import type { SequenceRange } from "../../motion/core";
 import { stepName } from "../timing";
 import type { DiagramScene as DiagramSceneData, DiagramStep } from "../schema";
+import { clamp01 } from "../../lib/math";
 
 export function currentDiagramStepIndex(scene: DiagramSceneData, ranges: Record<string, SequenceRange>, frame: number): number {
   let index = 0;
@@ -43,10 +44,6 @@ export function findConnectRange(edgeId: string, scene: DiagramSceneData, ranges
     if (scene.steps[i].connect?.includes(edgeId)) return ranges[stepName(scene.steps[i].id, i)];
   }
   return undefined;
-}
-
-function clamp01(n: number): number {
-  return Math.max(0, Math.min(1, n));
 }
 
 /** 0→1 draw progress for an edge at `frame`, given the range of the step

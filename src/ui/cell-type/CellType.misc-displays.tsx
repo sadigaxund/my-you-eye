@@ -34,7 +34,7 @@ export function TagsDisplay({ value }: { value: unknown }) {
   return (
     <span className="flex flex-wrap items-center gap-1 min-w-0">
       {tags.map((t, i) => (
-        <Badge key={i} variant="neutral" style="soft" className="text-xs px-1.5 py-0 leading-none">{t}</Badge>
+        <Badge key={i} variant="neutral" tone="soft" className="text-xs px-1.5 py-0 leading-none">{t}</Badge>
       ))}
     </span>
   );

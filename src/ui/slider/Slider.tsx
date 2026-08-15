@@ -3,7 +3,7 @@ import type { InputHTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
-const trackVariants = cva(
+const sliderTrackVariants = cva(
   "w-full rounded-full bg-secondary appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-bg [&::-webkit-slider-thumb]:shadow-card",
   {
     variants: {
@@ -21,7 +21,7 @@ const trackVariants = cva(
   },
 );
 
-export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size">, VariantProps<typeof trackVariants> {
+export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size">, VariantProps<typeof sliderTrackVariants> {
   label?: string;
   showValue?: boolean;
 }
@@ -85,7 +85,7 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(
           min={min}
           max={max}
           step={resolvedStep}
-          className={trackVariants({ size })}
+          className={sliderTrackVariants({ size })}
           {...props}
         />
       </div>
@@ -94,4 +94,4 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(
 );
 Slider.displayName = "Slider";
 
-export { Slider, trackVariants };
+export { Slider, sliderTrackVariants };

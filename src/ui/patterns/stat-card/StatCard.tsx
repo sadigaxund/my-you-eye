@@ -100,7 +100,7 @@ const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
               <p className="text-2xl font-bold">{value}</p>
               {resolved && (
                 <p className="flex items-center gap-tight text-sm">
-                  <Badge variant={resolved.variant} style="soft">
+                  <Badge variant={resolved.variant} tone="soft">
                     {resolved.glyph} {resolved.text}
                   </Badge>
                   {delta?.label && <span className="text-muted">{delta.label}</span>}
