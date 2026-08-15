@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **GitHub Pages deployment for the showcase** (`.github/workflows/pages.yml`) — every release tag (and manual dispatch) builds the showcase with `GH_PAGES_BASE=/my-you-eye/` and publishes it to https://sadigaxund.github.io/my-you-eye/, so the live component reference is always one click away.
+- **`npm run release`** (`scripts/release.mjs`) — computes the next CalVer version, retitles the changelog's `[Unreleased]` section, bumps `package.json`/lockfile together, and creates the signed release commit + tag. Pushing the tag remains the explicit publish trigger.
+
+### Changed
+
+- **Versioning switched from semver to CalVer** — `YYYY.M.N` (year, month, release counter within the month). Semver's compatibility semantics never applied to this kit; the date does. The format is still a valid semver triple, so npm, caret ranges, and all tooling behave unchanged. First CalVer release: `2026.8.0` (succeeding `0.6.0`; npm orders it correctly since 2026 > 0).
+- **README rewritten to be reader-first** — what the kit includes (four tiers in one table), a live-showcase link, screenshot placeholders (`docs/screenshots/`), a two-line install/start, and a section on why the kit is agent-legible (SKILL.md, `npx my-you-eye init`, the generated manifest). The deep styling/contributor detail moved out in favor of pointers to AGENTS.md/SKILL.md.
+
 ## [0.6.0] - 2026-08-15
 
 ### Fixed
