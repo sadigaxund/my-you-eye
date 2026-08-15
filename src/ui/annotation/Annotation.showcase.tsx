@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
   title: "Annotation",
   group: "canvas",
   description:
-    "A callout/leader-line pointing at a target point — for highlighting part of a diagram or screenshot in a video. Leader-line path math (and the arrow marker's angle) come straight from connection-line/geometry.ts; no new path math.",
+    "A callout with a leader line that points at a target, for picking out part of a diagram or screenshot in a video. Its path math and arrow-marker angle come straight from connection-line/geometry.ts.",
   demos: [
     {
       name: "Marker variants",
@@ -59,7 +59,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Vertical sides (top/bottom)",
-      description: "side=\"top\"/\"bottom\" anchors the label directly above/below target instead of left/right — for DiagramScene's node callouts, where a node's most legible free side is often above or below it rather than beside it. No auto-flip (there's no containerHeight to flip against).",
+      description: "side=\"top\" and \"bottom\" anchor the label directly above or below the target instead of beside it, for DiagramScene's node callouts; there is no auto-flip on this axis, because there is no containerHeight to flip against.",
       render: () => (
         <div className="relative mx-auto" style={{ width: 480, height: 240 }}>
           <MockScreenshot />
@@ -71,7 +71,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Progress reveal",
       description:
-        "progress (0→1): the leader line strokes on via stroke-dashoffset for the first 60%, then the label fades in over the remaining 40% — a pure function of the prop, no CSS transition.",
+        "progress (0→1) strokes the leader line on via stroke-dashoffset for the first 60%, then fades the label in over the remaining 40%. It is a pure function of the prop and uses no CSS transition.",
       render: () => (
         <div className="flex gap-6">
           <div className="relative rounded-ui border border-dashed border-border" style={{ width: 220, height: 140 }}>

@@ -29,7 +29,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Icon-only (compact)",
-      description: "size=\"icon-sm\" — for dense inline contexts (e.g. a table-cell audio player's play/pause toggle) where the text-sized buttons' horizontal padding is too wide around a single glyph.",
+      description: "size=\"icon-sm\" suits dense inline contexts, such as a table-cell audio player's play/pause toggle, where the text-sized buttons pad too widely around a single glyph.",
       render: () => (
         <div className="flex items-center justify-center gap-3">
           <Button variant="ghost" size="icon-sm" aria-label="Play">

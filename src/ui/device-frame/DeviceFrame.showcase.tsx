@@ -12,7 +12,7 @@ function FakeContent({ label }: { label: string }) {
 const entry: ShowcaseEntry = {
   title: "DeviceFrame",
   group: "display",
-  description: "Browser / window / phone chrome around arbitrary children — for showing UI on screen without a real screen recording.",
+  description: "Browser, window or phone chrome around arbitrary children, for putting UI on screen without a real screen recording.",
   demos: [
     {
       name: "Browser",

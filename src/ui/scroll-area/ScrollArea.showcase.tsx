@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Both axes",
-      description: "The default orientation — overflow-auto on both axes, for content wider and taller than its box.",
+      description: "The default orientation: overflow-auto on both axes, for content wider and taller than its box.",
       render: () => (
         <ScrollArea orientation="both" className="h-48 rounded-ui border border-border">
           <div className="w-[900px] p-3 space-y-2">
@@ -55,7 +55,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Rounded corners (radius on ScrollArea itself, not a wrapper)",
-      description: "Applying rounded-ui + border directly to ScrollArea — not to a separate overflow-hidden wrapper div — keeps the scrollbar's clip in sync with the border-radius so it never overlaps the corner.",
+      description: "Putting rounded-ui and the border directly on ScrollArea, rather than on a separate overflow-hidden wrapper div, keeps the scrollbar's clip in sync with the border radius so it never overlaps the corner.",
       render: () => (
         <ScrollArea className="h-40 rounded-ui border border-border">
           <div className="p-3 space-y-2">

@@ -6,7 +6,7 @@ const STATES = ["default", "connected", "highlighted"] as const;
 const entry: ShowcaseEntry = {
   title: "Port",
   group: "canvas",
-  description: "shape=\"circle\" is a freestanding full disc. shape=\"socket\" is a true half-disc (SVG geometry, not clipping) meant to sit exactly on a node's border — see GraphNode's row ports.",
+  description: "shape=\"circle\" is a freestanding full disc; shape=\"socket\" is a true half-disc built from SVG geometry rather than by clipping, meant to sit exactly on a node's border. See GraphNode's row ports.",
   demos: [
     {
       name: "States (circle)",
@@ -29,7 +29,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Socket shape — mounted on a border",
-      description: "The flat edge sits exactly on the dashed line (standing in for a node's border); the rounded half bulges outward. A real half-disc via SVG path geometry, not a full circle clipped by an ancestor's overflow-hidden — it looks identical with or without a clipping ancestor, unlike the old accidental version.",
+      description: "The flat edge sits exactly on the dashed line standing in for a node's border, and the rounded half bulges outward. It is a real half-disc from SVG path geometry, so it looks identical with or without a clipping ancestor.",
       render: () => (
         <div className="flex justify-center gap-16">
           <div className="flex flex-col items-center gap-3">
@@ -54,7 +54,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Socket mount — outward vs inward",
       description:
-        "`mount` decides which way the disc faces from the border it's on; `side` still just says which border that is. Use `inward` whenever the mounting element clips its own overflow. GraphNode's root carries both `overflow-hidden` and `contain: [layout paint]`, and a descendant can escape neither — so an outward socket there loses its entire visible half and renders as a bare vertical line (the flat chord's stroke alone). That is exactly what GraphNode's row ports used to look like.",
+        "`mount` decides which way the disc faces from the border it is on, while `side` still just says which border that is. Use `inward` whenever the mounting element clips its own overflow: GraphNode's root carries both `overflow-hidden` and `contain: [layout paint]`, so an outward socket there loses its visible half and renders as a bare vertical line.",
       render: () => (
         <div className="flex justify-center gap-16">
           {(["outward", "inward"] as const).map((mount) => (
@@ -96,7 +96,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Circle vs socket, side by side",
-      description: "Same footprint (size-port), two deliberate shapes — pick socket for anything mounted on an edge, circle for anything freestanding.",
+      description: "Same footprint (size-port), two deliberate shapes: pick socket for anything mounted on an edge and circle for anything freestanding.",
       render: () => (
         <div className="flex justify-center gap-10">
           <div className="flex flex-col items-center gap-2">

@@ -26,7 +26,7 @@ const entry: ShowcaseEntry = {
   title: "DataList",
   group: "data",
   parent: "Table",
-  description: "A label/value list (definition list) for record-detail views — the non-tabular counterpart to Table/DataTable.",
+  description: "A label/value list (a definition list) for record-detail views, the non-tabular counterpart to Table and DataTable.",
   demos: [
     {
       name: "Density (normal vs compact)",
@@ -46,12 +46,12 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Striped",
-      description: "striped is a real variant now — no more call-site [&>div:nth-child(odd)] hack.",
+      description: "striped is a real variant, so the call site no longer needs a [&>div:nth-child(odd)] hack.",
       render: () => <DataList items={items} striped />,
     },
     {
       name: "Label width",
-      description: "labelWidth (\"sm\" | \"md\" | \"lg\") sets the dt column to a fixed width on a two-column CSS grid — 8rem / 9rem / 11rem (128px / 144px / 176px) — instead of the old hardcoded w-36. The EXACT SAME three rows render at all three widths, side by side, with a divider on the label column so its width is visible even before any text truncates: \"ID\" always fits; \"Deployment target region\" fits once the column is \"md\" or wider; \"Autoscaling group desired capacity\" is long enough that it still truncates even at \"lg\" — it just shows visibly more of the label as the column widens, exactly as truncation is supposed to look.",
+      description: "labelWidth (\"sm\" | \"md\" | \"lg\") puts the dt column on a two-column CSS grid at 8rem, 9rem or 11rem instead of the old hardcoded w-36. The same three rows render at all three widths with a divider on the label column: \"ID\" always fits, \"Deployment target region\" fits from \"md\" up, and \"Autoscaling group desired capacity\" still truncates at \"lg\" while showing visibly more of itself as the column widens.",
       render: () => {
         const labelWidthItems = [
           { label: "ID", value: "usr_8213", type: "text" as const },

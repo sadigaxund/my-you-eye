@@ -30,7 +30,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Positioning",
-      description: "side picks the edge, align picks where along it — both forwarded straight to Radix.",
+      description: "side picks the edge and align picks where along it, and both forward straight to Radix.",
       render: () => (
         <div className="flex flex-wrap justify-center gap-3">
           <Popover>

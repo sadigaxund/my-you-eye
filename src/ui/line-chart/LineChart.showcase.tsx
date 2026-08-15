@@ -49,7 +49,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Focus a category",
-      description: "focus dims every point marker outside the named category to opacity-muted (the lines themselves stay full opacity) — for ChartScene's per-step focus callout.",
+      description: "focus dims every point marker outside the named category to opacity-muted while the lines stay at full opacity, for ChartScene's per-step focus callout.",
       render: () => <LineChart categories={categories} series={multi} focus={categories[3]} title="Active users, YoY" />,
     },
   ],

@@ -579,7 +579,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `CellType` | `my-you-eye` | — | Data Types, New data types, Numeric types, Column alignment |
-| `DataList` | `my-you-eye` | striped: false / true | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
+| `DataList` | `my-you-eye` | striped: **false** / true | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
 | `DataTable` | `my-you-eye` | variant: **default** / striped<br>density: compact / **normal** | Default, Striped, Scrolling + sticky header, Alignment, Truncation |
 | `Table` | `my-you-eye` | variant: **default** / striped | Composition, Variants, Density, Truncation & expand, Sticky header |
 | `Timeline` | `my-you-eye` | — | Horizontal — single lane, Horizontal — lanes, Spans — events with a duration, Shared scale across lanes, Label placement, Density, Progress (playhead reveal), Vertical — single lane, Vertical — lanes |
@@ -718,7 +718,7 @@ Also accepts everything from `HTMLAttributes<HTMLPreElement>`, `VariantProps<typ
 | `highlightColor?` | `CodeBlockHighlightGroup["color"]` | Color for highlightLines (default "primary"). |
 | `highlightGroups?` | `CodeBlockHighlightGroup[]` | Multi-color highlight groups. |
 | `highlightRanges?` | `HighlightRangeDef[]` | Substring-level highlight ranges (0-indexed char positions within each line). |
-| `focusRange?` | `[number, number]` | 1-based line numbers outside this `[start, end]` range get a reduced opacity (the `opacity-muted` token) instead of full contrast — the "focus on this range, dim the rest" treatment a code walkthrough needs. |
+| `focusRange?` | `[number, number]` | 1-based line numbers outside this `[start, end]` range get a reduced opacity (the `opacity-focus-dim` token) instead of full contrast — the "focus on this range, dim the rest" treatment a code walkthrough needs. |
 | `lineId?` | `(lineNumber: number) => string` | Assigns an `id` to each rendered line's row element, keyed by its 1-based line number. |
 | `bare?` | `boolean` | Strips the persistent header bar (filename/language badge) and the block's own opaque background/border, leaving only a hover-revealed copy button in the corner. |
 
@@ -1231,7 +1231,7 @@ Also accepts everything from `Timing`.
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `Breadcrumbs` | `my-you-eye` | — | Default, Custom separator |
-| `Link` | `my-you-eye` | variant: muted / **primary** | Variants, In a sentence |
+| `Link` | `my-you-eye` | variant: muted / **primary**<br>underline: false / **true** | Variants, underline={false}, In a sentence |
 | `Pagination` | `my-you-eye` | — | Default (10 pages), Few pages |
 | `Tabs` | `my-you-eye` | variant: filing / pills / **underline** | Underline, Pills, Filing |
 
@@ -1249,6 +1249,10 @@ Also accepts everything from `HTMLAttributes<HTMLElement>`.
 #### `Link`
 
 Also accepts everything from `AnchorHTMLAttributes<HTMLAnchorElement>`, `VariantProps<typeof linkVariants>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `underline?` | `boolean` | Underline the label on hover. |
 
 #### `Pagination`
 

@@ -45,7 +45,7 @@ const deployTrace: TimelineEvent[] = [
 const entry: ShowcaseEntry = {
   title: "Timeline",
   group: "data",
-  description: "Data-driven horizontal/vertical event sequences with optional lanes — roadmaps, request traces, git history. Events can be instants or spans (`until`). Draws no graph edges.",
+  description: "Data-driven horizontal or vertical event sequences with optional lanes, for roadmaps, request traces and git history. Events can be instants or spans (`until`), and the component draws no graph edges.",
   demos: [
     {
       name: "Horizontal — single lane",
@@ -66,7 +66,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Spans — events with a duration",
-      description: "Give an event `until` and it renders as a bar from `at` to `until` with its marker at the start, instead of a point. This is what makes a CI/deploy trace or a roadmap with real durations expressible; without it every event is an instant.",
+      description: "Give an event `until` and it renders as a bar from `at` to `until` with its marker at the start rather than as a point, which is what lets a CI/deploy trace or a roadmap carry real durations.",
       render: () => (
         <div className="max-w-xl mx-auto">
           <Timeline events={deployTrace} axis={(ms) => `${ms}ms`} />
@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Shared scale across lanes",
-      description: "Every lane is measured against ONE scale spanning all events. Each lane previously computed its own min/max, so two events with the same `at` in different lanes landed at different x positions — which defeats the only reason to have parallel lanes. Compare the `at: 200` boundary: ci's \"publish\" ends where deploy's \"canary\" begins, and they line up.",
+      description: "Every lane is measured against one scale spanning all events, so two events with the same `at` in different lanes land at the same x position. Compare the `at: 200` boundary: ci's \"publish\" ends exactly where deploy's \"canary\" begins.",
       render: () => (
         <div className="max-w-xl mx-auto">
           <Timeline events={deployTrace} lanes={["ci", "deploy"]} axis={(ms) => `${ms}ms`} />
@@ -84,7 +84,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Label placement",
-      description: "Point events sit proportionally to `at`, so close neighbours collide — and the label is by far the widest part of an event. `stagger` (default) alternates above/below the rule so adjacent labels can never overlap, without measuring anything. `below` is tighter but only safe when events are well separated.",
+      description: "Point events sit proportionally to `at`, so close neighbours collide, and the label is by far the widest part of an event. `stagger` (the default) alternates above and below the rule so adjacent labels cannot overlap, without measuring anything; `below` is tighter but only safe when events are well separated.",
       render: () => (
         <div className="max-w-xl mx-auto flex flex-col gap-panel-lg">
           {(["stagger", "below"] as const).map((placement) => (
@@ -111,7 +111,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Progress (playhead reveal)",
-      description: "`progress` is a playhead over the `at` domain, not an item counter — events appear as the head passes their `at`, and a span's bar is CLIPPED at the head so it grows rather than popping in whole. Pure function of the prop, no internal timer (TODO.md D4).",
+      description: "`progress` is a playhead over the `at` domain rather than an item counter: events appear as the head passes their `at`, and a span's bar is clipped at the head so it grows instead of popping in whole. It is a pure function of the prop with no internal timer (TODO.md D4).",
       render: () => (
         <div className="max-w-xl mx-auto flex flex-col gap-panel-lg">
           {[0.3, 0.65, 1].map((p) => (

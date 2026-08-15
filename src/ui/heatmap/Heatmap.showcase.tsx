@@ -10,7 +10,7 @@ const single: number[][] = [[42], [58], [61], [39], [70], [88], [30]];
 const entry: ShowcaseEntry = {
   title: "Heatmap",
   group: "charts",
-  description: "Matrix on the sequential ramp — latency grids, activity calendars. Cells fade in by rank (lowest value first) as `progress` sweeps 0→1.",
+  description: "Matrix on the sequential ramp, for latency grids and activity calendars. Cells fade in by rank, lowest value first, as `progress` sweeps 0→1.",
   demos: [
     {
       name: "Activity calendar",

@@ -23,7 +23,7 @@ const inverted: StatGridItem[] = [
 const entry: ShowcaseEntry = {
   title: "StatGrid",
   group: "patterns",
-  description: "A KPI row as one component — data-driven StatGrid over StatCard, instead of a call-site grid of individually placed StatCards.",
+  description: "A KPI row as one component: a data-driven StatGrid over StatCard, instead of a call-site grid of individually placed StatCards.",
   demos: [
     {
       name: "4-column KPI row",
@@ -52,7 +52,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "positiveIsGood",
-      description: "delta.positiveIsGood (default true) flips which sign reads as good — for a metric like latency or error rate where an increase is bad news. The trend glyph still follows the raw sign (both still show ↑); only the success/danger coloring flips.",
+      description: "delta.positiveIsGood (default true) flips which sign reads as good, for a metric like latency or error rate where an increase is bad news. The trend glyph still follows the raw sign, so both still show ↑; only the success/danger coloring flips.",
       render: () => (
         <div className="w-full max-w-3xl mx-auto">
           <StatGrid items={inverted} columns={2} />

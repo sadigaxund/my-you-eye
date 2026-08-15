@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Uncontrolled",
       description:
-        "No `value`/`onChange` — `defaultValue` seeds the selection and the component keeps it internally. Open it and use ArrowUp/ArrowDown, Home/End, Enter, Escape.",
+        "With no `value` or `onChange`, `defaultValue` seeds the selection and the component keeps it internally. Open it and use ArrowUp/ArrowDown, Home/End, Enter and Escape.",
       render: () => (
         <div className="max-w-xs mx-auto">
           <Combobox

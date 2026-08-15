@@ -181,7 +181,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Tall values (elbow/chevron alignment)",
-      description: "Audio players and JSON popover triggers render taller than a text line. The elbow connector still joins exactly at the chevron's vertical center at every row, in both density and indent sizes, because row-content height is a fixed --grid-unit multiple rather than driven by the tallest value. \"cover\" is an image value — CellType now sizes it to size-thumb-sm (20px) inside TreeView so it fits the row instead of overflowing size-thumb's 32px.",
+      description: "Audio players and JSON popover triggers render taller than a text line, yet the elbow connector still meets the chevron's vertical center at every row, in both density and indent sizes, because row-content height is a fixed --grid-unit multiple rather than the height of the tallest value. The \"cover\" image value is sized to size-thumb-sm (20px) inside TreeView so it fits the row instead of overflowing at size-thumb's 32px.",
       render: () => (
         <div className="flex items-start gap-6">
           <div className="flex-1 min-w-0 px-2">

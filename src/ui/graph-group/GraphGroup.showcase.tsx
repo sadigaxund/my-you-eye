@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
   title: "GraphGroup",
   group: "canvas",
   description:
-    "A labelled boundary region — VPC, cluster, service boundary — drawn behind the nodes and edges it encloses. Render groups before nodes in JSX: stacking is DOM order, not z-index.",
+    "A labelled boundary region (a VPC, a cluster, a service boundary) drawn behind the nodes and edges it encloses. Render groups before nodes in JSX, because stacking here is DOM order rather than z-index.",
   demos: [
     {
       name: "Architecture boundaries",

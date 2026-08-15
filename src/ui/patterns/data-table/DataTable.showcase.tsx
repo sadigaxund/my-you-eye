@@ -58,7 +58,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Scrolling + sticky header",
-      description: "Rounding lives directly on DataTable (which forwards to its own ScrollArea) rather than on a separate wrapper div, so the scrollbar's clip matches the border-radius and never overlaps the top-right corner. The sticky header is opaque (bg-surface-opaque) so scrolled rows never show through the seam.",
+      description: "Rounding lives on DataTable itself, which forwards it to its own ScrollArea, so the scrollbar's clip matches the border radius and never overlaps the top-right corner. The sticky header uses bg-surface-opaque, so scrolled rows never show through the seam.",
       render: () => (
         <DataTable
           stickyHeader

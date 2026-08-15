@@ -8,7 +8,7 @@ const trendDown = [33, 30, 27, 23, 24, 21, 17, 18, 16, 13, 14, 12];
 const entry: ShowcaseEntry = {
   title: "Sparkline",
   group: "charts",
-  description: "Inline micro-chart, no axes — feeds StatCard's trend slot. Draws left-to-right as `progress` sweeps 0→1.",
+  description: "Inline micro-chart with no axes, which feeds StatCard's trend slot. It draws left to right as `progress` sweeps 0→1.",
   demos: [
     {
       name: "Basic",

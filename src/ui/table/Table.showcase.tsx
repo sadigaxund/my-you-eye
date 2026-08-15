@@ -19,7 +19,7 @@ const entry: ShowcaseEntry = {
   title: "Table",
   group: "data",
   parent: "Table",
-  description: "The raw compositional table primitives (Table/TableHeader/TableBody/TableRow/TableHead/TableCell) — DataTable is the data-driven pattern built on top of these for typical use. Reach for Table directly when you need bespoke markup a data-driven API can't express.",
+  description: "The raw compositional table primitives: Table, TableHeader, TableBody, TableRow, TableHead and TableCell. DataTable is the data-driven pattern built on them for typical use; reach for Table directly when you need markup a data-driven API cannot express.",
   demos: [
     {
       name: "Composition",
@@ -72,7 +72,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Density",
-      description: "density lives on TableHead/TableCell (the parts that actually have height/padding) — Table and TableRow don't take a density prop themselves since they have no independent height to control.",
+      description: "density lives on TableHead and TableCell, the parts that actually have height and padding; Table and TableRow take no density prop of their own, because they have no independent height to control.",
       render: () => (
         <div className="flex flex-col gap-4">
           <div>
@@ -118,7 +118,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Truncation & expand",
-      description: "TableCell doesn't truncate on its own — it's a plain <td>. Put a CellType inside it (as DataTable does internally) and long content gets the same truncate + chevron + click-to-expand-popover behavior every other CellType consumer gets, anchored to the cell's own measured width.",
+      description: "TableCell is a plain <td> and does not truncate on its own. Put a CellType inside it, as DataTable does internally, and long content gets the same truncate, chevron and click-to-expand popover every other CellType consumer gets, anchored to the cell's measured width.",
       render: () => (
         <div className="max-w-sm">
           <Table variant="striped">

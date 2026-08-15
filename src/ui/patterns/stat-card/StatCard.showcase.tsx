@@ -17,7 +17,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Size",
-      description: "size (sm/md/lg, default md) controls padding density, forwarded to CardContent — matches Card's own size scale.",
+      description: "size (sm/md/lg, default md) controls padding density and forwards to CardContent on Card's own size scale.",
       render: () => (
         <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
           <StatCard size="sm" label="Revenue (sm)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
@@ -28,7 +28,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Numeric delta",
-      description: "delta.value as a number derives the arrow + success/danger/neutral color from its sign, formatted via src/lib/format.ts's formatSignedParts (the same logic CellType's `signed` display uses) — no direction prop needed.",
+      description: "A numeric delta.value derives the arrow and the success/danger/neutral color from its sign, formatted by src/lib/format.ts's formatSignedParts, the same logic CellType's `signed` display uses, so there is no direction prop.",
       render: () => (
         <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
           <StatCard label="Latency (ms)" value="182" delta={{ value: -14.2, label: "vs last week" }} />
@@ -39,7 +39,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Icon + sparkline",
-      description: "icon slot and an inline Sparkline (composes the standalone Sparkline component) reading the same trend.",
+      description: "The icon slot plus an inline Sparkline, which composes the standalone Sparkline component over the same trend data.",
       render: () => (
         <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
           <StatCard

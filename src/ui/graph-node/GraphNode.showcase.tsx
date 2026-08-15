@@ -85,7 +85,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Legacy ports on a tall node",
-      description: "ports (no rows) distribute across the node's real measured height, snapped to grid lines — not squeezed into the header band regardless of body height.",
+      description: "ports without rows distribute across the node's real measured height and snap to grid lines, instead of being squeezed into the header band whatever the body height is.",
       render: () => (
         <div className="flex items-center justify-center h-72">
           <GraphNode
@@ -133,7 +133,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Header variations",
-      description: "headerIcon, headerStatus and subtitle compose independently — mix any of them. headerIcon renders in a tinted tile in accentColor and is the node's type mark. subtitle adds one grid cell to the header's height (still whole-number cells, so rows/ports stay grid-aligned); everything else stays inside the standard 2-cell header. headerDots — the mac window buttons — is off by default and belongs only on a node that depicts an actual app window.",
+      description: "headerIcon, headerStatus and subtitle compose independently. headerIcon renders in a tinted accentColor tile as the node's type mark, subtitle adds one whole grid cell to the header so rows and ports stay grid-aligned, and headerDots (the mac window buttons) is off by default and belongs only on a node that depicts an actual app window.",
       render: () => (
         <div className="flex flex-wrap items-start justify-center gap-4">
           <GraphNode
@@ -165,7 +165,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Accent bar color",
-      description: "accentColor picks the accent bar's color (default \"primary\" — matches the original look exactly when omitted). Only visible when accent is true.",
+      description: "accentColor picks the accent bar's color and defaults to \"primary\", which matches the original look exactly. It shows only when accent is true.",
       render: () => (
         <div className="flex flex-wrap items-center justify-center gap-4">
           {(["primary", "success", "warning", "danger", "muted"] as const).map((color) => (
@@ -183,7 +183,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Footer variations",
-      description: "footerMetric, footerAction and footerProgress compose alongside footer's own text, inside the same fixed 1-cell footer row. footerProgress reuses Progress (no separate hand-rolled bar).",
+      description: "footerMetric, footerAction and footerProgress compose alongside footer's own text inside the same fixed one-cell footer row, and footerProgress reuses Progress rather than a hand-rolled bar.",
       render: () => (
         <div className="flex flex-wrap items-start justify-center gap-4">
           <GraphNode
@@ -212,7 +212,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Shape (state-machine pill)",
-      description: "shape=\"pill\" (default \"box\" = the fixed rounded-node radius) swaps in a full rounded-full corner — for DiagramScene's \"state\" preset (pill nodes, curved edges) rendering a state machine. Usually paired with variant=\"simple\" so there's no header rule/rows to look odd inside a pill.",
+      description: "shape=\"pill\" swaps the fixed rounded-node radius (\"box\", the default) for a fully rounded corner, for the state-machine nodes in DiagramScene's \"state\" preset. Pair it with variant=\"simple\" so no header rule or rows sit oddly inside the pill.",
       render: () => (
         <div className="flex flex-wrap items-center justify-center gap-4">
           <GraphNode x={0} y={0} className="static" header="idle" variant="simple" shape="pill" />

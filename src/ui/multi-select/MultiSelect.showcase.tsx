@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Uncontrolled",
       description:
-        "No `value`/`onChange` — `defaultValue` seeds the selection and the component keeps it internally. Open it and use ArrowUp/ArrowDown, Home/End, Enter to toggle, Escape to close.",
+        "With no `value` or `onChange`, `defaultValue` seeds the selection and the component keeps it internally. Open it and use ArrowUp/ArrowDown, Home/End, Enter to toggle and Escape to close.",
       render: () => (
         <div className="max-w-xs mx-auto">
           <MultiSelect

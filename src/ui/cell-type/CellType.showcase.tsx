@@ -66,7 +66,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "New data types",
-      description: "sparkline (reuses Sparkline), tags (reuses Badge), code (reuses CodeBlock's highlighter), color, hash/uuid (middle-truncated, monospace), user (reuses Avatar), progress (reuses Progress), secret (masked, click to reveal), markdown (reuses the Markdown component — inline formatting in the cell, full block rendering in the expand popover; link targets are scheme-checked, so the javascript: link in the multi-block row renders with no href at all), html (sanitised through DOMPurify on BOTH render paths before anything reaches the DOM — the \"hostile input\" row carries a javascript: link, an onerror image, a script tag and a style tag, and none of them survive).",
+      description: "sparkline, tags, code, color, hash/uuid, user, progress, secret, markdown and html cells, each reusing the component that already does the job (Sparkline, Badge, CodeBlock's highlighter, Avatar, Progress, Markdown); hash/uuid is middle-truncated monospace and secret stays masked until you click it. Markdown link targets are scheme-checked and html goes through DOMPurify on both render paths, so the hostile-input row's javascript: link, onerror image, script tag and style tag are all stripped before anything reaches the DOM.",
       render: () => (
         <TableGrid>
           <div role="row" className="contents">
@@ -123,7 +123,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Column alignment",
-      description: "Several rows of the same numeric/date type, stacked in a fixed-width column — tabular-nums (equal digit advance width) plus a structural number/unit (or date/time/zone) split keep the constant-width parts lined up with pure CSS, no measurement.",
+      description: "Several rows of the same numeric or date type stacked in a fixed-width column, where tabular-nums plus a structural number/unit (or date/time/zone) split line the constant-width parts up in pure CSS without measuring anything.",
       render: () => (
         <div className="flex flex-wrap gap-8">
           <div className="flex flex-col gap-1 w-24">

@@ -44,7 +44,7 @@ const entry: ShowcaseEntry = {
   title: "FileTree",
   group: "patterns",
   description:
-    "A file/folder tree for \"here's the project structure\" moments in coding videos — a pattern over TreeView, not a fork of it. Shapes FileTreeNode[] into TreeNode[] (icons, a git-status badge, a trailing metadata readout) and renders TreeView.",
+    "A file and folder tree for the \"here's the project structure\" moment in a coding video, built as a pattern over TreeView rather than a fork of it. It shapes FileTreeNode[] into TreeNode[] with icons, a git-status badge and a trailing metadata readout, then renders TreeView.",
   demos: [
     {
       name: "Project tree with git status",

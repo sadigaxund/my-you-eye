@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
   title: "SequenceDiagram",
   group: "patterns",
   description:
-    "UML-style sequence diagram — participant lanes, dashed lifelines, messages as ConnectionLayer edges, activation bars, and notes. Every coordinate is a GRID (16) multiple; message arrows are never hand-drawn <path>s.",
+    "UML-style sequence diagram with participant lanes, dashed lifelines, messages as ConnectionLayer edges, activation bars and notes. Every coordinate is a multiple of GRID (16), and message arrows come from ConnectionLayer rather than from hand-drawn <path>s.",
   demos: [
     {
       name: "Request flow",
@@ -58,7 +58,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Progress reveal",
-      description: "progress (0→1) reveals items strictly in order — fully-revealed messages stay drawn, the in-flight one draws a true prefix of its own route (corner and all, for the self-message loop).",
+      description: "progress (0→1) reveals items strictly in order: fully revealed messages stay drawn, and the in-flight one draws a true prefix of its own route, corner and all for the self-message loop.",
       render: () => (
         <div className="flex flex-col gap-6">
           <SequenceDiagram participants={participants} items={items} activations={activations} progress={0.4} />

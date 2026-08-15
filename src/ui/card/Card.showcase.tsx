@@ -41,7 +41,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Size",
-      description: "size on CardHeader/CardContent/CardFooter controls padding (sm/md/lg, token-sourced from --spacing-panel-sm/-panel/-panel-lg). md is the default and matches Alert's default padding for a consistent density across the library; the old hardcoded p-6 is still available as lg.",
+      description: "size on CardHeader, CardContent and CardFooter controls padding (sm/md/lg, from --spacing-panel-sm, --spacing-panel and --spacing-panel-lg). The default md matches Alert's default padding, and the old hardcoded p-6 is still available as lg.",
       render: () => (
         <div className="flex flex-col gap-4 max-w-sm mx-auto">
           <Card>

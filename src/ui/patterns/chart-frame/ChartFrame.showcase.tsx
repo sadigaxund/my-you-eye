@@ -6,7 +6,7 @@ const entry: ShowcaseEntry = {
   title: "ChartFrame",
   group: "charts",
   description:
-    "Shared chart chrome — measurement, axes, gridlines, legend, tooltip layer, empty/loading states. Every chart in this library composes it instead of re-implementing axis code.",
+    "Shared chart chrome: measurement, axes, gridlines, legend, tooltip layer and empty/loading states. Every chart in this library composes it instead of re-implementing axis code.",
   demos: [
     {
       name: "Axes, gridlines & a custom plot",

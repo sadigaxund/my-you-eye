@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-15
+
+### Fixed
+
+- **The Comparison header-separator artifact — for real this time.** The half-rendered line between a code pane's header and body survived every previous fix because none touched its actual cause: the 1px `border-b` was rasterizing against fractional-pixel boundaries — the wipe's percentage `clip-path` cuts an antialiased vertical seam through the border row, and columns mode's `1fr` grid tracks are themselves non-integer widths. `Comparison` now measures its container (ResizeObserver) and pixel-snaps both: the wipe clip is an integer-px inset and, while a reveal is active, the two panes are laid out at explicit integer pixel widths. Percentage fallback covers the first unmeasured frame.
+- **CodeBlock's copy button works on plain-http origins.** It silently no-oped wherever `navigator.clipboard` is unavailable (any non-secure context — e.g. a LAN dev server) and swallowed rejections. It now falls back to the textarea/`execCommand` path and shows a visible "Copy failed" state when both routes fail.
+- **Presenter no longer advances on stage clicks.** Any mouseup — including the end of a canvas drag — used to fire `next()`, making it impossible to pan a live diagram mid-presentation. Advancing is now explicit only: Space/arrows and the chrome's Prev/Next buttons.
+- **CodeScene is watchable.** Camera moves and diff cross-fades derived their entire duration from narration length, so a terse `say` produced sub-second pans; and out-of-focus dimming reused the shared 0.4 muted token. Code-scene steps now floor at 1.5s with the transition window clamped to 0.6–1.2s (`codeTransitionFrames`), the camera holds-then-moves inside each step instead of drifting for its whole span, and focus dimming uses a new dedicated `--opacity-focus-dim` token (0.25 base, 0.5 in brutal, defined across every theme and enforced by check-themes).
+- **Showcase page-nav polish**: prev/next cards are equal width with truncation, and the hover underline is gone — `no-underline` could never beat `hover:underline` on specificity, so `Link` gained a proper `underline` boolean axis (default true) used by the nav and TOC.
+
+### Changed
+
+- **Terminal output is plain tokenized text.** Output entries used to mount a full `CodeBlock` inside the frame — its own border, language badge, hover copy button, and a nested scroll region. Output now renders through the tokenizer directly as wrapped mono lines that inherit the terminal's scheme.
+- **The API reference panel was redesigned**: one surface panel holding a Variants block and a stacked, `divide-y` prop list — name, wrapping type chip, a default chip only when a default exists, and readable descriptions — replacing the four-column table whose Default column was mostly dashes and whose Type column crushed everything else.
+- **Showcase prose got a humanizer pass**: 124 entry/demo descriptions rewritten to plain, direct sentences (em dashes and AI-pattern phrasing removed, every factual claim kept); page descriptions and demo blurbs now run to an 80ch measure instead of stopping at 65ch mid-column; the import line on every page is syntax-highlighted via CodeBlock's `bare` mode.
+
 ## [0.5.0] - 2026-08-15
 
 ### Fixed

@@ -4,11 +4,11 @@ import { ConnectionLayer } from ".";
 const entry: ShowcaseEntry = {
   title: "ConnectionLayer",
   group: "canvas",
-  description: "One shared <svg> for N edges — path, arrowhead and label rendering reused from ConnectionLine's ConnectionPath, not duplicated. Prefer this over stacking many standalone ConnectionLines for diagrams with lots of edges.",
+  description: "One shared <svg> for N edges, with path, arrowhead and label rendering reused from ConnectionLine's ConnectionPath. Prefer it over stacking many standalone ConnectionLines when a diagram has a lot of edges.",
   demos: [
     {
       name: "Many edges, one svg",
-      description: "A small architecture diagram, not hand-tuned coordinates: every forward edge uses variant=\"orthogonal\" with the OTHER nodes passed as obstacles, so it detours around them instead of cutting through. The \"retry\" edge runs backward (worker → api) and is pinned with explicit waypoints to loop underneath the whole diagram instead of cutting back across it. No edge crosses another — verified geometrically (see ConnectionLine's showcase report), not eyeballed.",
+      description: "A small architecture diagram that is routed rather than hand-tuned: every forward edge is variant=\"orthogonal\" with the other nodes passed as obstacles, so it detours around them, and the backward \"retry\" edge (worker → api) uses explicit waypoints to loop underneath the whole diagram. No edge crosses another, and that was checked geometrically rather than by eye.",
       render: () => {
         const api = { x: 20, y: 90, width: 80, height: 40 };
         const queue = { x: 190, y: 20, width: 80, height: 40 };
@@ -36,7 +36,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Parallel edges (automatic bundling)",
-      description: "Three edges between the exact same two points would otherwise overlap into one indistinguishable stroke. ConnectionLayer detects the shared endpoint pair and fans them out automatically (bundleParallelEdges, default on) — no manual offset math at the call site.",
+      description: "Three edges between the same two points would overlap into one indistinguishable stroke, so ConnectionLayer spots the shared endpoint pair and fans them out itself (bundleParallelEdges, on by default), which saves the call site any offset math.",
       render: () => (
         <div className="relative" style={{ width: 320, height: 100 }}>
           <ConnectionLayer

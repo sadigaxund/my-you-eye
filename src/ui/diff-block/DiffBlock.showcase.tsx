@@ -38,7 +38,7 @@ const noisy: DiffLine[] = [
 const entry: ShowcaseEntry = {
   title: "DiffBlock",
   group: "display",
-  description: "Unified and side-by-side diff views, reusing CodeBlock's tokenizer for syntax color and a token-level LCS for optional word diff.",
+  description: "Unified and side-by-side diff views. They reuse CodeBlock's tokenizer for syntax color and a token-level LCS for the optional word diff.",
   demos: [
     {
       name: "Unified",
