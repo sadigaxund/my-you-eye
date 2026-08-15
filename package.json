@@ -1,6 +1,6 @@
 {
   "name": "my-you-eye",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/sadigaxund/my-you-eye"
@@ -12,7 +12,7 @@
     "build:lib": "tsup",
     "prebuild:lib": "node scripts/gen-manifest.mjs",
     "postbuild:lib": "node scripts/copy-styles.mjs",
-    "validate": "tsc -b --force && eslint . && node scripts/check-showcase.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs",
+    "validate": "tsc -b --force && eslint . && node scripts/check-showcase.mjs && node scripts/check-exports.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs && node scripts/audit.mjs",
     "audit": "node scripts/audit.mjs",
     "preview": "vite preview",
     "prepare": "npm run build:lib",
@@ -63,7 +63,9 @@
       "default": "./dist/video.js"
     },
     "./styles.css": "./dist/styles.css",
-    "./styles.compiled.css": "./dist/styles.compiled.css"
+    "./styles.compiled.css": "./dist/styles.compiled.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./themes/*.css": "./dist/themes/*.css"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
