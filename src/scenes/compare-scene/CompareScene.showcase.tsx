@@ -22,15 +22,25 @@ const codeScene: CompareSceneData = {
 const wipeScene: CompareSceneData = {
   kind: "compare",
   mode: "wipe",
-  heading: "Redesigned dashboard",
-  say: "The new layout consolidates the three cards into one panel.",
-  before: { content: "image", label: "Before", src: placeholderScreenshot() },
-  after: { content: "image", label: "After", src: placeholderScreenshot() },
+  heading: "Redesigned settings page",
+  say: "The new layout splits the stacked fields into two panels.",
+  before: { content: "image", label: "Before", src: placeholderScreenshot("before") },
+  after: { content: "image", label: "After", src: placeholderScreenshot("after") },
+};
+
+const codeWipeScene: CompareSceneData = {
+  kind: "compare",
+  mode: "wipe",
+  heading: "Same file, rewritten",
+  say: "The reduce call replaces the manual loop.",
+  before: { content: "code", label: "totals.js — before", lang: "js", code: "let sum = 0;\nfor (const x of items) {\n  sum += x.price;\n}" },
+  after: { content: "code", label: "totals.js — after", lang: "js", code: "const sum = items.reduce(\n  (s, x) => s + x.price,\n  0,\n);" },
 };
 
 const codeRanges = buildSequence(sceneSteps(codeScene), FPS, codeScene.pace);
 const codeTotal = sceneDuration(codeScene, FPS);
 const wipeTotal = sceneDuration(wipeScene, FPS);
+const codeWipeTotal = sceneDuration(codeWipeScene, FPS);
 const codeRange = Object.values(codeRanges)[0];
 
 function Frame({ children }: { children: ReactNode }) {
@@ -65,6 +75,15 @@ const entry: ShowcaseEntry = {
         <MotionPreview durationInFrames={wipeTotal} fps={FPS}>
           <Frame><CompareScene scene={wipeScene} /></Frame>
         </MotionPreview>
+      ),
+    },
+    {
+      name: `Pinned mid-wipe, code panes (frame ${Math.round(codeWipeTotal * 0.5)}/${codeWipeTotal})`,
+      description: "A code pane names itself in CodeBlock's own header, so no label Badge is drawn over it.",
+      render: () => (
+        <PinnedFrame frame={Math.round(codeWipeTotal * 0.5)} durationInFrames={codeWipeTotal}>
+          <Frame><CompareScene scene={codeWipeScene} /></Frame>
+        </PinnedFrame>
       ),
     },
     {

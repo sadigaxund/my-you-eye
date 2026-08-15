@@ -21,6 +21,20 @@ const config: DiffLine[] = [
   { type: "context", content: "}", oldLine: 4, newLine: 4 },
 ];
 
+// Every line here is the kind of rewrite that used to shatter into a dozen
+// one-character highlight boxes: punctuation-heavy edits (quote → backtick,
+// `+` concatenation → interpolation) where the raw LCS matches stray
+// brackets and spaces across otherwise unrelated text. See
+// DiffBlock.refine.ts.
+const noisy: DiffLine[] = [
+  { type: "context", content: "export function label(user, count) {", oldLine: 1, newLine: 1 },
+  { type: "removed", content: "  const name = user.firstName + ' ' + user.lastName;", oldLine: 2 },
+  { type: "added", content: "  const name = `${user.firstName} ${user.lastName}`;", newLine: 2 },
+  { type: "removed", content: "  return name + ' (' + count + ')';", oldLine: 3 },
+  { type: "added", content: "  return items.map((i) => i.label).join(', ');", newLine: 3 },
+  { type: "context", content: "}", oldLine: 4, newLine: 4 },
+];
+
 const entry: ShowcaseEntry = {
   title: "DiffBlock",
   group: "display",
@@ -40,6 +54,15 @@ const entry: ShowcaseEntry = {
       render: () => (
         <div className="max-w-xl mx-auto">
           <DiffBlock header="greet.js" lines={basic} wordDiff />
+        </div>
+      ),
+    },
+    {
+      name: "Unified — word diff, heavily rewritten lines",
+      description: "Noise runs are absorbed into their neighbours; a line that changed past ~55% keeps only its row tint.",
+      render: () => (
+        <div className="max-w-xl mx-auto">
+          <DiffBlock header="label.js" lines={noisy} wordDiff />
         </div>
       ),
     },

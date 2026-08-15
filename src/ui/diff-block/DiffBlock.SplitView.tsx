@@ -1,7 +1,7 @@
 import { cn } from "../../lib/cn";
 import { LineContent, ROW_BG, ROW_LEADING, MARKER_TEXT, MARKER_BORDER, MARKER_GLYPH } from "./DiffBlock";
 import type { DiffLine, DiffRow } from "./DiffBlock";
-import { wordDiff } from "./DiffBlock.wordDiff";
+import { refinedLineDiff } from "./DiffBlock.refine";
 import type { WordDiffSegment } from "./DiffBlock.wordDiff";
 
 function SideCell({ line, language, highlight, segments, side }: {
@@ -41,7 +41,7 @@ export function SplitView({ rows, language, highlight, wordDiff: wd }: {
     <div className="min-w-fit">
       {rows.map((row, i) => {
         const isPair = wd && row.left && row.right && row.left.type === "removed" && row.right.type === "added";
-        const diff = isPair ? wordDiff(row.left!.content, row.right!.content) : undefined;
+        const diff = isPair ? refinedLineDiff(row.left!.content, row.right!.content) : undefined;
         return (
           <div key={i} className="flex">
             <SideCell line={row.left} language={language} highlight={highlight} segments={diff?.oldSegments} side="old" />

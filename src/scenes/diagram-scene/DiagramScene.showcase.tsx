@@ -17,19 +17,21 @@ const archScene: DiagramSceneData = {
     { id: "client", label: "Client", sublabel: "browser" },
     { id: "api", label: "api", sublabel: "gateway", status: "success", accent: "primary", group: "vpc" },
     { id: "queue", label: "queue", metric: "1.2k/s", status: "success", group: "vpc" },
+    { id: "cache", label: "cache", sublabel: "redis", group: "vpc" },
     { id: "worker", label: "worker", sublabel: "×3", accent: "success", group: "vpc" },
     { id: "db", label: "db", sublabel: "postgres", status: "success", group: "vpc" },
   ],
   edges: [
     { from: "client", to: "api", label: "HTTPS" },
     { from: "api", to: "queue", label: "enqueue" },
+    { from: "api", to: "cache", kind: "data", label: "read" },
     { from: "queue", to: "worker" },
     { from: "worker", to: "db", kind: "data", label: "write" },
   ],
   groups: [{ id: "vpc", label: "VPC · us-east-1" }],
   steps: [
     { say: "A client calls into the API gateway.", reveal: ["client", "api"], connect: ["client->api"] },
-    { say: "The gateway enqueues work behind it, inside the VPC.", reveal: ["vpc", "queue"], connect: ["api->queue"] },
+    { say: "The gateway enqueues work behind it, inside the VPC.", reveal: ["vpc", "queue", "cache"], connect: ["api->queue", "api->cache"] },
     { say: "Workers pick jobs off the queue and write to the database.", reveal: ["worker", "db"], connect: ["queue->worker", "worker->db"], flow: ["queue->worker"] },
     { say: "Here's the whole path end to end — focus on the hot loop.", focus: ["api", "queue", "worker"] },
     { say: "The gateway is rate-limited.", annotate: [{ target: "api", text: "Rate-limited at 500 rps", side: "top" }] },
@@ -117,7 +119,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with the VPC group revealed, step 1 end (frame ${step1.endFrame - 1}/${archTotal})`,
-      description: "The VPC region — computed from its member nodes' bounds — and the queue node are settled.",
+      description: "The VPC region — bounds computed from its members — with its label chip floating above the dotted border.",
       render: () => (
         <PinnedFrame frame={step1.endFrame - 1} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>

@@ -10,6 +10,7 @@
 
 import { GRID, snap, HEADER, FOOTER } from "../../ui/graph-node/grid";
 import { layered, grid as gridLayout } from "../../lib/layout";
+import { fitZoom } from "../../motion/camera";
 import type { ConnectionKind, ConnectionVariant } from "../../ui/connection-line";
 import type { DiagramNode, DiagramEdge, DiagramGroup, DiagramPreset, DiagramLayout } from "../schema";
 
@@ -20,6 +21,31 @@ import type { DiagramNode, DiagramEdge, DiagramGroup, DiagramPreset, DiagramLayo
  * measuring inside a Canvas transform anyway: offsetWidth would be
  * post-zoom-irrelevant but still a second render pass we don't need here). */
 export const NODE_WIDTH = 10 * GRID;
+
+/** Clear space between two layers / two siblings, in grid units. Deliberately
+ * airier than `layout.ts`'s generic defaults (4 / 3), which serve every other
+ * caller: a diagram scene is composed for a 16:9 stage and is now scaled to
+ * fit that stage (`fitScale`) rather than cropped by it, so buying room
+ * between nodes no longer costs anything at the frame edge — and a chain of
+ * boxes 3 cells apart reads as one crowded strip rather than as a diagram. */
+const LAYER_GAP = 5;
+const NODE_GAP = 5;
+
+/** Vertical room a `GraphGroup`'s `labelPlacement="outside-top"` chip needs
+ * above the group's own border: the chip is one line of `text-xs` in a
+ * `py-0.5` pill, floated fully outside the box. Reserved in the content
+ * bounds so the fit/centre step never crops it. */
+export const GROUP_LABEL_BAND = 1.5 * GRID;
+
+/** A rect in diagram (canvas) space. Unlike the node/group rects this one can
+ * start at a NEGATIVE origin — a group's border, and the label band above it,
+ * both sit outside the topmost node's own box. */
+export interface ContentBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export interface NodeRect {
   id: string;
@@ -88,10 +114,8 @@ export function resolveNodeRects(
       ? gridLayout(layoutNodes, footprint)
       : layered(layoutNodes, layoutEdges, {
           direction: layoutKind === "layered-vertical" ? "vertical" : "horizontal",
-          // A tighter inter-layer gap than layout.ts's default: now that the
-          // gap is a real gap on top of a 10-cell node, 4 cells of extra air
-          // pushed a routine 4-node chain past the width of a 16:9 stage.
-          layerGap: 3,
+          layerGap: LAYER_GAP,
+          nodeGap: NODE_GAP,
           ...footprint,
         });
 
@@ -139,6 +163,28 @@ export function resolveGroupRects(groups: DiagramGroup[], nodeRects: Map<string,
   return out;
 }
 
+/** Breathing room kept between the diagram's bounding box and the canvas
+ * edge once it has been scaled to fit — two grid units on every side. */
+export const FIT_PADDING = 2 * GRID;
+
+/**
+ * Scale that makes the whole diagram fit inside the canvas, `1` when it
+ * already does. Never upscales: a two-node diagram blown up to fill a 16:9
+ * stage would render nodes at three times the type scale of every other
+ * scene in the same video.
+ *
+ * Reuses `Camera`'s own `fitZoom` (margin 1 — the clearance here is the
+ * explicit `FIT_PADDING` subtracted from the viewport, not a percentage)
+ * rather than restating the min-of-ratios formula, exactly as
+ * `CodeScene.useCamera.ts` does for its focus rects.
+ */
+export function fitScale(bounds: ContentBox, canvas: { width: number; height: number }): number {
+  const width = canvas.width - 2 * FIT_PADDING;
+  const height = canvas.height - 2 * FIT_PADDING;
+  if (width <= 0 || height <= 0) return 1;
+  return Math.min(1, fitZoom({ x: 0, y: 0, width: bounds.width, height: bounds.height }, width, height, 1));
+}
+
 /**
  * Shifts every rect so the diagram sits in the MIDDLE of the canvas rather
  * than pinned to its top-left origin. Layout necessarily produces
@@ -147,18 +193,34 @@ export function resolveGroupRects(groups: DiagramGroup[], nodeRects: Map<string,
  * whole diagram huddles in one corner of an empty frame, which is half of
  * the owner's "all nodes are bunched up on the top left of canvas".
  *
- * Never negative: a diagram larger than its canvas stays at the origin and
- * is panned/scrolled instead of being pushed off the top-left edge where it
- * couldn't be reached. Offsets snap to GRID so every node stays grid-aligned
- * (AGENTS.md §7) after centring.
+ * Two parts, in this order:
+ *
+ * 1. `-bounds.x` / `-bounds.y` pulls content that starts at a negative
+ *    coordinate back into view. A group's dotted border sits one grid unit
+ *    outside its topmost node and its `outside-top` label another band above
+ *    that, so a diagram whose first node is at y=0 genuinely begins at
+ *    y=-40 — without this the label is clipped by the canvas edge.
+ * 2. The centring term uses the canvas measured in DIAGRAM units, i.e.
+ *    divided by `zoom`: `Canvas` applies `translate(...) scale(zoom)` with a
+ *    `0 0` origin, so a rect shifted by `dx` moves `dx * zoom` on screen.
+ *    Dividing first is what keeps a scaled-down diagram optically centred
+ *    instead of drifting toward the top-left by the scale factor.
+ *
+ * The centring term is clamped at 0 (a diagram wider than its canvas stays
+ * flush rather than being pushed off the edge), and the total offset snaps to
+ * GRID so every node stays grid-aligned (AGENTS.md §7) after centring.
  */
 export function centerOffset(
-  bounds: { width: number; height: number },
+  bounds: ContentBox,
   canvas: { width: number; height: number },
+  zoom = 1,
 ): { dx: number; dy: number } {
+  const scale = zoom > 0 ? zoom : 1;
+  const viewWidth = canvas.width / scale;
+  const viewHeight = canvas.height / scale;
   return {
-    dx: Math.max(0, snap((canvas.width - bounds.width) / 2)),
-    dy: Math.max(0, snap((canvas.height - bounds.height) / 2)),
+    dx: snap(-bounds.x + Math.max(0, (viewWidth - bounds.width) / 2)),
+    dy: snap(-bounds.y + Math.max(0, (viewHeight - bounds.height) / 2)),
   };
 }
 
@@ -171,11 +233,20 @@ export function shiftRects<T extends { x: number; y: number }>(rects: Map<string
 
 /** Overall content bounding box (nodes ∪ groups), padded by one grid unit —
  * the coordinate space every overlay (ConnectionLayer's implicit sizing,
- * Trace's viewBox) needs to agree on. */
-export function contentBounds(nodeRects: Map<string, NodeRect>, groupRects: Map<string, GroupRect>): { width: number; height: number } {
+ * Trace's viewBox) needs to agree on, and the box `fitScale`/`centerOffset`
+ * frame.
+ *
+ * A group contributes `GROUP_LABEL_BAND` of extra height above its own rect:
+ * its label chip floats entirely outside the border (`outside-top`), so a box
+ * that stopped at the border would fit the diagram to the viewport with the
+ * label hanging over the edge. */
+export function contentBounds(nodeRects: Map<string, NodeRect>, groupRects: Map<string, GroupRect>): ContentBox {
   const rects = [...nodeRects.values(), ...groupRects.values()];
-  if (rects.length === 0) return { width: 4 * NODE_WIDTH, height: 8 * GRID };
+  if (rects.length === 0) return { x: 0, y: 0, width: 4 * NODE_WIDTH, height: 8 * GRID };
+  const tops = [...nodeRects.values()].map((r) => r.y).concat([...groupRects.values()].map((r) => r.y - GROUP_LABEL_BAND));
+  const minX = Math.min(...rects.map((r) => r.x));
+  const minY = Math.min(...tops);
   const maxX = Math.max(...rects.map((r) => r.x + r.width));
   const maxY = Math.max(...rects.map((r) => r.y + r.height));
-  return { width: maxX + GRID, height: maxY + GRID };
+  return { x: minX - GRID, y: minY - GRID, width: maxX - minX + 2 * GRID, height: maxY - minY + 2 * GRID };
 }

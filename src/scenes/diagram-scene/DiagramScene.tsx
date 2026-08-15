@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "../../lib/cn";
 import { Canvas } from "../../ui/canvas";
 import { GraphNode } from "../../ui/graph-node";
@@ -13,7 +13,7 @@ import { Reveal, Trace } from "../../motion";
 import { useSequence, useTimeline } from "../../motion/core";
 import type { MotionColor } from "../../motion/core";
 import { sceneSteps, stepName } from "../timing";
-import { PRESET_DEFAULTS, resolveNodeRects, resolveGroupRects, contentBounds, centerOffset, shiftRects } from "./DiagramScene.layout";
+import { PRESET_DEFAULTS, resolveNodeRects, resolveGroupRects, contentBounds, centerOffset, fitScale, shiftRects } from "./DiagramScene.layout";
 import type { NodeRect, GroupRect } from "./DiagramScene.layout";
 import { edgeEndpoints, obstaclesExcluding } from "./DiagramScene.geometry";
 import { useCanvasSize } from "./DiagramScene.useCanvasSize";
@@ -77,11 +77,25 @@ export function DiagramScene({ scene }: DiagramSceneProps) {
   const bounds = useMemo(() => contentBounds(laidOutNodes, laidOutGroups), [laidOutNodes, laidOutGroups]);
   const { ref: canvasRef, size: canvasSize } = useCanvasSize(bounds);
 
+  // Fit, then centre. `Canvas` renders at zoom 1 by default, so any diagram
+  // bigger than the stage used to be simply cropped — the "too zoomed in,
+  // cramped and cut off" report. `fitScale` scales it down (never up) to sit
+  // inside the measured canvas with FIT_PADDING to spare, and re-runs
+  // whenever `useCanvasSize`'s ResizeObserver reports a new size.
+  //
+  // `zoomOverride` keeps Canvas's own zoom controls live: the fit is the
+  // starting point, not a lock. Once a viewer zooms (live presenter only —
+  // nothing clicks during a video render), their value wins. Passing
+  // `onZoomChange` is what makes Canvas's controlled `zoom` prop writable
+  // instead of inert.
+  const [zoomOverride, setZoomOverride] = useState<number | null>(null);
+  const zoom = zoomOverride ?? fitScale(bounds, canvasSize);
+
   // Centre the whole diagram in the measured canvas. Applied to the rects
   // themselves rather than to a wrapper transform, so edges, flow tokens and
   // annotation callouts — all of which read these rects — stay in agreement
   // without a second coordinate space to keep in sync.
-  const offset = useMemo(() => centerOffset(bounds, canvasSize), [bounds, canvasSize]);
+  const offset = useMemo(() => centerOffset(bounds, canvasSize, zoom), [bounds, canvasSize, zoom]);
   const nodeRects = useMemo(() => shiftRects(laidOutNodes, offset.dx, offset.dy), [laidOutNodes, offset]);
   const groupRects = useMemo(() => shiftRects(laidOutGroups, offset.dx, offset.dy), [laidOutGroups, offset]);
 
@@ -145,7 +159,12 @@ export function DiagramScene({ scene }: DiagramSceneProps) {
   return (
     <div className="flex h-full w-full flex-col gap-stack bg-bg p-panel-xl text-fg">
       {scene.title && <h2 className="text-xl font-semibold text-fg">{scene.title}</h2>}
-      <Canvas ref={canvasRef} className="min-h-0 flex-1 rounded-ui border border-border">
+      <Canvas
+        ref={canvasRef}
+        zoom={zoom}
+        onZoomChange={setZoomOverride}
+        className="min-h-0 flex-1 rounded-ui border border-border"
+      >
         {[...groupRects.values()].map((rect) => {
           const dimmed = focusIds != null && !focusIds.has(rect.id);
           const revealRange = findRevealRange(rect.id, scene, ranges);
@@ -154,6 +173,16 @@ export function DiagramScene({ scene }: DiagramSceneProps) {
               <GraphGroup
                 x={rect.x} y={rect.y} width={rect.width} height={rect.height}
                 label={rect.data.label} border={rect.data.border}
+                // Outside the box, not inset into it. GraphGroup's default
+                // "top-left" chip sits 8px INSIDE the region's top band,
+                // and this scene's group rect is only one grid unit larger
+                // than its member nodes — so the very nodes the group
+                // encloses, painted after it by GraphGroup's own DOM-order
+                // stacking contract, covered the label. Floating it above
+                // the border is the placement that can't be overlapped;
+                // `contentBounds` reserves GROUP_LABEL_BAND for it so the
+                // fit step never crops it either.
+                labelPlacement="outside-top"
                 className={cn(dimmed && "opacity-dim")}
               />
             </Reveal>

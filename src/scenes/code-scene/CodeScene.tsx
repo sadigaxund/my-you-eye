@@ -21,6 +21,21 @@ export interface CodeSceneProps {
  * site (AGENTS.md D5 — the schema is the API). */
 const DIFF_SHARE = 0.55;
 
+/**
+ * The typed-so-far prefix of `source`, with every not-yet-typed character
+ * dropped EXCEPT its newlines. Keeping the trailing newlines means the
+ * partial string always has the final line count, so `CodeBlock`'s gutter
+ * (derived from `code.split("\n")`) renders the same number of rows — and
+ * therefore the same digit width, and therefore the same code x-origin — on
+ * every frame of the typing. Without it, the gutter grows from "1" to "12"
+ * mid-type and shoves the code sideways under a camera that is measuring
+ * exactly those line positions.
+ */
+function typedSlice(source: string, progress: number): string {
+  const cut = Math.floor(source.length * progress);
+  return source.slice(0, cut) + source.slice(cut).replace(/[^\n]/g, "");
+}
+
 /** Which step is "current" at `frame`: the last one whose own range has
  * started. Only this one step's code/diff/typing is rendered — earlier
  * steps are already fully settled into whatever source they left behind
@@ -102,7 +117,19 @@ export function CodeScene({ scene }: CodeSceneProps) {
   const diffFrames = Math.max(1, Math.round((range.endFrame - range.startFrame) * DIFF_SHARE));
   const isDiff = !step.typed && nextSource !== prevSource && frame < range.startFrame + diffFrames;
   const isTyped = Boolean(step.typed);
-  const typedCode = isTyped ? nextSource.slice(0, Math.floor(nextSource.length * stepProgress)) : nextSource;
+  const typedCode = isTyped ? typedSlice(nextSource, stepProgress) : nextSource;
+
+  // Every layout-affecting CodeBlock prop, shared verbatim by the visible
+  // block and the hidden final-source block that reserves its box below —
+  // the two must size identically for the reservation to mean anything.
+  const blockProps = {
+    language: scene.lang,
+    header: scene.file,
+    highlight: highlightEnabled,
+    showLineNumbers,
+    focusRange: step.focus,
+    highlightRanges: highlightRanges.length > 0 ? highlightRanges : undefined,
+  };
 
   return (
     <div className="flex h-full w-full flex-col gap-stack bg-bg p-panel-xl text-fg">
@@ -128,16 +155,37 @@ export function CodeScene({ scene }: CodeSceneProps) {
               duration={diffFrames}
               className="max-h-full"
             />
+          ) : isTyped ? (
+            /* Reserve the FINAL layout up front — the same trick TypeText's
+               `preserveLayout` uses (src/motion/type-text/TypeText.tsx), for
+               the same reason: a box that grows with the text is a box that
+               moves under everything measuring it. Both blocks occupy the
+               one grid cell, the hidden one (full source) sizing it and the
+               visible one (typed prefix) stretching into it, so block width,
+               block height and gutter width are final from frame 1 and the
+               only thing that changes per frame is which characters are
+               painted. The container therefore never resizes while typing,
+               so `useCodeCameraKeyframes`' ResizeObserver stays quiet and
+               the centring wrapper below has nothing left to re-centre.
+               The ghost deliberately gets NO `lineId`: duplicate element ids
+               would make the camera's `getElementById` measure the invisible
+               copy instead of the real one. */
+            <div key={index} className="grid max-h-full">
+              <div aria-hidden className="invisible col-start-1 row-start-1 min-w-0">
+                <CodeBlock code={nextSource} {...blockProps} className="max-h-full" />
+              </div>
+              <CodeBlock
+                code={typedCode}
+                {...blockProps}
+                lineId={(n) => lineElementId(blockId, n)}
+                className="col-start-1 row-start-1 min-w-0 max-h-full"
+              />
+            </div>
           ) : (
             <CodeBlock
               key={index}
-              code={typedCode}
-              language={scene.lang}
-              header={scene.file}
-              highlight={highlightEnabled}
-              showLineNumbers={showLineNumbers}
-              focusRange={step.focus}
-              highlightRanges={highlightRanges.length > 0 ? highlightRanges : undefined}
+              code={nextSource}
+              {...blockProps}
               lineId={(n) => lineElementId(blockId, n)}
               className="max-h-full"
             />

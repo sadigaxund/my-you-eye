@@ -6,8 +6,15 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 import { useProgress } from "../../motion/core";
-import { wordDiff } from "../../ui/diff-block";
 import type { DiffRow, WordDiffSegment } from "../../ui/diff-block";
+// The shared word-diff post-processing (absorb noise runs, drop
+// single-character changes, fall back to a whole-line treatment when most of
+// the line changed). Deep import for the same reason as CodeBlock.highlight
+// below: it's an internal helper of the diff-block folder, not part of the
+// package's public surface — but it IS the one implementation, so DiffBlock's
+// static rendering and these animated rows can never disagree about which
+// tokens are worth calling out.
+import { refinedLineDiff } from "../../ui/diff-block/DiffBlock.refine";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "../../ui/code-block/CodeBlock.highlight";
 // Reused rather than re-implemented (owner feedback: "make those more
 // intuitive. Maybe you can use the Merged Diff component that we have") —
@@ -93,8 +100,8 @@ export interface CodeDiffRowProps {
  * reversed; a changed pair (a removed line immediately followed by an added
  * line — `pairDiffLines`' definition of "paired") cross-fades between old
  * and new via two absolutely-stacked layers whose fades do not overlap (see
- * the comment on the branch), each word-diffed with `wordDiff` so only the
- * changed tokens are called out.
+ * the comment on the branch), each word-diffed with `refinedLineDiff` so only
+ * the changed tokens — and only the ones worth calling out — are boxed.
  */
 export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHeight, charWidth }: CodeDiffRowProps) {
   const progress = useProgress({ delay: delayFrames, duration: durationFrames });
@@ -107,7 +114,12 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
   // every render of a given row instance calls the same hooks in the same
   // order, even if `row`'s shape ever changed between renders — `diff` is
   // just null on non-changed rows, which segmentsToRects' callers guard on.
-  const diff = isChanged ? wordDiff(row.left!.content, row.right!.content) : null;
+  // `null` here means one of two things, both handled the same way: this
+  // isn't a changed pair at all, or it IS but so much of the line changed
+  // that per-token boxes would be noise (DiffBlock.refine.ts's whole-line
+  // fallback) — either way no rects are generated and the row keeps only its
+  // calm added/removed background.
+  const diff = isChanged ? refinedLineDiff(row.left!.content, row.right!.content) : null;
   const oldRects = useMemo(
     () => (diff ? segmentsToRects(diff.oldSegments, anchorX, charWidth, lineHeight) : []),
     [diff, anchorX, charWidth, lineHeight],
@@ -117,7 +129,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
     [diff, anchorX, charWidth, lineHeight],
   );
 
-  if (isChanged && diff) {
+  if (isChanged) {
     // A dissolve, NOT a cross-fade. The two layers are stacked on the same
     // pixels, so any window where both are partly visible paints two
     // different strings of monospace text on top of each other — the row
@@ -136,7 +148,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
           style={{ opacity: oldOpacity }}
         >
           <span ref={markerRef} className={cn("w-5 shrink-0 text-center", MARKER_TEXT.removed)}>{MARKER_GLYPH.removed}</span>
-          {diff.oldSegments.map((seg) => seg.text).join("")}
+          {row.left!.content}
           {oldRects.length > 0 && <MergedHighlight rects={oldRects} color={WORD_COLOR.old} strokeColor={WORD_COLOR.old} />}
         </div>
         <div
@@ -144,7 +156,7 @@ export function CodeDiffRow({ row, language, delayFrames, durationFrames, lineHe
           style={{ opacity: newOpacity }}
         >
           <span className={cn("w-5 shrink-0 text-center", MARKER_TEXT.added)}>{MARKER_GLYPH.added}</span>
-          {diff.newSegments.map((seg) => seg.text).join("")}
+          {row.right!.content}
           {newRects.length > 0 && <MergedHighlight rects={newRects} color={WORD_COLOR.new} strokeColor={WORD_COLOR.new} />}
         </div>
       </div>

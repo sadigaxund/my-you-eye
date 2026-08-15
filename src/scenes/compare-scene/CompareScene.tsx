@@ -13,7 +13,13 @@ export interface CompareSceneProps {
 function renderPane(pane: ComparePane): ReactNode {
   switch (pane.content) {
     case "code":
-      return <CodeBlock code={pane.code} language={pane.lang} header={pane.label} className="h-full" />;
+      // `border-0 rounded-none`: Comparison already wraps each pane in its
+      // own `rounded-ui border border-border` box, so CodeBlock's identical
+      // frame drew a second hairline 0px inside the first — two concentric
+      // rounded borders reading as a rendering seam. Suppressing the INNER
+      // one (at this call site only, via tailwind-merge, never by changing
+      // CodeBlock's own default) leaves exactly one frame around the pane.
+      return <CodeBlock code={pane.code} language={pane.lang} header={pane.label} className="h-full border-0 rounded-none" />;
     case "text":
       return <div className="whitespace-pre-wrap p-panel text-sm text-fg">{pane.text}</div>;
     case "image":
@@ -23,6 +29,20 @@ function renderPane(pane: ComparePane): ReactNode {
       throw new Error(`CompareScene: unhandled pane content ${(exhaustive as ComparePane).content}`);
     }
   }
+}
+
+/**
+ * The label `Comparison` should draw for a pane — which for a code pane is
+ * NOTHING, because `CodeBlock`'s own header bar is already showing it. Passed
+ * to both slots as well, `Comparison` paints an opaque `Badge` at the top-left
+ * (and top-right) of the pane, which in `wipe` mode sits exactly on top of
+ * that header text, and in `columns` mode simply says the same word twice.
+ * Decided per side, not per scene: a code pane compared against an image pane
+ * keeps the image side's badge (nothing else names it) and drops only the code
+ * side's.
+ */
+function paneLabel(pane: ComparePane): string | undefined {
+  return pane.content === "code" ? undefined : pane.label;
 }
 
 /**
@@ -62,8 +82,8 @@ export function CompareScene({ scene }: CompareSceneProps) {
         mode={mode === "wipe" ? "wipe" : "side-by-side"}
         before={beforeNode}
         after={afterNode}
-        beforeLabel={scene.before.label}
-        afterLabel={scene.after.label}
+        beforeLabel={paneLabel(scene.before)}
+        afterLabel={paneLabel(scene.after)}
         progress={progress}
         className="w-full"
       />

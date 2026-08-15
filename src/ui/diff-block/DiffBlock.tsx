@@ -4,8 +4,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { ScrollArea } from "../scroll-area";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "../code-block/CodeBlock.highlight";
-import { wordDiff as wordDiffOf } from "./DiffBlock.wordDiff";
 import type { WordDiffSegment } from "./DiffBlock.wordDiff";
+import { refinedLineDiff } from "./DiffBlock.refine";
 import { SplitView } from "./DiffBlock.SplitView";
 
 const diffBlockVariants = cva(
@@ -164,7 +164,10 @@ function UnifiedView({ rows, language, highlight, wordDiff: wd }: {
     <>
       {rows.map((row, i) => {
         const isPair = wd && row.left && row.right && row.left.type === "removed" && row.right.type === "added";
-        const diff = isPair ? wordDiffOf(row.left!.content, row.right!.content) : undefined;
+        // `null` back from refinedLineDiff = "too much of this line changed
+        // for token boxes to mean anything" — the row's own added/removed
+        // background carries it instead. See DiffBlock.refine.ts.
+        const diff = isPair ? refinedLineDiff(row.left!.content, row.right!.content) : undefined;
         return (
           <div key={i}>
             {row.left && <UnifiedRow line={row.left} language={language} highlight={highlight} segments={diff?.oldSegments} side="old" />}

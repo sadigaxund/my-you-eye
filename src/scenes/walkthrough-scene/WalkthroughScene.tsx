@@ -6,6 +6,7 @@ import type { CursorEvent, CursorAction } from "../../motion";
 import { useProgress, useSequence, useTimeline } from "../../motion/core";
 import type { SequenceRange } from "../../motion/core";
 import { sceneSteps, stepName } from "../timing";
+import { spotlightPlan } from "./WalkthroughScene.spotlight";
 import type { WalkthroughScene as WalkthroughSceneData, WalkthroughStep, PercentPoint, PercentRect } from "../schema";
 
 export interface WalkthroughSceneProps {
@@ -123,8 +124,16 @@ export function WalkthroughScene({ scene }: WalkthroughSceneProps) {
   // hiccup right at that step boundary. A stable wrapper means `screenshot`
   // never remounts, no matter how many steps toggle their spotlight on and
   // off.
-  const spotlightFocus = step?.spotlight && size.width > 0 ? rectToPx(step.spotlight, size) : { x: 0, y: 0, width: 0, height: 0 };
-  const spotlightDim = step?.spotlight ? 0.6 : 0;
+  //
+  // The rect, the dim and the fade-in anchor all come from
+  // `spotlightPlan` (WalkthroughScene.spotlight.ts) rather than from
+  // `step.spotlight` directly: read raw, both the rect and the dim are step
+  // functions that change discontinuously at the frame the index advances,
+  // which is the one-frame "pop" from fully dimmed to clear. The plan makes
+  // them continuous across the boundary. `Spotlight` stays a pure function
+  // of the values it is handed.
+  const plan = spotlightPlan(scene.steps, ranges, index, frame);
+  const spotlightFocus = plan.focus && size.width > 0 ? rectToPx(plan.focus, size) : { x: 0, y: 0, width: 0, height: 0 };
 
   const target = step ? resolveTarget(step) : undefined;
   const annotateTarget = step?.annotate && target && size.width > 0 ? toPx(target, size) : undefined;
@@ -136,7 +145,7 @@ export function WalkthroughScene({ scene }: WalkthroughSceneProps) {
       <div className="w-full max-w-4xl">
         <DeviceFrame variant={scene.frame ?? "browser"} url={scene.url} title={scene.title} className="aspect-video w-full">
           <div ref={frameRef} className="relative h-full w-full">
-            <Spotlight focus={spotlightFocus} dim={spotlightDim} delay={range.startFrame} duration="normal" className="h-full w-full">
+            <Spotlight focus={spotlightFocus} dim={plan.dim} delay={plan.delay} duration="normal" className="h-full w-full">
               {screenshot}
             </Spotlight>
             <Cursor events={events} />

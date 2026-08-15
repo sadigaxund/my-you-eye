@@ -87,7 +87,7 @@ export interface TerminalStep extends StepBase {
   output?: string;
   /** Language id for highlighting `output`. */
   language?: string;
-  /** Process exit code — renders a badge (0 reads success, non-zero danger). */
+  /** Process exit code — renders a plain status line (0 reads success, non-zero danger). */
   exitCode?: number;
   /** Shows a spinner with this label while the step runs, before `output`
    * lands. For a step that should read as "this takes a while". */

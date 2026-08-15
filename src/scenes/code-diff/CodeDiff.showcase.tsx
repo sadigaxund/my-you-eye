@@ -33,7 +33,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned mid-transition (frame 70/150)",
-      description: "Changed lines mid-crossfade, removed lines partway collapsed, added text partway grown in.",
+      description: "The signature's added parameter is boxed as one run; the wholly-rewritten body line keeps just its row tint.",
       render: () => (
         <PinnedFrame frame={70} durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />
