@@ -6,7 +6,7 @@ import { Beat } from ".";
 const entry: ShowcaseEntry = {
   title: "Beat",
   group: "motion",
-  description: "A no-op hold, so a deliberate pause reads as intentional rather than a missing animation.",
+  description: "A no-op hold, so a deliberate pause reads as intentional instead of as a missing animation.",
   demos: [
     {
       name: "Hold between reveals",

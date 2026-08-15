@@ -23,6 +23,16 @@ while ((match = tokenPattern.exec(tokensRaw)) !== null) {
 // --texture-paper/--texture-size are the shared raster asset + tile size —
 // intentionally global, not themed, so they're excluded from the check.
 const requiredPrefixes = ["color-", "texture-"];
+// Individually required tokens outside those prefixes. --opacity-focus-dim
+// (out-of-focus code lines in CodeBlock's focusRange) is listed here rather
+// than by adding an "opacity-" prefix above: the other two opacity tokens
+// (--opacity-dim, --opacity-muted) are legitimately optional — a theme that
+// is happy with the base value simply inherits it — and promoting the whole
+// prefix would retroactively demand them from four themes that never needed
+// them. The focus dim is different: how hard a theme dims is a deliberate
+// per-theme call (brutal dims at 0.5, everything else at 0.25), so a theme
+// that never states its value has forgotten to make that call.
+const requiredTokens = ["opacity-focus-dim"];
 // DERIVED CATEGORY (TODO.md D3 / AGENTS.md §0.9 approved exception, Batch 4):
 // the chart palette (--color-chart-1..8 categorical, --color-chart-seq-1..5
 // sequential) is computed ONCE in tokens.css from each theme's own
@@ -74,6 +84,14 @@ for (const file of themeFiles) {
         errors.push(`${file}: missing --${token}`);
       }
     }
+  }
+
+  for (const token of requiredTokens) {
+    if (!baseTokens.has(token)) {
+      errors.push(`src/styles/tokens.css: missing --${token} (required by check-themes.mjs)`);
+      continue;
+    }
+    if (!themeTokens.has(token)) errors.push(`${file}: missing --${token}`);
   }
 }
 

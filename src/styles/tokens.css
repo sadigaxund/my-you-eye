@@ -149,6 +149,17 @@
   /* ---- Opacity ---- */
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
+  /* Out-of-focus code lines (CodeBlock's `focusRange`, driven by CodeScene).
+     Deliberately its own token rather than a second use of --opacity-muted:
+     the two answer different questions. --opacity-muted is "this text is
+     subordinate but still meant to be read" (a chart's non-focused series,
+     an exit status, a caption), so it has to stay legible on its own.
+     Focus dimming is the opposite — the dimmed lines are context the viewer
+     is being told to look away from while a step talks about four lines out
+     of thirty, and at 0.4 they competed with the lines the camera had just
+     zoomed into. Sharing the token meant every attempt to fix one broke the
+     other. Themes override it the way they override the other opacities. */
+  --opacity-focus-dim: 0.25;
 
   /* ---- Shadow ----
      Two-layer recipe throughout: a tight, darker "contact" layer close to the

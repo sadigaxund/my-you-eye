@@ -116,6 +116,7 @@ html[data-theme="glass"]::before {
   /* Opacities */
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
+  --opacity-focus-dim: 0.25;
 
   --texture-size: 3334px;
   --texture-opacity: 0.22;

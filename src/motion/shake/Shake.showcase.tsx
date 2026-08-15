@@ -6,7 +6,7 @@ const entry: ShowcaseEntry = {
   title: "Shake",
   group: "motion",
   description:
-    "Decaying-amplitude oscillation, deterministic via a seeded PRNG — never an unseeded random source.",
+    "Decaying-amplitude oscillation, made deterministic by a seeded PRNG rather than an unseeded random source.",
   demos: [
     {
       name: "Axis variants",

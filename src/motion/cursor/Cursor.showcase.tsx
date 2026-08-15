@@ -13,11 +13,11 @@ const entry: ShowcaseEntry = {
   title: "Cursor",
   group: "motion",
   description:
-    "A fake pointer for simulated UI walkthroughs — eased movement, four shapes, Ripple click feedback.",
+    "A fake pointer for simulated UI walkthroughs, with eased movement, four shapes and Ripple click feedback.",
   demos: [
     {
       name: "Move, click, type",
-      description: "Eased movement (spring=\"snappy\" here) between 4 timed events, ending on a click.",
+      description: "Eased movement (spring=\"snappy\" here) between four timed events that ends on a click.",
       render: () => (
         <MotionPreview durationInFrames={150} leadIn>
           <div className="relative h-40 w-full overflow-hidden rounded-ui bg-surface">
@@ -40,7 +40,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Shapes",
-      description: "shape: \"arrow\" | \"hand\" | \"crosshair\" | \"dot\" — each eases in, then clicks.",
+      description: "shape: \"arrow\" | \"hand\" | \"crosshair\" | \"dot\", each of which eases in and then clicks.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="grid grid-cols-4 gap-panel">
@@ -69,7 +69,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Click effect variants",
-      description: "clickEffect: \"ring\" | \"solid\" | \"double\" — forwarded straight to Ripple.",
+      description: "clickEffect: \"ring\" | \"solid\" | \"double\", forwarded straight to Ripple.",
       render: () => (
         <MotionPreview durationInFrames={90} loop leadIn>
           <div className="grid grid-cols-3 gap-panel">

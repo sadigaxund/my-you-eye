@@ -5,7 +5,7 @@ import { TextSwap } from ".";
 const entry: ShowcaseEntry = {
   title: "TextSwap",
   group: "motion",
-  description: "Cross-fade or roll between two strings without a layout jump — a hidden sizer reserves the space.",
+  description: "Cross-fade or roll between two strings without a layout jump, because a hidden sizer reserves the space.",
   demos: [
     {
       name: "Fade",

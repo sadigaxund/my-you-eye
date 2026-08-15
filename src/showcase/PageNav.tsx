@@ -8,13 +8,16 @@ function NavLink({ page, direction }: { page: RegistryPage; direction: "prev" | 
     <Link
       href={`#${page.slug}`}
       variant="muted"
+      underline={false}
       className={cn(
-        "flex flex-col gap-1 rounded-ui border border-border px-4 py-3 no-underline hover:bg-secondary",
+        "flex w-full min-w-0 flex-col gap-1 rounded-ui border border-border px-4 py-3 hover:bg-secondary",
         isNext ? "items-end text-right" : "items-start",
       )}
     >
       <span className="block text-xs uppercase tracking-wide opacity-muted">{isNext ? "Next" : "Previous"}</span>
-      <span className="block text-sm font-medium text-fg">{isNext ? `${page.title} →` : `← ${page.title}`}</span>
+      <span className="block max-w-full truncate text-sm font-medium text-fg">
+        {isNext ? `${page.title} →` : `← ${page.title}`}
+      </span>
     </Link>
   );
 }
@@ -29,8 +32,8 @@ export function PageNav({ prev, next }: { prev?: RegistryPage; next?: RegistryPa
   if (!prev && !next) return null;
   return (
     <nav className="mt-16 grid grid-cols-2 gap-4 border-t border-border pt-8">
-      <div>{prev && <NavLink page={prev} direction="prev" />}</div>
-      <div className="flex justify-end">{next && <NavLink page={next} direction="next" />}</div>
+      <div className="min-w-0">{prev && <NavLink page={prev} direction="prev" />}</div>
+      <div className="flex min-w-0 justify-end">{next && <NavLink page={next} direction="next" />}</div>
     </nav>
   );
 }

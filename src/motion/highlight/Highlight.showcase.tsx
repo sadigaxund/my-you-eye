@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Overlay radius",
       description:
-        "The box overlay always draws rounded-ui-sm, never inheriting this pill's fully-rounded corners.",
+        "The box overlay always draws rounded-ui-sm and does not inherit this pill's fully-rounded corners.",
       render: () => (
         <MotionPreview durationInFrames={60} center leadIn>
           <Highlight mode="box" color="primary" duration="slow">

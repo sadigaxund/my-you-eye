@@ -22,7 +22,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Pan and fit zoom",
-      description: "Camera moves from an overview to node-a, then node-c, fitting the zoom to each.",
+      description: "The camera moves from an overview to node-a, then node-c, and fits the zoom to each.",
       render: () => (
         <MotionPreview durationInFrames={150} leadIn>
           <div style={{ height: 220 }}>

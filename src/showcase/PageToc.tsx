@@ -31,7 +31,8 @@ export function PageToc({ items }: { items: TocItem[] }) {
                 key={item.id}
                 href={`#${item.id}`}
                 variant="muted"
-                className={cn("text-sm leading-snug no-underline", item.section && "font-semibold text-fg")}
+                underline={false}
+                className={cn("text-sm leading-snug", item.section && "font-semibold text-fg")}
               >
                 {item.label}
               </Link>

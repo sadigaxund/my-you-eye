@@ -6,11 +6,11 @@ const entry: ShowcaseEntry = {
   title: "Morph",
   group: "motion",
   description:
-    "Lerps position/size/opacity between two caller-supplied snapshots — a simplified FLIP, not shape morphing.",
+    "Lerps position, size and opacity between two caller-supplied snapshots. It is a simplified FLIP rather than shape morphing.",
   demos: [
     {
       name: "Between layout slots",
-      description: "The same card content sliding from a small slot to a larger one.",
+      description: "The same card content slides from a small slot to a larger one.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-32 w-full">
@@ -25,7 +25,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Cross-fade two elements",
-      description: "toChildren swaps the content mid-box — a different element in the same space.",
+      description: "toChildren swaps the content mid-box, so a different element occupies the same space.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-16 w-full">
@@ -49,7 +49,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Row expanding into a panel",
-      description: "Box grows and its content swaps in one motion — a row becoming its detail view.",
+      description: "The box grows and its content swaps in one motion, the way a row opens into its detail view.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="relative h-40 w-full">

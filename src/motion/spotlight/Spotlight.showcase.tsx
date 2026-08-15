@@ -45,7 +45,7 @@ const entry: ShowcaseEntry = {
   title: "Spotlight",
   group: "motion",
   description:
-    "Dims everything except a focused rect via a box-shadow cut-out — never backdrop-filter.",
+    "Dims everything except a focused rect with a box-shadow cut-out rather than a backdrop-filter.",
   demos: [
     {
       name: "One line of code",

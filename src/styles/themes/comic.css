@@ -84,6 +84,7 @@ html[data-theme="comic"].dark {
   --texture-size: 170px;
   --texture-opacity: 0.5;
   --texture-opacity-surface: 0.35;
+  --opacity-focus-dim: 0.25;
   --texture-blend: multiply;
   --texture-type: paper-grain;
 }

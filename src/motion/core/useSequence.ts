@@ -12,6 +12,18 @@ export interface SequenceStepInput {
   frames?: number;
   /** Text content whose length estimates a natural reveal/typing/reading duration. */
   content?: string;
+  /**
+   * Per-step floor, in seconds, on the content-derived duration. Raises
+   * `MIN_STEP_SECONDS` for this step only; ignored when `frames` is given
+   * (that is the explicit escape hatch) and never lowers the global floor.
+   *
+   * It exists so one scene kind can be slower than the default without
+   * slowing every scene kind down. `MIN_STEP_SECONDS` is 0.6s because a
+   * bullet appearing is legible in 0.6s; a code scene spends the same beat
+   * panning a camera and cross-fading a diff, and 0.6s of that is a blink
+   * rather than a move you can follow. See `codeSteps` in scenes/timing.ts.
+   */
+  minSeconds?: number;
   /** Extra hold time appended after the computed duration, so a step can pause before the next one starts. */
   hold?: Beat;
 }
@@ -50,10 +62,14 @@ export function buildSequence(
     if (step.frames != null) {
       frames = Math.max(1, Math.round(step.frames));
     } else if (step.content != null) {
-      const seconds = Math.max(MIN_STEP_SECONDS, step.content.length / charsPerSecond);
+      const floor = Math.max(MIN_STEP_SECONDS, step.minSeconds ?? 0);
+      const seconds = Math.max(floor, step.content.length / charsPerSecond);
       frames = Math.round(seconds * fps);
     } else {
-      frames = resolveBeatFrames("normal", fps);
+      frames = Math.max(
+        resolveBeatFrames("normal", fps),
+        step.minSeconds != null ? Math.round(step.minSeconds * fps) : 0,
+      );
     }
     if (step.hold != null) frames += resolveBeatFrames(step.hold, fps);
 

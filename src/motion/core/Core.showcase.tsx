@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
   title: "Motion Core",
   group: "motion",
   description:
-    "The foundation every primitive builds on: useTimeline() / useProgress(), reading from whichever driver is mounted.",
+    "The foundation every primitive builds on: useTimeline() and useProgress(), which read from whichever driver is mounted.",
   demos: [
     {
       name: "useTimeline / useProgress",
@@ -96,7 +96,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Easing vs spring",
-      description: "Every EasingName and SpringName at one duration — springs may overshoot past 1.00.",
+      description: "Every EasingName and SpringName at one duration, where springs may overshoot past 1.00.",
       render: () => (
         <MotionPreview durationInFrames={60}>
           <EasingSpringMatrix />
@@ -106,7 +106,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Seek & scrub",
       description:
-        "Every demo's Play/Pause/Replay buttons and scrub slider already ARE DomDriverHandle calls.",
+        "Every demo's Play/Pause/Replay buttons and scrub slider are already DomDriverHandle calls.",
       render: () => (
         <MotionPreview durationInFrames={90}>
           <TimelineReadout />

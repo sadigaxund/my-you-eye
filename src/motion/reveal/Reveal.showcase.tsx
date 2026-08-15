@@ -6,7 +6,7 @@ const entry: ShowcaseEntry = {
   title: "Reveal",
   group: "motion",
   description:
-    "Generic entrance animation — fade, directional slide, scale or blur — driven entirely by useProgress().",
+    "Generic entrance animation (fade, directional slide, scale or blur), driven entirely by useProgress().",
   demos: [
     {
       name: "from variants",

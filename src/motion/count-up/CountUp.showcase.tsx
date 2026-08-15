@@ -5,7 +5,7 @@ import { CountUp } from ".";
 const entry: ShowcaseEntry = {
   title: "CountUp",
   group: "motion",
-  description: "Numeric tween that reuses src/lib/format.ts for every formatting mode — never reimplements Intl formatting.",
+  description: "Numeric tween that reuses src/lib/format.ts for every formatting mode instead of reimplementing Intl formatting.",
   demos: [
     {
       name: "Formats",

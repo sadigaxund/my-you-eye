@@ -31,6 +31,7 @@
   --shadow-elevated: none;
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
+  --opacity-focus-dim: 0.25;
   --texture-blend: multiply;
   --texture-type: paper-grain;
 }

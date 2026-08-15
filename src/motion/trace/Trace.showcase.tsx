@@ -14,7 +14,7 @@ const VIEW_BOX = "0 0 160 60";
 const entry: ShowcaseEntry = {
   title: "Trace",
   group: "motion",
-  description: "Tokens travelling along an SVG path — the data-flow primitive for architecture diagrams.",
+  description: "Tokens travel along an SVG path. This is the data-flow primitive for architecture diagrams.",
   demos: [
     {
       name: "Single token, looping",

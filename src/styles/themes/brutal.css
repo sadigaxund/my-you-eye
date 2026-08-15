@@ -57,6 +57,7 @@ html[data-theme="brutal"].dark {
 
   --opacity-dim: 1;
   --opacity-muted: 1;
+  --opacity-focus-dim: 0.5;
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
   --texture-blend: multiply;
@@ -107,4 +108,5 @@ html[data-theme="brutal"].dark {
 
   --opacity-dim: 1;
   --opacity-muted: 1;
+  --opacity-focus-dim: 0.5;
 }

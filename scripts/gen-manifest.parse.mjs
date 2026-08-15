@@ -161,7 +161,14 @@ function variantsOf(mainFile) {
       if (defaultAxes && ts.isObjectLiteralExpression(defaultAxes)) {
         for (const axis of defaultAxes.properties) {
           if (!ts.isPropertyAssignment(axis) || !axis.name || !ts.isIdentifier(axis.name)) continue;
-          if (ts.isStringLiteral(axis.initializer)) defaults[axis.name.text] = axis.initializer.text;
+          // A boolean axis (`underline: { true: …, false: … }` on Link) keys
+          // its values as the strings "true"/"false" but writes the default
+          // as a real boolean literal, so a string-only read silently drops
+          // it and the manifest reports an axis with no default.
+          const init = axis.initializer;
+          if (ts.isStringLiteral(init)) defaults[axis.name.text] = init.text;
+          else if (init.kind === ts.SyntaxKind.TrueKeyword) defaults[axis.name.text] = "true";
+          else if (init.kind === ts.SyntaxKind.FalseKeyword) defaults[axis.name.text] = "false";
         }
       }
     }

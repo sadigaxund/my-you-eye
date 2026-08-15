@@ -21,7 +21,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Reveal vs Stagger",
-      description: "Same 5 chips, same Reveal underneath — Stagger just gives each child its own delay.",
+      description: "Same five chips and the same Reveal underneath; Stagger just gives each child its own delay.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="flex flex-col gap-panel">

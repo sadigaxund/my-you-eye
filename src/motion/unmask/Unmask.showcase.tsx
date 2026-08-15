@@ -5,7 +5,7 @@ import { Unmask } from ".";
 const entry: ShowcaseEntry = {
   title: "Unmask",
   group: "motion",
-  description: "Soft-edged mask sweep — a gentler alternative to Wipe's hard clip-path edge, for headings and pull-quotes.",
+  description: "Soft-edged mask sweep, a gentler alternative to Wipe's hard clip-path edge for headings and pull-quotes.",
   demos: [
     {
       name: "Directions & softness",

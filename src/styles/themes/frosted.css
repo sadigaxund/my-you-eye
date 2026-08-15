@@ -97,6 +97,7 @@ html[data-theme="frosted"].dark::before {
 
   --opacity-dim: 0.6;
   --opacity-muted: 0.4;
+  --opacity-focus-dim: 0.25;
 
   /* Fine-grain frost texture: smaller tile than the 150px default, low
      opacity, "overlay" blend for an etched/sandblasted feel rather than

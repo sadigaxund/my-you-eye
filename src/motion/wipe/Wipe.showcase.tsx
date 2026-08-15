@@ -9,7 +9,7 @@ function panel(label: string) {
 const entry: ShowcaseEntry = {
   title: "Wipe",
   group: "motion",
-  description: "clip-path reveal — linear (hard edge, 4 directions) or radial (circle growing from the direction's edge).",
+  description: "clip-path reveal, either linear (hard edge, four directions) or radial (a circle that grows from the direction's edge).",
   demos: [
     {
       name: "Linear — 4 directions",

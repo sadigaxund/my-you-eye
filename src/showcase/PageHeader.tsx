@@ -19,9 +19,14 @@ export interface EntryIntroProps {
  * The import statement is derived, never authored: the manifest record
  * carries the published subpath this component ships on (`my-you-eye`,
  * `my-you-eye/motion`, …), so the line is right by construction even when a
- * component moves tiers. `CodeBlock` supplies the copy button; no `language`
- * is passed on purpose — that would add a header bar and a language badge
- * around what is one line of text.
+ * component moves tiers. `CodeBlock` supplies the copy button, and `bare`
+ * is what keeps the line tokenized without dragging a header bar, a
+ * language badge and a second panel border around one line of text.
+ *
+ * The prose measure is 80ch rather than `max-w-prose`'s ~65ch. A 65ch
+ * paragraph sitting directly above a full-width demo card stops visibly
+ * short of the column, which reads as truncated text rather than as a
+ * chosen line length; 80ch still lands inside a comfortable measure.
  */
 export function EntryIntro({ title, description, className }: EntryIntroProps) {
   const api = findComponentApi(title);
@@ -29,8 +34,10 @@ export function EntryIntro({ title, description, className }: EntryIntroProps) {
   if (!description && !statement) return null;
   return (
     <div className={cn("flex flex-col gap-4", className)}>
-      {description && <p className="max-w-prose text-base leading-relaxed text-muted">{description}</p>}
-      {statement && <CodeBlock code={statement} wrap={false} className="max-w-prose" />}
+      {description && <p className="max-w-[80ch] text-base leading-relaxed text-muted">{description}</p>}
+      {statement && (
+        <CodeBlock code={statement} wrap={false} language="ts" highlight bare className="max-w-[80ch]" />
+      )}
     </div>
   );
 }

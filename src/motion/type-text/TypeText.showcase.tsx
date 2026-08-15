@@ -45,7 +45,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "preserveLayout (no reflow)",
-      description: "The box is full-size from frame 0 — surrounding content never jumps as text fills in.",
+      description: "The box is full-size from frame 0, so surrounding content never jumps as the text fills in.",
       render: () => (
         <MotionPreview durationInFrames={90} leadIn>
           <div className="flex flex-col gap-tight">

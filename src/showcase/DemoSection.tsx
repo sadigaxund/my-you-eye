@@ -64,7 +64,7 @@ export function DemoSection({ demo, texture, anchor }: DemoSectionProps) {
               #
             </Link>
           </h3>
-          {demo.description && <p className="mt-1 max-w-prose text-xs leading-relaxed text-muted">{demo.description}</p>}
+          {demo.description && <p className="mt-1 max-w-[80ch] text-xs leading-relaxed text-muted">{demo.description}</p>}
         </div>
         {hasSource && (
           <Button

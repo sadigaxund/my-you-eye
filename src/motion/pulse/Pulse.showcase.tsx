@@ -6,7 +6,7 @@ const entry: ShowcaseEntry = {
   title: "Pulse",
   group: "motion",
   description:
-    "Looping scale/opacity breathing, driven by frame % period — never CSS animation.",
+    "Looping scale and opacity breathing, driven by frame % period rather than by a CSS animation.",
   demos: [
     {
       name: "Infinite",
