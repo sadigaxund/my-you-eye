@@ -25,7 +25,7 @@ const rootShell: TerminalEntry[] = [
 const entry: ShowcaseEntry = {
   title: "Terminal",
   group: "display",
-  description: "Prompt/command/output/exit-code sequences, composing CodeBlock for output bodies. Data-driven via a typed entries array.",
+  description: "Prompt/command/output/exit-status sequences, composing CodeBlock for output bodies. Data-driven via a typed entries array.",
   demos: [
     {
       name: "Prompt glyphs",
@@ -52,6 +52,22 @@ const entry: ShowcaseEntry = {
               { command: "./deploy.sh --env production" },
               { spinner: "Uploading build artifacts…" },
               { output: "Deployed to production in 8.2s", exitCode: 0 },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      name: "Exit status & spinner",
+      description: "Everything inside the frame is text a shell could have printed: no pills, no widgets — an exit line and a braille spinner glyph.",
+      render: () => (
+        <div className="flex flex-col gap-4 max-w-lg mx-auto">
+          <Terminal
+            cwd="~/project"
+            entries={[
+              { command: "npm test", output: "42 passed, 0 failed", exitCode: 0 },
+              { command: "npm run lint", output: "3 problems (3 errors, 0 warnings)", exitCode: 1 },
+              { command: "npm run deploy", spinner: "Uploading assets…" },
             ]}
           />
         </div>

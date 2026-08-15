@@ -1,5 +1,10 @@
 import { useSequence, useTimeline } from "../../motion/core";
 import { Terminal } from "../../ui/terminal";
+// Deep import: the braille frame set is Terminal's internal constant, not
+// part of the package's public surface, but it IS the one source of those
+// glyphs — the scene steps through the same array the static component's
+// default comes from, so the paused and animated spinners can't drift apart.
+import { SPINNER_FRAMES } from "../../ui/terminal/Terminal";
 import type { TerminalEntry } from "../../ui/terminal";
 import { sceneSteps, stepName } from "../timing";
 import type { TerminalScene as TerminalSceneData, TerminalStep } from "../schema";
@@ -20,8 +25,8 @@ type PhaseWindows = Partial<Record<PhaseKey, { start: number; end: number }>>;
 
 /** Splits one entry's local 0→1 progress into ordered sub-phases — command
  * types in, then the spinner (if any) holds, then output appears, then the
- * exit-code badge lands — weighted so a longer command gets proportionally
- * more of the window than the badge's brief final beat. */
+ * exit status lands — weighted so a longer command gets proportionally
+ * more of the window than that brief final beat. */
 function phaseWindows(entry: TerminalStep): PhaseWindows {
   const segments: { key: PhaseKey; weight: number }[] = [];
   if (entry.command != null) segments.push({ key: "command", weight: 2 });
@@ -40,9 +45,21 @@ function phaseWindows(entry: TerminalStep): PhaseWindows {
   return windows;
 }
 
+/** Frames each braille spinner glyph is held for. 3 at 30fps is ~10 glyphs a
+ * second — the pace a real CLI spinner runs at; one glyph per frame reads as
+ * a flicker. */
+const SPINNER_FRAME_HOLD = 3;
+
+/** Which braille glyph a running spinner shows on `frame`. A pure function of
+ * the frame (never a timer — AGENTS.md §9c), so the same frame renders the
+ * same glyph in the live preview and in the MP4. */
+function spinnerGlyphAt(frame: number): string {
+  return SPINNER_FRAMES[Math.floor(frame / SPINNER_FRAME_HOLD) % SPINNER_FRAMES.length];
+}
+
 /** Builds the partially-revealed `TerminalEntry` for whichever entry is
  * currently running, from its own phase windows and local progress. */
-function currentEntryView(entry: TerminalStep, localProgress: number): TerminalEntry {
+function currentEntryView(entry: TerminalStep, localProgress: number, frame: number): TerminalEntry {
   const windows = phaseWindows(entry);
 
   const command = entry.command != null && windows.command
@@ -56,6 +73,7 @@ function currentEntryView(entry: TerminalStep, localProgress: number): TerminalE
   return {
     command,
     spinner: spinnerVisible ? entry.spinner : undefined,
+    spinnerGlyph: spinnerVisible ? spinnerGlyphAt(frame) : undefined,
     output: outputVisible ? entry.output : undefined,
     language: entry.language,
     exitCode: exitVisible ? entry.exitCode : undefined,
@@ -68,13 +86,14 @@ function currentEntryView(entry: TerminalStep, localProgress: number): TerminalE
 
 /**
  * Wraps `Terminal`, revealing one entry per step (TODO.md Phase E): the
- * command types in, then the spinner (if set) holds, then output appears,
- * then the exit-code badge lands — all within that entry's own
+ * command types in, then the spinner (if set) holds — its braille glyph
+ * cycling as a pure function of the frame — then output appears, then the
+ * exit status lands — all within that entry's own
  * `SequenceRange` from `useSequence(sceneSteps(scene), ...)`. Entries before
  * the current step render fully settled (spinner cleared — it's a transient
  * "this is running" cue, not a permanent part of the transcript); entries
  * after it aren't rendered yet. `Terminal` itself owns every visual (prompt
- * chrome, exit badge, output syntax highlighting) — this scene only decides
+ * chrome, exit status line, output syntax highlighting) — this scene only decides
  * how much of each entry to hand it on a given frame.
  */
 export function TerminalScene({ scene }: TerminalSceneProps) {
@@ -104,7 +123,7 @@ export function TerminalScene({ scene }: TerminalSceneProps) {
     }
     const range = ranges[stepName(entry.id, i)];
     const span = Math.max(1, range.endFrame - range.startFrame);
-    visible.push(currentEntryView(entry, clamp01((frame - range.startFrame) / span)));
+    visible.push(currentEntryView(entry, clamp01((frame - range.startFrame) / span), frame));
   }
 
   return (

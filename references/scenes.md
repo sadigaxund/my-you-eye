@@ -139,8 +139,9 @@ scene's initial `code`), and warns past ~25 focused lines.
 `entries: TerminalStep[]`, `cwd?`, `user?`, `host?`, `title?` (defaults to
 `cwd`), `prompt?: "$" | ">" | "#" | "❯"`. `TerminalStep`: `command?` (omit
 for an output-only entry — a banner, a log tail), `output?`, `language?`,
-`exitCode?` (renders a badge — 0 reads success, non-zero danger),
-`spinner?` (label shown before `output` lands).
+`exitCode?` (renders a plain status line — `✓ exit 0` success, `✗ exit N` danger),
+`spinner?` (in-progress line: an animated braille glyph + label, cycled
+frame-deterministically by the scene).
 
 #### `kind: "diagram"` and `kind: "sequence"`
 See **`references/diagrams.md`** — this is the highest-authoring-risk part

@@ -3,6 +3,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 import { MotionPreview } from "../../showcase/MotionPreview";
 import { PinnedFrame } from "../../showcase/PinnedFrame";
 import { TerminalScene } from ".";
+import { sceneDuration } from "../timing";
 import type { TerminalScene as TerminalSceneData } from "../schema";
 
 const scene: TerminalSceneData = {
@@ -38,6 +39,27 @@ const sshScene: TerminalSceneData = {
   ],
 };
 
+const spinnerScene: TerminalSceneData = {
+  kind: "terminal",
+  cwd: "/srv/app",
+  user: "ci",
+  host: "runner-42",
+  title: "deploy.sh — zsh",
+  rows: 6,
+  pace: "slow",
+  entries: [
+    {
+      command: "./deploy.sh --env production",
+      spinner: "Uploading build artifacts…",
+      output: "Deployed to production in 8.2s",
+      exitCode: 0,
+      say: "The braille glyph cycles off the frame number, so the same frame always renders the same glyph.",
+    },
+  ],
+};
+
+const spinnerTotal = sceneDuration(spinnerScene, 30);
+
 function Frame({ children }: { children: ReactNode }) {
   return <div className="aspect-video w-full overflow-hidden rounded-ui border border-border">{children}</div>;
 }
@@ -45,7 +67,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "TerminalScene",
   group: "scenes",
-  description: "Wraps Terminal, revealing one entry per step: command types in, spinner holds, output and badge land.",
+  description: "Wraps Terminal, revealing one entry per step: command types in, spinner cycles, output and exit status land.",
   demos: [
     {
       name: "Playing",
@@ -66,7 +88,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned on entry 2's spinner (frame 72/160)",
-      description: "Entry 1 is settled with its exit-0 badge; entry 2's spinner is showing in place of output.",
+      description: "Entry 1 is settled with its \"✓ exit 0\" line; entry 2's braille spinner is showing in place of output.",
       render: () => (
         <PinnedFrame frame={72} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>
@@ -74,8 +96,17 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Spinner, animating",
+      description: "One slow-paced entry: the braille glyph cycles ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ straight off the frame — no CSS animation anywhere.",
+      render: () => (
+        <MotionPreview durationInFrames={spinnerTotal} fps={30}>
+          <Frame><TerminalScene scene={spinnerScene} /></Frame>
+        </MotionPreview>
+      ),
+    },
+    {
       name: "Pinned at rest (frame 160/160)",
-      description: "All three entries fully settled: three commands, their outputs, and three exit-0 badges — no spinners.",
+      description: "All three entries fully settled: three commands, their outputs, and three \"✓ exit 0\" lines — no spinners.",
       render: () => (
         <PinnedFrame frame={160} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>

@@ -3,8 +3,6 @@ import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { CodeBlock } from "../code-block";
-import { Badge } from "../badge";
-import { Spinner } from "../spinner";
 import { ScrollArea } from "../scroll-area";
 
 const terminalVariants = cva(
@@ -62,10 +60,18 @@ export interface TerminalEntry {
   output?: string;
   /** Syntax language for `output` — enables CodeBlock's tokenizer for that entry. */
   language?: string;
-  /** Process exit code for this command. Renders a small badge (0 reads success, non-zero danger). */
+  /** Process exit code for this command. Renders a plain monospace status line — "✓ exit 0" in success color, "✗ exit 2" in danger. */
   exitCode?: number;
-  /** In-progress line: a spinner + label in place of output, for a still-frame of a running step. */
+  /** In-progress line: a braille spinner glyph + this label in place of output, for a still-frame of a running step. */
   spinner?: string;
+  /**
+   * Which glyph that spinner line shows. Defaults to the first frame of
+   * `SPINNER_FRAMES`. Exists so a frame-driven caller (`TerminalScene`) can
+   * cycle the braille set deterministically from the current frame — this
+   * component never animates it itself (AGENTS.md §9c: no CSS animation in
+   * anything a video render composes).
+   */
+  spinnerGlyph?: string;
   /**
    * Per-entry overrides of the prompt chrome — each independently
    * optional, and each PERSISTS to every following entry until overridden
@@ -141,13 +147,34 @@ const SCHEME_COMMAND_TEXT: Record<TerminalScheme, string> = {
   amber: "text-warning",
 };
 
-function ExitBadge({ code }: { code: number }) {
+/**
+ * The exit line, as a shell would print it: monospace text, no pill, no
+ * border, no background. Everything inside the terminal frame has to look
+ * like something a real shell could have written to the tty — a rounded
+ * `Badge` is chrome from a different design language, and reading it inside a
+ * transcript is like finding a button in a log file. Color (success/danger)
+ * plus a ✓/✗ glyph carries the same information; `opacity-muted` keeps it
+ * subordinate to the command and its output, which is what the reader is
+ * actually there for.
+ */
+function ExitStatus({ code }: { code: number }) {
+  const ok = code === 0;
   return (
-    <Badge variant={code === 0 ? "success" : "danger"} tone="soft" className="font-mono">
-      exit {code}
-    </Badge>
+    <span className={cn("text-xs opacity-muted", ok ? "text-success" : "text-danger")}>
+      {ok ? "✓" : "✗"} exit {code}
+    </span>
   );
 }
+
+/**
+ * The braille cycle every terminal spinner on earth uses, in order. Exported
+ * for the scenes tier (`TerminalScene`), which has frame access and steps
+ * through it deterministically — this component itself renders ONE glyph and
+ * never animates: a CSS animation here would be wall-clock driven, and
+ * AGENTS.md §9c forbids that anywhere a frame-captured render can reach. A
+ * paused spinner reads perfectly well in a static page.
+ */
+export const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"] as const;
 
 /** Resolved per-entry prompt chrome, carried forward shell-style: each
  * entry's own override (if set) becomes the new "current" value for every
@@ -294,7 +321,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
                 )}
                 {entry.spinner != null && (
                   <div className="flex items-center gap-inline text-code-muted">
-                    <Spinner size="sm" className="size-3.5" />
+                    <span aria-hidden className="shrink-0">{entry.spinnerGlyph ?? SPINNER_FRAMES[0]}</span>
                     <span>{entry.spinner}</span>
                   </div>
                 )}
@@ -306,7 +333,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
                     wrap
                   />
                 )}
-                {entry.exitCode != null && <ExitBadge code={entry.exitCode} />}
+                {entry.exitCode != null && <ExitStatus code={entry.exitCode} />}
               </div>
             ))}
           </div>

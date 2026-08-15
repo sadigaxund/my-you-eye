@@ -88,8 +88,8 @@ interface TerminalEntry {
   command?: string;   // omit for an output-only entry (banner, log tail)
   output?: string;    // rendered via CodeBlock
   language?: string;
-  exitCode?: number;  // badge: 0 = success, non-zero = danger
-  spinner?: string;   // in-progress line
+  exitCode?: number;  // status line: "✓ exit 0" success, "✗ exit N" danger — plain text, no badge
+  spinner?: string;   // in-progress line: braille glyph + label (glyph via spinnerGlyph, default "⠋")
   // Per-entry prompt-chrome overrides. Each PERSISTS to every following
   // entry until overridden again (real-shell semantics), falling back to
   // the Terminal-level prop until first set.
