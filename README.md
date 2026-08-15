@@ -45,6 +45,36 @@ import { Dialog, TreeView } from "my-you-eye";
 
 To pick up changes: bump the tag here, then `npm update` in each app.
 
+## Styling — pick the stylesheet that matches your pipeline
+
+The package ships the same design system as two different artefacts. Import **exactly one**.
+
+| Import | What it is | Use it when |
+|---|---|---|
+| `my-you-eye/styles.css` | **Tailwind v4 source.** The raw `globals.css`: `@import "tailwindcss"`, the token `@theme` block, every theme file, the `@font-face` rules, and the global scrollbar styling. It is *not* compiled CSS — the `@import` and `@utility` at-rules have to be processed. | Your app already runs Tailwind v4 (`@tailwindcss/vite`, `@tailwindcss/postcss`, or the CLI). Tailwind then scans **your** source too, so utilities you write in your own components get generated alongside the library's. This is the normal path. |
+| `my-you-eye/styles.compiled.css` | **Pre-compiled drop-in.** Vite's build output with every Tailwind utility the library uses already resolved to plain CSS. No build step required, no Tailwind anywhere in your toolchain. | Your pipeline has no Tailwind: Remotion, a plain bundler, a `<link>` tag, an email/preview harness. Trade-off — it contains the utilities *the library* uses and nothing else, so Tailwind classes you write yourself will not exist. Stick to component props and layout `className`s that the library already emits, or switch to the source stylesheet. |
+
+```tsx
+// app with Tailwind v4
+import "my-you-eye/styles.css";
+
+// Remotion / plain bundler / no Tailwind
+import "my-you-eye/styles.compiled.css";
+```
+
+Two narrower entry points are also exported, for when you want the tokens without the rest:
+
+```css
+@import "my-you-eye/tokens.css";        /* the @theme token block only */
+@import "my-you-eye/themes/neon.css";   /* one theme's override block  */
+```
+
+Theme files are token-override blocks keyed on `[data-theme="<name>"]` (and `.dark` for the
+orthogonal dark variant) — see [AGENTS.md](./AGENTS.md) §7. Available names: `dark`, `neon`,
+`contrast`, `glass`, `comic`, `brutal`, `stark`, `frosted`, `metallic`. Both full stylesheets
+already include all of them; the per-theme import only matters if you are assembling your own
+subset from `tokens.css`.
+
 ## Customize — three channels, in order of preference
 
 1. **Theme tokens** — global restyle, zero code. Override the CSS variables at your root, or
@@ -143,6 +173,7 @@ src/
   showcase/            # dev-only showcase app (glob-discovers *.showcase.tsx)
 scripts/
   check-showcase.mjs   # every component folder has a showcase + export
+  check-exports.mjs    # src/index.ts re-exports every folder index's symbols
   check-themes.mjs     # every theme defines the full token set
   gen-manifest.mjs     # regenerates components.json + COMPONENTS.md
   audit.mjs            # non-blocking drift report

@@ -121,9 +121,37 @@ Work through every step. Do not skip. Do not reorder.
    - Forward refs. Spread rest props. Type props explicitly (exported interface).
    - Colors/spacing/radius via token-mapped Tailwind classes only (e.g. `bg-primary`,
      `rounded-ui`) — never arbitrary values like `bg-[#3b82f6]`.
+
+   **Accepted exception — the chart family's domain-props API.** `BarChart`, `LineChart`,
+   `PieChart`, `ScatterPlot`, `Sparkline`, `Heatmap`, `Funnel`, `Gauge`, plus `TreeView` and
+   `CellType`, deliberately do *not* forward a ref or spread rest props onto a DOM node. They
+   take a data-domain prop set (`series`, `slices`, `stages`, `nodes`, `value`/`type`) and own
+   their entire subtree — there is no single "the element" for a ref to point at, and an
+   escape-hatch rest spread onto an internal `<svg>` would let callers reach past the
+   component's own layout contract. This is the intended API for that family; do not "fix"
+   these components to match the primitive contract above, and do follow it for any new
+   chart-shaped component. Every other component in `src/ui/` forwards refs and spreads rest.
+
+   **Accepted convention — `density` is not `size`.** On components that render repeating rows
+   or lines (`DataTable`, `Timeline`), `density` (`compact` | `normal`) is the deliberate axis
+   name for row/line spacing, and it is distinct from `size`, which scales the component as a
+   whole (padding, type scale, control height). A component may legitimately have both. Do not
+   collapse `density` into `size`, and do not introduce a third name (`spacing`, `compact`,
+   `tight`) for the same idea.
+
 4. **Write the showcase file** per §4.
-5. **Export from the public API:** add a line to `src/index.ts`
-   (`export * from "./ui/<kebab-name>";`).
+5. **Export from the public API:** add the component to its group's section in
+   `src/index.ts` (alphabetical within the section), as exactly two explicit lines —
+   values then types:
+   ```ts
+   export { Thing, thingVariants } from "./ui/thing";
+   export type { ThingProps } from "./ui/thing";
+   ```
+   Never `export *` — the explicit list *is* the API, and `scripts/check-exports.mjs`
+   rejects wildcards. That script also fails if the folder's `index.ts` exports anything
+   `src/index.ts` does not, so the two stay in sync: everything public (including the
+   CVA `xVariants` object, which consumers compose with) reaches the root, and anything
+   internal stays out of the folder index.
 6. **Run `npm run validate`.** Fix everything until green.
 7. **Visually verify:** `npm run dev`, open the showcase, confirm the component renders
    in its group with all variants, in both light and dark mode (toggle in showcase header).
@@ -145,11 +173,30 @@ folder** (e.g. `Table.Row.tsx`) — never into a shared file elsewhere.
 
 ## 4. Showcase rules
 
-**Showcase layout is fixed infrastructure.** A new component adds exactly one `<section>` inside the `<main>`; never add per-component layout hacks (col-span, margins, positioning, custom widths). The CSS columns (masonry) layout handles packing automatically.
+**Showcase layout is fixed infrastructure.** The app is a sidebar plus one page per
+component, not a single scrolling wall:
 
-The showcase app auto-discovers every `*.showcase.tsx` under `src/ui/` via
-`import.meta.glob`. There is **no manual registration list** — the file itself is the
-registration.
+| File | Responsibility |
+|---|---|
+| `src/showcase/registry.ts` | Auto-discovery + the `GROUPS` order. Globs every `*.showcase.tsx`, slugifies titles, collapses entries sharing a `parent` into one page. |
+| `src/showcase/App.tsx` | Shell: header (theme / font / dark toggle), sidebar, `<main>`. Owns routing. |
+| `src/showcase/Sidebar.tsx` | Grouped, filterable nav list. The filter matches title, group, description and demo names. |
+| `src/showcase/ComponentPage.tsx` | Renders the selected page: one `<section>` per entry, one `DemoSection` per demo. |
+
+**Routing is the URL hash.** `App.tsx` reads `window.location.hash` on mount
+(`initialSlug()`) and writes it back on every sidebar selection, so `#button` deep-links
+straight to the Button page. Nothing else touches history — do not add a router.
+
+A component contributes demos, never layout. `ComponentPage` already emits the
+`<section>`, heading and description wrapper for each entry — never add per-component
+layout hacks (col-span, margins, positioning, custom widths) around them. Layout
+`className`s inside a single demo's own `render` are fine and expected.
+
+The app auto-discovers every `*.showcase.tsx` under `src/ui/`, `src/motion/`,
+`src/scenes/` and `src/present/` via `import.meta.glob` (patterns must stay written
+inline at the call site — Vite parses them statically). There is **no manual
+registration list** — the file itself is the registration. `scripts/check-showcase.mjs`
+fails if any component folder in those four trees lacks one.
 
 Every showcase file exports exactly one default `ShowcaseEntry` (typed in
 `src/showcase/types.ts`):
@@ -177,14 +224,29 @@ const entry: ShowcaseEntry = {
 export default entry;
 ```
 
-**Groups (fixed):** `inputs` | `display` | `feedback` | `overlay` | `navigation` | `canvas` | `data` | `patterns` | `typography`
+**Groups (fixed):** `inputs` | `display` | `feedback` | `overlay` | `navigation` |
+`canvas` | `data` | `patterns` | `typography` | `motion` | `charts` | `scenes`
 
-- Add your component to the group that fits. Every group is a tab in the showcase.
+- Add your component to the group that fits. Each group is a labelled section in the
+  sidebar, ordered by the `GROUPS` array — not alphabetically.
 - **Do not invent a new group** unless: (a) you have 3+ components that genuinely fit no
-  existing group, AND (b) the human approved it. Then add the group name to the union type
-  in `src/showcase/types.ts` and the tab order list in `src/showcase/App.tsx` — those are
-  the only two places.
+  existing group, AND (b) the human approved it. Then add the group name to the
+  `ShowcaseGroup` union in `src/showcase/types.ts` **and** to the `GROUPS` array in
+  `src/showcase/registry.ts` — those are the only two places. (A group missing from
+  `GROUPS` type-checks fine and then silently renders nothing in the sidebar.)
+- `description` is a **short 1–2 sentence blurb**, ~15 words. It is not the place for
+  engineering rationale — that belongs in a docblock in the component's own `.tsx`, or
+  in `references/*.md`. Same cap for a demo's own `description`.
+- Demo `name`s are short Title Case labels ("Variants", "Sizes", "With icon"). A name
+  that starts with a code identifier keeps that identifier's own casing
+  (`asChild (no layout box)`, `mode="out"`).
 - Demos must cover: every variant, every size, disabled/edge states where applicable.
+- Use literal JSX in `render`, not `.map()` — the code-toggle extractor
+  (`extract-source.ts`) has to produce copy-pasteable output. Realistic content only, no
+  `foo`/`bar`/lorem.
+- Related components may share one sidebar page by declaring the same `parent` string
+  (e.g. Table / DataTable / DataList). Each still keeps its own showcase file and stays
+  independently discoverable.
 
 ## 5. Validation — the definition of done
 
@@ -196,13 +258,18 @@ Runs, in order — ALL must pass:
 
 | Step | Command | Catches |
 |---|---|---|
-| Types | `tsc --noEmit` | type errors |
+| Types | `tsc -b --force` | type errors |
 | Lint | `eslint .` | native elements outside `src/ui/`, files >250 lines, restricted imports, arbitrary Tailwind color values |
-| Showcase coverage | `node scripts/check-showcase.mjs` | any `src/ui/**` component folder missing a `*.showcase.tsx`, any `ui/` folder not exported from `src/index.ts` |
-| Contrast | `node scripts/check-contrast.mjs` | WCAG AA contrast ratio failures |
+| Showcase coverage | `node scripts/check-showcase.mjs` | any component folder under `src/ui/`, `src/motion/`, `src/scenes/`, `src/present/` missing a `*.showcase.tsx`; any `ui/` folder not exported from `src/index.ts` |
+| Export drift | `node scripts/check-exports.mjs` | a symbol a component folder's `index.ts` calls public that `src/index.ts` never re-exports (so consumers can't reach it), and any `export *` in either |
+| Motion tier | `node scripts/check-motion.mjs` | wall-clock/nondeterministic APIs and CSS animation in `src/motion`/`src/scenes`/`src/present`; every tier-boundary import ban in §9b; a motion folder missing from `src/motion/index.ts` |
 | Theme tokens | `node scripts/check-themes.mjs` | theme files missing required token set |
-| Manifest | `node scripts/gen-manifest.mjs` (prebuild hook) | stale components.json / COMPONENTS.md |
+| Contrast | `node scripts/check-contrast.mjs` | WCAG AA contrast ratio failures; a checked token pair carrying alpha (contrast is undefined without a composite) |
+| Manifest | `node scripts/gen-manifest.mjs` (prebuild hook of `build:lib`) | stale components.json / COMPONENTS.md |
 | Build | `npm run build:lib && vite build` | broken exports, unresolvable imports |
+| Utility emission | `node scripts/check-tokens.mjs` | a literal Tailwind class in `src/` that the build emitted no rule for (e.g. `bg-info/70`, where no `--color-info` token exists) — it renders unstyled with no other error |
+| Styles | `node scripts/copy-styles.mjs` | refreshes `dist/styles.css`, `dist/tokens.css` and `dist/themes/*.css` |
+| Drift report | `node scripts/audit.mjs` | duplicate `GRID` constants, per-component scrollbar overrides, orphaned `PortDot` references. Advisory — prints warnings, never fails the build |
 
 Rules about validation itself:
 
@@ -426,105 +493,128 @@ see. A question costs nothing; silent rule-bending costs the repo its integrity.
 
 ## 9. Animation / motion / video system
 
-This section governs the emerging Remotion-based animation layer. It extends — not replaces
-— all rules in §0–§8. When a motion rule and a base rule conflict, the stricter one wins.
+This section governs the shipped Remotion-based animation layer. It extends — not
+replaces — all rules in §0–§8. When a motion rule and a base rule conflict, the stricter
+one wins. **Decision history lives in `TODO.md` §1 "Architecture decisions" (D1–D5); this
+section describes the result.**
 
-### 9a. Package architecture
+### 9a. Package architecture — one package, subpath exports
+
+There is **no monorepo**. `packages/*` does not exist and Phase 5 of the original plan is
+cancelled (TODO.md D1): three packages would mean three version numbers to keep in
+lockstep in a consuming project, which defeats the whole point.
 
 ```
 repo/
-  src/ui/          # EXISTING — static primitives ($0–§8 rules apply unchanged)
-  src/ui/patterns/ # EXISTING — composed patterns
-  apps/
-    video/         # NEW — Remotion project, compositions, MP4 rendering
-  packages/
-    motion/        # NEW — frame-driven animation wrappers (pure, no ui deps)
-    scenes/        # NEW — composed scene templates (ui + motion)
+  src/ui/          static primitives (§0–§8 apply unchanged)  -> "my-you-eye"
+  src/ui/patterns/ composed patterns                          -> "my-you-eye"
+  src/motion/      frame-driven animation primitives          -> "my-you-eye/motion"
+  src/motion/remotion.tsx   RemotionDriver, the sole remotion  -> "my-you-eye/motion/remotion"
+                            importer in the motion tier
+  src/scenes/      composed scene templates (ui + motion)      -> "my-you-eye/scenes"
+  src/present/     live click-through presenter                -> "my-you-eye/present"
+  src/present/player.tsx    PlayerEmbed (@remotion/player)     -> "my-you-eye/present/player"
+  src/video/       VideoRoot — assembles a Video into a        -> "my-you-eye/video"
+                   Remotion <TransitionSeries>
+  apps/video/      dev harness only: Remotion Studio + MP4 render.
+                   Never published, never imported by the library.
 ```
+
+Every subpath is declared in `package.json` `exports` and built by `tsup.config.ts`. Add
+a new entry point only with human approval — a subpath is public API forever.
 
 ### 9b. Tier separation — NEVER cross the streams
 
-| Tier | Can import from | Must NOT |
-|---|---|---|
-| `src/ui/` (static) | `src/lib/`, Radix, CVA | motion, scenes, remotion |
-| `packages/motion/` | remotion, react | `src/ui/` components (no dependency) |
-| `packages/scenes/` | `src/ui/`, `packages/motion/`, remotion | nothing restricted |
-| `apps/video/` | ui, motion, scenes, remotion | nothing restricted |
+Enforced by `scripts/check-motion.mjs` (wired into `npm run validate`) plus eslint import
+boundaries — not by package boundaries.
 
-**The ui package is the design-system source of truth.** Motion never imports from it.
-Scenes composes both. Video is the runtime.
+| Tier | May import | Must NOT import |
+|---|---|---|
+| `src/ui/` | `src/lib/`, Radix, CVA | `src/motion/`, `src/scenes/`, `src/present/`, `src/video/`, `remotion` |
+| `src/motion/` | `src/lib/`, react | `src/ui/`, `"my-you-eye"`, `src/present/`, `src/video/`, `remotion` |
+| `src/motion/remotion.tsx` | the above **plus `remotion`** | `src/ui/` |
+| `src/scenes/` | `src/ui/`, `src/motion/`, `src/lib/` | `src/present/`, `src/video/`, `remotion` |
+| `src/present/` | `src/ui/`, `src/motion/`, `src/scenes/` | `src/video/`, `remotion` |
+| `src/present/player.tsx` | the above **plus `remotion` and `src/video/`** | — |
+| `src/video/` | ui, motion (both entries), scenes | `src/present/` |
+| `apps/video/` | the published package only, via `"my-you-eye/*"` | relative paths into `src/` |
+
+**The ui tier is the design-system source of truth.** Motion never imports from it —
+that's what keeps a primitive child-agnostic. Scenes composes both. Video and present sit
+on top; nothing below them may import them.
+
+`remotion` is a keep-out for a concrete reason: `my-you-eye/motion`,
+`my-you-eye/scenes` and the default `my-you-eye/present` entry must stay free of a video
+renderer, so a consumer who only wants the live click-through never pulls one into their
+bundle. Exactly three modules import it — `src/motion/remotion.tsx`,
+`src/present/player.tsx`, and `src/video/**`.
 
 ### 9c. Hard rules for animation code
 
-1. **Frame-driven only.** Every animation must use `useCurrentFrame()`, `interpolate()`,
-   `spring()` from `remotion` — never CSS `transition`, `@keyframes`, `animation-delay`,
-   or `setTimeout()` with wall-clock time. Remotion captures frame-by-frame; wall-clock
-   animation will NOT render deterministically in the mp4 output.
+1. **Primitives read time through `useTimeline()` / `useProgress()` — never
+   `useCurrentFrame()`.** Only the drivers (`src/motion/core/DomDriver.tsx`,
+   `src/motion/remotion.tsx`) and `src/video/` may call a Remotion hook. This is
+   AGENTS.md's original "frame-driven only" rule *strengthened* by TODO.md D2: a
+   primitive may not read wall-clock time **at all**, and it may not know which driver is
+   mounted. `MotionRoot mode="live"` mounts `DomDriver` (a seekable, pausable rAF clock);
+   `MotionRoot mode="video"` mounts `RemotionDriver`. Every primitive downstream is a
+   pure function of `progress: 0→1` either way.
+2. **No wall-clock or nondeterministic APIs** anywhere in `src/motion/`, `src/scenes/`,
+   `src/present/`: no `Date.now()`, `performance.now()`, `setTimeout`, `setInterval`,
+   `requestAnimationFrame`, or `Math.random()` (use the seeded PRNG in
+   `src/motion/core/prng.ts`). One documented exception exists —
+   `src/present/speaker-view/SpeakerView.useElapsed.ts`'s speaker timer, which is UI
+   chrome and never part of a rendered frame. Adding a second exception needs human
+   approval and a `check-motion.mjs` entry.
+3. **No CSS `transition`, `@keyframes`, or `animation`** in those tiers. Remotion
+   captures frame by frame; wall-clock animation does not render deterministically to
+   MP4.
+4. **No side effects in render.** Driver hooks are called at the driver's own top level,
+   never inside event handlers, `useEffect`, or user-dependent conditionals.
+5. **Every animation primitive is a wrapper around `React.ReactNode`.** It must not know
+   or care what children it receives — no `src/ui/` import inside `src/motion/`.
+6. **Every prop has a TypeScript interface.** No `any`, no implicit return types, no bare
+   `PropsWithChildren`.
+7. **Animatable static components take `progress`, never import motion** (TODO.md D4).
+   A `src/ui/` component that can animate accepts an optional `progress?: number`
+   (defaulting to fully drawn); the scenes tier does the wiring.
 
-2. **No side effects in render.** `useCurrentFrame()` is a React hook — call it at the
-   top level of a component, never inside event handlers, `useEffect`, loops, or
-   conditionals that depend on user interaction.
+### 9d. Rollout status — complete
 
-3. **Every animation primitive is a wrapper around `React.ReactNode`.** It must not know
-   or care what children it receives. No `import { Button } from "@lib/ui"` inside
-   `packages/motion/`.
+Phases 0–6 of the original plan shipped (with Phase 5, the monorepo migration, cancelled
+per 9a). The motion, scenes, present and video tiers all exist, are exported, are
+showcased, and render both to MP4 (`apps/video`) and to the live presenter. Per-phase
+history and acceptance checks are in `TODO.md`; do not re-derive them here.
 
-4. **Every prop has a TypeScript interface.** No `any`, no implicit return types, no
-   `PropsWithChildren` used alone without a named interface.
+### 9e. Interactive mode — the driver model, not `@remotion/player`
 
-5. **Packages are workspace-scoped.** No relative cross-package imports like
-   `"../../src/ui/button"`. Use `"my-you-eye"` (pre-monorepo) or `"@lib/ui"` (post-monorepo).
+The original plan preferred driving live playback through `@remotion/player`. That was
+adopted only as a fallback for *embedding the exact MP4 timeline*, because inside a
+`<Player>` the frame is owned by playback: click-to-advance works, but a primitive cannot
+respond to a hover, a drag, or a live value change (TODO.md D2).
 
-### 9d. Phased rollout — do not skip ahead
+So the live path is `MotionRoot mode="live"` → `DomDriver` → `useTimeline()`, and
+`Presenter` (`my-you-eye/present`) is built on `useSteps`, a headless
+`(scene, step)` navigator derived from the same `sceneSteps`/`sceneDuration` spine the
+MP4 uses — which is why the two can never drift apart.
 
-| Phase | What | Depends on |
-|---|---|---|
-| 0 | Pre-requisite additions to `src/ui` (CodeBlock `highlightLines`/`highlightRanges`, GraphNode `variant="simple"`, ConnectionLine `arrowhead` + `label`) | — |
-| 1 | Remotion PoC in `apps/video` — import existing components, render static composition to MP4 with correct Tailwind styling | Phase 0 |
-| 2 | `packages/motion` — 5 animation primitives (Reveal, Stagger, TypeText, Highlight, SlideTransition), smoke-test compositions | Phase 1 |
-| 3 | `packages/present` — interactive presenter via `@remotion/player`. Step = frame range. `seek()` + `play()` + `outFrame`. No `core/` extraction needed unless Player proves insufficient. | Phase 1 + 2 |
-| 4 | `packages/scenes` — CodeWalkthrough, Diagram scene templates (compose ui + motion). Data-driven. | Phase 0 + 2 |
-| 5 | Monorepo migration (pnpm workspaces, Turborepo) — mechanical only | Phases 3+4 proven |
-| 6 | Video composition + transitions (`@remotion/transitions`). Same scene data powers both MP4 export AND interactive presenter. | Phase 4 + 5 |
+`PlayerEmbed` in `src/present/player.tsx` is the **sole** `@remotion/player` consumer in
+the package, published on its own subpath (`my-you-eye/present/player`) precisely so the
+default present entry stays renderer-free. Use it when you want to scrub the real video
+timeline in a browser; use `Presenter` when you want interactivity.
 
-**Do not start a phase until the previous phase's acceptance check passes.** Stop and
-report back after each phase with a short summary: what was done, verification results,
-and how to visually confirm it works.
+### 9f. Primitives
 
-### 9e. Interactive mode — `@remotion/player` (preferred architecture)
+The full primitive set has shipped — entrance/reveal, attention, camera, text/code,
+structural and data-flow families. The authoritative inventory is generated, not written
+by hand:
 
-The primary approach for live click-to-advance uses `@remotion/player`, NOT a
-separate `core/remotion/interactive` layer:
+- `components.json` / `COMPONENTS.md` — every export with its props (regenerated by
+  `scripts/gen-manifest.mjs`).
+- `references/motion.md` — the motion tier's own guide: `Timing`, the driver model,
+  pacing via `useSequence`, and the `progress`-in convention.
+- `references/scenes.md` — authoring a `Video`, validation, and rendering to MP4.
 
-1. Define each presentation "step" as a frame range in a Remotion composition.
-2. Embed the composition via `<Player ref={playerRef} />`.
-3. On click → `playerRef.current.seek(step.startFrame)` → `play()`.
-4. `outFrame={step.endFrame}` stops playback automatically at the step boundary.
-5. Animation primitives (`Reveal`/`Stagger`/`TypeText`/etc.) stay exactly as they
-   are today with `useCurrentFrame()` — zero duplication.
-
-**Only if `@remotion/player` proves insufficient** (e.g. per-primitive
-interruption/reversal that frame-seeking can't express smoothly) should you build
-the `core/remotion/interactive` extraction. That fallback is documented in
-`TODO.md` but is NOT the current plan.
-
-### 9f. Future animation primitives
-
-After the current 5 are proven in both video and interactive contexts, the next
-highest-value additions:
-
-**Priority (express patterns the current 5 cannot):**
-- `CameraPan` / `CameraZoom` — translate + scale container for zooming into
-  diagram regions or code functions
-- `PathDraw` — `stroke-dashoffset` animation on SVG paths for edge/connection
-  drawing (pairs with ConnectionLine)
-
-**Fit existing `progress: 0→1` model:**
-- `Pulse` — looping scale/opacity breathing
-- `Shake` — oscillating error/attention indicator
-- `CountUp` — numeric tween for stats/metrics
-
-**Need extra params (from/to pairs or path data):**
-- `Morph` — FLIP-based cross-fade between two diagram states
-- `CursorMove` — fake pointer along a path
-- `FocusBlur` — dim/blur everything except a focused region
+Adding a new primitive follows §2's checklist, plus: it lives in its own folder under
+`src/motion/`, is re-exported from `src/motion/index.ts` (`check-motion.mjs` fails
+otherwise), and gets a `*.showcase.tsx` in the `motion` group.

@@ -313,9 +313,12 @@ built in Phase G/H, not Phase F.
   Remaining suspects, in order: (a) `mix-blend-mode: hard-light` on 2–3 stacked full-size
   layers per surface, which forces backdrop readback and off the fast compositing path —
   AGENTS.md §7 already names "compositing through the complex HTML background layer" as the
-  documented cost; (b) `alignToViewport`, which sets `background-attachment: fixed`, the exact
-  pattern §0.12 rule 12 bans in theme files, here reachable as a component prop (currently
-  unused anywhere in `src/`); (c) sheer layer count. Headless software rendering was too noisy
+  documented cost; (b) ~~`alignToViewport`, which sets `background-attachment: fixed`~~ —
+  **removed.** The prop set `background-attachment: fixed`, the exact pattern §0.12 rule 12
+  bans in theme files, reachable here as a component prop; it was unused anywhere in `src/`,
+  so `TexturedSurfaceProps.alignToViewport` and the `TextureTileLayer` branch behind it were
+  deleted outright rather than kept as a live footgun; (c) sheer layer count. Headless
+  software rendering was too noisy
   to discriminate between these — next step needs a trace on the owner's own machine, with the
   specific page and theme where the lag shows.
 - `ScatterPlot`/`PieChart` don't compose `ChartFrame` (needs a continuous `xDomain` mode).

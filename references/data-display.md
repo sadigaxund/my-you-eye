@@ -82,23 +82,47 @@ them by hand outside that scene's own step-to-camera wiring.
 ## `Terminal`
 
 ```ts
+type TerminalPromptGlyph = "$" | ">" | "#" | "❯";
+
 interface TerminalEntry {
   command?: string;   // omit for an output-only entry (banner, log tail)
   output?: string;    // rendered via CodeBlock
   language?: string;
   exitCode?: number;  // badge: 0 = success, non-zero = danger
   spinner?: string;   // in-progress line
-  cwd?: string;        // per-entry override of the prompt's cwd chrome
+  // Per-entry prompt-chrome overrides. Each PERSISTS to every following
+  // entry until overridden again (real-shell semantics), falling back to
+  // the Terminal-level prop until first set.
+  cwd?: string; user?: string; host?: string;
+  promptGlyph?: TerminalPromptGlyph;
 }
 interface TerminalProps {
   entries: TerminalEntry[];
-  prompt?: "$" | ">" | "#" | "❯";  // default "$"
+  prompt?: TerminalPromptGlyph;    // default "$"
   cwd?: string; user?: string; host?: string;
   title?: string;                  // window-style title bar caption
+  variant?: "default" | "elevated";        // default "default"; "elevated" adds shadow-card
+  scheme?: "default" | "matrix" | "amber"; // default "default"; retints text + border only
+  chrome?: "dots" | "none";                // default "dots"; traffic-light dots in the title bar
+  rows?: number;                            // fixed visible height, in whole text lines
 }
 ```
 
 Composes `CodeBlock` for output bodies — never re-tokenizes.
+
+`rows` is a **fixed** height, not a maximum: the entries body is exactly
+`rows` lines tall from the first frame on (measured from the real rendered
+line-height plus the body's own padding, never a hardcoded px figure) and
+scrolls internally, auto-scrolling newly revealed content into view. Omit it
+for grows-with-content behaviour — fine on a static page, wrong for a video
+frame, where a box that changes height mid-shot reads as a jump.
+
+`scheme` and `chrome` are decorators on the existing variant axis, not
+parallel props. `scheme` composes only tokens that already exist
+(`--color-success` / `--color-warning`) and retints text and border while
+leaving `--color-code-bg` alone, so no theme file needs updating for it.
+`chrome="none"` keeps the caption bar (whenever `title`/`cwd` is set) but
+drops the macOS-style dots; it has no effect when there is no title bar.
 
 ## `DiffBlock`
 

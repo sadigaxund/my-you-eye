@@ -257,6 +257,75 @@ function SceneRenderer(props: { scene: Scene }): JSX.Element; // the single Scen
   than `VideoRoot`/`Presenter` yourself; both of those already use it
   internally.
 
+## Rendering to MP4
+
+`VideoRoot` is a plain Remotion composition component, so rendering a `Video`
+to a file is a stock Remotion project with one composition registered. This
+is exactly what `apps/video` in this repo does — copy its shape:
+
+```tsx
+// src/Root.tsx
+import { Composition } from "remotion";
+import type { AnyZodObject } from "remotion";
+import { VideoRoot, computeVideoDuration } from "my-you-eye/video";
+import type { VideoRootProps } from "my-you-eye/video";
+import { VIDEO_SIZES } from "my-you-eye/scenes";
+import { video } from "./video";           // your own `Video` object
+import "my-you-eye/styles.compiled.css";   // the pre-built stylesheet — see below
+
+const fps = video.meta?.fps ?? 30;
+const size = VIDEO_SIZES[video.meta?.size ?? "1080p"];
+
+export const RemotionRoot = () => (
+  // Explicit generic args: <Composition> infers its Props type from BOTH
+  // `component` and `defaultProps`, and for a component with a required prop
+  // that dual inference collapses to `Record<string, unknown>`. Naming
+  // VideoRootProps here keeps the real type; the intersection satisfies the
+  // index-signature constraint.
+  <Composition<AnyZodObject, VideoRootProps & Record<string, unknown>>
+    id="MyVideo"
+    component={VideoRoot}
+    durationInFrames={computeVideoDuration(video, fps)}
+    fps={fps}
+    width={size.width}
+    height={size.height}
+    defaultProps={{ video }}
+  />
+);
+```
+
+```tsx
+// src/index.ts
+import { registerRoot } from "remotion";
+import { RemotionRoot } from "./Root";
+
+registerRoot(RemotionRoot);
+```
+
+```bash
+npx remotion render MyVideo out/video.mp4
+```
+
+Three things that are easy to get wrong:
+
+- **Never hardcode `durationInFrames`, `width` or `height`.** They come from
+  `computeVideoDuration(video, fps)` and `VIDEO_SIZES[video.meta.size]`, the
+  same two functions the presenter's timing spine uses. A hand-picked frame
+  count silently truncates or pads the render the moment a step's narration
+  changes length.
+- **Styling is a plain CSS import, not a PostCSS/Tailwind build.** Importing
+  `my-you-eye/styles.compiled.css` pulls in the already-compiled stylesheet
+  (tokens + every utility the library's own components use). A Remotion
+  project therefore needs **no** `remotion.config.ts` webpack override, no
+  `postcss-loader`/`css-loader`/`style-loader`, and no Tailwind of its own.
+  Use `my-you-eye/styles.css` (the Tailwind v4 source) only if you are
+  compiling Tailwind in that project anyway for your own markup.
+- **Run `assertVideo(video)` first.** See "Validate before you render" above —
+  a render is the slowest possible place to discover a bad reference.
+
+`VIDEO_SIZES`: `1080p` 1920×1080, `1440p` 2560×1440, `4k` 3840×2160,
+`square` 1080×1080, `vertical` 1080×1920.
+
 ## Live-only interactivity
 
 Diagram scenes support hover-to-highlight-edges / click-to-expand **only**
