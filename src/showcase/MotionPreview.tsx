@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { MotionRoot, TimelineProvider, useTimeline, resolveBeatFrames } from "../motion";
 import type { DomDriverHandle } from "../motion";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { cn } from "../lib/cn";
+import { observeOnScreen, observeTabVisible } from "./MotionPreview.gate";
 
 export interface MotionPreviewProps {
   children: ReactNode;
@@ -44,6 +45,19 @@ export interface MotionPreviewProps {
 // magic frame count, same as every primitive's own Timing.
 const LEAD_IN_BEAT = "slow" as const;
 
+/**
+ * How often the *chrome* (scrub thumb + frame readout) refreshes, in updates
+ * per second. The animation itself keeps running at full fps inside
+ * `MotionRoot` — this only throttles MotionPreview's own display state.
+ *
+ * Without it every preview re-rendered twice per driver tick: once for the
+ * driver's own frame commit and once more for this component, whose state
+ * change re-renders the whole `MotionRoot` subtree a second time. A frame
+ * counter that ticks 10×/s is indistinguishable from one that ticks 30×/s to
+ * a reader, and costs a third as many renders.
+ */
+const CHROME_FPS = 10;
+
 function LeadInGate({ fps, children }: { fps: number; children: ReactNode }) {
   const { frame, durationInFrames } = useTimeline();
   const leadFrames = resolveBeatFrames(LEAD_IN_BEAT, fps);
@@ -68,16 +82,82 @@ function LeadInGate({ fps, children }: { fps: number; children: ReactNode }) {
  */
 export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop = true, center = false, leadIn = false }: MotionPreviewProps) {
   const handleRef = useRef<DomDriverHandle>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState(0);
   const [playing, setPlaying] = useState(true);
+
+  // Three independent gates decide whether the driver runs: what the reader
+  // asked for, whether the preview is on screen, and whether the tab is
+  // foregrounded. A preview the reader paused must stay paused when it
+  // scrolls back into view, so "resume" is `wantsPlay && onScreen && tabVisible`
+  // rather than a bare play() on re-entry.
+  const wantsPlayRef = useRef(true);
+  const onScreenRef = useRef(true);
+  const tabVisibleRef = useRef(true);
+
+  const syncPlayback = useCallback(() => {
+    if (wantsPlayRef.current && onScreenRef.current && tabVisibleRef.current) handleRef.current?.play();
+    else handleRef.current?.pause();
+  }, []);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return undefined;
+    const unobserve = observeOnScreen(el, (visible) => {
+      onScreenRef.current = visible;
+      syncPlayback();
+    });
+    const untrack = observeTabVisible((visible) => {
+      tabVisibleRef.current = visible;
+      syncPlayback();
+    });
+    return () => {
+      unobserve();
+      untrack();
+    };
+  }, [syncPlayback]);
+
+  const setWantsPlay = (next: boolean) => {
+    wantsPlayRef.current = next;
+    setPlaying(next);
+    syncPlayback();
+  };
+
+  // Display-only frame, throttled to CHROME_FPS (see the constant). The
+  // endpoints always land exactly, so a non-looping preview never rests on a
+  // stale "87/90".
+  const chromeStep = Math.max(1, Math.round(fps / CHROME_FPS));
+  const shownFrameRef = useRef(0);
+  const showFrame = useCallback(
+    (next: number) => {
+      shownFrameRef.current = next;
+      setFrame(next);
+    },
+    [],
+  );
+  const handleDriverFrame = useCallback(
+    (raw: number) => {
+      const rounded = Math.round(raw);
+      const atEdge = rounded === 0 || rounded === durationInFrames;
+      if (rounded === shownFrameRef.current) return;
+      if (!atEdge && Math.abs(rounded - shownFrameRef.current) < chromeStep) return;
+      showFrame(rounded);
+    },
+    [chromeStep, durationInFrames, showFrame],
+  );
 
   const content = leadIn ? <LeadInGate fps={fps}>{children}</LeadInGate> : children;
 
   return (
     <div className="flex w-full flex-col gap-tight">
       <div
+        ref={stageRef}
         className={cn(
-          "relative w-full overflow-hidden rounded-ui border border-border bg-surface p-panel",
+          // contain-paint: the stage is already an overflow-hidden box, so
+          // scoping its paint changes nothing visually — but it stops each
+          // animating preview from dirtying the page-level (textured,
+          // backdrop-filtered) compositing layer behind it.
+          "relative w-full overflow-hidden contain-paint rounded-ui border border-border bg-surface p-panel",
           center && "flex items-center justify-center",
         )}
       >
@@ -98,7 +178,7 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
           // precision displayed on the slider's values… For example: Motion
           // > Beat" — reproduced on Pulse/Spotlight too; every MotionPreview
           // instance shares this one readout).
-          onFrame={(f) => setFrame(Math.round(f))}
+          onFrame={handleDriverFrame}
         >
           {content}
         </MotionRoot>
@@ -107,15 +187,7 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
         <Button
           size="sm"
           variant={playing ? "secondary" : "primary"}
-          onClick={() => {
-            if (playing) {
-              handleRef.current?.pause();
-              setPlaying(false);
-            } else {
-              handleRef.current?.play();
-              setPlaying(true);
-            }
-          }}
+          onClick={() => setWantsPlay(!playing)}
         >
           {playing ? "Pause" : "Play"}
         </Button>
@@ -124,8 +196,8 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
           variant="ghost"
           onClick={() => {
             handleRef.current?.seek(0);
-            handleRef.current?.play();
-            setPlaying(true);
+            showFrame(0);
+            setWantsPlay(true);
           }}
         >
           Replay
@@ -139,9 +211,12 @@ export function MotionPreview({ children, durationInFrames = 90, fps = 30, loop 
           step={1}
           onChange={(e) => {
             const next = Number(e.target.value);
-            handleRef.current?.pause();
-            setPlaying(false);
+            setWantsPlay(false);
             handleRef.current?.seek(next);
+            // The thumb is controlled by `frame`, so a drag has to write the
+            // display state directly — the throttled driver feed would drop
+            // the small deltas a slow drag produces and the thumb would stick.
+            showFrame(next);
           }}
         />
         <span className="w-16 shrink-0 text-right font-mono text-xs text-muted">

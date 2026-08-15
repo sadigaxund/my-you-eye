@@ -18,6 +18,10 @@ export interface PresenterScenePreviewProps {
  * Deliberately mounts no `LiveInteractionContext` provider: overview
  * thumbnails are navigation, not the live interactive view. Only
  * `PresenterStage` (the main stage) wires one up.
+ *
+ * Costs nothing per frame: `autoPlay={false}` means the driver never starts
+ * its rAF loop at all (see DomDriver's performance invariants), so an
+ * overview grid of N scenes is N static renders, not N clocks.
  */
 export function PresenterScenePreview({ sceneTiming }: PresenterScenePreviewProps) {
   const handleRef = useRef<DomDriverHandle>(null);
