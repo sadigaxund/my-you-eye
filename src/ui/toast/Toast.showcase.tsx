@@ -27,6 +27,10 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Trigger toasts",
+      // The Toaster's viewport is `position: fixed` — it belongs to the
+      // viewport corner, not to this demo's card, so the card must not
+      // become its containing block (see ShowcaseDemo.contain).
+      contain: false,
       render: () => (
         <Toaster>
           <ToastDemo />

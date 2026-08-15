@@ -1148,10 +1148,11 @@
         "Playing",
         "Pinned mid-typing, entry 1 (frame 12/160)",
         "Pinned on entry 2's spinner (frame 72/160)",
+        "Spinner, animating",
         "Pinned at rest (frame 160/160)",
         "Prompt change (rows + scheme)"
       ],
-      "description": "Wraps Terminal, revealing one entry per step: command types in, spinner holds, output and badge land."
+      "description": "Wraps Terminal, revealing one entry per step: command types in, spinner cycles, output and exit status land."
     },
     {
       "name": "TitleScene",
@@ -2918,6 +2919,7 @@
       "demos": [
         "Unified",
         "Unified — word diff",
+        "Unified — word diff, heavily rewritten lines",
         "Split",
         "Split — word diff",
         "Elevated"
@@ -3221,13 +3223,14 @@
       "demos": [
         "Prompt glyphs",
         "Title bar",
+        "Exit status & spinner",
         "Variant",
         "Color schemes",
         "Chrome decorator",
         "Fixed height, scrolls as content grows",
         "Prompt segments, changed mid-session"
       ],
-      "description": "Prompt/command/output/exit-code sequences, composing CodeBlock for output bodies. Data-driven via a typed entries array.",
+      "description": "Prompt/command/output/exit-status sequences, composing CodeBlock for output bodies. Data-driven via a typed entries array.",
       "variantDefaults": {
         "variant": "default",
         "scheme": "default",
@@ -4862,7 +4865,7 @@
             "name": "exitCode",
             "optional": true,
             "type": "number",
-            "description": "Process exit code — renders a badge (0 reads success, non-zero danger)."
+            "description": "Process exit code — renders a plain status line (0 reads success, non-zero danger)."
           },
           {
             "name": "spinner",

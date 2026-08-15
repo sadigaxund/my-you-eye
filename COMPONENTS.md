@@ -132,7 +132,7 @@ Step (`TerminalStep`):
 | `command?` | `string` | Command typed after the prompt. Omit for an output-only entry (a banner, a log tail). |
 | `output?` | `string` | Output body shown under the command. |
 | `language?` | `string` | Language id for highlighting `output`. |
-| `exitCode?` | `number` | Process exit code — renders a badge (0 reads success, non-zero danger). |
+| `exitCode?` | `number` | Process exit code — renders a plain status line (0 reads success, non-zero danger). |
 | `spinner?` | `string` | Shows a spinner with this label while the step runs, before `output` lands. For a step that should read as "this takes a while". |
 | `cwd?` | `string` | Per-entry overrides of the prompt chrome — each independently optional, and each PERSISTS to every following entry until overridden again, mirroring `Terminal`'s own per-entry override semantics (a real shell's `cd`/`ssh` changes the prompt for every command after it, not just that one line). Falls back to the scene-level prop of the same name when never set by any entry up to this point. |
 | `user?` | `string` | — |
@@ -672,7 +672,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `Card` | `my-you-eye` | variant: **default** / elevated / outlined | Variants, With footer actions, Size |
 | `CodeBlock` | `my-you-eye` | variant: **default** / elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `DeviceFrame` | `my-you-eye` | variant: **browser** / phone / window | Browser, Window, Phone |
-| `DiffBlock` | `my-you-eye` | variant: **default** / elevated | Unified, Unified — word diff, Split, Split — word diff, Elevated |
+| `DiffBlock` | `my-you-eye` | variant: **default** / elevated | Unified, Unified — word diff, Unified — word diff, heavily rewritten lines, Split, Split — word diff, Elevated |
 | `EmptyState` | `my-you-eye` | — | Default, With icon and action |
 | `Image` | `my-you-eye` | fit: contain / **cover** / fill / none / scaleDown<br>radius: full / lg / **md** / none / sm<br>aspect: **auto** / square / tall / video / wide<br>bordered: true<br>shadowed: true | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | `my-you-eye` | — | Default, Combinations |
@@ -680,7 +680,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `ScrollArea` | `my-you-eye` | orientation: **both** / horizontal / vertical | Vertical scroll, Horizontal scroll, Both axes, Rounded corners (radius on ScrollArea itself, not a wrapper), Edge fade |
 | `Separator` | `my-you-eye` | orientation: **horizontal** / vertical | Horizontal, Vertical |
 | `StatusDot` | `my-you-eye` | variant: danger / info / **neutral** / success / warning<br>size: **md** / sm | Variants, Sizes, Pulsing |
-| `Terminal` | `my-you-eye` | variant: **default** / elevated<br>scheme: amber / **default** / matrix<br>chrome: **dots** / none | Prompt glyphs, Title bar, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
+| `Terminal` | `my-you-eye` | variant: **default** / elevated<br>scheme: amber / **default** / matrix<br>chrome: **dots** / none | Prompt glyphs, Title bar, Exit status & spinner, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
 
 ### display — props
 
@@ -1450,7 +1450,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `SceneRenderer` | `my-you-eye/scenes` | — | Title, Bullets, Diagram, chart, stat |
 | `SequenceScene` | `my-you-eye/scenes` | — | Playing |
 | `StatScene` | `my-you-eye/scenes` | — | Playing |
-| `TerminalScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-typing, entry 1 (frame 12/160), Pinned on entry 2's spinner (frame 72/160), Pinned at rest (frame 160/160), Prompt change (rows + scheme) |
+| `TerminalScene` | `my-you-eye/scenes` | — | Playing, Pinned mid-typing, entry 1 (frame 12/160), Pinned on entry 2's spinner (frame 72/160), Spinner, animating, Pinned at rest (frame 160/160), Prompt change (rows + scheme) |
 | `TitleScene` | `my-you-eye/scenes` | — | Centered, playing, Left-aligned, no chapter/subtitle, Pinned mid-stagger (frame 12/90), Pinned at rest (frame 90/90) |
 | `Validation` | `my-you-eye/scenes` | — | Deliberately broken video, Valid, minimal video |
 | `WalkthroughScene` | `my-you-eye/scenes` | — | Playing |
