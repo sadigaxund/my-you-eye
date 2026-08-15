@@ -33,7 +33,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "StatScene",
   group: "scenes",
-  description: "StatGrid with per-tile staggered CountUp, delta arrows and inline Sparklines — one step per tile.",
+  description: "StatGrid with per-tile staggered CountUp, delta arrows and inline Sparklines, one step per tile.",
   demos: [
     {
       name: "Playing",
@@ -54,7 +54,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned at rest, all four tiles (frame ${step3.endFrame - 1}/${total})`,
-      description: "All settled. Latency reads danger-red despite rising: positiveIsGood: false flips the colour, not the glyph.",
+      description: "Everything has settled, and Latency reads danger-red despite rising because positiveIsGood: false flips the colour while the glyph follows the raw sign.",
       render: () => (
         <PinnedFrame frame={step3.endFrame - 1} durationInFrames={total}>
           <Frame><StatScene scene={scene} /></Frame>

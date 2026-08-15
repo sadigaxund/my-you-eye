@@ -67,7 +67,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "TerminalScene",
   group: "scenes",
-  description: "Wraps Terminal, revealing one entry per step: command types in, spinner cycles, output and exit status land.",
+  description: "Wraps Terminal and reveals one entry per step: the command types in, the spinner cycles, then output and exit status land.",
   demos: [
     {
       name: "Playing",
@@ -97,7 +97,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Spinner, animating",
-      description: "One slow-paced entry: the braille glyph cycles ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ straight off the frame — no CSS animation anywhere.",
+      description: "One slow-paced entry whose braille glyph cycles ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ from the frame number rather than from a CSS animation.",
       render: () => (
         <MotionPreview durationInFrames={spinnerTotal} fps={30}>
           <Frame><TerminalScene scene={spinnerScene} /></Frame>
@@ -106,7 +106,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned at rest (frame 160/160)",
-      description: "All three entries fully settled: three commands, their outputs, and three \"✓ exit 0\" lines — no spinners.",
+      description: "All three entries have settled into three commands, their outputs and three \"✓ exit 0\" lines; none of the spinners are still showing.",
       render: () => (
         <PinnedFrame frame={160} durationInFrames={160}>
           <Frame><TerminalScene scene={scene} /></Frame>

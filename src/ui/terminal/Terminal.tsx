@@ -2,8 +2,8 @@ import { forwardRef, useEffect, useLayoutEffect, useMemo, useRef, useState } fro
 import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { CodeBlock } from "../code-block";
 import { ScrollArea } from "../scroll-area";
+import { TerminalOutput } from "./Terminal.Output";
 
 const terminalVariants = cva(
   "w-full overflow-clip rounded-ui border border-border bg-code-bg text-code-fg flex flex-col",
@@ -56,9 +56,9 @@ export type TerminalPromptGlyph = "$" | ">" | "#" | "❯";
 export interface TerminalEntry {
   /** Command text shown after the prompt. Omit for an output-only entry (banner text, log lines). */
   command?: string;
-  /** Output body rendered below the command, composed via CodeBlock. */
+  /** Output body rendered below the command, as plain terminal lines. */
   output?: string;
-  /** Syntax language for `output` — enables CodeBlock's tokenizer for that entry. */
+  /** Syntax language for `output` — colorizes it with the shared code tokenizer. */
   language?: string;
   /** Process exit code for this command. Renders a plain monospace status line — "✓ exit 0" in success color, "✗ exit 2" in danger. */
   exitCode?: number;
@@ -325,14 +325,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
                     <span>{entry.spinner}</span>
                   </div>
                 )}
-                {entry.output != null && (
-                  <CodeBlock
-                    code={entry.output}
-                    language={entry.language}
-                    highlight={Boolean(entry.language)}
-                    wrap
-                  />
-                )}
+                {entry.output != null && <TerminalOutput text={entry.output} language={entry.language} />}
                 {entry.exitCode != null && <ExitStatus code={entry.exitCode} />}
               </div>
             ))}

@@ -46,7 +46,7 @@ const entry: ShowcaseEntry = {
   title: "Presenter",
   group: "scenes",
   description:
-    "Click-through presentation of a Video: → or Space advances, ← reverses, Esc overviews, f fullscreens.",
+    "Step-through presentation of a Video: Space or → advances, ← reverses, Esc opens the overview, f fullscreens. Clicking the stage does nothing, so a live scene keeps its own pointer events.",
   demos: [
     {
       name: "Click-through presenter",

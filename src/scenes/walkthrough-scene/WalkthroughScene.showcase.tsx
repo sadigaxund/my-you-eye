@@ -54,7 +54,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "WalkthroughScene",
   group: "scenes",
-  description: "DeviceFrame, Cursor and Spotlight over a static screenshot — the alternative to a screen recording.",
+  description: "DeviceFrame, Cursor and Spotlight over a static screenshot, as an alternative to a screen recording.",
   demos: [
     {
       name: "Playing",
@@ -84,7 +84,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-typing, step 3 (frame ${step2.startFrame + 5}/${total})`,
-      description: "A \"Jordan Lee\" text bubble is shown near the cursor — the step's `type` field, distinct from `action`.",
+      description: "A \"Jordan Lee\" text bubble sits near the cursor, from the step's `type` field rather than `action`.",
       render: () => (
         <PinnedFrame frame={step2.startFrame + 5} durationInFrames={total}>
           <Frame><WalkthroughScene scene={scene} /></Frame>

@@ -119,7 +119,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with the VPC group revealed, step 1 end (frame ${step1.endFrame - 1}/${archTotal})`,
-      description: "The VPC region — bounds computed from its members — with its label chip floating above the dotted border.",
+      description: "The VPC region, whose bounds are computed from its members, with its label chip floating above the dotted border.",
       render: () => (
         <PinnedFrame frame={step1.endFrame - 1} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>
@@ -128,7 +128,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with flow tokens in transit, step 2 (frame ${step2.startFrame + Math.round((step2.endFrame - step2.startFrame) / 2)}/${archTotal})`,
-      description: "worker and db are revealed, both new edges drawing, two Trace tokens crossing queue→worker.",
+      description: "worker and db are revealed, both new edges are drawing, and two Trace tokens cross queue→worker.",
       render: () => (
         <PinnedFrame frame={step2.startFrame + Math.round((step2.endFrame - step2.startFrame) / 2)} durationInFrames={archTotal} fps={FPS}>
           <Frame><DiagramScene scene={archScene} /></Frame>

@@ -24,7 +24,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "OutroScene",
   group: "scenes",
-  description: "End card — title, subtitle, links and a closing call to action, staggering in as one beat.",
+  description: "End card with a title, subtitle, links and a closing call to action, all staggered in as one beat.",
   demos: [
     {
       name: "Playing",

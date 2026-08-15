@@ -1,10 +1,12 @@
-import { forwardRef, useState, useCallback, useMemo } from "react";
+import { forwardRef, useCallback, useMemo } from "react";
 import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { ScrollArea } from "../scroll-area";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
 import { useHighlightOverlay } from "./CodeBlock.useHighlightOverlay";
+import { useCopy } from "./CodeBlock.useCopy";
+import type { CopyState } from "./CodeBlock.useCopy";
 import { CodeHeaderBar, LanguageBadge } from "./CodeBlock.chrome";
 
 /** Exported so the scenes-tier `CodeDiff` frames itself identically instead
@@ -99,7 +101,7 @@ export interface CodeBlockProps
   highlightRanges?: HighlightRangeDef[];
   /**
    * 1-based line numbers outside this `[start, end]` range get a reduced
-   * opacity (the `opacity-muted` token) instead of full contrast — the
+   * opacity (the `opacity-focus-dim` token) instead of full contrast — the
    * "focus on this range, dim the rest" treatment a code walkthrough needs.
    * Added for `my-you-eye/scenes`' `CodeScene` (TODO.md Phase E): additive,
    * defaults to no dimming.
@@ -144,7 +146,21 @@ function CheckIcon() {
   );
 }
 
-function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void }) {
+function CrossIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-3.5 fill-danger">
+      <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+const COPY_LABEL: Record<CopyState, string> = { idle: "Copy", copied: "Copied", failed: "Copy failed" };
+const COPY_TEXT: Record<CopyState, string> = { idle: "", copied: "text-success", failed: "text-danger" };
+
+/** Three states, because two of them were indistinguishable from a dead
+ * button: a copy that never reached the clipboard now says so in the danger
+ * color for the same beat "Copied" would have held. */
+function CopyButton({ state, onCopy }: { state: CopyState; onCopy: () => void }) {
   return (
     <button
       type="button"
@@ -154,12 +170,12 @@ function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void })
         "text-xs text-code-muted hover:text-code-fg hover:bg-code-bg/80 border border-transparent hover:border-border",
         "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-[var(--duration-fast)]",
         "outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring cursor-pointer",
-        copied && "opacity-100",
+        state !== "idle" && "opacity-100",
       )}
       title="Copy code"
     >
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      <span className={cn(copied && "text-success")}>{copied ? "Copied" : "Copy"}</span>
+      {state === "copied" ? <CheckIcon /> : state === "failed" ? <CrossIcon /> : <CopyIcon />}
+      <span className={cn(COPY_TEXT[state])}>{COPY_LABEL[state]}</span>
     </button>
   );
 }
@@ -173,14 +189,7 @@ const HIGHLIGHT_BG: Record<string, string> = {
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
   ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, bare = false, ...props }, ref) => {
-    const [copied, setCopied] = useState(false);
-    const copy = useCallback(() => {
-      if (!navigator.clipboard) return;
-      navigator.clipboard.writeText(code).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      });
-    }, [code]);
+    const { state: copyState, copy } = useCopy(code);
 
     const lines = useMemo(() => code.split("\n"), [code]);
     // `bare` always suppresses the header bar, even if header/language were
@@ -251,7 +260,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
           </span>
         )}
         {hasHeader && (
-          <CodeHeaderBar header={header} language={language} trailing={<CopyButton copied={copied} onCopy={copy} />} />
+          <CodeHeaderBar header={header} language={language} trailing={<CopyButton state={copyState} onCopy={copy} />} />
         )}
         {!hasHeader && (
           <div className="absolute top-1 right-1 z-10 flex items-center gap-1">
@@ -259,7 +268,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
                 no persistent chrome at all, just the hover-revealed copy
                 button (CopyButton is opacity-0 until group-hover on its own). */}
             {!bare && language && <LanguageBadge language={language} floating />}
-            <CopyButton copied={copied} onCopy={copy} />
+            <CopyButton state={copyState} onCopy={copy} />
           </div>
         )}
         <div className="flex flex-col flex-1 min-h-0">
@@ -289,7 +298,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
                       key={i}
                       id={lineId?.(i + 1)}
                       ref={setLineRef(i)}
-                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-muted")}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-focus-dim")}
                     >
                       {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
                     </div>
@@ -312,7 +321,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
                       key={i}
                       id={lineId?.(i + 1)}
                       ref={setLineRef(i)}
-                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-muted")}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-focus-dim")}
                     >
                       {line || " "}
                     </div>

@@ -29,10 +29,13 @@ export interface PresenterProps {
 }
 
 /**
- * `<Presenter video={video} />` (TODO.md Phase F) — click-through
- * presentation of a `Video`. Click / `→` / `Space` advances a step, `←`
- * reverses, `Esc` opens an overview grid, `f` toggles fullscreen. Renders
- * exactly one scene at a time through `SceneRenderer` under a live
+ * `<Presenter video={video} />` (TODO.md Phase F) — step-through
+ * presentation of a `Video`. `→` / `Space` advances a step, `←`
+ * reverses, `Esc` opens an overview grid, `f` toggles fullscreen; the
+ * Prev/Next buttons in the chrome do the same. The stage itself does NOT
+ * advance on click, so a scene can own its own pointer interactions.
+ *
+ * Renders exactly one scene at a time through `SceneRenderer` under a live
  * `MotionRoot` (`PresenterStage`), seeked so the current step's animation
  * plays and then holds — see that file for the driver/direction logic.
  * Steps come from `useSteps`, the same `sceneSteps`/`buildSequence` spine
@@ -61,10 +64,6 @@ export function Presenter({ video, className, onStepChange }: PresenterProps) {
     onStepChangeRef.current?.({ sceneIndex: current.sceneIndex, stepIndex: current.stepIndex, globalIndex: current.index });
   }, [current]);
 
-  const handleBackgroundClick = useCallback(() => {
-    if (!overviewOpen) next();
-  }, [next, overviewOpen]);
-
   const handleSelectScene = useCallback(
     (sceneIndex: number) => {
       goToScene(sceneIndex);
@@ -91,7 +90,13 @@ export function Presenter({ video, className, onStepChange }: PresenterProps) {
       data-font={font}
       className={cn("flex h-full w-full flex-col overflow-hidden bg-bg text-fg", appearance === "dark" && "dark", className)}
     >
-      <div className="relative min-h-0 flex-1 cursor-pointer" onClick={handleBackgroundClick}>
+      {/* The stage takes no click handler of its own. It used to advance on
+          any click, which made every interactive scene unusable: dragging a
+          `DiagramScene` canvas, or grabbing a `Comparison` divider, ends in a
+          click on the stage and the slide jumped forward mid-gesture.
+          Advancing is the Chrome's Prev/Next buttons and the keyboard
+          (Space / arrows), both of which are unambiguous. */}
+      <div className="relative min-h-0 flex-1">
         <PresenterStage key={sceneTiming.sceneIndex} sceneTiming={sceneTiming} current={current} />
       </div>
       <PresenterChrome

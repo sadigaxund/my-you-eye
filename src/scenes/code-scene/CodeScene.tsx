@@ -4,7 +4,7 @@ import { Annotation } from "../../ui/annotation";
 import { Camera } from "../../motion/camera";
 import { useProgress, useSequence, useTimeline } from "../../motion/core";
 import { CodeDiff } from "../code-diff";
-import { sceneSteps, stepName } from "../timing";
+import { codeTransitionFrames, sceneSteps, stepName } from "../timing";
 import { runningSources, buildHighlightRanges, lineElementId } from "./CodeScene.sources";
 import { useCodeCameraKeyframes } from "./CodeScene.useCamera";
 import { useCodeAnnotations } from "./CodeScene.useAnnotations";
@@ -13,13 +13,6 @@ import type { CodeScene as CodeSceneData } from "../schema";
 export interface CodeSceneProps {
   scene: CodeSceneData;
 }
-
-/** Fraction of a rewriting step spent in `CodeDiff` before it settles into a
- * plain `CodeBlock` of the new source. Not a prop: a scene author picks the
- * step's pace, and how that budget splits between "show the change" and "let
- * the result be read" is a property of the scene format, not of one call
- * site (AGENTS.md D5 — the schema is the API). */
-const DIFF_SHARE = 0.55;
 
 /**
  * The typed-so-far prefix of `source`, with every not-yet-typed character
@@ -81,7 +74,7 @@ function currentStepIndex(scene: CodeSceneData, ranges: ReturnType<typeof useSeq
  */
 export function CodeScene({ scene }: CodeSceneProps) {
   const ranges = useSequence(sceneSteps(scene), scene.pace);
-  const { frame } = useTimeline();
+  const { frame, fps } = useTimeline();
   const blockId = `code-${useId().replace(/:/g, "")}`;
 
   const { before, after } = useMemo(() => runningSources(scene), [scene]);
@@ -108,13 +101,15 @@ export function CodeScene({ scene }: CodeSceneProps) {
     [nextSource, step.focus, step.highlight],
   );
 
-  // A step that rewrites the code spends only its first `DIFF_SHARE` showing
-  // the diff, then settles into the ordinary CodeBlock for the rest. Running
-  // the diff for the whole step left the viewer staring at red/green gutter
-  // chrome until the step ended, so "the code now" was never actually shown
-  // — the step's own `focus` framing and highlights had nothing to land on,
-  // and the next step began from what still looked like a pending change.
-  const diffFrames = Math.max(1, Math.round((range.endFrame - range.startFrame) * DIFF_SHARE));
+  // A step that rewrites the code shows the diff for its transition window
+  // only, then settles into the ordinary CodeBlock for the rest. Running the
+  // diff for the whole step left the viewer staring at red/green gutter
+  // chrome until the step ended, so "the code now" was never actually shown:
+  // the step's own `focus` framing and highlights had nothing to land on, and
+  // the next step began from what still looked like a pending change. The
+  // window is the same `codeTransitionFrames` the camera keyframes use, so
+  // the diff resolves exactly as the camera arrives.
+  const diffFrames = codeTransitionFrames(range.endFrame - range.startFrame, fps);
   const isDiff = !step.typed && nextSource !== prevSource && frame < range.startFrame + diffFrames;
   const isTyped = Boolean(step.typed);
   const typedCode = isTyped ? typedSlice(nextSource, stepProgress) : nextSource;

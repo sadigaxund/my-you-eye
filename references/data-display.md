@@ -67,7 +67,7 @@ interface CodeBlockProps extends HTMLAttributes<HTMLPreElement> {
   highlightColor?: CodeBlockHighlightGroup["color"];
   highlightGroups?: CodeBlockHighlightGroup[];   // multi-color; takes precedence over highlightLines
   highlightRanges?: HighlightRangeDef[];         // substring highlights, 0-indexed char positions
-  focusRange?: [number, number];                 // 1-based; lines outside dim to opacity-muted
+  focusRange?: [number, number];                 // 1-based; lines outside dim to opacity-focus-dim
   lineId?: (lineNumber: number) => string;        // per-line element id, for Camera/Annotation targeting
 }
 ```
@@ -86,7 +86,7 @@ type TerminalPromptGlyph = "$" | ">" | "#" | "❯";
 
 interface TerminalEntry {
   command?: string;   // omit for an output-only entry (banner, log tail)
-  output?: string;    // rendered via CodeBlock
+  output?: string;    // plain terminal lines, colorized when `language` is set
   language?: string;
   exitCode?: number;  // status line: "✓ exit 0" success, "✗ exit N" danger — plain text, no badge
   spinner?: string;   // in-progress line: braille glyph + label (glyph via spinnerGlyph, default "⠋")
@@ -108,7 +108,9 @@ interface TerminalProps {
 }
 ```
 
-Composes `CodeBlock` for output bodies — never re-tokenizes.
+Output bodies are plain terminal lines in the terminal's own mono style: no
+border, no header, no nested scroll region. They reuse CodeBlock's tokenizer
+(and only its tokenizer) for color when the entry names a `language`.
 
 `rows` is a **fixed** height, not a maximum: the entries body is exactly
 `rows` lines tall from the first frame on (measured from the real rendered

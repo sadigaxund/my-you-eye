@@ -62,7 +62,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-reveal, columns (frame ${Math.round((codeRange.startFrame + codeRange.endFrame) / 2)}/${codeTotal})`,
-      description: "The before pane is fully visible; the after pane is partway through its Reveal fade-in.",
+      description: "The before pane is fully visible; the after pane is partway through its wipe-in.",
       render: () => (
         <PinnedFrame frame={Math.round((codeRange.startFrame + codeRange.endFrame) / 2)} durationInFrames={codeTotal}>
           <Frame><CompareScene scene={codeScene} /></Frame>
@@ -88,7 +88,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-wipe (frame ${Math.round(wipeTotal * 0.4)}/${wipeTotal})`,
-      description: "The divider sits partway across, driven by the scene's own beat progress — never dragged.",
+      description: "The divider sits partway across, driven by the scene's own beat progress rather than by dragging.",
       render: () => (
         <PinnedFrame frame={Math.round(wipeTotal * 0.4)} durationInFrames={wipeTotal}>
           <Frame><CompareScene scene={wipeScene} /></Frame>

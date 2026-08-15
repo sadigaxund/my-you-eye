@@ -43,7 +43,7 @@ const entry: ShowcaseEntry = {
   title: "useSteps",
   group: "scenes",
   description:
-    "Headless step-navigation hook — the flattened (scene, step) list across a whole Video.",
+    "Headless step-navigation hook that flattens a whole Video into one (scene, step) list.",
   demos: [{ name: "Custom controls built from useSteps", render: () => <CustomControls /> }],
 };
 export default entry;

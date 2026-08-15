@@ -73,11 +73,55 @@ function codeStepContent(step: CodeStep, sceneCode: string, isFirst: boolean): s
   return undefined;
 }
 
+/**
+ * Floor on a single code step, in seconds (45 frames at 30fps, scaled by
+ * whatever fps the video actually runs at).
+ *
+ * A code step is not "a line of text appears". It is a camera pan and zoom
+ * onto a line range, often a `CodeDiff` cross-fade underneath it, and then
+ * whatever reading time is left. Paced purely off narration length, a short
+ * `say` bought about 0.6s for all three, so the move was over before the eye
+ * had found where it went. Every other scene kind keeps the global
+ * `MIN_STEP_SECONDS`; this floor is applied only here, through the
+ * `minSeconds` field on the step input.
+ */
+const CODE_STEP_MIN_SECONDS = 1.5;
+
+/** Share of a code step given over to the move itself, before the frame
+ * settles and the viewer just reads. */
+const CODE_TRANSITION_SHARE = 0.55;
+/** Ceiling on that move, in seconds. Past this a pan stops reading as a
+ * camera move and starts reading as a slow drift. */
+const CODE_TRANSITION_MAX_SECONDS = 1.2;
+/** Floor on it. Below this the move is a cut with extra steps. */
+const CODE_TRANSITION_MIN_SECONDS = 0.6;
+
+/**
+ * How many frames of a code step are the transition — the camera's pan/zoom
+ * onto the new focus range, and the `CodeDiff` cross-fade when the step
+ * rewrites the source. The remainder of the step is dwell: the frame is
+ * settled and the viewer reads it.
+ *
+ * Both consumers (`CodeScene.useCamera`'s keyframes and `CodeScene`'s own
+ * diff window) call this one function, so the camera can never still be
+ * flying while the diff has already resolved, or the reverse.
+ */
+export function codeTransitionFrames(stepFrames: number, fps: number): number {
+  const share = Math.round(stepFrames * CODE_TRANSITION_SHARE);
+  const capped = Math.min(share, Math.round(CODE_TRANSITION_MAX_SECONDS * fps));
+  const floored = Math.max(capped, Math.round(CODE_TRANSITION_MIN_SECONDS * fps));
+  // Never the whole step: the arrival keyframe has to land strictly before
+  // the next step's own keyframe, or the two share a frame and the camera
+  // interpolates across a zero-length leg.
+  return Math.max(1, Math.min(floored, stepFrames - 1));
+}
+
 function codeSteps(scene: CodeScene): SequenceStepInput[] {
   return scene.steps.map((step, i) => ({
     name: stepName(step.id, i),
     content: codeStepContent(step, scene.code, i === 0),
     hold: step.hold,
+    minSeconds: CODE_STEP_MIN_SECONDS,
   }));
 }
 

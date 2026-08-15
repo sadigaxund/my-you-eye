@@ -2,8 +2,9 @@ import { useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { measureRelative, keyframesEqual, fitZoom } from "../../motion/camera";
 import type { CameraKeyframe, CameraRect } from "../../motion/camera";
+import { useTimeline } from "../../motion/core";
 import type { SequenceRange } from "../../motion/core";
-import { stepName } from "../timing";
+import { codeTransitionFrames, stepName } from "../timing";
 import { lineElementId } from "./CodeScene.sources";
 import type { CodeScene as CodeSceneData } from "../schema";
 
@@ -32,6 +33,7 @@ export interface CodeCamera {
 export function useCodeCameraKeyframes(scene: CodeSceneData, ranges: Record<string, SequenceRange>, blockId: string): CodeCamera {
   const containerRef = useRef<HTMLDivElement>(null);
   const [keyframes, setKeyframes] = useState<CameraKeyframe[]>([]);
+  const { fps } = useTimeline();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -73,14 +75,35 @@ export function useCodeCameraKeyframes(scene: CodeSceneData, ranges: Record<stri
         return { at, focus, zoom: zoomFor(focus) };
       };
 
-      const next: CameraKeyframe[] = scene.steps.map((step, i) => {
-        const at = ranges[stepName(step.id, i)].startFrame;
-        if (!step.focus) return frameFor(at, allLines());
+      const targetFor = (step: CodeSceneData["steps"][number]): HTMLElement[] => {
+        if (!step.focus) return allLines();
         const [start, end] = step.focus;
         const startEl = document.getElementById(lineElementId(blockId, start));
         const endEl = document.getElementById(lineElementId(blockId, end));
-        if (!startEl || !endEl) return frameFor(at, allLines());
-        return frameFor(at, [startEl, endEl]);
+        return startEl && endEl ? [startEl, endEl] : allLines();
+      };
+
+      // TWO keyframes per step, not one. With a single keyframe at each
+      // step's `startFrame`, `interpolateCamera` spreads the move across the
+      // entire gap to the next one, so the camera is always drifting and
+      // never actually arrives — a step's framing is only correct for the
+      // single frame before the next move begins. Holding the previous
+      // framing until the step starts and then arriving `codeTransitionFrames`
+      // later splits the step into a move you can follow and a dwell you can
+      // read in. The first step has nothing to move from, so it just starts
+      // where it belongs.
+      const next: CameraKeyframe[] = [];
+      scene.steps.forEach((step, i) => {
+        const range = ranges[stepName(step.id, i)];
+        const arrival = frameFor(range.startFrame, targetFor(step));
+        if (i === 0) {
+          next.push(arrival);
+          return;
+        }
+        const held = next[next.length - 1];
+        next.push({ at: range.startFrame, focus: held.focus, zoom: held.zoom });
+        const move = codeTransitionFrames(range.endFrame - range.startFrame, fps);
+        next.push({ ...arrival, at: range.startFrame + move });
       });
       // Guarded: `ranges` (an effect dependency, below) is a fresh object
       // every CodeScene render (`useSequence` doesn't memoize), so this
@@ -103,7 +126,7 @@ export function useCodeCameraKeyframes(scene: CodeSceneData, ranges: Record<stri
     // sceneSteps(scene) is recomputed on every call, but its identity isn't
     // what matters here — re-measuring keys off the scene/ranges/blockId
     // values that can actually change which lines exist or where they sit.
-  }, [scene, ranges, blockId]);
+  }, [scene, ranges, blockId, fps]);
 
   return { containerRef, keyframes };
 }

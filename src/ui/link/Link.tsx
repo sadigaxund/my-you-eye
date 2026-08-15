@@ -8,19 +8,38 @@ const linkVariants = cva(
   {
     variants: {
       variant: {
-        primary: "text-primary hover:underline",
-        muted: "text-muted hover:text-fg hover:underline",
+        primary: "text-primary",
+        muted: "text-muted hover:text-fg",
+      },
+      /**
+       * The hover rule lives on its own axis rather than inside each
+       * `variant` string because turning it off from a call site is
+       * otherwise impossible: `no-underline` and `hover:underline` have
+       * identical specificity, so which one wins comes down to the order
+       * the two rules happen to sit in the generated stylesheet — and
+       * `hover:underline`, being the more specific selector at match time,
+       * wins on hover regardless. A variant removes the rule instead of
+       * trying to out-shout it.
+       */
+      underline: {
+        true: "hover:underline",
+        false: "",
       },
     },
     defaultVariants: {
       variant: "primary",
+      underline: true,
     },
   },
 );
 
 export interface LinkProps
   extends AnchorHTMLAttributes<HTMLAnchorElement>,
-    VariantProps<typeof linkVariants> {}
+    VariantProps<typeof linkVariants> {
+  /** Underline the label on hover. Default true. Set false for links that
+   * are already a card or a nav row, where the underline fights the box. */
+  underline?: boolean;
+}
 
 /**
  * A styled `<a>` — the one primitive missing before this batch. AGENTS.md §0
@@ -32,8 +51,8 @@ export interface LinkProps
  * it as a standalone, reusable component).
  */
 const Link = forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, variant, ...props }, ref) => (
-    <a ref={ref} className={cn(linkVariants({ variant }), className)} {...props} />
+  ({ className, variant, underline, ...props }, ref) => (
+    <a ref={ref} className={cn(linkVariants({ variant, underline }), className)} {...props} />
   ),
 );
 Link.displayName = "Link";

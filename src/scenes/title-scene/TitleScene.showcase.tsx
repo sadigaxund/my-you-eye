@@ -25,7 +25,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "TitleScene",
   group: "scenes",
-  description: "Opening/chapter card — chapter eyebrow, title and subtitle stagger in together, timed off the scene's own content-derived duration.",
+  description: "Opening or chapter card. The chapter eyebrow, title and subtitle stagger in together, timed off the scene's own content-derived duration.",
   demos: [
     {
       name: "Centered, playing",

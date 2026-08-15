@@ -90,7 +90,7 @@ function IssueList({ video }: { video: Video }) {
 const entry: ShowcaseEntry = {
   title: "Validation",
   group: "scenes",
-  description: "validateVideo(video) run against a deliberately broken Video — every runtime check, made visible.",
+  description: "validateVideo(video) run against a deliberately broken Video, so every runtime check is visible.",
   demos: [
     {
       name: "Deliberately broken video",

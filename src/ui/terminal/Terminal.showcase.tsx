@@ -25,7 +25,7 @@ const rootShell: TerminalEntry[] = [
 const entry: ShowcaseEntry = {
   title: "Terminal",
   group: "display",
-  description: "Prompt/command/output/exit-status sequences, composing CodeBlock for output bodies. Data-driven via a typed entries array.",
+  description: "Prompt, command, output and exit-status sequences, driven by a typed entries array. Output renders as plain terminal text, colorized by the shared code tokenizer when an entry names a language.",
   demos: [
     {
       name: "Prompt glyphs",
@@ -59,7 +59,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Exit status & spinner",
-      description: "Everything inside the frame is text a shell could have printed: no pills, no widgets — an exit line and a braille spinner glyph.",
+      description: "Everything inside the frame is text a shell could have printed, so the exit line and the braille spinner glyph are plain glyphs rather than pills or widgets.",
       render: () => (
         <div className="flex flex-col gap-4 max-w-lg mx-auto">
           <Terminal
@@ -84,7 +84,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Color schemes",
-      description: "scheme: \"default\" | \"matrix\" | \"amber\" — retints the command line and border from existing success/warning tokens, never new ones.",
+      description: "scheme: \"default\" | \"matrix\" | \"amber\" retints the command line and border from the existing success and warning tokens rather than from new ones.",
       render: () => (
         <div className="flex flex-col gap-4 max-w-lg mx-auto">
           <Terminal scheme="default" prompt="$" entries={[{ command: "uptime", output: "up 14 days, load average: 0.08" }]} />
@@ -105,7 +105,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Fixed height, scrolls as content grows",
-      description: "rows caps the box at that many lines' worth of height (measured, never hardcoded) instead of growing with content — new entries scroll into view, older ones scroll up out of the fixed frame, like a real terminal.",
+      description: "rows fixes the box at that many lines' worth of height, measured rather than hardcoded, so the frame never grows with content: new entries scroll into view and older ones scroll up out of the fixed frame, the way a real terminal behaves.",
       render: () => (
         <div className="max-w-lg mx-auto">
           <Terminal
@@ -128,7 +128,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Prompt segments, changed mid-session",
-      description: "user/host/cwd/promptGlyph are each independently settable per entry, and — like a real shell's cd — persist to every following entry until overridden again, not just that one line.",
+      description: "user, host, cwd and promptGlyph are each settable per entry, and like a real shell's cd they persist to every following entry until something overrides them again.",
       render: () => (
         <div className="max-w-lg mx-auto">
           <Terminal

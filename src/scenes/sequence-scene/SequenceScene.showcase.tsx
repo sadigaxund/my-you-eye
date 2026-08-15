@@ -37,7 +37,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "SequenceScene",
   group: "scenes",
-  description: "Wraps SequenceDiagram, one message or note per step. Activation bars are derived, never authored.",
+  description: "Wraps SequenceDiagram with one message or note per step. Activation bars are derived rather than authored.",
   demos: [
     {
       name: "Playing",

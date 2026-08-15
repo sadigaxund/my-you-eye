@@ -188,7 +188,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Substring highlights on a long line (wrap forced off)",
-      description: "highlightRanges forces wrap={false} internally so every rect stays on its own logical line — even though wrap is left at its default (true) here.",
+      description: "highlightRanges forces wrap={false} internally so every rect stays on its own logical line, even though wrap is left at its default of true here.",
       render: () => (
         <CodeBlock
           code={`const veryLongVariableNameThatWouldNormallyWrapOntoASecondVisualLine = computeSomethingExpensive(argumentOne, argumentTwo, argumentThree);\nconst ok = true;`}
@@ -223,14 +223,14 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Focus range (dims everything outside it)",
-      description: "focusRange dims lines outside [start, end] via the opacity-muted token — used by CodeScene to spotlight the lines a step is talking about while Camera frames them.",
+      description: "focusRange dims lines outside [start, end] with the opacity-focus-dim token, which CodeScene uses to spotlight the lines a step is talking about while Camera frames them.",
       render: () => (
         <CodeBlock code={typescript} language="typescript" header="api.ts" showLineNumbers highlight focusRange={[8, 12]} />
       ),
     },
     {
       name: "Bare (embedded in another surface)",
-      description: "bare drops the header bar and the block's own background/border, leaving just a hover-revealed copy button — for embedding CodeBlock inside a surface (Popover, Card) that already provides its own chrome, e.g. CellType's JSON/code cell previews.",
+      description: "bare drops the header bar and the block's own background and border, leaving only a hover-revealed copy button, for a CodeBlock inside a surface that already has its own chrome such as CellType's JSON and code cell previews.",
       render: () => (
         <div className="rounded-ui border border-border bg-surface-elevated p-3">
           <CodeBlock code={json} language="json" highlight bare />

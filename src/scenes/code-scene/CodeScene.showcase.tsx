@@ -57,7 +57,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Playing",
-      description: "The whole four-step scene: type in, focus, rewrite, annotate. Every frame below comes from this timeline.",
+      description: "The whole four-step scene (type in, focus, rewrite, annotate), which every frame below is taken from.",
       render: () => (
         <MotionPreview durationInFrames={total} fps={FPS}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -75,7 +75,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned on focus + highlight, step 2 (frame ${step1.startFrame + 5}/${total})`,
-      description: "Lines 2–5 stay at full contrast with every \"sum\" highlighted; the camera has framed them.",
+      description: "Lines 2 to 5 stay at full contrast with every \"sum\" highlighted, and the camera has framed them.",
       render: () => (
         <PinnedFrame frame={step1.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -84,7 +84,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-diff, step 3 (frame ${step2.startFrame + 5}/${total})`,
-      description: "CodeDiff is cross-fading the old loop body into the new reduce() call, not yet settled.",
+      description: "CodeDiff is cross-fading the old loop body into the new reduce() call and has not settled yet.",
       render: () => (
         <PinnedFrame frame={step2.startFrame + 5} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>
@@ -93,7 +93,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned at rest, end of step 3 (frame ${step2.endFrame - 1}/${total})`,
-      description: "The rewritten source, fully settled, with lines 1–3 framed by the camera.",
+      description: "The rewritten source, fully settled, with lines 1 to 3 framed by the camera.",
       render: () => (
         <PinnedFrame frame={step2.endFrame - 1} durationInFrames={total}>
           <Frame><CodeScene scene={scene} /></Frame>

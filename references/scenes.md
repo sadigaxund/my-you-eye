@@ -238,8 +238,12 @@ function PlayerEmbed(props: { video: Video; className?: string; controls?: boole
 function SceneRenderer(props: { scene: Scene }): JSX.Element; // the single Scene -> frame switch; you never write this switch yourself
 ```
 
-- **`Presenter`** — click / `→` / `Space` advances a step, `←` reverses,
-  `Esc` opens an overview grid, `f` toggles fullscreen. It's built entirely
+- **`Presenter`** — `→` / `Space` advances a step, `←` reverses,
+  `Esc` opens an overview grid, `f` toggles fullscreen; the Prev/Next
+  buttons in the chrome bar do the same. Clicking the stage does **not**
+  advance: a live scene owns its own pointer events (dragging a
+  `DiagramScene` canvas, grabbing a `Comparison` divider), and a
+  click-anywhere handler ate every one of those gestures. It's built entirely
   on `useSteps` — if you want your own chrome instead of Presenter's, use
   `useSteps` directly (it's headless: `steps`, `scenes`, `index`, `current`,
   `isFirst`/`isLast`, `next()`/`prev()`/`goTo()`/`goToScene()`).

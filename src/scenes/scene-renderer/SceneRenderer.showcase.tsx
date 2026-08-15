@@ -22,7 +22,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "SceneRenderer",
   group: "scenes",
-  description: "The single switch(scene.kind) consumers never touch. All eleven SceneKinds render for real — there is no placeholder branch.",
+  description: "The single switch(scene.kind) that consumers never touch. All eleven SceneKinds render for real; the switch has no placeholder branch.",
   demos: [
     {
       name: "Title",

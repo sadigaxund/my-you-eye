@@ -55,7 +55,7 @@ function Frame({ children }: { children: ReactNode }) {
 const entry: ShowcaseEntry = {
   title: "ChartScene",
   group: "scenes",
-  description: "Wraps whichever chart ChartSpec.type selects, driving its progress prop step by step.",
+  description: "Wraps whichever chart ChartSpec.type selects and drives its progress prop step by step.",
   demos: [
     {
       name: "Bar — playing",
@@ -67,7 +67,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned with only "Organic" revealed, step 0 end (frame ${step0.endFrame - 1}/${barTotal})`,
-      description: "Only the Organic series bars are drawn — Paid hasn't been named by any step yet.",
+      description: "Only the Organic series bars are drawn, because no step has named Paid yet.",
       render: () => (
         <PinnedFrame frame={step0.endFrame - 1} durationInFrames={barTotal}>
           <Frame><ChartScene scene={barScene} /></Frame>
@@ -76,7 +76,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: `Pinned mid-reveal of "Paid", step 1 (frame ${step1.startFrame + Math.round((step1.endFrame - step1.startFrame) / 2)}/${barTotal})`,
-      description: "Both series are now included and drawing on together (the chart's single `progress` scales every currently-included bar).",
+      description: "Both series are now included and draw on together, since the chart's single `progress` scales every included bar.",
       render: () => (
         <PinnedFrame frame={step1.startFrame + Math.round((step1.endFrame - step1.startFrame) / 2)} durationInFrames={barTotal}>
           <Frame><ChartScene scene={barScene} /></Frame>

@@ -24,7 +24,7 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Playing",
-      description: "A loop is rewritten as one reduce() call, the signature grows a taxRate parameter.",
+      description: "A loop is rewritten as one reduce() call, and the signature grows a taxRate parameter.",
       render: () => (
         <MotionPreview durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />
@@ -42,7 +42,7 @@ const entry: ShowcaseEntry = {
     },
     {
       name: "Pinned at rest (frame 150/150)",
-      description: "The settled end state — reads exactly like a plain CodeBlock showing `after`.",
+      description: "The settled end state, which reads exactly like a plain CodeBlock showing `after`.",
       render: () => (
         <PinnedFrame frame={150} durationInFrames={150}>
           <CodeDiff from={before} to={after} language="js" header="totals.js" duration={150} />
