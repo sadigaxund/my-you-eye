@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2026.8.0] - 2026-08-15
+
 ### Added
 
 - **GitHub Pages deployment for the showcase** (`.github/workflows/pages.yml`) — every release tag (and manual dispatch) builds the showcase with `GH_PAGES_BASE=/my-you-eye/` and publishes it to https://sadigaxund.github.io/my-you-eye/, so the live component reference is always one click away.
