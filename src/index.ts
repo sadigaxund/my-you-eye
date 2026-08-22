@@ -44,6 +44,8 @@ export {
   ContextMenuSeparator,
 } from "./ui/context-menu";
 export { FileDrop, fileDropVariants } from "./ui/file-drop";
+export { FindWidget } from "./ui/find-widget";
+export type { FindWidgetProps, FindOptions } from "./ui/find-widget";
 export type { FileDropProps } from "./ui/file-drop";
 export { Input, inputVariants } from "./ui/input";
 export type { InputProps } from "./ui/input";
