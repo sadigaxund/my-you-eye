@@ -95,6 +95,8 @@ export type {
   WordDiffResult,
   LcsDiffFlags,
 } from "./ui/diff-block";
+export { DiffStatChip, diffStatChipVariants } from "./ui/diff-stat-chip";
+export type { DiffStatChipProps } from "./ui/diff-stat-chip";
 export { EmptyState } from "./ui/empty-state";
 export type { EmptyStateProps } from "./ui/empty-state";
 export { Image, imageVariants } from "./ui/image";
