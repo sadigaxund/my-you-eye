@@ -216,9 +216,31 @@ interface DataListProps {
 ```
 
 `TreeView` renders a `CellType type="tree"`-shaped nested payload with
-expand/collapse, depth guides, and a per-item `trailing` slot; `FileTree`
-(patterns group) is `TreeView` + file-type icons + git-status badges, no
-new tree logic of its own.
+expand/collapse, depth guides, controlled selection (`selectedId`/`onSelect`),
+inline rename (`renamingId`), and drag moves (`draggable` + `onMove` with
+"into"/"before"/"after" modes); `FileTree` (patterns group) is `TreeView` +
+file-type icons + git-status badges, no new tree logic of its own.
+
+### Virtualizing very large trees (>~200 visible rows)
+
+Nested `role="group"` DOM disappears when rows are windowed, so depth and
+position must move onto the rows themselves. The recipe:
+
+1. Flatten the tree against the expanded set into
+   `{ node, depth, hasChildren, siblingCount, siblingIndex }` rows (same walk
+   TreeView does internally).
+2. Render through `VirtualList` with `rowHeight` matching the row token
+   (24px normal / 16px compact — read it off `--spacing-tree-row(-compact)`,
+   not hardcoded).
+3. Each row renders `role="treeitem"` with
+   `aria-level={depth + 1}`, `aria-setsize={siblingCount}`,
+   `aria-posinset={siblingIndex + 1}` — this is the a11y fallback that
+   replaces the nesting.
+4. Keyboard navigation becomes flat-list Up/Down over visible rows;
+   ArrowRight/Left still toggle the focused row's expansion.
+
+`VirtualList`'s `computeVirtualWindow` is exported pure, so the flattening +
+windowing decisions are unit-testable without a DOM.
 
 ## `Timeline`
 

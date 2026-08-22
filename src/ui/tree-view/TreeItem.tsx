@@ -89,21 +89,22 @@ export interface TreeItemProps {
   onSelect?: (node: TreeNode) => void;
   onRenameCommit?: (node: TreeNode, newName: string) => void;
   onRenameCancel?: () => void;
-  /** Drop ONTO this row (folder targets). Descendant/refusal checks live in
-   *  TreeView, which owns the whole tree and its id→node map. */
-  onDropInto?: (sourceId: string, targetId: string) => void;
+  /** Drop targeting this row (#11). Mode comes from pointer position:
+   *  top/bottom edge = before/after (2px insertion line), middle = into
+   *  (folders only). Refusal logic lives in TreeView's id→node index. */
+  onDropMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
   replacements?: UrlReplacement[];
   children?: ReactNode;
 }
 
 const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
-  ({ node, depth, density, indent, ancestorLines, isLast, expanded, current, selected, hovered, renaming, draggable, onToggle, onHover, onSelect, onRenameCommit, onRenameCancel, onDropInto, replacements, children }, ref) => {
+  ({ node, depth, density, indent, ancestorLines, isLast, expanded, current, selected, hovered, renaming, draggable, onToggle, onHover, onSelect, onRenameCommit, onRenameCancel, onDropMove, replacements, children }, ref) => {
     const hasChildren = !!node.children?.length;
     const rawLabel = typeof node.label === "string" ? node.label : "";
     const arrIndex = isArrayIndex(rawLabel);
     const guideHighlight = hovered;
     const compact = density === "compact";
-    const [dropTarget, setDropTarget] = useState(false);
+    const [dropMode, setDropMode] = useState<"into" | "before" | "after" | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -121,6 +122,8 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
 
     return (
       <li ref={ref} className={cn("relative", compact ? "py-px" : "py-0.5")}>
+        {dropMode === "before" && <span aria-hidden="true" className="absolute inset-x-1 -top-px z-10 h-0.5 bg-primary" />}
+        {dropMode === "after" && <span aria-hidden="true" className="absolute inset-x-1 -bottom-px z-10 h-0.5 bg-primary" />}
         <div
           id={node.id}
           role="treeitem"
@@ -133,19 +136,23 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
             e.dataTransfer.effectAllowed = "move";
           }}
           onDragOver={(e) => {
-            if (!hasChildren || !onDropInto) return;
+            if (!onDropMove) return;
             e.preventDefault();
             e.dataTransfer.dropEffect = "move";
-            setDropTarget(true);
+            const rect = e.currentTarget.getBoundingClientRect();
+            const rel = (e.clientY - rect.top) / rect.height;
+            const mode = rel < 0.3 ? "before" : rel > 0.7 ? "after" : hasChildren ? "into" : "after";
+            setDropMode(mode);
           }}
-          onDragLeave={() => setDropTarget(false)}
+          onDragLeave={() => setDropMode(null)}
           onDrop={(e) => {
-            setDropTarget(false);
-            if (!hasChildren || !onDropInto) return;
+            const mode = dropMode;
+            setDropMode(null);
+            if (!mode || !onDropMove) return;
             const sourceId = e.dataTransfer.getData("application/x-tree-node");
             if (sourceId && sourceId !== node.id) {
               e.preventDefault();
-              onDropInto(sourceId, node.id);
+              onDropMove(sourceId, node.id, mode);
             }
           }}
           className={cn(
@@ -153,7 +160,7 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
             "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
             "hover:bg-surface-hover",
             (current || selected) && "bg-surface-active",
-            dropTarget && DROP_TARGET_CLASSES,
+            dropMode === "into" && DROP_TARGET_CLASSES,
             "focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
           )}
           onClick={() => {

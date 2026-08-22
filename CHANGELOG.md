@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **TreeView drop modes completed (#11 — issue now fully closed)** — `onMove` gains a `mode` parameter: `"into"` (folder target), `"before"`/`"after"` (sibling insertion). Drop zone comes from pointer position within the row (edges = insertion, middle = into for folders); illegal drops (self / own subtree) refused for every mode. Showcase drag demo handles all three. The flattened-tree virtualization recipe (aria-level/setsize/posinset fallback over `VirtualList`) is documented in `references/data-display.md`.
+
 ### Added
 
 - **ColorField (#20)** — themed accent-color field: token-styled swatch trigger over the platform's native color input (accessible, zero reinvention), validated hex readout with danger-border on invalid text, optional preset swatch row. An in-app popover picker stays future work per the issue's own "nice-to-have" verdict.

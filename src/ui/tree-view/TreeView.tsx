@@ -82,9 +82,11 @@ export interface TreeViewProps {
   onRenameCancel?: () => void;
   /** Enable HTML5 drag-and-drop of rows onto folder rows ("into" moves). */
   draggable?: boolean;
-  /** Called after a legal drop. Illegal drops (onto self or a descendant)
-   *  are refused inside the tree and never reach this callback. */
-  onMove?: (sourceId: string, targetParentId: string) => void;
+  /** Called after a legal drop (#11). Mode: "into" (folder target),
+   *  "before"/"after" (sibling insertion). Illegal drops — onto self, or
+   *  anywhere inside the source's own subtree — are refused inside the
+   *  tree and never reach this callback. */
+  onMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
 }
 
 
@@ -106,7 +108,7 @@ interface RenderCtx {
   onSelect?: (node: TreeNode) => void;
   onRenameCommit?: (node: TreeNode, newName: string) => void;
   onRenameCancel?: () => void;
-  onDropInto?: (sourceId: string, targetId: string) => void;
+  onDropMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
   replacements?: UrlReplacement[];
 }
 
@@ -134,7 +136,7 @@ function renderNodes(nodes: TreeNode[], depth: number, ancestorLines: boolean[],
         onSelect={ctx.onSelect}
         onRenameCommit={ctx.onRenameCommit}
         onRenameCancel={ctx.onRenameCancel}
-        onDropInto={ctx.onDropInto}
+        onDropMove={ctx.onDropMove}
         replacements={ctx.replacements}
       >
         {isExpanded && (
@@ -190,13 +192,17 @@ export function TreeView({
 
   const handleSelect = useCallback((node: TreeNode) => onSelect?.(node), [onSelect]);
 
-  const handleDropInto = useCallback((sourceId: string, targetId: string) => {
-    if (!onMove) return;
-    if (sourceId === targetId) return;
-    // Refuse dropping a node into its own subtree.
-    if (isDescendant(sourceId, targetId, byId)) return;
-    onMove(sourceId, targetId);
-  }, [byId, onMove]);
+  const handleDrop = useCallback(
+    (sourceId: string, targetId: string, mode: "into" | "before" | "after") => {
+      if (!onMove) return;
+      if (sourceId === targetId) return;
+      // Any target inside the source's own subtree is illegal in every
+      // mode — the move would carry its own ancestor along.
+      if (isDescendant(sourceId, targetId, byId)) return;
+      onMove(sourceId, targetId, mode);
+    },
+    [byId, onMove],
+  );
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (visible.length === 0) return;
@@ -256,7 +262,7 @@ export function TreeView({
     onSelect: handleSelect,
     onRenameCommit,
     onRenameCancel,
-    onDropInto: onMove ? handleDropInto : undefined,
+    onDropMove: onMove ? handleDrop : undefined,
     replacements,
   };
 

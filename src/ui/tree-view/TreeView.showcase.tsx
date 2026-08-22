@@ -213,14 +213,21 @@ function DragDemo() {
         data={data}
         defaultExpandedDepth={2}
         draggable
-        onMove={(sourceId, targetId) => {
+        onMove={(sourceId, targetId, mode) => {
+          const moved = pluck(data, sourceId);
           const detach = (nodes: TreeNode[]): TreeNode[] =>
-            nodes
-              .filter((n) => n.id !== sourceId)
-              .map((n) => (n.children ? { ...n, children: detach(n.children) } : n));
-          const attach = (nodes: TreeNode[]): TreeNode[] =>
-            nodes.map((n) => (n.id === targetId && n.children ? { ...n, children: [...detach(n.children), ...pluck(data, sourceId)] } : n));
-          setData(() => attach(detach(data)));
+            nodes.filter((n) => n.id !== sourceId).map((n) => (n.children ? { ...n, children: detach(n.children) } : n));
+          const apply = (nodes: TreeNode[]): TreeNode[] =>
+            nodes.flatMap((n) => {
+              if (mode === "into" && n.id === targetId && n.children) return [{ ...n, children: [...n.children, ...moved] }];
+              if ((mode === "before" || mode === "after") && n.children?.some((c) => c.id === targetId)) {
+                const siblings = n.children.filter((c) => c.id !== sourceId);
+                const at = siblings.findIndex((c) => c.id === targetId) + (mode === "after" ? 1 : 0);
+                return [{ ...n, children: [...siblings.slice(0, at), ...moved, ...siblings.slice(at)] }];
+              }
+              return [{ ...n, children: n.children ? apply(n.children) : undefined }];
+            });
+          setData(apply(detach(data)));
         }}
       />
       <p className="mt-2 text-xs text-muted text-center">Drag rows onto folders to move them; self/descendant drops are refused.</p>
