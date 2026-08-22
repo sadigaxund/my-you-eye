@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **DropdownSubmenu (#21)** — `DropdownSubmenu`/`DropdownSubmenuTrigger`/`DropdownSubmenuContent` restyle Radix's Sub parts to be visually indistinguishable from the top-level menu. Same a11y model (arrow-right/hover opens, arrow-left/Escape closes, typeahead across levels); `disabled` on the trigger grays out an entire submenu at once — sanctioned over disabling every leaf item.
+
 - **New components and gaps from the issue backlog** (#14, #18, #24, #25): `DiffStatChip` — chrome-free two-tone added/removed line counts sharing DiffBlock's success/danger tokens; `Input` gains `leading`/`trailing` slots (the ⌘K search-field composition); `SelectItem` renders children as one unwrappable inline-flex row so icon + label compose directly; `DataTable` gains `onRowClick` (never swallowing clicks on interactive descendants) and a trailing `renderActions` cell with `actionsHeader`/`actionsWidth` knobs.
 - **Tree-shaking guarantee (#31)** — `"sideEffects": ["*.css"]` in package.json; per-component subpaths officially not supported (barrel + tier subpaths is the sanctioned path); consumer symbol-dump verification recipe documented in README.
 

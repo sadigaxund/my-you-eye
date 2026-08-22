@@ -162,6 +162,9 @@ export {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuLabel,
+  DropdownSubmenu,
+  DropdownSubmenuTrigger,
+  DropdownSubmenuContent,
 } from "./ui/dropdown-menu";
 export { Popover, PopoverTrigger, PopoverContent, PopoverClose } from "./ui/popover";
 export { TooltipProvider, Tooltip, TooltipContent } from "./ui/tooltip";

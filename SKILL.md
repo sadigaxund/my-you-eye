@@ -377,7 +377,7 @@ Some components export sub-parts. Import them by name:
 
 **Dialog:** `Dialog, DialogTrigger, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter`
 **Drawer:** `Drawer, DrawerTrigger, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerBody, DrawerFooter`
-**DropdownMenu:** `DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel`
+**DropdownMenu:** `DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel, DropdownSubmenu, DropdownSubmenuTrigger, DropdownSubmenuContent`
 **Popover:** `Popover, PopoverTrigger, PopoverContent, PopoverClose`
 **Tooltip:** `TooltipProvider, Tooltip, TooltipContent`
 **Select:** `Select, SelectTrigger, SelectContent, SelectItem, SelectValue`
