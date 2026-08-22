@@ -371,3 +371,5 @@ export type { ToolbarProps, ToolbarFilterChip } from "./ui/patterns/toolbar";
 // ---------------------------------------------------------------------------
 export { Typography } from "./ui/typography";
 export type { TypographyProps } from "./ui/typography";
+export { VirtualList, computeVirtualWindow, DEFAULT_OVERSCAN } from "./ui/virtual-list";
+export type { VirtualListProps, VirtualWindow } from "./ui/virtual-list";

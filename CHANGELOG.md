@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **VirtualList (#16)** — generic fixed-row-height windowed list composed on ScrollArea: an inner spacer sized to `items.length × rowHeight` keeps scrollbar thumb/track honest while only the current window plus overscan is mounted. `rowHeight` is a required prop (the caller reads it off its own layout tokens — no guessing). The windowing math ships DOM-free as `computeVirtualWindow`/`DEFAULT_OVERSCAN`, unit-testable without a renderer. No tree/list a11y semantics of its own — consumers add per-row roles inside `renderRow`.
+
 - **ContextMenu (#3)** — pointer-position (right-click/long-press) menu on `@radix-ui/react-context-menu` (new direct dependency, pre-approved Radix per-component package), restyled with DropdownMenu's exact classes so the two families are visually indistinguishable. Items take `destructive` for danger-tinted focus; the `onCloseAutoFocus` suppress-refocus recipe is documented in a docblock for menus whose action may remove the triggering row.
 
 - **SegmentedControl (#9)** — a single-choice segmented toggle on native radio inputs (radiogroup semantics + arrow-key model for free), distinct from `Tabs` (which is navigation bound to panels). Generic over the value's string type; per-segment real `disabled`; three sizes (`xs`/`sm`/`md`); `iconOnly` mode moves labels into tooltips. Active segment uses the theme's primary at 15% tint.
