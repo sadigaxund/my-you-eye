@@ -152,10 +152,95 @@ const tallData: TreeNode[] = [
   { id: "t2", label: "narration", value: { type: "audio", value: "https://example.com/narration.mp3" } },
 ];
 
+const explorerData: TreeNode[] = [
+  {
+    id: "src",
+    label: "src",
+    icon: <FolderIcon />,
+    children: [
+      { id: "main", label: "main.tsx", icon: <FileIcon /> },
+      { id: "styles", label: "styles.css", tone: "warning", icon: <FileIcon /> },
+      { id: "deleted", label: "legacy.tsx", tone: "danger", icon: <FileIcon /> },
+    ],
+  },
+  { id: "readme", label: "README.md", icon: <FileIcon /> },
+  { id: "notes", label: "scratch/", tone: "muted", icon: <FolderIcon />, children: [{ id: "todo", label: "todo.md", icon: <FileIcon /> }] },
+];
+
+function SelectionDemo() {
+  const [selectedId, setSelectedId] = useState<string | undefined>("main");
+  return (
+    <div className="mx-auto max-w-xs">
+      <TreeView data={explorerData} defaultExpandedDepth={2} selectedId={selectedId} onSelect={(n) => setSelectedId(n.id)} />
+      <p className="mt-2 text-xs text-muted text-center">Selected: {selectedId ?? "none"} — tones mark modified (amber) and deleted (struck) files.</p>
+    </div>
+  );
+}
+
+function RenameDemo() {
+  const [data, setData] = useState<TreeNode[]>([
+    { id: "doc", label: "architecture.md", icon: <FileIcon /> },
+    { id: "guide", label: "getting-started.md", icon: <FileIcon /> },
+  ]);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  return (
+    <div className="mx-auto max-w-xs">
+      <TreeView
+        data={data}
+        renamingId={renamingId}
+        onRenameCommit={(node, newName) => {
+          setData((prev) => prev.map((n) => (n.id === node.id ? { ...n, id: newName, label: newName } : n)));
+          setRenamingId(null);
+        }}
+        onRenameCancel={() => setRenamingId(null)}
+        onSelect={(n) => {
+          if (n.id !== renamingId) setRenamingId(n.id);
+        }}
+      />
+      <p className="mt-2 text-xs text-muted text-center">Click a row to rename it in place — Enter commits, Escape cancels.</p>
+    </div>
+  );
+}
+
+function DragDemo() {
+  const [data, setData] = useState<TreeNode[]>([
+    { id: "docs", label: "docs", icon: <FolderIcon />, children: [{ id: "a", label: "a.md", icon: <FileIcon /> }] },
+    { id: "b", label: "b.md", icon: <FileIcon /> },
+  ]);
+  return (
+    <div className="mx-auto max-w-xs">
+      <TreeView
+        data={data}
+        defaultExpandedDepth={2}
+        draggable
+        onMove={(sourceId, targetId) => {
+          const detach = (nodes: TreeNode[]): TreeNode[] =>
+            nodes
+              .filter((n) => n.id !== sourceId)
+              .map((n) => (n.children ? { ...n, children: detach(n.children) } : n));
+          const attach = (nodes: TreeNode[]): TreeNode[] =>
+            nodes.map((n) => (n.id === targetId && n.children ? { ...n, children: [...detach(n.children), ...pluck(data, sourceId)] } : n));
+          setData(() => attach(detach(data)));
+        }}
+      />
+      <p className="mt-2 text-xs text-muted text-center">Drag rows onto folders to move them; self/descendant drops are refused.</p>
+    </div>
+  );
+}
+
+function pluck(nodes: TreeNode[], id: string): TreeNode[] {
+  for (const n of nodes) {
+    if (n.id === id) return [n];
+    const hit = n.children ? pluck(n.children, id) : [];
+    if (hit.length) return hit;
+  }
+  return [];
+}
+
 const entry: ShowcaseEntry = {
   title: "TreeView",
   group: "data",
-  description: "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, and typed value rendering.",
+  description: "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, typed value rendering, and controlled selection with rename and drag hooks.",
   demos: [
     {
       name: "Density (normal vs compact)",
@@ -230,6 +315,20 @@ const entry: ShowcaseEntry = {
           <TreeView data={messyPayload} defaultExpandedDepth={1} />
         </div>
       ),
+    },
+    {
+      name: "Controlled selection & tones",
+      description:
+        "selectedId is decoupled from keyboard focus; tone tints labels with semantic tokens (danger strikes through).",
+      render: () => <SelectionDemo />,
+    },
+    {
+      name: "Inline rename",
+      render: () => <RenameDemo />,
+    },
+    {
+      name: "Drag to move",
+      render: () => <DragDemo />,
     },
   ],
 };
