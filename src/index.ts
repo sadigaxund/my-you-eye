@@ -367,6 +367,8 @@ export type {
 } from "./ui/patterns/sequence-diagram";
 export { StatCard } from "./ui/patterns/stat-card";
 export type { StatCardProps, StatCardDelta, StatCardSparklineProps } from "./ui/patterns/stat-card";
+export { SidebarContainer } from "./ui/sidebar-container";
+export type { SidebarContainerProps } from "./ui/sidebar-container";
 export { StatGrid, STAT_GRID_COLUMNS_CLASS } from "./ui/patterns/stat-grid";
 export type { StatGridProps, StatGridItem } from "./ui/patterns/stat-grid";
 export { SplitPane, ResizeHandle, DockOverlay, resizePair, MIN_FRACTION } from "./ui/split-pane";
