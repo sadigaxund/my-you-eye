@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **ColorField (#20)** — themed accent-color field: token-styled swatch trigger over the platform's native color input (accessible, zero reinvention), validated hex readout with danger-border on invalid text, optional preset swatch row. An in-app popover picker stays future work per the issue's own "nice-to-have" verdict.
+
 - **Button `size="xs"` (#17)** — micro icon-only tier (20px, below `icon-sm`) for sidebar-header rows of New/Refresh/Collapse icons; composes with Tooltip like any Button.
 
 - **TreeList (#26)** — the tree×table hybrid neither DataTable (flat) nor TreeView (label-only) covered: rows expand like a tree (TreeView's controlled/uncontrolled expansion model) while carrying typed columns rendered through CellType, with DataTable's column contract (`key`/`header`/`type`/`align`), indent elbow guides, sticky header, density, and controlled selection.

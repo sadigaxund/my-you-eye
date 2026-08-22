@@ -34,6 +34,8 @@ export { CheckboxTree } from "./ui/checkbox-tree";
 export type { CheckboxTreeProps, CheckboxTreeNode } from "./ui/checkbox-tree";
 export { EditorTabBar } from "./ui/editor-tab-bar";
 export type { EditorTabBarProps, EditorTab } from "./ui/editor-tab-bar";
+export { ColorField } from "./ui/color-field";
+export type { ColorFieldProps } from "./ui/color-field";
 export { Combobox } from "./ui/combobox";
 export type { ComboboxProps, ComboboxOption } from "./ui/combobox";
 export {
