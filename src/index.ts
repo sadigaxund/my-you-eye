@@ -30,6 +30,8 @@ export { Button, buttonVariants } from "./ui/button";
 export type { ButtonProps } from "./ui/button";
 export { Checkbox, checkboxVariants } from "./ui/checkbox";
 export type { CheckboxProps } from "./ui/checkbox";
+export { CheckboxTree } from "./ui/checkbox-tree";
+export type { CheckboxTreeProps, CheckboxTreeNode } from "./ui/checkbox-tree";
 export { Combobox } from "./ui/combobox";
 export type { ComboboxProps, ComboboxOption } from "./ui/combobox";
 export {
