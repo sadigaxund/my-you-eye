@@ -20,8 +20,29 @@ import { FormField, Input } from "my-you-eye";
 </FormField>
 ```
 
-Why: the pattern wires `aria-describedby`, `aria-invalid`, help/error
-placement, and spacing. Hand-wiring them is where a11y bugs are born.
+Why: the pattern wires `aria-describedby`, `aria-invalid`, `data-invalid`,
+and help/error placement automatically onto its single control child, and
+marks the error text `role="alert"`. Hand-wiring them is where a11y bugs are
+born. Styling hook: controls styled with `data-[invalid]:…` react to
+FormField's error state without extra props.
+
+## DialogTitle is required — hide it, never omit it
+
+```tsx
+// ❌ WRONG — no title; screen readers announce an unnamed dialog
+<DialogContent><p>Are you sure?</p>…</DialogContent>
+```
+
+```tsx
+// ✅ RIGHT — visually hidden title when the design shows none
+<DialogContent>
+  <DialogTitle className="sr-only">Delete file</DialogTitle>
+  …
+</DialogContent>
+```
+
+Focus is trapped and restored by the library; initial focus lands inside.
+Destructive confirms keep that discipline through `ConfirmDialog`.
 
 ## A disabled submit must explain why
 

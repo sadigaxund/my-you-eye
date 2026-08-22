@@ -48,6 +48,28 @@
   color: var(--color-fg);
 }
 
+/* Dark mode is an explicit consumer decision (.dark on <html>) — native
+   inputs, scrollbars, and form controls must follow it too (#29). */
+.dark,
+[data-theme].dark {
+  color-scheme: dark;
+}
+
+/* Reduced-motion guard (#29): every CSS animation/transition in the ui tier
+   (animate-in/out entrances, hover transitions) collapses to effectively
+   instant. The motion tier (src/motion) is frame-driven via progress and
+   unaffected by this — its pacing belongs to the timeline, not to CSS. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 [data-font="serif"] {
   --font-sans: var(--font-serif);
   --font-mono: "Courier New", monospace;

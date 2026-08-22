@@ -7,7 +7,7 @@ const dialogOverlay =
   "fixed inset-0 z-[var(--z-overlay)] bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out";
 
 const dialogContentVariants = cva(
-  "fixed left-1/2 top-1/2 z-[var(--z-overlay)] w-full -translate-x-1/2 -translate-y-1/2 rounded-ui bg-surface-elevated p-6 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "fixed left-1/2 top-1/2 z-[var(--z-overlay)] w-full -translate-x-1/2 -translate-y-1/2 rounded-ui bg-surface-elevated p-6 shadow-lg overscroll-contain data-[state=open]:animate-in data-[state=closed]:animate-out",
   {
     variants: {
       size: {
@@ -34,8 +34,15 @@ const DialogContent = forwardRef<React.ComponentRef<typeof Content>, DialogConte
       <Overlay className={dialogOverlayWithBlur} />
       <Content ref={ref} className={cn("backdrop-blur-ui", dialogContentVariants({ size }), className)} style={{ borderWidth: "var(--border-width)" }} {...props}>
         {children}
-        <Close className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100">
-          <svg viewBox="0 0 15 15" className="size-4 fill-current">
+        {/* Icon-only control: the accessible name is mandatory (#29). Radix's
+            DialogContent already warns when DialogTitle is missing — a title
+            is REQUIRED; consumers hiding it visually use
+            <DialogTitle className="sr-only">. */}
+        <Close
+          aria-label="Close"
+          className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring"
+        >
+          <svg viewBox="0 0 15 15" aria-hidden="true" className="size-4 fill-current">
             <path d="M2 2l11 11M13 2L2 13" stroke="currentColor" strokeWidth="1.5" fill="none" />
           </svg>
         </Close>
