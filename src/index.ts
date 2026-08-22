@@ -183,12 +183,16 @@ export { TooltipProvider, Tooltip, TooltipContent } from "./ui/tooltip";
 // ---------------------------------------------------------------------------
 // Navigation — moving between places.
 // ---------------------------------------------------------------------------
+export { ActivityBar } from "./ui/activity-bar";
+export type { ActivityBarProps, ActivityBarItem } from "./ui/activity-bar";
 export { Breadcrumbs } from "./ui/breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./ui/breadcrumbs";
 export { Link, linkVariants } from "./ui/link";
 export type { LinkProps } from "./ui/link";
 export { Pagination } from "./ui/pagination";
 export type { PaginationProps } from "./ui/pagination";
+export { StatusBar, StatusBarItem } from "./ui/status-bar";
+export type { StatusBarProps, StatusBarItemProps } from "./ui/status-bar";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 export type { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps } from "./ui/tabs";
 

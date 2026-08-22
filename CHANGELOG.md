@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **App-chrome components on the sidebar namespace** (#6, #7): `ActivityBar` — vertical icon rail with an active left-edge accent bar (never a fill), per-item count badges, bottom-pinned footer item, labels in right-side tooltips; `StatusBar`/`StatusBarItem` — two-sided compact strip whose `tone` maps to the semantic token vocabulary Badge/Alert already use. Both paint exclusively from `--color-sidebar-*` (#27), codifying the persistent-chrome pattern.
+
 - **CheckboxTree (#19)** — controlled tree picker with derived tri-state folders: given a `checked` set of FILE ids, folder checked/unchecked/indeterminate is computed fresh every render (never stored, so it can't drift), and toggling a folder applies to all descendants. Rows use the library's own `Checkbox` (Radix native mixed state); unchecked rows dim as a second cue. The checked-set owner stays external by contract.
 
 - **VirtualList (#16)** — generic fixed-row-height windowed list composed on ScrollArea: an inner spacer sized to `items.length × rowHeight` keeps scrollbar thumb/track honest while only the current window plus overscan is mounted. `rowHeight` is a required prop (the caller reads it off its own layout tokens — no guessing). The windowing math ships DOM-free as `computeVirtualWindow`/`DEFAULT_OVERSCAN`, unit-testable without a renderer. No tree/list a11y semantics of its own — consumers add per-row roles inside `renderRow`.
