@@ -14,6 +14,24 @@ the renderers that turn scene data into an MP4 or a live click-through
 menu, or a hand-drawn diagram/chart.** There is almost certainly already a
 component for it.
 
+## Step 0 — load your context (once per session)
+
+1. **The manifest is ground truth**: `components.json` / `COMPONENTS.md` (or
+   `npx my-you-eye list`). Every prop signature and variant value you use
+   must come from there — never from memory or another project's habits.
+2. **Check what exists before building anything.** Search the manifest
+   first. If the consuming project keeps a local-components inventory (e.g.
+   `src/components/local/` + a backlog doc), check that too. Agents were
+   observed rebuilding solved primitives (context menus, segmented
+   controls…) — don't. The order is: library component → local composition
+   of library parts → propose it upstream.
+3. **Note the project's own law**: its AGENTS/CLAUDE.md and design spec sit
+   ABOVE this skill in precedence. When they disagree with anything here,
+   they win — record the conflict instead of silently picking a side.
+4. **Domain detail lives in referenced files** — `references/*.md` and
+   `references/rules/*.md`. This file is the map; open the territory before
+   implementing.
+
 ## Step 1 — find the component (always do this first)
 
 Read `components.json` (machine-readable) or `COMPONENTS.md` (human-readable)
@@ -40,6 +58,7 @@ Or run `npx my-you-eye list` for a terminal overview of all components.
 | A custom animation: entrance/attention effects, camera pans | `references/motion.md` |
 | A whole video or click-through presentation | **"Script → scenes" workflow below**, then `references/scenes.md` |
 | Charts, `CodeBlock`/`Terminal`/`DiffBlock`, stat tiles, tables/lists/trees | `references/data-display.md` |
+| Frontend craft beyond this library: React perf, component API design, a11y, motion discipline, UX copy | **`references/skills-index.md`** — router over vendored third-party agent skills |
 
 ## Step 3 — use it
 
@@ -66,6 +85,11 @@ import "my-you-eye/styles.css"; // once, at the app root
   the live `Presenter` never need Remotion installed.
 
 ## The rules that matter most
+
+These five are the compressed version. `references/rules/*.md` carry each
+domain as Incorrect/Correct code pairs — **open the relevant pair file before
+writing component code** (`styling.md`, `forms.md`, `composition.md`,
+`icons.md`).
 
 1. **Two different stability contracts — do not cross them.** `my-you-eye/scenes`
    data (a `Video` object) accepts **no** `className`, `style`, color, pixel
@@ -180,6 +204,50 @@ line length (~70ch max), `default` or `stark` theme.
 `rowKey`) → `Pagination`. Row click opens a `Drawer` with a `DataList`
 detail view + actions. Bulk import via `FileDrop`. Creation via `Dialog`
 with `FormField`s.
+
+## Need → component (quick lookup)
+
+The playbooks above are recipes; this is the dictionary. Full signatures in
+`components.json`.
+
+| You need… | Use |
+|---|---|
+| Immediate on/off setting | `Switch` |
+| One-of, submitted form, ≤5 options | `RadioGroup` |
+| One-of, many options / searchable | `Select` / `Combobox` |
+| Many-of selection | `MultiSelect` |
+| Command palette / ⌘K search | `CommandPalette` |
+| Confirm a destructive action | `ConfirmDialog` (+ `variant="danger"`) |
+| Async result feedback | `useToast`; validation summary: inline `Alert` |
+| Empty region with a next step | `EmptyState` (one action) |
+| Loading region | `Skeleton` mirroring the real layout |
+| KPI tile with trend/delta | `StatCard` / `StatGrid` (`sparkline`, `delta`) |
+| Comparison / trend / part-of-whole / correlation / matrix chart | `BarChart` / `LineChart` / `PieChart`+`Funnel` / `ScatterPlot` / `Heatmap` |
+| Single value vs thresholds | `Gauge` |
+| Tiny inline trend | `Sparkline` |
+| Formatted values (bytes, dates, currency, status) | `CellType` — pass `type`, never format by hand |
+| Tabular data, sortable/sticky | `DataTable` (typed columns, `rowKey`) |
+| Key–value details panel | `DataList` |
+| Hierarchical nav or data | `FileTree` (files) / `TreeView` (anything else) |
+| Node/pipeline editor | `Graph` pattern; static architecture panel: `Canvas` + `GraphNode` + `ConnectionLayer` |
+| Architecture/dataflow diagram (non-interactive) | `DiagramScene` data or `references/diagrams.md` patterns |
+| Code display / before-after / fake CLI | `CodeBlock` / `DiffBlock` / `Terminal` |
+| Rich text body | `Markdown` |
+| Page scaffold / filter row | `PageShell` / `Toolbar` |
+| Before-after visual proof | `Comparison` wipe |
+| Themed textured backdrop | `TexturedSurface` (one layer hierarchy per page) |
+
+## Consent gates — ask before you
+
+1. **Add any dependency** (npm package). The library's set is closed;
+   Radix/CVA/clsx/tailwind-merge are pre-approved only inside the library
+   repo. If a task seems to need a new package, stop and ask.
+2. **Fork or copy component source.** Never paste a component's JSX to
+   restyle it. Customize via variants, tokens, or an upstream change.
+3. **Make a multi-file structural change.** State the plan (files + why)
+   and get agreement first — the equivalent of shadcn's dry-run/diff review.
+4. **Invent a new pattern** not covered by the playbooks. Say which playbook
+   you checked and what's missing.
 
 ## Design rules that make it look professional
 
@@ -343,6 +411,9 @@ supports a subset — see `references/scenes.md`'s "Theme caveat".
 npx my-you-eye init [--force]   Copy SKILL.md + references/ + components.json to skills/
 npx my-you-eye list             List all components with groups and variants
 npx my-you-eye sync             Re-copy SKILL.md + references/ + components.json (overwrite)
+npx my-you-eye skills:init      Scaffold skills/vendor.config.json + empty lock
+npx my-you-eye skills:update    Vendor pinned skill bodies into skills/vendor/
+                                (--latest floats pins to HEAD; --source <id> filters one)
 npx my-you-eye --help           Show usage
 ```
 
@@ -380,8 +451,11 @@ Update this file when — and only when — one of these happens:
 
 After any edit: verify every component name mentioned here exists in
 `components.json` (`npx my-you-eye list` is the quick cross-check), keep the
-playbooks/decision tables in the same compact format, and don't let this
-file grow past roughly its current length — it is loaded into context
-whenever the skill triggers, so every added paragraph must earn its keep.
+playbooks/decision tables in the same compact format, and don't let this file
+grow past roughly its current length — it is loaded into context whenever
+the skill triggers, so every added paragraph must earn its keep.
 The deep references (`references/*.md`) are the place for detail; this file
-is the map, not the territory.
+is the map, not the territory. The same split governs
+`references/rules/*.md`: each holds one domain's Incorrect/Correct pairs,
+grows by adding pairs (never prose essays), and is pointed to from the
+"rules that matter most" section here.
