@@ -93,7 +93,12 @@ const SelectItem = forwardRef<React.ComponentRef<typeof Item>, SelectItemProps>(
           </ItemIndicator>
         </span>
       )}
-      <ItemText>{children}</ItemText>
+      {/* Item content is one visual unit: icon + label on a single row that
+          never wraps, so consumers compose an icon directly as a child
+          without hand-rolling the same wrapper span (#24). */}
+      <ItemText>
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">{children}</span>
+      </ItemText>
     </Item>
   ),
 );

@@ -6,6 +6,36 @@ const entry: ShowcaseEntry = {
   group: "inputs",
   demos: [
     {
+      name: "Icon + label",
+      description:
+        "Item content is one unwrappable row — compose an icon directly as a child, no wrapper span needed.",
+      render: () => (
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="General access" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="restricted">
+                <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5 fill-none stroke-current" strokeWidth="1.5">
+                  <rect x="3.5" y="7" width="9" height="6.5" rx="1" />
+                  <path d="M5.5 7V5a2.5 2.5 0 015 0v2" />
+                </svg>
+                Restricted to listed people
+              </SelectItem>
+              <SelectItem value="link">
+                <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5 fill-none stroke-current" strokeWidth="1.5">
+                  <circle cx="8" cy="8" r="5.5" />
+                  <path d="M2.5 8h11M8 2.5c1.8 1.6 2.6 3.4 2.6 5.5S9.8 12.9 8 13.5C6.2 12.9 5.4 10.1 5.4 8S6.2 4.1 8 2.5z" />
+                </svg>
+                Anyone with the link
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      ),
+    },
+    {
       name: "Sizes",
       render: () => (
         <div className="flex flex-col gap-3 max-w-xs mx-auto">
