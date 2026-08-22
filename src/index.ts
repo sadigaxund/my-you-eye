@@ -369,6 +369,16 @@ export { StatCard } from "./ui/patterns/stat-card";
 export type { StatCardProps, StatCardDelta, StatCardSparklineProps } from "./ui/patterns/stat-card";
 export { StatGrid, STAT_GRID_COLUMNS_CLASS } from "./ui/patterns/stat-grid";
 export type { StatGridProps, StatGridItem } from "./ui/patterns/stat-grid";
+export { SplitPane, ResizeHandle, DockOverlay, resizePair, MIN_FRACTION } from "./ui/split-pane";
+export type {
+  SplitPaneProps,
+  SplitNode,
+  SplitLeaf,
+  SplitBranch,
+  ResizeHandleProps,
+  DockOverlayProps,
+  DockEdge,
+} from "./ui/split-pane";
 export { TexturedSurface, texturedSurfaceVariants } from "./ui/patterns/textured-surface";
 export type { TexturedSurfaceProps, TextureName } from "./ui/patterns/textured-surface";
 export { Toolbar } from "./ui/patterns/toolbar";
