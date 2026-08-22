@@ -43,7 +43,22 @@ export interface DataTableProps extends HTMLAttributes<HTMLDivElement>, VariantP
    *  filtered, or spliced — without it rows are keyed by index, so React reuses
    *  the wrong DOM (and any cell state inside it) after the array shifts. */
   rowKey?: (row: Record<string, unknown>, index: number) => string | number;
+  /** Row-level click (open-detail pattern). Clicks on interactive descendants
+   *  (buttons, links, inputs) inside the row never trigger it. Keyboard users
+   *  reach the same destination through focusable controls in the row — keep
+   *  at least one real button/link per row when rows are clickable. */
+  onRowClick?: (row: Record<string, unknown>, e: React.MouseEvent<HTMLTableRowElement>) => void;
+  /** Per-row action controls rendered in a trailing cell (#25) — icon buttons,
+   *  menus. Return real controls; they own their own handlers/confirm flows. */
+  renderActions?: (row: Record<string, unknown>) => React.ReactNode;
+  /** Column header for the actions cell. Default "Actions". */
+  actionsHeader?: string;
+  /** Width of the trailing actions column under layout="fixed" (any CSS width:
+   *  "10%", "8rem"). Unset, the column shares the leftover space equally. */
+  actionsWidth?: string;
 }
+
+const INTERACTIVE_SELECTOR = "button,a,input,select,textarea,label,[role='button'],[role='menuitem']";
 
 const dataTableVariants = cva("", {
   variants: {
@@ -63,7 +78,8 @@ const dataTableVariants = cva("", {
 });
 
 const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
-  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", rowKey, ...props }, ref) => (
+  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", rowKey, onRowClick, renderActions, actionsHeader = "Actions", actionsWidth, ...props }, ref) => {
+    const hasActions = Boolean(renderActions);
     // `density` is intentionally NOT forwarded to Table/TableRow — that variant
     // was a no-op there (see TODO.md A2) and was removed. TableHead/TableCell
     // are the real owners of row density; it reaches them below.
@@ -71,49 +87,71 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
     // that should carry any rounding a consumer wants, so its own overflow-auto
     // box owns both the clip radius and the scrollbar — see ScrollArea's own
     // comment for why a separate ancestor wrapper mis-renders the corner.
-    <ScrollArea ref={ref} className={cn("w-full", className)} {...props}>
-      <Table
-        variant={variant}
-        className={layout === "fixed" ? "table-fixed" : "table-auto"}
-      >
-        {layout === "fixed" && (
-          <colgroup>
-            {columns.map((col) => (
-              <col key={col.key} style={col.width ? { width: COLUMN_WIDTH_SCALE[col.width] } : undefined} />
-            ))}
-          </colgroup>
-        )}
-        <TableHeader sticky={stickyHeader}>
-          <TableRow>
-            {columns.map((col) => (
-              <TableHead key={col.key} density={density} align={col.align}>
-                {col.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row, i) => (
-            <TableRow key={rowKey ? rowKey(row, i) : i}>
+    return (
+      <ScrollArea ref={ref} className={cn("w-full", className)} {...props}>
+        <Table
+          variant={variant}
+          className={layout === "fixed" ? "table-fixed" : "table-auto"}
+        >
+          {layout === "fixed" && (
+            <colgroup>
               {columns.map((col) => (
-                <TableCell key={col.key} density={density} align={col.align}>
-                  <CellType
-                    type={col.type}
-                    value={row[col.key]}
-                    badgeVariant={col.badgeVariant}
-                    badgeStyle={col.badgeStyle}
-                    statusVariant={typeof col.statusVariant === "function" ? col.statusVariant(row[col.key]) : col.statusVariant}
-                    statusPulse={col.statusPulse}
-                    replacements={replacements}
-                  />
-                </TableCell>
+                <col key={col.key} style={col.width ? { width: COLUMN_WIDTH_SCALE[col.width] } : undefined} />
               ))}
+              {hasActions && <col style={actionsWidth ? { width: actionsWidth } : undefined} />}
+            </colgroup>
+          )}
+          <TableHeader sticky={stickyHeader}>
+            <TableRow>
+              {columns.map((col) => (
+                <TableHead key={col.key} density={density} align={col.align}>
+                  {col.header}
+                </TableHead>
+              ))}
+              {hasActions && <TableHead density={density} align="right">{actionsHeader}</TableHead>}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </ScrollArea>
-  ),
+          </TableHeader>
+          <TableBody>
+            {rows.map((row, i) => (
+              <TableRow
+                key={rowKey ? rowKey(row, i) : i}
+                className={onRowClick ? "cursor-pointer" : undefined}
+                onClick={
+                  onRowClick
+                    ? (e) => {
+                        // Clicks that land on a real control inside the row
+                        // belong to that control, not the row.
+                        if ((e.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) return;
+                        onRowClick(row, e);
+                      }
+                    : undefined
+                }
+              >
+                {columns.map((col) => (
+                  <TableCell key={col.key} density={density} align={col.align}>
+                    <CellType
+                      type={col.type}
+                      value={row[col.key]}
+                      badgeVariant={col.badgeVariant}
+                      badgeStyle={col.badgeStyle}
+                      statusVariant={typeof col.statusVariant === "function" ? col.statusVariant(row[col.key]) : col.statusVariant}
+                      statusPulse={col.statusPulse}
+                      replacements={replacements}
+                    />
+                  </TableCell>
+                ))}
+                {hasActions && (
+                  <TableCell density={density} align="right">
+                    {renderActions!(row)}
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ScrollArea>
+    );
+  },
 );
 DataTable.displayName = "DataTable";
 

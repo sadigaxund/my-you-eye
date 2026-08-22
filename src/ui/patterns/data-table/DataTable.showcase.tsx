@@ -1,5 +1,7 @@
+import { useState } from "react";
 import type { ShowcaseEntry } from "../../../showcase/types";
 import { DataTable } from ".";
+import { Button } from "../../button";
 
 const users = [
   { name: "Alice", email: "alice@example.com", role: "Admin", status: "Active", sessions: 1245, lastLogin: "2026-07-17T10:30:00Z" },
@@ -16,6 +18,38 @@ const users = [
 
 const statusFromRole = (v: unknown) =>
   v === "Active" ? "success" : v === "Warning" ? "warning" : v === "Danger" ? "danger" : "neutral";
+
+function RowActionsDemo() {
+  const [lastAction, setLastAction] = useState("");
+  return (
+    <div className="flex flex-col gap-2 max-w-2xl mx-auto">
+      <DataTable
+        columns={[
+          { key: "name", header: "Name", width: "sm" },
+          { key: "role", header: "Role", width: "xs" },
+          { key: "status", header: "Status", width: "xs" },
+        ]}
+        rows={users.slice(0, 4)}
+        rowKey={(row) => String(row.name)}
+        actionsWidth="12%"
+        onRowClick={(row) => setLastAction(`opened ${row.name}'s profile`)}
+        renderActions={(row) => (
+          <span className="inline-flex justify-end gap-1">
+            <Button size="sm" variant="ghost" onClick={() => setLastAction(`edited ${row.name}`)}>
+              Edit
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setLastAction(`revoked ${row.name}`)}>
+              Revoke
+            </Button>
+          </span>
+        )}
+      />
+      <p className="text-xs text-muted text-center">
+        {lastAction ? `Last action: ${lastAction}` : "Click a row, or use its trailing actions."}
+      </p>
+    </div>
+  );
+}
 
 const entry: ShowcaseEntry = {
   title: "DataTable",
@@ -162,6 +196,12 @@ const entry: ShowcaseEntry = {
 
         </div>
       ),
+    },
+    {
+      name: "Row click & actions",
+      description:
+        "onRowClick opens the row's detail; renderActions adds a trailing per-row cell. Clicks on the action buttons stay with the buttons.",
+      render: () => <RowActionsDemo />,
     },
   ],
 };
