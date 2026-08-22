@@ -85,16 +85,15 @@ function VirtualListInner<T>(
   );
 }
 
-// Generic forwardRef wrapper: TS can't carry a component's own generic
-// through forwardRef's fixed type parameters (see SegmentedControl).
-const VirtualListBase = forwardRef(VirtualListInner) as <T>(
+// Generic forwardRef: TS can't carry a component's own generic through
+// forwardRef's fixed type parameters (see SegmentedControl). Type-only cast;
+// the runtime value stays forwardRef's own object.
+type VirtualListComponent = <T>(
   props: VirtualListProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> },
 ) => React.JSX.Element;
 
 export const VirtualList = Object.assign(
-  function VirtualList<T>(props: VirtualListProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }) {
-    return VirtualListBase(props);
-  },
+  forwardRef(VirtualListInner) as unknown as VirtualListComponent,
   { displayName: "VirtualList" },
 );
 

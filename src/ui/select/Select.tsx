@@ -56,6 +56,7 @@ const SelectContent = forwardRef<React.ComponentRef<typeof Content>, React.Compo
       <Content
         ref={ref}
         position={position}
+        data-slot="select-content"
         className={cn(
           "backdrop-blur-ui relative z-[var(--z-overlay)] max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
           className,

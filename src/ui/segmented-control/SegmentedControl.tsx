@@ -71,6 +71,7 @@ function SegmentedControlInner<T extends string>(
         const active = option.value === value;
         const segment = (
           <label
+            key={option.value}
             className={cn(
               segmentedSegmentVariants({ size }),
               active ? "bg-primary/15 font-medium text-primary" : "",
@@ -97,7 +98,7 @@ function SegmentedControlInner<T extends string>(
         // In iconOnly mode the label text survives as the tooltip content
         // instead of disappearing entirely (#9).
         return iconOnly ? (
-          <Tooltip key={option.value} content={option.label}>
+          <Tooltip key={`tt-${option.value}`} content={option.label}>
             {segment}
           </Tooltip>
         ) : (
@@ -108,17 +109,16 @@ function SegmentedControlInner<T extends string>(
   );
 }
 
-// Generic forwardRef wrapper: TS can't carry a component's own generic
-// through forwardRef's fixed type parameters, so the inner function owns the
-// generic and this cast restores it per call site (the standard pattern).
-const SegmentedControlBase = forwardRef(SegmentedControlInner) as <T extends string>(
+// Generic forwardRef: TS can't carry a component's own generic through
+// forwardRef's fixed type parameters, so the inner function owns the generic
+// and this type-only cast restores it per call site. The RUNTIME value stays
+// forwardRef's own object (React invokes .render itself — never call it).
+type SegmentedControlComponent = <T extends string>(
   props: SegmentedControlProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> },
 ) => React.JSX.Element;
 
 export const SegmentedControl = Object.assign(
-  function SegmentedControl<T extends string>(props: SegmentedControlProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }) {
-    return SegmentedControlBase(props);
-  },
+  forwardRef(SegmentedControlInner) as unknown as SegmentedControlComponent,
   { displayName: "SegmentedControl" },
 );
 

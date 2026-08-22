@@ -59,6 +59,17 @@
    (animate-in/out entrances, hover transitions) collapses to effectively
    instant. The motion tier (src/motion) is frame-driven via progress and
    unaffected by this — its pacing belongs to the timeline, not to CSS. */
+/* Radix Select wraps its popover in react-remove-scroll with no opt-out
+   (2.3.x has no `modal` prop), which hides the PAGE scrollbar while the
+   listbox is open — the layout jumps sideways under the user's cursor and
+   the scrollbar visibly blinks out on every selection. A select listbox is
+   a transient popover, not a modal: it doesn't need a body lock. Restore
+   normal page scrolling while a select popover exists. */
+body:has([data-slot="select-content"]) {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
