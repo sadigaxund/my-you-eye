@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **ContextMenu (#3)** — pointer-position (right-click/long-press) menu on `@radix-ui/react-context-menu` (new direct dependency, pre-approved Radix per-component package), restyled with DropdownMenu's exact classes so the two families are visually indistinguishable. Items take `destructive` for danger-tinted focus; the `onCloseAutoFocus` suppress-refocus recipe is documented in a docblock for menus whose action may remove the triggering row.
+
 - **SegmentedControl (#9)** — a single-choice segmented toggle on native radio inputs (radiogroup semantics + arrow-key model for free), distinct from `Tabs` (which is navigation bound to panels). Generic over the value's string type; per-segment real `disabled`; three sizes (`xs`/`sm`/`md`); `iconOnly` mode moves labels into tooltips. Active segment uses the theme's primary at 15% tint.
 
 - **DropdownSubmenu (#21)** — `DropdownSubmenu`/`DropdownSubmenuTrigger`/`DropdownSubmenuContent` restyle Radix's Sub parts to be visually indistinguishable from the top-level menu. Same a11y model (arrow-right/hover opens, arrow-left/Escape closes, typeahead across levels); `disabled` on the trigger grays out an entire submenu at once — sanctioned over disabling every leaf item.

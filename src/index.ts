@@ -32,6 +32,13 @@ export { Checkbox, checkboxVariants } from "./ui/checkbox";
 export type { CheckboxProps } from "./ui/checkbox";
 export { Combobox } from "./ui/combobox";
 export type { ComboboxProps, ComboboxOption } from "./ui/combobox";
+export {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "./ui/context-menu";
 export { FileDrop, fileDropVariants } from "./ui/file-drop";
 export type { FileDropProps } from "./ui/file-drop";
 export { Input, inputVariants } from "./ui/input";
