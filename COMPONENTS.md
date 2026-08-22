@@ -14,7 +14,7 @@ import { VideoRoot } from "my-you-eye/video";
 import "my-you-eye/styles.css";
 ```
 
-**129 components** across 12 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
+**129 components** across 13 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
 
 ## Video schema
 
@@ -701,6 +701,25 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children" \|
 | `onRenameCancel?` | `() => void` | — |
 | `draggable?` | `boolean` | Enable HTML5 drag-and-drop of rows onto folder rows ("into" moves). |
 | `onMove?` | `(sourceId: string, targetId: string, mode: "into" \| "before" \| "after") => void` | Called after a legal drop (#11). |
+
+## decorators
+
+| Component | Tier | Variants (**default**) | Demos |
+|---|---|---|---|
+| `TexturedSurface` | `my-you-eye` | variant: elevated / **surface**<br>radius: **default** / lg / none / sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Nested inline → theme, Composed |
+
+### decorators — props
+
+#### `TexturedSurface`
+
+Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Omit<HTMLAttributes<HTMLDivElement>, "color">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `color?` | `string` | — |
+| `texture?` | `TextureName` | — |
+| `strength?` | `TextureStrength` | — |
+| `layer?` | `TextureLayer` | — |
 
 ## display
 
@@ -1494,7 +1513,6 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onClose">`.
 | `SplitPane` | `my-you-eye` | — | Nested grid |
 | `StatCard` | `my-you-eye` | — | Default, Size, Numeric delta, Icon + sparkline |
 | `StatGrid` | `my-you-eye` | — | 4-column KPI row, 3-column with sparklines, Size, positiveIsGood |
-| `TexturedSurface` | `my-you-eye` | variant: elevated / **surface**<br>radius: **default** / lg / none / sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
 | `Toolbar` | `my-you-eye` | — | All slots filled, With leading label, Result count + removable filter chips, Narrow / responsive collapse |
 
 ### patterns — props
@@ -1617,17 +1635,6 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `items` | `StatGridItem[]` | — |
 | `columns?` | `2 \| 3 \| 4 \| 5 \| 6` | Column count at the widest breakpoint. |
 | `size?` | `"sm" \| "md" \| "lg"` | Forwarded to every StatCard. |
-
-#### `TexturedSurface`
-
-Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Omit<HTMLAttributes<HTMLDivElement>, "color">`.
-
-| Prop | Type | Description |
-|---|---|---|
-| `color?` | `string` | — |
-| `texture?` | `TextureName` | — |
-| `strength?` | `"subtle" \| "medium" \| "strong"` | — |
-| `layer?` | `TextureLayer` | — |
 
 #### `Toolbar`
 

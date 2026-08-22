@@ -6,7 +6,7 @@
    clear glass. Cool neutral palette, gentle backdrop blur, soft diffused
    (untinted) shadows, and a fine frost-grain overlay on every surface via
    the shared --texture-* mechanism (TexturedSurface's ::after — see
-   AGENTS.md §7 and src/ui/patterns/textured-surface/TexturedSurface.tsx).
+   AGENTS.md §7 and src/ui/decorators/textured-surface/TexturedSurface.tsx).
 
    The full-viewport backdrop is a `position: fixed; pointer-events: none;`
    pseudo-element (never `background-attachment: fixed` — see AGENTS.md §0/§7)
@@ -56,6 +56,7 @@ html[data-theme="frosted"].dark::before {
   --color-success: oklch(0.48 0.13 155);
   --color-success-fg: oklch(1 0 0);
   --color-warning: oklch(0.72 0.15 80);
+  --color-warning-fg: oklch(0.22 0.01 235);
 
   /* Colors - Frosted surfaces (translucency lives only here) */
   --color-surface: oklch(0.99 0.004 235 / 0.72);
@@ -133,6 +134,7 @@ html[data-theme="frosted"].dark::before {
   --color-success: oklch(0.55 0.13 155);
   --color-success-fg: oklch(0 0 0);
   --color-warning: oklch(0.78 0.15 80);
+  --color-warning-fg: oklch(0.22 0.01 235);
 
   --color-surface: oklch(0.22 0.01 235 / 0.7);
   --color-surface-hover: oklch(0.26 0.01 235 / 0.78);

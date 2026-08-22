@@ -389,8 +389,8 @@ export type {
   DockOverlayProps,
   DockEdge,
 } from "./ui/split-pane";
-export { TexturedSurface, texturedSurfaceVariants } from "./ui/patterns/textured-surface";
-export type { TexturedSurfaceProps, TextureName } from "./ui/patterns/textured-surface";
+export { TexturedSurface, texturedSurfaceVariants } from "./ui/decorators/textured-surface";
+export type { TexturedSurfaceProps, TextureName } from "./ui/decorators/textured-surface";
 export { Toolbar } from "./ui/patterns/toolbar";
 export type { ToolbarProps, ToolbarFilterChip } from "./ui/patterns/toolbar";
 

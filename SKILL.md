@@ -361,7 +361,10 @@ BarChart, ChartFrame, Funnel, Gauge, Heatmap, Legend, LineChart, PieChart, Scatt
 CellType, DataList, DataTable, Table, Timeline, TreeView
 
 ### patterns
-Comparison, ConfirmDialog, FileTree, FormField, PageShell, SequenceDiagram, StatCard, StatGrid, TexturedSurface, Toolbar
+Comparison, ConfirmDialog, FileTree, FormField, PageShell, SequenceDiagram, StatCard, StatGrid, Toolbar
+
+### decorators
+TexturedSurface
 
 ### typography
 Typography
@@ -410,6 +413,36 @@ shadows · `neon` vibrant dev-tool energy · `glass` translucent modern SaaS ·
 `frosted` softer glass · `comic` hand-drawn playful · `metallic` brushed
 industrial. A video/presentation's `meta.theme` (`my-you-eye/scenes`)
 supports a subset — see `references/scenes.md`'s "Theme caveat".
+## Decorators — composable visual effects
+
+A **decorator** is not a component you fill with content — it *wraps* content and changes how it
+looks. It doesn't care what's inside, so you can wrap anything.
+
+```tsx
+import { TexturedSurface } from "my-you-eye";
+
+<TexturedSurface texture="theme" layer="surface" strength="subtle">
+  <Card>…</Card>
+</TexturedSurface>
+```
+
+Decorators **compose by nesting** — stack them to combine effects:
+
+```tsx
+<TexturedSurface texture="paper-grain" layer="page">
+  <TexturedSurface texture="theme" layer="surface">
+    <Card>…</Card>
+  </TexturedSurface>
+</TexturedSurface>
+```
+
+Rules of thumb:
+- Reach for a decorator when you want a *surface treatment* (texture, depth, glow, border style),
+  not new UI structure.
+- Nest outermost = furthest back. A `layer` of `page` sits behind `surface`, which sits behind
+  `foreground`.
+- Decorators are themeable: `texture="theme"` follows whatever theme is active, so it restyles
+  for free when the user switches themes.
 
 ## CLI tool
 

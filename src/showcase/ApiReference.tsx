@@ -1,6 +1,6 @@
 import { Badge } from "../ui/badge";
-import { TexturedSurface } from "../ui/patterns/textured-surface";
-import type { TextureName } from "../ui/patterns/textured-surface";
+import { TexturedSurface } from "../ui/decorators/textured-surface";
+import type { TextureName } from "../ui/decorators/textured-surface";
 import { findComponentApi, hasApi, splitDefault } from "./manifest";
 import { apiAnchor } from "./registry";
 import type { ManifestComponent } from "./manifest";

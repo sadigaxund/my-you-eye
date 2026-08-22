@@ -66,10 +66,13 @@ function componentFolders() {
   const out = [];
   for (const entry of readdirSync(UI_DIR, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    if (entry.name === "patterns") {
-      const patternsDir = join(UI_DIR, "patterns");
-      for (const pattern of readdirSync(patternsDir, { withFileTypes: true })) {
-        if (pattern.isDirectory()) out.push(join(patternsDir, pattern.name));
+    // Category container dirs hold one folder per component; their children
+    // are the component folders. (decorators added with master's category model)
+    const containers = ["patterns", "decorators"];
+    if (containers.includes(entry.name)) {
+      const containerDir = join(UI_DIR, entry.name);
+      for (const child of readdirSync(containerDir, { withFileTypes: true })) {
+        if (child.isDirectory()) out.push(join(containerDir, child.name));
       }
     } else {
       out.push(join(UI_DIR, entry.name));

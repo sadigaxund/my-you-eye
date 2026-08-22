@@ -49,10 +49,15 @@ set of components. Your job is to keep it that way. These rules are not suggesti
       never repaints, and `backdrop-filter` can sample it cheaply.
     - **Never** let an element with `backdrop-filter` live inside a transforming subtree (i.e.
       inside `Canvas`'s pannable/zoomable layer). `Canvas` enforces this structurally by
-      overriding `--backdrop-blur` (and `--texture-opacity`) to `0` as inline custom properties
-      on its transforming layer — every component already reads these via `var(...)`, so the
-      override cascades to any descendant automatically. Do not reintroduce a hardcoded
-      `backdropFilter` value inside `src/ui/canvas/**` or `src/ui/graph-node/**`.
+      overriding `--backdrop-blur`, `--texture-opacity`, `--texture-opacity-surface` and
+      `--texture-suppress` to `0` as inline custom properties on its transforming layer — every
+      component already reads these via `var(...)`, so the override cascades to any descendant
+      automatically. Do not reintroduce a hardcoded `backdropFilter` value inside
+      `src/ui/canvas/**` or `src/ui/graph-node/**`. This guarantee only reaches `TexturedSurface`
+      instances rendered with `texture="theme"` — an inline texture (`paper-grain` /
+      `frosted-glass` / `brushed-aluminium`) paints via a numeric React `opacity` style that no
+      CSS override can reach, so a non-theme `TexturedSurface` must never be placed inside
+      `Canvas`.
     - **Canvas surfaces are always opaque.** `GraphNode` (and anything else rendered as a
       canvas-space surface) uses `bg-canvas-surface` (the `--color-canvas-surface` token), never
       `bg-surface`. Every theme must define an opaque `--color-canvas-surface` (enforced by
@@ -62,6 +67,26 @@ set of components. Your job is to keep it that way. These rules are not suggesti
 ---
 
 ## 1. Decision tree — follow it top to bottom, stop at first match
+
+### Category map — decide the home BEFORE anything else
+
+Everything in this repo is exactly **one** of five categories. Put work in the right one:
+
+| Category | Home | What it is | Delivered as | Rules |
+|---|---|---|---|---|
+| **Components** | `src/ui/<name>/`, `src/ui/patterns/<name>/` | Self-contained UI (Button, Dialog) or a composition of primitives (FormField) | CVA variants + Radix behavior | §2 |
+| **Themes** | `src/styles/themes/<name>.css` | A complete token-override preset that restyles everything | `data-theme` + `.dark` | §0.9, §7 |
+| **Decorators** | `src/ui/decorators/<name>/` | A composable *visual effect* that WRAPS arbitrary children without knowing what they are (TexturedSurface, and the planned Elevate3d / Glow / HandDrawn border) | wrapper component (CVA + tokens), nested to compose | §2 + §2-decorator |
+| **Motion** | `packages/motion/` | Frame-driven, deterministic animation for the **scripted story** (video export + live presenter) | Remotion wrappers (`useCurrentFrame`) | §9 |
+| **Effects** | `src/ui/effects/` | Live, DOM-native **ambient/interactive** motion (hover-press, scroll-entrance, pulse) — NOT a scripted timeline | CSS transitions / `@keyframes` + hooks (IntersectionObserver). No Remotion. | §9 (effects tier) |
+
+Two distinctions people get wrong:
+- **Component vs Decorator** — renders specific UI content → **component**. Takes `children` and
+  only changes how they *look* (surface, border, glow, depth) without caring what they are →
+  **decorator**.
+- **Motion vs Effects** — frame-driven & deterministic for capture (video/presenter) →
+  `packages/motion` (Remotion). Live & interaction-driven on the page (hover/scroll/pulse) →
+  `src/ui/effects` (CSS + hooks). They share no runtime — **never merge them**. See §9.
 
 You need a UI element. Do this **in order**:
 
@@ -91,6 +116,24 @@ on a `ui/` component, you are in variant territory — go to §3.
 ### Step C — It does not exist at all?
 
 Create it **in this repo** (never inline in a consuming app), following §2 exactly.
+
+### Triage — "I found this HTML/component elsewhere. Can we build it?"
+
+Do **not** paste foreign HTML in. Decompose it against the five categories, in this order:
+
+1. **Structure / behavior** → is it (or can it be built from) an existing **component**? Missing
+   primitive → create it (§2).
+2. **Look** (color/radius/spacing/shadow) → expressible as **theme tokens**? Missing visual
+   constant → add the token first (§0.2), then every theme defines it (§0.9).
+3. **Surface effect** (texture/border/glow/depth/translucency) → a **decorator** (existing or new,
+   §2-decorator).
+4. **Motion** → scripted & deterministic → **motion** (§9); live & interaction-driven → **effects**
+   (§9 effects tier).
+
+If every piece maps → compose them; done. If a piece maps to **nothing**, that gap IS the new
+entry you must add **first** — a token, a component, a decorator, or a primitive — in its own
+category, following its rules. Never inline the foreign markup to "make it work." Unsure which
+category a piece belongs to → §8 (stop and ask).
 
 ---
 
@@ -160,6 +203,29 @@ Work through every step. Do not skip. Do not reorder.
 A file exceeding **250 lines** is flagged by lint (warning). If a component
 legitimately needs more, split subparts into additional files **inside the same
 folder** (e.g. `Table.Row.tsx`) — never into a shared file elsewhere.
+
+### 2-decorator. Creating a decorator
+
+A decorator lives under `src/ui/decorators/<kebab-name>/` with the same file layout and the
+**full §2 checklist**, plus these extra rules. **TexturedSurface is the reference implementation.**
+
+1. **It wraps children it does not understand.** Signature is
+   `({ children, ...effectProps }) => <wrapper>{children}</wrapper>`. Never import or assume a
+   specific `src/ui` component inside a decorator — it decorates *any* `ReactNode`.
+2. **Composable by nesting.** Two decorators must stack
+   (`<Glow><Elevate3d>{x}</Elevate3d></Glow>`) without fighting. Prefer effects that live on the
+   wrapper element, a pseudo-element, or an absolutely-positioned overlay — not ones that
+   restructure children.
+3. **Token-driven, own namespace.** Tunable constants become `--decorator-*` (or a specific
+   `--glow-*` / `--elevate-*`) tokens in `tokens.css`, themed where a theme should be able to
+   art-direct them. No hardcoded values (§0.2).
+4. **Respect the Canvas performance boundary (§0.12).** No `backdrop-filter`/`filter` inside a
+   transforming subtree. A decorator that uses them must document that it cannot be used inside
+   `Canvas`, and read the Canvas-overridden tokens where applicable.
+5. **Showcase group is `decorators`.** Demo the effect on neutral sample content (a Card, a box)
+   with all variants, and demonstrate it composing with at least one other decorator.
+6. Export from `src/index.ts`; `npm run validate` green; visual check in the **decorators** tab,
+   light + dark, across themes.
 
 ## 3. Modifying an existing component — checklist
 
@@ -299,7 +365,7 @@ Runs, in order — ALL must pass:
 
 | Step | Command | Catches |
 |---|---|---|
-| Types | `tsc -b --force` | type errors |
+| Types | `tsc -p tsconfig.app.json --noEmit` | type errors |
 | Lint | `eslint .` | native elements outside `src/ui/`, files >250 lines, restricted imports, arbitrary Tailwind color values |
 | Showcase coverage | `node scripts/check-showcase.mjs` | any component folder under `src/ui/`, `src/motion/`, `src/scenes/`, `src/present/` missing a `*.showcase.tsx`; any `ui/` folder not exported from `src/index.ts` |
 | Export drift | `node scripts/check-exports.mjs` | a symbol a component folder's `index.ts` calls public that `src/index.ts` never re-exports (so consumers can't reach it), and any `export *` in either |
@@ -314,6 +380,17 @@ Runs, in order — ALL must pass:
 
 Rules about validation itself:
 
+- **Do not "simplify" the Types step back to bare `tsc --noEmit`.** Root `tsconfig.json`
+  uses project references with `files: []`, so a bare `tsc --noEmit` traverses nothing and
+  silently type-checks zero files — a no-op that looks green. `tsconfig.app.json` is the
+  config that actually `include`s `src`, so `npm run validate` must invoke
+  `tsc -p tsconfig.app.json --noEmit` to get a real type-check. This was a confirmed hole
+  (fixed 2026-07-23, surfaced 6 pre-existing errors) — reverting it is a weakening of
+  validation and is forbidden by the rule above. `tsconfig.app.json` is the
+  config that actually `include`s `src`, so `npm run validate` must invoke
+  `tsc -p tsconfig.app.json --noEmit` to get a real type-check. This was a confirmed hole
+  (fixed 2026-07-23, surfaced 6 pre-existing errors) — reverting it to bare `tsc --noEmit`
+  is a weakening of validation and is forbidden by the rule above.
 - **Never** modify `scripts/check-showcase.mjs`, `eslint.config.js`, or `tsconfig.json`
   to make a failure pass. If you believe a rule is wrong, stop and report to the human.
 - **Never** use `eslint-disable` without a `-- reason:` comment on the same line, and only
@@ -376,7 +453,10 @@ Token categories: `--color-*`, `--radius-*`, `--spacing-*`, `--opacity-*`, `--sh
 
 ### TexturedSurface — layer × strength system
 
-**Files:** `src/ui/patterns/textured-surface/TexturedSurface.tsx`, `svg-utils.ts`, `ParamTable.tsx`, `texture-factory.ts`
+**Files:** `src/ui/decorators/textured-surface/TexturedSurface.tsx`, `svg-utils.ts`, `ParamTable.tsx`, `texture-factory.ts`
+
+> TexturedSurface is the **reference decorator** (§1 category map, §2-decorator). It lives under
+> `src/ui/decorators/`, not `src/ui/patterns/`.
 
 **Three-tier hierarchy** — every textured surface belongs to one of three layers, each with distinct SVG noise parameters (frequency, octaves, contrast stretch, tile size):
 
@@ -414,7 +494,7 @@ foreground.strong:   freq=0.18, octaves=4, stretch=1.6, tile=100
 | `medium` | 0.50 / 0.35 / 0.28 | Default params |
 | `subtle` | 0.30 / 0.22 / 0.15 | Finer freq, lower stretch within the layer |
 
-**Opacity formula** (read this before adjusting any value):
+**Opacity formula — inline textures only** (`texture="paper-grain" | "frosted-glass" | "brushed-aluminium"`; read this before adjusting any value):
 ```
 FINAL = TEXTURE_STRENGTHS[texture][strength] × LAYER_OPACITY[layer]
 ```
@@ -422,10 +502,12 @@ Example: `<TexturedSurface texture="paper-grain" strength="subtle" layer="foregr
 
 When layering textures (nested TexturedSurfaces), the cumulative effect is multiplicative. A foreground card inside a surface panel inside a page-backed view: the card's own texture at 0.075 compounds with the panel's texture at its opacity. The values are chosen so foreground textures are noticeably lighter — never override `LAYER_OPACITY` or `TEXTURE_STRENGTHS` to flatten this hierarchy.
 
-**SVG preset matrix** — defined in `svg-utils.ts` as `LAYER_SVGS[texture][layer][strength]`, returning `{ primary, secondary, tileSize }`. Each material defines 9 presets (3 layers × 3 strengths). Presets are pre-generated at module level via helper functions (`pAssets`, `mAssets`, `fAssets`) that call `dataUri(paperSvg(...))` etc. — no runtime SVG generation.
+**`texture="theme"` does NOT use this formula for opacity.** In theme mode, `strength` only selects which SVG noise preset to draw (`LAYER_SVGS["paper-grain"][layer][strength]`) — it has no effect on opacity. Theme-mode opacity is `calc(var(--texture-opacity-surface) * LAYER_OPACITY[layer])`, i.e. `TEXTURE_STRENGTHS` is never consulted for this path. This is intentional, not a bug: the active theme (not `strength`) owns the surface's base opacity via `--texture-opacity-surface`, and only the layer multiplier + the theme's chosen intensity apply. Do not "fix" this by multiplying in `strength` — that would change every themed surface's tuned opacity.
+
+**SVG preset matrix** — defined in `svg-utils.ts` as `LAYER_SVGS[texture][layer][strength]`, returning `{ primary, secondary, tileSize }`. Each material defines 9 presets (3 layers × 3 strengths). Presets are pre-generated at module level via helper functions (`pAssets`, `mAssets`, `fAssets`) that call `dataUri(paperSvg(...))` etc. — no runtime SVG generation. `LAYER_SVGS`, `TEXTURE_STRENGTHS` and `TEXTURE_CONFS` are all typed against the `TextureKey` union (`svg-utils.ts`), so adding a texture that misses one of the three tables fails to compile rather than silently falling through at runtime. A `getComputedStyle`-derived value (e.g. `--texture-type`) is untyped at the CSS boundary — narrow it with the exported `isTextureKey` guard before indexing any of these tables.
 
 **Two rendering paths:**
-- **Inline textures** (`texture="paper-grain" | "brushed-aluminium" | "frosted-glass"`): React-rendered `<div>` overlays with `backgroundImage: url("${svg}")`. Theme-independent. Conf is built by `TEXTURE_CONFS[texture](opacity, layer, strength)`.
+- **Inline textures** (`texture="paper-grain" | "brushed-aluminium" | "frosted-glass"`): React-rendered `<div>` overlays with `backgroundImage: url("${svg}")`. Theme-independent. Conf is built by `TEXTURE_CONFS[texture](opacity, layer, strength)`. In DEV (`import.meta.env?.DEV`), a missing `TEXTURE_STRENGTHS`/`TEXTURE_CONFS` entry for the given `texture` logs a `console.warn` instead of silently falling through to theme rendering.
 - **Theme-driven** (`texture="theme"`): `::after` pseudo-element reads `--texture-paper-resolved` / `--texture-opacity-resolved` (with fallback to `--texture-paper` / `--texture-opacity-surface`). Component writes `--texture-paper-resolved` from `LAYER_SVGS["paper-grain"][layer][strength]` and `--texture-opacity-resolved` from `calc(var(--texture-opacity-surface) * layerOpacity)`.
 
 **ParamTable subcomponent** — `<TexturedSurface.ParamTable texture="paper-grain" />` renders a 3×3 grid (layers × strengths) for any texture, filling container width with aspect-square cells. No labels inside cells — just bare texture swatches. Always use literal JSX in showcase files (no `.map()` loops) so the code extractor produces copyable output.
@@ -434,6 +516,13 @@ When layering textures (nested TexturedSurfaces), the cumulative effect is multi
 - Never write to the same CSS custom property that the `::after` reads. The CVA reads `--texture-paper-resolved` (fallback to `--texture-paper`), and the component writes to `--texture-paper-resolved` — never to `--texture-paper`. Same for `--texture-size-resolved` and `--texture-opacity-resolved`.
 - Self-reference example (DO NOT DO): setting `--texture-opacity-surface: calc(var(--texture-opacity-surface) * 0.5)` creates a dependency cycle → guaranteed-invalid → property falls back to initial value (opacity: 1).
 - The `html::before` page texture (Comic theme) uses `--texture-paper` directly — this is fine because the component never writes to the base `--texture-paper` token. The indirection only exists for the `::after` path.
+
+**`--texture-suppress` — nested-texture suppression, without poisoning:**
+- The inline-texture path (above) renders its own visuals via numeric React `opacity` on plain `<div>`s, but it still carries the shared `texturedSurfaceVariants` classes (including the `::after` theme-texture pseudo-element) on its root — so it must suppress its *own* `::after`, or a themed texture would render behind its inline layers too.
+- It does this by setting `--texture-suppress: "0"` (only on itself). The CVA's opacity expression is `calc(var(--texture-opacity-resolved,var(--texture-opacity-surface)) * var(--texture-suppress,1))` — multiplying by `0` zeroes that one element's own `::after`, no matter what it inherited.
+- Because CSS custom properties inherit, `--texture-suppress: 0` also reaches any descendant that doesn't redeclare it. Every `texture="theme"` render therefore unconditionally re-declares `--texture-suppress: "1"` on itself, undoing whatever it inherited from an ancestor inline surface — so a `texture="theme"` surface nested inside an inline one always shows its own texture (see the "Nested inline → theme" showcase demo).
+- **Do not use `--texture-suppress` to intentionally hide a nested theme surface's texture** — a `texture="theme"` render always resets it to `1`. The only real (and correct) way to suppress a nested theme texture is `Canvas`'s override of `--texture-opacity-surface` itself (§0.12), which the theme path never resets.
+- This is a different mechanism from the *former* bug where the inline path zeroed `--texture-opacity-surface` directly as its kill switch — that inherited into nested theme children and silently zeroed their real opacity too. `--texture-suppress` exists so "kill switch" and "real opacity input" are never the same variable.
 
 **Theme tokens for texture:**
 ```
@@ -448,7 +537,7 @@ All per-layer SVG textures use the JS-side `LAYER_SVGS` factory pattern (see Tex
 **Comic theme page texture stacking:**
 - `html[data-theme="comic"]` sets the background color + repeating line pattern.
 - `html[data-theme="comic"]::before` overlays the SVG noise texture at `z-index: -1` with `--texture-opacity: 0.5` — sits behind body content but in front of the html background.
-- The page SVG (`--texture-paper`) comes from the DS factory (`PAGE_MEDIUM_URI` in `svg-utils.ts`), **not** from a hardcoded string in CSS. The showcase's `handleThemeChange` sets it via JS on `document.documentElement.style`. This ensures the page texture always matches the `LAYER_SVGS["paper-grain"]["page"]["medium"]` preset — single source of truth.
+- The page SVG (`--texture-paper`) comes from the DS factory (`PAGE_MEDIUM_URI` in `svg-utils.ts`), **not** from a hardcoded string in CSS. The showcase's `handleThemeChange` sets it via JS on `document.documentElement.style`. `PAGE_MEDIUM_URI` sources directly from `LAYER_SVGS["paper-grain"]["surface"]["medium"]` (`layerPaper.surface.medium.primary`) — **not** `["page"]["medium"]` as the name suggests. This is a known naming drift (`NOTE(human)` at its declaration in `svg-utils.ts`): the constant's params have always matched `surface.medium`, and the owner likes the shipped look, so the reference points at the preset it actually reproduces rather than being changed to the `page.medium` params its name implies. Still a single source of truth — just not the one the name suggests.
 - `html[data-theme="comic"] body { background-color: transparent; }` ensures the page texture shows through.
 - The showcase root `<div>` must NOT have `bg-bg` (or must be overridden per theme) — it blocks the html background.
 

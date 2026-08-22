@@ -8,7 +8,8 @@ const cardVariants = cva("rounded-ui bg-surface text-fg", {
     variant: {
       default: "border border-border",
       outlined: "border-2 border-border",
-      elevated: "border border-border shadow-elevated",
+      // NOTE(human): audit suggests surface-elevated + --shadow-elevated token; deferred to avoid visual change
+      elevated: "border border-border shadow-lg",
     },
   },
   defaultVariants: {
@@ -24,8 +25,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, style, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("backdrop-blur-ui", cardVariants({ variant }), className)}
-      style={{ borderWidth: "var(--border-width)", ...style }}
+      className={cn(cardVariants({ variant }), className)}
+      style={{ backdropFilter: "blur(var(--backdrop-blur))", borderWidth: "var(--border-width)", ...style }}
       {...props}
     />
   ),

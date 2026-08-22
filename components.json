@@ -2781,6 +2781,63 @@
       "description": "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, typed value rendering, and controlled selection with rename and drag hooks."
     },
     {
+      "name": "TexturedSurface",
+      "group": "decorators",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/decorators/textured-surface",
+      "variants": {
+        "variant": [
+          "elevated",
+          "surface"
+        ],
+        "radius": [
+          "default",
+          "lg",
+          "none",
+          "sm"
+        ]
+      },
+      "props": {
+        "color": {
+          "type": "string",
+          "optional": true
+        },
+        "texture": {
+          "type": "TextureName",
+          "optional": true
+        },
+        "strength": {
+          "type": "TextureStrength",
+          "optional": true
+        },
+        "layer": {
+          "type": "TextureLayer",
+          "optional": true
+        }
+      },
+      "demos": [
+        "Tuner",
+        "Paper grain",
+        "Frosted glass",
+        "Brushed aluminium",
+        "Paper grain — full matrix",
+        "Frosted glass — full matrix",
+        "Brushed aluminium — full matrix",
+        "Theme-driven",
+        "Nested inline → theme",
+        "Composed"
+      ],
+      "variantDefaults": {
+        "variant": "surface",
+        "radius": "default"
+      },
+      "extends": [
+        "VariantProps<typeof texturedSurfaceVariants>",
+        "Omit<HTMLAttributes<HTMLDivElement>, \"color\">"
+      ]
+    },
+    {
       "name": "Avatar",
       "group": "display",
       "tier": "ui",
@@ -5107,62 +5164,6 @@
       "description": "A KPI row as one component: a data-driven StatGrid over StatCard, instead of a call-site grid of individually placed StatCards.",
       "extends": [
         "HTMLAttributes<HTMLDivElement>"
-      ]
-    },
-    {
-      "name": "TexturedSurface",
-      "group": "patterns",
-      "tier": "ui",
-      "entry": "my-you-eye",
-      "folder": "ui/patterns/textured-surface",
-      "variants": {
-        "variant": [
-          "elevated",
-          "surface"
-        ],
-        "radius": [
-          "default",
-          "lg",
-          "none",
-          "sm"
-        ]
-      },
-      "props": {
-        "color": {
-          "type": "string",
-          "optional": true
-        },
-        "texture": {
-          "type": "TextureName",
-          "optional": true
-        },
-        "strength": {
-          "type": "\"subtle\" | \"medium\" | \"strong\"",
-          "optional": true
-        },
-        "layer": {
-          "type": "TextureLayer",
-          "optional": true
-        }
-      },
-      "demos": [
-        "Tuner",
-        "Paper grain",
-        "Frosted glass",
-        "Brushed aluminium",
-        "Paper grain — full matrix",
-        "Frosted glass — full matrix",
-        "Brushed aluminium — full matrix",
-        "Theme-driven",
-        "Composed"
-      ],
-      "variantDefaults": {
-        "variant": "surface",
-        "radius": "default"
-      },
-      "extends": [
-        "VariantProps<typeof texturedSurfaceVariants>",
-        "Omit<HTMLAttributes<HTMLDivElement>, \"color\">"
       ]
     },
     {

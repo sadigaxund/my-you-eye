@@ -2,17 +2,17 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { CodeBlock } from "../ui/code-block";
 import { Link } from "../ui/link";
-import { TexturedSurface } from "../ui/patterns/textured-surface";
-import type { TextureName } from "../ui/patterns/textured-surface";
+import { TexturedSurface } from "../ui/decorators/textured-surface";
 import { cn } from "../lib/cn";
 import type { RegistryDemo } from "./registry";
+import type { ShowcaseTexture } from "./types";
 
 const overflowClass = (v: NonNullable<RegistryDemo["overflow"]>) =>
   v === "auto" ? "overflow-auto" : v === "hidden" ? "overflow-hidden" : "overflow-visible";
 
 export interface DemoSectionProps {
   demo: RegistryDemo;
-  texture: TextureName;
+  texture: ShowcaseTexture;
   /** Stable `id` for this card's heading — see `demoAnchor()` in registry.ts. */
   anchor: string;
 }

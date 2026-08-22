@@ -7,7 +7,7 @@ import type { TocItem } from "./PageToc";
 import { apiAnchor, demoAnchor, pageNeighbours } from "./registry";
 import type { RegistryEntry, RegistryPage } from "./registry";
 import { findComponentApi, hasApi } from "./manifest";
-import type { TextureName } from "../ui/patterns/textured-surface";
+import type { ShowcaseTexture } from "./types";
 
 /** More than four demos is where a reader starts scrolling to find one. */
 const TOC_MIN_DEMOS = 4;
@@ -33,7 +33,7 @@ function EntrySection({
   showHeading,
 }: {
   entry: RegistryEntry;
-  texture: TextureName;
+  texture: ShowcaseTexture;
   showHeading: boolean;
 }) {
   return (
@@ -75,7 +75,7 @@ function EntrySection({
  * Per AGENTS.md §4 this is the only place page layout is decided — a demo
  * contributes content, never structure.
  */
-export function ComponentPage({ texture, page }: { texture: TextureName; page: RegistryPage | undefined }) {
+export function ComponentPage({ texture, page }: { texture: ShowcaseTexture; page: RegistryPage | undefined }) {
   if (!page) {
     return <p className="text-muted text-sm">No component selected. Pick one from the sidebar.</p>;
   }

@@ -37,17 +37,17 @@ const badgeVariants = cva(
       {
         tone: "solid",
         variant: "success",
-        className: "bg-success text-bg",
+        className: "bg-success text-success-fg",
       },
       {
         tone: "solid",
         variant: "warning",
-        className: "bg-warning text-bg",
+        className: "bg-warning text-warning-fg",
       },
       {
         tone: "solid",
         variant: "danger",
-        className: "bg-danger text-primary-fg",
+        className: "bg-danger text-danger-fg",
       },
     ],
     defaultVariants: {

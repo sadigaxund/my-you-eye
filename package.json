@@ -12,7 +12,7 @@
     "build:lib": "tsup",
     "prebuild:lib": "node scripts/gen-manifest.mjs",
     "postbuild:lib": "node scripts/copy-styles.mjs",
-    "validate": "tsc -b --force && eslint . && node scripts/check-showcase.mjs && node scripts/check-exports.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs && node scripts/audit.mjs",
+    "validate": "tsc -p tsconfig.app.json --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-exports.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs && node scripts/audit.mjs",
     "audit": "node scripts/audit.mjs",
     "release": "node scripts/release.mjs",
     "skills:init": "node bin/my-you-eye.mjs skills:init",

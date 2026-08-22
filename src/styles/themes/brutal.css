@@ -20,6 +20,7 @@ html[data-theme="brutal"].dark {
   --color-success: oklch(0.70 0.20 150);
   --color-success-fg: oklch(0.10 0 0);
   --color-warning: oklch(0.85 0.20 90);
+  --color-warning-fg: oklch(0.10 0 0);
 
   --color-surface: oklch(1 0 0);
   --color-surface-hover: oklch(0.95 0 0);

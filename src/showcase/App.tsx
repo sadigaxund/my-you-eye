@@ -4,9 +4,9 @@ import type { FontMode } from "../lib/fonts";
 import { themeGroups } from "../lib/themes";
 import type { ThemeProfile } from "../lib/themes";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
-import { TexturedSurface } from "../ui/patterns/textured-surface";
-import type { TextureName } from "../ui/patterns/textured-surface";
-import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/patterns/textured-surface/svg-utils";
+import { TexturedSurface } from "../ui/decorators/textured-surface";
+import { PAGE_MEDIUM_URI, PAGE_MEDIUM_FROSTED_LAYERS } from "../ui/decorators/textured-surface/svg-utils";
+import type { ShowcaseTexture } from "./types";
 import { Sidebar } from "./Sidebar";
 import { ComponentPage } from "./ComponentPage";
 import { pages, findPage } from "./registry";
@@ -38,7 +38,7 @@ export default function App() {
   const [activeSlug, setActiveSlug] = useState<string | undefined>(initialSlug);
   const [anchor, setAnchor] = useState<string | undefined>(() => parseHash().anchor);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [texture, setTexture] = useState<TextureName>("theme");
+  const [texture, setTexture] = useState<ShowcaseTexture>("theme");
 
   // The only history listener in the app. A TOC link, a demo's own `#`
   // anchor and the prev/next footer all navigate by writing the hash, so
