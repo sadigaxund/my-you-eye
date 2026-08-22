@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **Button `size="xs"` (#17)** — micro icon-only tier (20px, below `icon-sm`) for sidebar-header rows of New/Refresh/Collapse icons; composes with Tooltip like any Button.
+
 - **TreeList (#26)** — the tree×table hybrid neither DataTable (flat) nor TreeView (label-only) covered: rows expand like a tree (TreeView's controlled/uncontrolled expansion model) while carrying typed columns rendered through CellType, with DataTable's column contract (`key`/`header`/`type`/`align`), indent elbow guides, sticky header, density, and controlled selection.
 - **FileIcon (#10)** — generalized file/folder identity icon with zero icon-pack dependencies: the component owns the layout contract (square box, open/closed folder states, neutral built-in fallbacks); which icon a filename gets is injected via a consumer-supplied `resolve({ name, folder, open })` returning any ReactNode (Material pack, lucide glyphs, anything — rendered as-is, never tinted).
 

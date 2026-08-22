@@ -29,6 +29,10 @@ const buttonVariants = cva(
         // where the text-sized "sm" button's horizontal padding reads as
         // too wide around a single glyph.
         "icon-sm": "size-control p-0",
+        // Micro icon-only tier (#17): sidebar-header rows of New/Refresh/
+        // Collapse icons at 16–22px, below icon-sm. Composes with Tooltip
+        // like any Button (consumers label these via the tooltip).
+        xs: "size-5 p-0",
       },
     },
     defaultVariants: {
