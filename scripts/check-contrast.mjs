@@ -17,12 +17,18 @@ const TOKENS = join(ROOT, "src/styles/tokens.css");
 const THEMES_DIR = join(ROOT, "src/styles/themes");
 
 function parseBlock(css, selectorRegex) {
+  // Strip /* */ comments FIRST: comment prose may legitimately mention token
+  // names ("--color-fg: fg is themed…", "--color-surface: some themes…"),
+  // and the naive definition regex below would otherwise match inside the
+  // comment, swallow following real definitions into a garbage value, or
+  // overwrite an earlier correct one (surfaced by #27's var()-alias pairs).
+  const clean = css.replace(/\/\*[\s\S]*?\*\//g, "");
   // selectorRegex must be a `g`-flagged regex; merges every matching block
   // (a selector may appear more than once, e.g. an `html[data-theme]` block
   // with only background rules, plus a bare `[data-theme]` block with tokens).
   const tokens = {};
   let m;
-  while ((m = selectorRegex.exec(css)) !== null) {
+  while ((m = selectorRegex.exec(clean)) !== null) {
     const body = m[1];
     const re = /--([\w-]+):\s*([^;]+);/g;
     let mm;
@@ -138,7 +144,28 @@ const PAIRS = [
   ["danger-fg", "danger"],
   ["success-fg", "success"],
   ["secondary-fg", "secondary"],
+  // Sidebar chrome family (#27): panel text must read on the resting panel,
+  // on a hovered row, and on an active row; badge counts on their accent chip.
+  // This is why glass/frosted define OPAQUE sidebar item-hover/active tokens
+  // while their generic surface family stays translucent.
+  ["sidebar-fg", "sidebar"],
+  ["sidebar-fg", "sidebar-item-hover"],
+  ["sidebar-fg", "sidebar-item-active"],
+  ["sidebar-badge-fg", "sidebar-badge"],
 ];
+
+// Base tokens.css may define a color as a var() alias of another token
+// (e.g. --color-sidebar: var(--color-surface-opaque), #27). Resolve such
+// chains against the theme's own effective map so derived pairs are checked
+// at their real resolved values; a named theme's explicit overrides win
+// because they live in the same map.
+function resolveToken(value, tokens, depth = 0) {
+  if (depth > 8) return value;
+  const m = /^var\(\s*--([\w-]+)\s*\)$/.exec(value.trim());
+  if (!m) return value;
+  const next = tokens[m[1]];
+  return next ? resolveToken(next, tokens, depth + 1) : value;
+}
 
 const MIN_RATIO = 4.5;
 let failures = [];
@@ -147,8 +174,8 @@ for (const theme of themes) {
   for (const mode of ["light", "dark"]) {
     const tokens = effectiveTokens(theme, mode);
     for (const [fgKey, bgKey] of PAIRS) {
-      const fgVal = tokens[`color-${fgKey}`];
-      const bgVal = tokens[`color-${bgKey}`];
+      const fgVal = resolveToken(tokens[`color-${fgKey}`], tokens);
+      const bgVal = resolveToken(tokens[`color-${bgKey}`], tokens);
       if (!fgVal || !bgVal) {
         failures.push(
           `${theme.name} (${mode}): missing token for pair color-${fgKey}/color-${bgKey}`,

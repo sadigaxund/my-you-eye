@@ -5,12 +5,15 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const TOKENS = join(ROOT, "src/styles/tokens.css");
 const THEMES_DIR = join(ROOT, "src/styles/themes");
 
-const tokensRaw = readFileSync(TOKENS, "utf-8");
+const tokensRaw = readFileSync(TOKENS, "utf-8").replace(/\/\*[\s\S]*?\*\//g, "");
 
-// Extract all --* token names from the @theme block
-const tokenPattern = /--([\w-]+):/g;
+// Extract all --* token names from the @theme block. Comments are stripped
+// first: comment prose may mention token names ("--color-surface: some
+// themes…") which would otherwise register phantom required tokens (or, in
+// value-parsing siblings like check-contrast.mjs, poison real values).
 const baseTokens = new Set();
 let match;
+const tokenPattern = /--([\w-]+):/g;
 while ((match = tokenPattern.exec(tokensRaw)) !== null) {
   baseTokens.add(match[1]);
 }
@@ -68,7 +71,7 @@ if (themeFiles.length === 0) {
 }
 
 for (const file of themeFiles) {
-  const content = readFileSync(join(THEMES_DIR, file), "utf-8");
+  const content = readFileSync(join(THEMES_DIR, file), "utf-8").replace(/\/\*[\s\S]*?\*\//g, "");
   const themeTokens = new Set();
   let m;
   const re = /--([\w-]+):/g;

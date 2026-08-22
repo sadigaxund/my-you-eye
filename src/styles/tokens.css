@@ -35,6 +35,26 @@
      (non-canvas) surface role. See AGENTS.md §0.12. */
   --color-surface-opaque: oklch(1 0 0);
 
+  /* ---- Sidebar chrome namespace (#27) ----
+     Persistent side-panel chrome — the sidebar region, activity rails,
+     status bars — paints ONLY from this family, never from generic
+     surface/muted tokens. This keeps "switch data-theme + .dark and the
+     whole app restyles" true for app-shell chrome independently of page
+     content: a theme can tune its near-black rail or accent badge counts
+     here without touching view code (shadcn's --sidebar-* precedent).
+     Base values alias each theme's own opaque surface roles, so the default
+     look is identical to before; a theme opts into distinct chrome by
+     overriding these in its [data-theme] blocks (check-themes.mjs requires
+     every theme to state all seven). Badge slots default to the theme's
+     primary accent so counts/glyphs pop without per-theme work. */
+  --color-sidebar: var(--color-surface-opaque);
+  --color-sidebar-fg: var(--color-fg);
+  --color-sidebar-border: var(--color-border);
+  --color-sidebar-item-hover: var(--color-surface-hover);
+  --color-sidebar-item-active: var(--color-surface-active);
+  --color-sidebar-badge: var(--color-primary);
+  --color-sidebar-badge-fg: var(--color-primary-fg);
+
   /* ---- Chart palette (TODO.md D3 / AGENTS.md §0.9 approved exception) ----
      Defined ONCE here, derived in oklch from each theme's own --color-primary
      via CSS relative-color syntax (oklch(from ...)), so all 9 themes inherit

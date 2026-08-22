@@ -83,6 +83,13 @@ html[data-theme="glass"]::before {
   --color-surface-elevated: oklch(1 0 0 / 0.85);
   --color-canvas-surface: oklch(0.97 0.01 280);
   --color-surface-opaque: oklch(1 0 0);
+  --color-sidebar: oklch(1 0 0);
+  --color-sidebar-fg: oklch(0.20 0.04 290);
+  --color-sidebar-border: oklch(0.32 0.06 290 / 0.45);
+  --color-sidebar-item-hover: oklch(0.96 0.01 280);
+  --color-sidebar-item-active: oklch(0.93 0.015 280);
+  --color-sidebar-badge: oklch(0.55 0.22 290);
+  --color-sidebar-badge-fg: oklch(0.98 0 0);
 
   /* Chart palette override (Batch 4 / TODO.md D3): at this theme's primary
      hue (H=290), the general tokens.css derivation puts slot 5 on a deutan
@@ -155,6 +162,13 @@ html[data-theme="glass"]::before {
   --color-surface-elevated: oklch(0.25 0.05 290 / 0.80);
   --color-canvas-surface: oklch(0.16 0.03 290);
   --color-surface-opaque: oklch(0.22 0.05 290);
+  --color-sidebar: oklch(0.22 0.05 290);
+  --color-sidebar-fg: oklch(0.98 0 0);
+  --color-sidebar-border: oklch(1 0 0 / 0.30);
+  --color-sidebar-item-hover: oklch(0.28 0.06 290);
+  --color-sidebar-item-active: oklch(0.35 0.06 290);
+  --color-sidebar-badge: oklch(0.72 0.20 290);
+  --color-sidebar-badge-fg: oklch(0.15 0.03 290);
 
   /* Colors - Utilities */
   --color-border: oklch(1 0 0 / 0.30);

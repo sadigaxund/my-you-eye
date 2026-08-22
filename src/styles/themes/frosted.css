@@ -64,6 +64,13 @@ html[data-theme="frosted"].dark::before {
   --color-surface-elevated: oklch(0.995 0.003 235 / 0.85);
   --color-canvas-surface: oklch(0.975 0.005 235);
   --color-surface-opaque: oklch(0.99 0.004 235);
+  --color-sidebar: oklch(0.99 0.004 235);
+  --color-sidebar-fg: oklch(0.22 0.01 235);
+  --color-sidebar-border: oklch(0.62 0.01 235);
+  --color-sidebar-item-hover: oklch(0.97 0.004 235);
+  --color-sidebar-item-active: oklch(0.93 0.006 235);
+  --color-sidebar-badge: oklch(0.52 0.10 235);
+  --color-sidebar-badge-fg: oklch(1 0 0);
 
   /* Chart palette override (Batch 4 / TODO.md D3): at this theme's primary
      hue (H=235), the general tokens.css derivation puts slot 3 on a deutan
@@ -133,6 +140,13 @@ html[data-theme="frosted"].dark::before {
   --color-surface-elevated: oklch(0.24 0.01 235 / 0.82);
   --color-canvas-surface: oklch(0.19 0.008 235);
   --color-surface-opaque: oklch(0.22 0.01 235);
+  --color-sidebar: oklch(0.22 0.01 235);
+  --color-sidebar-fg: oklch(0.94 0.005 235);
+  --color-sidebar-border: oklch(0.55 0.01 235);
+  --color-sidebar-item-hover: oklch(0.26 0.01 235);
+  --color-sidebar-item-active: oklch(0.30 0.01 235);
+  --color-sidebar-badge: oklch(0.68 0.13 235);
+  --color-sidebar-badge-fg: oklch(0.12 0.01 235);
 
   --color-border: oklch(0.55 0.01 235);
   --color-ring: oklch(0.68 0.13 235 / 0.4);

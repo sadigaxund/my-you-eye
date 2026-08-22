@@ -393,6 +393,12 @@ Some components export sub-parts. Import them by name:
 `frosted`, `metallic`. Dark mode (`.dark` class) is orthogonal — every theme
 has a light and dark variant.
 
+App-shell chrome — persistent sidebars, activity rails, status bars — paints
+from the dedicated `--color-sidebar-*` namespace (`sidebar`, `sidebar-fg`,
+`sidebar-border`, `sidebar-item-hover`, `sidebar-item-active`,
+`sidebar-badge`, `sidebar-badge-fg`), never from generic surface tokens, so
+chrome and page content can be tuned independently per theme.
+
 ```tsx
 document.documentElement.dataset.theme = "glass"; // switch theme
 document.documentElement.classList.toggle("dark"); // toggle dark mode
