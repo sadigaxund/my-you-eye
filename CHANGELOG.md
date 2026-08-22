@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Skills pack — a curated, trust-ranked index of the frontend agent-skill ecosystem, shipped and operational.** Two new reference docs ride the existing `init`/`sync` pipeline: `references/skills-index.md` (the router — precedence chain, per-source "use when" tables, a task-routing matrix, and a conflicts register) and `references/skills-analysis.md` (the provenance/trust record — tier ranking, inventories, concerns, verdicts for every source). Both are generalized from a project-specific index+analysis: fully project-agnostic, so any consumer can adopt them.
+- **Operational vendoring via the CLI**: `npx my-you-eye skills:init` scaffolds `skills/vendor.config.json` (a curated 15-source list: Vercel labs skills, web-interface-guidelines, shadcn doctrine, react-doctor, addyosmani web-quality, community a11y/motion/copy sources) plus an empty `skills/vendor.lock.json`; `npx my-you-eye skills:update` vendors skill bodies at pinned commits into gitignored `skills/vendor/` using shallow blobless sparse git clones (zero npm dependencies); `--latest` consciously floats pins to HEAD with the lock diff as the review artifact; `--source <id>` operates on one source. The library adopts the system internally too (`npm run skills:update` / `skills:update:latest`) — all 15 sources pinned at first run.
+- SKILL.md's routing table now points craft questions (React perf, component API design, a11y, motion discipline, UX copy) at the skills-index router; README documents the pack.
+
 ## [2026.8.0] - 2026-08-15
 
 ### Added

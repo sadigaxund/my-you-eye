@@ -3,7 +3,10 @@ import tseslint from "typescript-eslint";
 const RESTRICTED_ELEMENTS = /^(button|input|select|textarea|table)$/;
 
 export default tseslint.config(
-  { ignores: ["dist/", "node_modules/"] },
+  // skills/vendor/ holds gitignored third-party agent-skill bodies vendored at
+  // pinned commits (`npm run skills:update`) — derived data like dist/, never
+  // repo source, so house lint rules (styled-native-elements etc.) do not apply.
+  { ignores: ["dist/", "node_modules/", "skills/vendor/"] },
   tseslint.configs.recommended,
   {
     rules: {

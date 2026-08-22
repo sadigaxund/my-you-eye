@@ -82,6 +82,11 @@ one-line request and get house-style UI back:
   ```bash
   npx my-you-eye init   # copies SKILL.md + references/ + components.json into skills/
   ```
+- **The skills pack** (`references/skills-index.md` + `references/skills-analysis.md`)
+  is a curated, trust-ranked index of the wider frontend agent-skill ecosystem —
+  React perf, component API design, accessibility, motion, UX copy. `skills:init` +
+  `skills:update` vendor third-party skill bodies into a project at pinned commits,
+  so agents route to vetted guidance instead of guessing.
 - **`components.json`** is generated from the source on every build — prop
   signatures, variants, defaults — so agents pick from the real API instead of
   guessing.

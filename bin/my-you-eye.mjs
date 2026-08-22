@@ -1,33 +1,40 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { skillsInit, skillsUpdate } from "./skills-vendor.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const SKILL = join(ROOT, "SKILL.md");
 const COMPONENTS_JSON = join(ROOT, "components.json");
 const REFERENCES_DIR = join(ROOT, "references");
+const VERSION = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf-8")).version;
 
 function usage(exitCode = 0) {
-  console.log(`my-you-eye v0.2.0 — UI Component Toolkit
+  console.log(`my-you-eye v${VERSION} — UI Component Toolkit
 
 Usage:
   my-you-eye init [--force]    Copy SKILL.md + references/ + components.json to skills/
   my-you-eye list              List all components with groups and variants
   my-you-eye sync              Re-copy SKILL.md + references/ + components.json (overwrite)
+  my-you-eye skills:init       Scaffold skills/vendor.config.json + empty lock
+  my-you-eye skills:update     Vendor pinned skill bodies into skills/<vendorDir>/
+                               (--latest floats pins to HEAD; --source <id> filters)
 
 Options:
   --help                       Show this help
-  --force                      Overwrite existing files (init only)`);
+  --force                      Overwrite existing files (init only)
+  --latest                     Float every source to HEAD (skills:update only)
+  --source <id>                Operate on one source only (skills:update only)`);
   process.exit(exitCode);
 }
 
 // SKILL.md's decision table routes to files under references/ by relative
-// path (e.g. "references/diagrams.md") — those files must land next to
-// wherever SKILL.md itself is copied, or the routing table points at
-// nothing in the consuming project. Flat directory of *.md files, no
-// subdirectories, so a plain readdir is enough (no recursive walk needed).
+// path (e.g. "references/diagrams.md", "references/rules/styling.md") — those
+// files must land next to wherever SKILL.md itself is copied, or the routing
+// table points at nothing in the consuming project. The tree is walked
+// recursively and its structure preserved; only *.md files are copied.
 function cmdInit(force) {
   const targetDir = join(process.cwd(), "skills");
   if (!existsSync(targetDir)) {
@@ -48,12 +55,22 @@ function cmdInit(force) {
   copyOne(COMPONENTS_JSON, join(targetDir, "components.json"), "components.json");
 
   const referencesTargetDir = join(targetDir, "references");
-  if (!existsSync(referencesTargetDir)) {
-    mkdirSync(referencesTargetDir, { recursive: true });
-  }
+  mkdirSync(referencesTargetDir, { recursive: true });
   for (const name of readdirSync(REFERENCES_DIR)) {
-    copyOne(join(REFERENCES_DIR, name), join(referencesTargetDir, name), `references/${name}`);
+    const src = join(REFERENCES_DIR, name);
+    if (statSync(src).isDirectory()) {
+      for (const inner of readdirSync(src)) {
+        const target = join(referencesTargetDir, name, inner);
+        mkdirSync(dirname(target), { recursive: true });
+        copyOne(join(src, inner), target, `references/${name}/${inner}`);
+      }
+    } else {
+      copyOne(src, join(referencesTargetDir, name), `references/${name}`);
+    }
   }
+
+  console.log("\nOptional: npx my-you-eye skills:init adds the vendored frontend-skills pack");
+  console.log("(config + lock + updater; see references/skills-index.md).");
 }
 
 // Groups a component may belong to, in the order they read best. This is a
@@ -105,7 +122,10 @@ function cmdSync() {
 
 const args = process.argv.slice(2);
 const force = args.includes("--force");
-const cmd = args.find((a) => a !== "--force");
+const latest = args.includes("--latest");
+const sourceIdx = args.indexOf("--source");
+const source = sourceIdx !== -1 ? args[sourceIdx + 1] : undefined;
+const cmd = args.find((a) => !a.startsWith("--") && a !== source);
 
 if (!cmd || cmd === "--help") {
   usage(cmd === "--help" ? 0 : 1);
@@ -120,6 +140,12 @@ switch (cmd) {
     break;
   case "sync":
     cmdSync();
+    break;
+  case "skills:init":
+    skillsInit(force);
+    break;
+  case "skills:update":
+    skillsUpdate({ latest, source });
     break;
   default:
     console.error(`Unknown command: ${cmd}`);

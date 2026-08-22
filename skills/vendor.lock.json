@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "sources": {
+    "vercel-labs/agent-skills": {
+      "commit": "dd089a8c752c966dee8bf0f27cb625ba193ffd9e",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:44.422Z"
+    },
+    "vercel-labs/web-interface-guidelines": {
+      "commit": "e3d624baaf29dc1fc645aff3e38f03e564d2d6b1",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:45.419Z"
+    },
+    "shadcn-ui/ui": {
+      "commit": "1773ecfeeb4a04366978d353e69b5c7ded78dcb2",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:46.884Z"
+    },
+    "millionco/react-doctor": {
+      "commit": "2b0f06ec70943f083d8893f8a1b989eba2ae40c6",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:48.313Z"
+    },
+    "addyosmani/web-quality-skills": {
+      "commit": "95d6e255afe1596b557d7a8498517884438f5b3a",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:49.673Z"
+    },
+    "wshobson/agents": {
+      "commit": "367cb6a4a182cf7e9b0a17c9429f7411ddd9cf35",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:51.116Z"
+    },
+    "mblode/agent-skills": {
+      "commit": "2e575d39f28acdc698ea22e4c62325801188e1b1",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:52.963Z"
+    },
+    "julianoczkowski/designer-skills": {
+      "commit": "c259656c76d9758d7ead46b0d2f125cbe84f8665",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:54.367Z"
+    },
+    "bergside/awesome-design-skills": {
+      "commit": "f631a09b4fcc0166f2e2c1a8c81906ef680c57e8",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:55.746Z"
+    },
+    "rampstackco/claude-skills": {
+      "commit": "0479242522549dfdb389bb9b7807ad4d6016ffb7",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:57.239Z"
+    },
+    "content-designer/ux-writing-skill": {
+      "commit": "98cacde4ba2dd10ed28df43a8d53eef1e321c539",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:03:59.288Z"
+    },
+    "anthropics/knowledge-work-plugins": {
+      "commit": "5267cf7bff3031921d4474b8e8f86ad02d2b8f6d",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:04:00.701Z"
+    },
+    "jakubkrehel/skills": {
+      "commit": "6c43b20ce00f720eed854591abe480127629c191",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:04:02.083Z"
+    },
+    "blader/humanizer": {
+      "commit": "e2e92e7b4b8229253ed5c8e81dc65463fdeddda5",
+      "ref": "main",
+      "vendoredAt": "2026-08-22T00:04:03.067Z"
+    },
+    "kursku/skills": {
+      "commit": "346c313fd2ec241a088c68274da26c538422568b",
+      "ref": "master",
+      "vendoredAt": "2026-08-22T00:04:57.851Z"
+    }
+  }
+}

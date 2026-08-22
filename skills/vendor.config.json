@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "vendorDir": "vendor",
+  "sources": [
+    {
+      "id": "vercel-labs/agent-skills",
+      "repo": "https://github.com/vercel-labs/agent-skills",
+      "ref": "main",
+      "include": [
+        "skills/react-best-practices/**",
+        "skills/composition-patterns/**"
+      ],
+      "note": "Tier 1 — client slices are standing review checklists; ignore server-* (RSC-only)"
+    },
+    {
+      "id": "vercel-labs/web-interface-guidelines",
+      "repo": "https://github.com/vercel-labs/web-interface-guidelines",
+      "ref": "main",
+      "include": [
+        "command.md"
+      ],
+      "note": "Tier 1 — dense interaction/a11y rulebook for any user-facing change"
+    },
+    {
+      "id": "shadcn-ui/ui",
+      "repo": "https://github.com/shadcn-ui/ui",
+      "ref": "main",
+      "include": [
+        "skills/shadcn/SKILL.md",
+        "skills/shadcn/rules/**",
+        "skills/shadcn/customization.md"
+      ],
+      "note": "Tier 1 doctrine — reference only, never install (copy-the-source model)"
+    },
+    {
+      "id": "millionco/react-doctor",
+      "repo": "https://github.com/millionco/react-doctor",
+      "ref": "main",
+      "include": [
+        ".agents/skills/react-doctor/**"
+      ],
+      "note": "Tier 1 — CLI auditor docs; run npx react-doctor --no-telemetry, skip skill install"
+    },
+    {
+      "id": "addyosmani/web-quality-skills",
+      "repo": "https://github.com/addyosmani/web-quality-skills",
+      "ref": "main",
+      "include": [
+        "skills/accessibility/**",
+        "skills/performance/**",
+        "skills/core-web-vitals/**",
+        "skills/best-practices/**",
+        "skills/web-quality-audit/**"
+      ],
+      "note": "Professional — WCAG 2.2 patterns + perf/CWV checklists; skip seo"
+    },
+    {
+      "id": "wshobson/agents",
+      "repo": "https://github.com/wshobson/agents",
+      "ref": "main",
+      "include": [
+        "plugins/frontend-mobile-development/skills/react-state-management/**",
+        "plugins/frontend-mobile-development/skills/tailwind-design-system/**"
+      ],
+      "note": "Community — slice typing + selector hooks; the v4-correct Tailwind skill"
+    },
+    {
+      "id": "kursku/skills",
+      "repo": "https://github.com/kursku/skills",
+      "ref": "master",
+      "include": [
+        "frontend/fixing-accessibility/**",
+        "frontend/optimize/**",
+        "frontend/baseline-ui/**"
+      ],
+      "note": "Community — a11y gem + perf workflow + anti-slop baseline (strike its Stack section)"
+    },
+    {
+      "id": "mblode/agent-skills",
+      "repo": "https://github.com/mblode/agent-skills",
+      "ref": "main",
+      "include": [
+        "skills/ui-animation/**",
+        "skills/typography-audit/**"
+      ],
+      "note": "Community — compositor-only motion + typography audit"
+    },
+    {
+      "id": "julianoczkowski/designer-skills",
+      "repo": "https://github.com/julianoczkowski/designer-skills",
+      "ref": "main",
+      "include": [
+        "design-review/**",
+        "grill-me/**",
+        "design-tokens/**",
+        "information-architecture/**",
+        "design-brief/**",
+        "brief-to-tasks/**",
+        "design-flow/**",
+        "frontend-design/**"
+      ],
+      "note": "Community — design process skills"
+    },
+    {
+      "id": "bergside/awesome-design-skills",
+      "repo": "https://github.com/bergside/awesome-design-skills",
+      "ref": "main",
+      "include": [
+        "skills/**"
+      ],
+      "note": "Community — style-preset vocabulary only; never route to it by default"
+    },
+    {
+      "id": "rampstackco/claude-skills",
+      "repo": "https://github.com/rampstackco/claude-skills",
+      "ref": "main",
+      "include": [
+        "skills/accessibility-audit/**",
+        "skills/frontend-component-build/**",
+        "skills/design-system/**",
+        "skills/information-architecture/**",
+        "skills/usability-testing/**",
+        "skills/qa-testing/**",
+        "skills/performance-optimization/**",
+        "skills/security-baseline/**",
+        "skills/onboarding-wizard-design/**",
+        "skills/internationalization/**"
+      ],
+      "note": "Community — UI-relevant subset only"
+    },
+    {
+      "id": "content-designer/ux-writing-skill",
+      "repo": "https://github.com/content-designer/ux-writing-skill",
+      "ref": "main",
+      "include": [
+        "**"
+      ],
+      "note": "Community — richest UI-copy source (error/success message patterns)"
+    },
+    {
+      "id": "anthropics/knowledge-work-plugins",
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "ref": "main",
+      "include": [
+        "design/skills/ux-copy/**"
+      ],
+      "note": "Vendor — consequence-labeled confirm-button pairs"
+    },
+    {
+      "id": "jakubkrehel/skills",
+      "repo": "https://github.com/jakubkrehel/skills",
+      "ref": "main",
+      "include": [
+        "skills/better-writing/**"
+      ],
+      "note": "Community — checkable copy standards"
+    },
+    {
+      "id": "blader/humanizer",
+      "repo": "https://github.com/blader/humanizer",
+      "ref": "main",
+      "include": [
+        "SKILL.md"
+      ],
+      "note": "Community — de-AI-ing written text"
+    }
+  ]
+}

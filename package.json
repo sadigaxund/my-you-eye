@@ -15,6 +15,9 @@
     "validate": "tsc -b --force && eslint . && node scripts/check-showcase.mjs && node scripts/check-exports.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs && node scripts/audit.mjs",
     "audit": "node scripts/audit.mjs",
     "release": "node scripts/release.mjs",
+    "skills:init": "node bin/my-you-eye.mjs skills:init",
+    "skills:update": "node bin/my-you-eye.mjs skills:update",
+    "skills:update:latest": "node bin/my-you-eye.mjs skills:update --latest",
     "preview": "vite preview",
     "prepare": "npm run build:lib",
     "manifest": "node scripts/gen-manifest.mjs"
