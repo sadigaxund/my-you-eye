@@ -10,6 +10,16 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { cn } from "../../lib/cn";
 
+// DropdownMenuContent forwards every Radix Content prop — including
+// onCloseAutoFocus (#23). Radix's default close behavior refocuses the
+// trigger; when a selected action intentionally moves focus elsewhere (an
+// editor a Format action just edited, a field an "Insert" targeted),
+// suppress that with:
+//
+//   <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
+//
+// The same override applies to any sibling menu surface where an action
+// manages its own focus destination.
 const DropdownMenuContent = forwardRef<React.ComponentRef<typeof Content>, React.ComponentPropsWithoutRef<typeof Content>>(
   ({ className, ...props }, ref) => (
     <Portal>

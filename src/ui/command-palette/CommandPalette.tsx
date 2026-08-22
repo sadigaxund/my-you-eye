@@ -29,6 +29,7 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(
     () =>
@@ -41,6 +42,14 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
       }),
     [actions, query],
   );
+
+  // Keyboard contract completion (#32): the active item follows ArrowUp/Down
+  // visually too, even deep in a long filtered list.
+  useEffect(() => {
+    listRef.current
+      ?.querySelector('[data-active="true"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [activeIdx, query]);
 
   const groupedFiltered = useMemo(() => {
     if (!groups) return null;
@@ -106,8 +115,15 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
             own radius to the inherited one keeps its scrollbar's clip in
             sync with the curve instead of a mismatched ancestor clip cutting
             across it. See AGENTS.md §0.10 / TODO.md A4. */}
+        {/* Live-region contract (#32): the filtered count is announced
+            politely as the query changes — WIG's dynamic-update rule. The
+            query lives in internal state, so this must be internal too;
+            consumers get it for free. */}
+        <p role="status" aria-live="polite" className="sr-only">
+          {`${flatItems.length} result${flatItems.length === 1 ? "" : "s"}`}
+        </p>
         <ScrollArea className="max-h-80 rounded-b-[inherit]">
-          <div className="p-2" onKeyDown={handleKeyDown}>
+          <div ref={listRef} className="p-2" onKeyDown={handleKeyDown}>
           {flatItems.length === 0 ? (
             <p className="px-2 py-8 text-sm text-muted text-center">{emptyText}</p>
           ) : groupedFiltered ? (
@@ -171,6 +187,7 @@ function CommandItem({
   return (
     <button
       type="button"
+      data-active={active ? "true" : undefined}
       className={cn(
         "flex w-full items-center gap-3 rounded-ui-sm px-2 py-1.5 text-sm text-left",
         active ? "bg-secondary text-secondary-fg" : "text-fg",
