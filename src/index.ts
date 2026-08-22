@@ -32,6 +32,8 @@ export { Checkbox, checkboxVariants } from "./ui/checkbox";
 export type { CheckboxProps } from "./ui/checkbox";
 export { CheckboxTree } from "./ui/checkbox-tree";
 export type { CheckboxTreeProps, CheckboxTreeNode } from "./ui/checkbox-tree";
+export { EditorTabBar } from "./ui/editor-tab-bar";
+export type { EditorTabBarProps, EditorTab } from "./ui/editor-tab-bar";
 export { Combobox } from "./ui/combobox";
 export type { ComboboxProps, ComboboxOption } from "./ui/combobox";
 export {
@@ -375,6 +377,8 @@ export type { ToolbarProps, ToolbarFilterChip } from "./ui/patterns/toolbar";
 // ---------------------------------------------------------------------------
 // Typography.
 // ---------------------------------------------------------------------------
+export { TitleBar } from "./ui/title-bar";
+export type { TitleBarProps } from "./ui/title-bar";
 export { Typography } from "./ui/typography";
 export type { TypographyProps } from "./ui/typography";
 export { VirtualList, computeVirtualWindow, DEFAULT_OVERSCAN } from "./ui/virtual-list";

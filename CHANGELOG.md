@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- **TitleBar (#12) + EditorTabBar (#5)** — the remaining window-chrome pair. `TitleBar`: two-zone bar (identity + inline breadcrumb left, actions right), distinct from `Toolbar`, fixed-height with the breadcrumb folded into the identity cluster. `EditorTabBar`: closeable/draggable open-document strip — dirty dot beside (never replacing) the close button, italic preview tabs, within-bar drag reorder, documented `application/x-tab` dataTransfer payload for pane-docking, roving-tabindex arrow-key selection + Delete-to-close, trailing actions slot for an overflow trigger. Both paint from `--color-sidebar-*`.
+
 - **App-chrome components on the sidebar namespace** (#6, #7): `ActivityBar` — vertical icon rail with an active left-edge accent bar (never a fill), per-item count badges, bottom-pinned footer item, labels in right-side tooltips; `StatusBar`/`StatusBarItem` — two-sided compact strip whose `tone` maps to the semantic token vocabulary Badge/Alert already use. Both paint exclusively from `--color-sidebar-*` (#27), codifying the persistent-chrome pattern.
 
 - **CheckboxTree (#19)** — controlled tree picker with derived tri-state folders: given a `checked` set of FILE ids, folder checked/unchecked/indeterminate is computed fresh every render (never stored, so it can't drift), and toggling a folder applies to all descendants. Rows use the library's own `Checkbox` (Radix native mixed state); unchecked rows dim as a second cue. The checked-set owner stays external by contract.
