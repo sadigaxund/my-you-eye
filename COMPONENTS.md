@@ -14,7 +14,7 @@ import { VideoRoot } from "my-you-eye/video";
 import "my-you-eye/styles.css";
 ```
 
-**114 components** across 12 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
+**129 components** across 12 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
 
 ## Video schema
 
@@ -579,11 +579,13 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `CellType` | `my-you-eye` | — | Data Types, New data types, Numeric types, Column alignment |
+| `CheckboxTree` | `my-you-eye` | — | Publish-style picker |
 | `DataList` | `my-you-eye` | striped: **false** / true | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
-| `DataTable` | `my-you-eye` | variant: **default** / striped<br>density: compact / **normal** | Default, Striped, Scrolling + sticky header, Alignment, Truncation |
+| `DataTable` | `my-you-eye` | variant: **default** / striped<br>density: compact / **normal** | Default, Striped, Scrolling + sticky header, Alignment, Truncation, Row click & actions |
 | `Table` | `my-you-eye` | variant: **default** / striped | Composition, Variants, Density, Truncation & expand, Sticky header |
 | `Timeline` | `my-you-eye` | — | Horizontal — single lane, Horizontal — lanes, Spans — events with a duration, Shared scale across lanes, Label placement, Density, Progress (playhead reveal), Vertical — single lane, Vertical — lanes |
-| `TreeView` | `my-you-eye` | — | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides) |
+| `TreeList` | `my-you-eye` | density: compact / **normal** | Vault browser |
+| `TreeView` | `my-you-eye` | — | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides), Controlled selection & tones, Inline rename, Drag to move |
 
 ### data — props
 
@@ -605,6 +607,16 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">
 | `displayUnit?` | `string` | Force a byte unit (e.g. "GB"). |
 | `codeLanguage?` | `string` | Highlight language for "code" type (e.g. "ts", "sql"). |
 | `avatarSrc?` | `string` | Optional photo URL for "user" type — falls back to initials (Avatar's own fallback behavior) when omitted. |
+
+#### `CheckboxTree`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `data` | `CheckboxTreeNode[]` | — |
+| `checked` | `ReadonlySet<string>` | Ids of every currently-included FILE. |
+| `onNodeToggle` | `(node: CheckboxTreeNode, nextChecked: boolean) => void` | — |
 
 #### `DataList`
 
@@ -630,6 +642,10 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `replacements?` | `UrlReplacement[]` | — |
 | `layout?` | `"fixed" \| "auto"` | "fixed" locks columns to width hints/equal share (default). "auto" sizes columns to content and enables horizontal scroll — use for rows with divergent content widths (e.g. a type smoke test) where fixed columns would clip legitimate content. |
 | `rowKey?` | `(row: Record<string, unknown>, index: number) => string \| number` | Stable React key for a row. |
+| `onRowClick?` | `(row: Record<string, unknown>, e: React.MouseEvent<HTMLTableRowElement>) => void` | Row-level click (open-detail pattern). |
+| `renderActions?` | `(row: Record<string, unknown>) => React.ReactNode` | Per-row action controls rendered in a trailing cell (#25) — icon buttons, menus. |
+| `actionsHeader?` | `string` | Column header for the actions cell. |
+| `actionsWidth?` | `string` | Width of the trailing actions column under layout="fixed" (any CSS width: "10%", "8rem"). |
 
 #### `Table`
 
@@ -649,6 +665,22 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `axis?` | `(at: number) => string` | Horizontal only. |
 | `progress?` | `number` | 0→1 reveal (TODO.md D4's progress-in convention). |
 
+#### `TreeList`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children" \| "onSelect">`, `VariantProps<typeof treeListVariants>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `columns` | `TreeListColumn[]` | — |
+| `nodes` | `TreeListNode[]` | — |
+| `defaultExpandedDepth?` | `number` | — |
+| `expandedIds?` | `Set<string>` | — |
+| `onExpandedChange?` | `(id: string) => void` | — |
+| `selectedId?` | `string` | — |
+| `onSelect?` | `(node: TreeListNode) => void` | — |
+| `stickyHeader?` | `boolean` | — |
+| `replacements?` | `UrlReplacement[]` | — |
+
 #### `TreeView`
 
 | Prop | Type | Description |
@@ -662,6 +694,13 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `onToggle?` | `(id: string) => void` | — |
 | `replacements?` | `UrlReplacement[]` | — |
 | `className?` | `string` | Merged onto the root `<ul>`. |
+| `selectedId?` | `string` | Controlled selection, decoupled from internal keyboard-focus state. aria-selected reports this; focus stays internal. |
+| `onSelect?` | `(node: TreeNode) => void` | — |
+| `renamingId?` | `string \| null` | Render this row's label as an inline Input; commit on Enter/blur, cancel on Escape. |
+| `onRenameCommit?` | `(node: TreeNode, newName: string) => void` | — |
+| `onRenameCancel?` | `() => void` | — |
+| `draggable?` | `boolean` | Enable HTML5 drag-and-drop of rows onto folder rows ("into" moves). |
+| `onMove?` | `(sourceId: string, targetId: string, mode: "into" \| "before" \| "after") => void` | Called after a legal drop (#11). |
 
 ## display
 
@@ -673,7 +712,9 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `CodeBlock` | `my-you-eye` | variant: **default** / elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
 | `DeviceFrame` | `my-you-eye` | variant: **browser** / phone / window | Browser, Window, Phone |
 | `DiffBlock` | `my-you-eye` | variant: **default** / elevated | Unified, Unified — word diff, Unified — word diff, heavily rewritten lines, Split, Split — word diff, Elevated |
+| `DiffStatChip` | `my-you-eye` | size: md / **sm** | Sizes, In context |
 | `EmptyState` | `my-you-eye` | — | Default, With icon and action |
+| `FileIcon` | `my-you-eye` | — | Neutral defaults, Custom resolver |
 | `Image` | `my-you-eye` | fit: contain / **cover** / fill / none / scaleDown<br>radius: full / lg / **md** / none / sm<br>aspect: **auto** / square / tall / video / wide<br>bordered: true<br>shadowed: true | Fit modes, Border radius, Aspect ratio, Styles, With caption |
 | `Kbd` | `my-you-eye` | — | Default, Combinations |
 | `Markdown` | `my-you-eye` | — | Rendered markdown |
@@ -681,6 +722,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `Separator` | `my-you-eye` | orientation: **horizontal** / vertical | Horizontal, Vertical |
 | `StatusDot` | `my-you-eye` | variant: danger / info / **neutral** / success / warning<br>size: **md** / sm | Variants, Sizes, Pulsing |
 | `Terminal` | `my-you-eye` | variant: **default** / elevated<br>scheme: amber / **default** / matrix<br>chrome: **dots** / none | Prompt glyphs, Title bar, Exit status & spinner, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
+| `VirtualList` | `my-you-eye` | — | 10,000 rows |
 
 ### display — props
 
@@ -745,6 +787,15 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `highlight?` | `boolean` | Syntax-highlight line content via CodeBlock's tokenizer (js/ts/json/bash/css/html/py/yaml/sql). |
 | `wordDiff?` | `boolean` | Word-level intra-line diff for a removed line immediately followed by an added line (a 1:1 changed pair). |
 
+#### `DiffStatChip`
+
+Also accepts everything from `React.HTMLAttributes<HTMLSpanElement>`, `VariantProps<typeof diffStatChipVariants>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `added` | `number` | Number of added lines, rendered as "+N". |
+| `removed` | `number` | Number of removed lines, rendered as "-N". |
+
 #### `EmptyState`
 
 Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
@@ -755,6 +806,18 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`.
 | `title` | `string` | — |
 | `description?` | `string` | — |
 | `action?` | `ReactNode` | — |
+
+#### `FileIcon`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLSpanElement>, "children">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `name?` | `string` | Basename handed to the resolver (e.g. "notes.md", "guides"). |
+| `folder?` | `boolean` | True renders as a folder (open/closed states); false as a file. |
+| `open?` | `boolean` | Folder expanded state; meaningful when `folder` is true. |
+| `size?` | `number` | Square icon size in px (default 16). |
+| `resolve?` | `FileIconResolver` | — |
 
 #### `Image`
 
@@ -811,6 +874,20 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `title?` | `string` | Caption for an optional window-style title bar above the entries. |
 | `rows?` | `number` | Fixed visible height, expressed as a whole number of text lines (owner feedback: "I want to see a constant height terminal that does not change or move, and the content gets added within it ... like a scrolling action"). |
 
+#### `VirtualList`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `items` | `readonly T[]` | — |
+| `rowHeight` | `number` | Required, never inferred: fixed-height virtualization needs no measurement pass, and the caller reads the value off its own layout tokens so it cannot drift from the real row height. |
+| `overscan?` | `number` | — |
+| `renderRow` | `(item: T, index: number) => ReactNode` | — |
+| `getKey` | `(item: T, index: number) => string` | — |
+| `className?` | `string` | — |
+| `style?` | `CSSProperties` | — |
+
 ## feedback
 
 | Component | Tier | Variants (**default**) | Demos |
@@ -858,15 +935,17 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
-| `Button` | `my-you-eye` | variant: danger / ghost / **primary** / secondary<br>size: icon-sm / lg / **md** / sm | Variants, Sizes, Icon-only (compact), Disabled & loading |
+| `Button` | `my-you-eye` | variant: danger / ghost / **primary** / secondary<br>size: icon-sm / lg / **md** / sm / xs | Variants, Sizes, Icon-only (compact), Disabled & loading |
 | `Checkbox` | `my-you-eye` | size: **md** / sm | Sizes, States |
+| `ColorField` | `my-you-eye` | — | Accent color |
 | `Combobox` | `my-you-eye` | — | Basic, Uncontrolled, Disabled |
 | `FileDrop` | `my-you-eye` | state: **default** / dragging / error / success<br>size: lg / **md** / sm | Default, Sizes, States, Disabled, Single image only |
-| `Input` | `my-you-eye` | variant: **default** / filled<br>size: **md** / sm<br>invalid: true | Variants, Sizes, States |
+| `Input` | `my-you-eye` | variant: **default** / filled<br>size: **md** / sm<br>invalid: true | Variants, Sizes, Leading & trailing, States |
 | `Label` | `my-you-eye` | — | Default |
 | `MultiSelect` | `my-you-eye` | — | Basic, Uncontrolled, Empty, Disabled |
 | `RadioGroup` | `my-you-eye` | — | Default |
-| `Select` | `my-you-eye` | size: **md** / sm<br>invalid: true | Sizes, States, No indicator |
+| `SegmentedControl` | `my-you-eye` | size: md / **sm** / xs | Sizes, Disabled segment, Icon only, Controlled |
+| `Select` | `my-you-eye` | size: **md** / sm<br>invalid: true | Icon + label, Sizes, States, No indicator |
 | `Slider` | `my-you-eye` | size: **md** / sm | Basic slider, Sizes |
 | `Switch` | `my-you-eye` | size: **md** / sm | Sizes, States |
 | `Textarea` | `my-you-eye` | variant: **default** / filled<br>invalid: true | Variants, States |
@@ -884,6 +963,17 @@ Also accepts everything from `ButtonHTMLAttributes<HTMLButtonElement>`, `Variant
 #### `Checkbox`
 
 Also accepts everything from `React.ComponentPropsWithoutRef<typeof Root>`, `VariantProps<typeof checkboxVariants>`.
+
+#### `ColorField`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onChange" \| "defaultValue">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `value` | `string` | Hex color, e.g. "#7c3aed". |
+| `onChange` | `(hex: string) => void` | — |
+| `presets?` | `string[]` | Quick-pick swatches rendered beside the trigger. |
+| `label?` | `string` | Accessible name for the swatch trigger. |
 
 #### `Combobox`
 
@@ -915,6 +1005,11 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onDrop">`.
 
 Also accepts everything from `Omit<InputHTMLAttributes<HTMLInputElement>, "size">`, `VariantProps<typeof inputVariants>`.
 
+| Prop | Type | Description |
+|---|---|---|
+| `leading?` | `ReactNode` | Slot rendered inside the field's left edge (icon, unit prefix). |
+| `trailing?` | `ReactNode` | Slot rendered inside the field's right edge — shortcut hints via Kbd, unit suffixes. |
+
 #### `Label`
 
 Also accepts everything from `ComponentPropsWithoutRef<typeof Root>`, `VariantProps<typeof labelVariants>`.
@@ -935,6 +1030,17 @@ Also accepts everything from `ComponentPropsWithoutRef<typeof Root>`, `VariantPr
 #### `RadioGroup`
 
 Also accepts everything from `React.ComponentPropsWithoutRef<typeof Root>`.
+
+#### `SegmentedControl`
+
+Also accepts everything from `React.HTMLAttributes<HTMLDivElement>`, `VariantProps<typeof segmentedControlVariants>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `options` | `ReadonlyArray<SegmentedOption<T>>` | — |
+| `value` | `T \| undefined` | — |
+| `onValueChange?` | `(value: T) => void` | — |
+| `iconOnly?` | `boolean` | Hide label text; each label moves into its segment's Tooltip instead. |
 
 #### `Slider`
 
@@ -1230,12 +1336,27 @@ Also accepts everything from `Timing`.
 
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
+| `ActivityBar` | `my-you-eye` | — | Rail with footer item |
 | `Breadcrumbs` | `my-you-eye` | — | Default, Custom separator |
+| `EditorTabBar` | `my-you-eye` | — | Open documents |
 | `Link` | `my-you-eye` | variant: muted / **primary**<br>underline: false / **true** | Variants, underline={false}, In a sentence |
 | `Pagination` | `my-you-eye` | — | Default (10 pages), Few pages |
+| `StatusBar` | `my-you-eye` | tone: danger / **default** / primary / success / warning | Left and right slots |
 | `Tabs` | `my-you-eye` | variant: filing / pills / **underline** | Underline, Pills, Filing |
+| `TitleBar` | `my-you-eye` | — | Identity, breadcrumb, actions |
 
 ### navigation — props
+
+#### `ActivityBar`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLElement>, "onSelect">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `items` | `ActivityBarItem[]` | — |
+| `onSelect?` | `(id: string) => void` | — |
+| `footer?` | `ActivityBarItem` | Bottom-pinned item (Settings-class), same shape, its own handler. |
+| `onFooterSelect?` | `(id: string) => void` | — |
 
 #### `Breadcrumbs`
 
@@ -1245,6 +1366,20 @@ Also accepts everything from `HTMLAttributes<HTMLElement>`.
 |---|---|---|
 | `items` | `BreadcrumbItem[]` | — |
 | `separator?` | `ReactNode` | — |
+
+#### `EditorTabBar`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onSelect">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `tabs` | `EditorTab[]` | — |
+| `activeId?` | `string` | — |
+| `onSelect?` | `(id: string) => void` | — |
+| `onClose?` | `(id: string) => void` | — |
+| `onMove?` | `(draggedId: string, targetId: string) => void` | Within-bar drag reorder: dragged tab dropped onto targetId. |
+| `dragPayload?` | `(tab: EditorTab) => Record<string, unknown>` | Given a tab, returns the JSON-ready payload written to dataTransfer under "application/x-tab" on dragstart, so pane-edge drop zones can dock the dragged document (e.g. { path, paneId, name }). |
+| `actions?` | `ReactNode` | Trailing slot after the tabs (the home for a "…" overflow trigger). |
 
 #### `Link`
 
@@ -1264,18 +1399,41 @@ Also accepts everything from `HTMLAttributes<HTMLElement>`.
 | `totalPages` | `number` | — |
 | `onPageChange` | `(page: number) => void` | — |
 
+#### `StatusBar`
+
+Also accepts everything from `HTMLAttributes<HTMLElement>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `left?` | `ReactNode` | — |
+| `right?` | `ReactNode` | — |
+
 #### `Tabs`
 
 Also accepts everything from `React.ComponentPropsWithoutRef<typeof Root>`, `VariantProps<typeof tabsListVariants>`.
+
+#### `TitleBar`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLElement>, "title">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `title` | `ReactNode` | — |
+| `subtitle?` | `ReactNode` | — |
+| `glyph?` | `ReactNode` | App glyph rendered before the title (logo mark). |
+| `breadcrumb?` | `ReactNode` | Breadcrumb trail folded INLINE into the left identity cluster — the bar's fixed height never grows to fit it (#12). |
+| `actions?` | `ReactNode` | Right-aligned action cluster. |
 
 ## overlay
 
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `CommandPalette` | `my-you-eye` | — | Basic, With groups |
+| `ContextMenu` | `my-you-eye` | — | Row menu |
 | `Dialog` | `my-you-eye` | size: lg / **md** / sm | Sizes, Form example |
 | `Drawer` | `my-you-eye` | side: left / **right**<br>size: lg / **md** / sm | Left & Right, Sizes |
-| `DropdownMenu` | `my-you-eye` | — | Default |
+| `DropdownMenu` | `my-you-eye` | — | Default, With submenu |
+| `FindWidget` | `my-you-eye` | — | Live demo over sample text |
 | `Popover` | `my-you-eye` | — | Default, Positioning, With close button |
 | `Tooltip` | `my-you-eye` | — | Directions |
 
@@ -1292,6 +1450,27 @@ Also accepts everything from `React.ComponentPropsWithoutRef<typeof Root>`, `Var
 | `placeholder?` | `string` | — |
 | `emptyText?` | `string` | — |
 | `groups?` | `{ label: string; actionIds: string[] }[]` | — |
+
+#### `FindWidget`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onClose">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `query` | `string` | — |
+| `onQueryChange` | `(query: string) => void` | — |
+| `matchCount?` | `number` | Total matches for the current query; omit renders no counter. |
+| `activeMatch?` | `number` | Zero-based active match; rendered as "activeMatch + 1 of matchCount". |
+| `replaceable?` | `boolean` | Render the replace row (gate it off yourself for read-only surfaces). |
+| `replaceValue?` | `string` | — |
+| `onReplaceValueChange?` | `(value: string) => void` | — |
+| `options` | `FindOptions` | — |
+| `onOptionsChange?` | `(options: FindOptions) => void` | — |
+| `onNext?` | `() => void` | — |
+| `onPrevious?` | `() => void` | — |
+| `onReplace?` | `() => void` | — |
+| `onReplaceAll?` | `() => void` | — |
+| `onClose` | `() => void` | — |
 
 #### `Tooltip`
 
@@ -1311,6 +1490,8 @@ Also accepts everything from `React.ComponentPropsWithoutRef<typeof Root>`, `Var
 | `FormField` | `my-you-eye` | — | Default, With hint, Required with error |
 | `PageShell` | `my-you-eye` | — | Default, With actions |
 | `SequenceDiagram` | `my-you-eye` | — | Request flow, Self-messages, spanning note, error path, Progress reveal |
+| `SidebarContainer` | `my-you-eye` | — | Width + collapse are the region's |
+| `SplitPane` | `my-you-eye` | — | Nested grid |
 | `StatCard` | `my-you-eye` | — | Default, Size, Numeric delta, Icon + sparkline |
 | `StatGrid` | `my-you-eye` | — | 4-column KPI row, 3-column with sparklines, Size, positiveIsGood |
 | `TexturedSurface` | `my-you-eye` | variant: elevated / **surface**<br>radius: **default** / lg / none / sm | Tuner, Paper grain, Frosted glass, Brushed aluminium, Paper grain — full matrix, Frosted glass — full matrix, Brushed aluminium — full matrix, Theme-driven, Composed |
@@ -1388,6 +1569,31 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
 | `activations?` | `SequenceActivation[]` | — |
 | `laneWidth?` | `number` | Lane (participant column) width in px. |
 | `progress?` | `number` | 0→1 reveal progress, default 1 (fully drawn). |
+
+#### `SidebarContainer`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLElement>, "children">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `label` | `string` | — |
+| `headerActions?` | `ReactNode` | Trailing header icons (new-file, refresh…). |
+| `width` | `number` | Controlled width in px — a property of the REGION, not of any one view, so views mounted into the shell share one width (#13). |
+| `onWidthChange` | `(width: number) => void` | — |
+| `collapsed` | `boolean` | — |
+| `onCollapsedChange` | `(collapsed: boolean) => void` | — |
+| `maxWidth?` | `number` | Resize ceiling. |
+| `children` | `ReactNode` | — |
+
+#### `SplitPane`
+
+| Prop | Type | Description |
+|---|---|---|
+| `node` | `SplitNode` | — |
+| `renderLeaf` | `(leaf: SplitLeaf) => ReactNode` | — |
+| `onResize` | `(branchId: string, sizes: number[]) => void` | — |
+| `onEqualize?` | `(branchId: string) => void` | — |
+| `className?` | `string` | Applied to every BRANCH root (leaves are consumer-rendered). |
 
 #### `StatCard`
 
