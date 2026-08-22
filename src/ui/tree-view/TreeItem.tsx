@@ -1,8 +1,9 @@
-import { forwardRef, useCallback } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { CellType } from "../cell-type";
 import type { UrlReplacement } from "../cell-type";
+import { Input } from "../input";
 import type { TreeNode } from "./TreeView";
 
 function Chevron({ expanded }: { expanded: boolean }) {
@@ -58,47 +59,115 @@ function Sigil({ kind, count }: { kind: "object" | "array"; count: number }) {
   );
 }
 
+const TONE_CLASSES = {
+  default: "",
+  muted: "text-muted",
+  success: "text-success",
+  danger: "text-danger line-through decoration-dotted",
+  warning: "text-warning",
+} as const;
+
+const DROP_TARGET_CLASSES = "outline outline-2 -outline-offset-2 outline-primary bg-primary/10";
+
 export interface TreeItemProps {
   node: TreeNode;
   depth: number;
-  variant: "default" | "condensed";
+  density: "normal" | "compact";
   indent: number;
   ancestorLines: boolean[];
   isLast: boolean;
   expanded: boolean;
+  /** Keyboard-focus ring owner (#11: decoupled from selection). */
   current: boolean;
+  /** Controlled selection (#11) — what aria-selected reports. */
+  selected: boolean;
   hovered: boolean;
+  renaming: boolean;
+  draggable: boolean;
   onToggle: (id: string) => void;
   onHover: (id: string | undefined) => void;
+  onSelect?: (node: TreeNode) => void;
+  onRenameCommit?: (node: TreeNode, newName: string) => void;
+  onRenameCancel?: () => void;
+  /** Drop targeting this row (#11). Mode comes from pointer position:
+   *  top/bottom edge = before/after (2px insertion line), middle = into
+   *  (folders only). Refusal logic lives in TreeView's id→node index. */
+  onDropMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
   replacements?: UrlReplacement[];
   children?: ReactNode;
 }
 
 const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
-  ({ node, depth, variant, indent, ancestorLines, isLast, expanded, current, hovered, onToggle, onHover, replacements, children }, ref) => {
+  ({ node, depth, density, indent, ancestorLines, isLast, expanded, current, selected, hovered, renaming, draggable, onToggle, onHover, onSelect, onRenameCommit, onRenameCancel, onDropMove, replacements, children }, ref) => {
     const hasChildren = !!node.children?.length;
-    const arrIndex = isArrayIndex(node.label);
+    const rawLabel = typeof node.label === "string" ? node.label : "";
+    const arrIndex = isArrayIndex(rawLabel);
     const guideHighlight = hovered;
+    const compact = density === "compact";
+    const [dropMode, setDropMode] = useState<"into" | "before" | "after" | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+      if (renaming) inputRef.current?.focus();
+    }, [renaming]);
 
     const handleMouseEnter = useCallback(() => onHover(node.id), [node.id, onHover]);
     const handleMouseLeave = useCallback(() => onHover(undefined), [onHover]);
 
+    const commitRename = () => {
+      const name = inputRef.current?.value.trim() ?? "";
+      if (name && name !== rawLabel) onRenameCommit?.(node, name);
+      else onRenameCancel?.();
+    };
+
     return (
-      <li ref={ref} className={cn("relative", variant === "condensed" ? "py-px" : "py-0.5")}>
+      <li ref={ref} className={cn("relative", compact ? "py-px" : "py-0.5")}>
+        {dropMode === "before" && <span aria-hidden="true" className="absolute inset-x-1 -top-px z-10 h-0.5 bg-primary" />}
+        {dropMode === "after" && <span aria-hidden="true" className="absolute inset-x-1 -bottom-px z-10 h-0.5 bg-primary" />}
         <div
           id={node.id}
           role="treeitem"
           aria-expanded={hasChildren ? expanded : undefined}
-          aria-selected={current}
+          aria-selected={selected ? true : undefined}
           tabIndex={current ? 0 : -1}
+          draggable={draggable && !renaming}
+          onDragStart={(e) => {
+            e.dataTransfer.setData("application/x-tree-node", node.id);
+            e.dataTransfer.effectAllowed = "move";
+          }}
+          onDragOver={(e) => {
+            if (!onDropMove) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            const rect = e.currentTarget.getBoundingClientRect();
+            const rel = (e.clientY - rect.top) / rect.height;
+            const mode = rel < 0.3 ? "before" : rel > 0.7 ? "after" : hasChildren ? "into" : "after";
+            setDropMode(mode);
+          }}
+          onDragLeave={() => setDropMode(null)}
+          onDrop={(e) => {
+            const mode = dropMode;
+            setDropMode(null);
+            if (!mode || !onDropMove) return;
+            const sourceId = e.dataTransfer.getData("application/x-tree-node");
+            if (sourceId && sourceId !== node.id) {
+              e.preventDefault();
+              onDropMove(sourceId, node.id, mode);
+            }
+          }}
           className={cn(
             "group/row flex items-stretch min-w-0 rounded-ui-sm cursor-pointer outline-none",
             "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
             "hover:bg-surface-hover",
-            current && "bg-surface-active",
+            (current || selected) && "bg-surface-active",
+            dropMode === "into" && DROP_TARGET_CLASSES,
             "focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
           )}
-          onClick={() => hasChildren && onToggle(node.id)}
+          onClick={() => {
+            if (renaming) return;
+            if (hasChildren) onToggle(node.id);
+            onSelect?.(node);
+          }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -107,8 +176,12 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
           ))}
           {depth > 0 && <ElbowColumn indent={indent} isLast={isLast} highlight={guideHighlight} />}
           <div className={cn(
-            "flex items-center gap-1.5 min-w-0 flex-1 pr-2",
-            variant === "condensed" ? "py-1" : "py-1.5",
+            "flex items-center gap-1.5 min-w-0 min-h-0 flex-1 pr-2",
+            // Fixed grid-unit row heights (--spacing-tree-row(-compact)); see
+            // AGENTS.md §7 ("never content-driven") for why this isn't
+            // intrinsic. Tall values overflow past the row instead of
+            // dragging the chevron/elbow anchor down with them.
+            compact ? "h-tree-row-compact" : "h-tree-row",
           )}>
             {hasChildren ? (
               <Chevron expanded={expanded} />
@@ -123,13 +196,51 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
                 {node.icon}
               </span>
             )}
-            <span className={cn(
-              "text-sm leading-normal truncate flex-1 min-w-0",
-              arrIndex && "font-mono text-muted text-xs",
-            )}>{node.label}</span>
+            {renaming ? (
+              <Input
+                ref={inputRef}
+                size="sm"
+                defaultValue={rawLabel}
+                aria-label={`Rename ${rawLabel}`}
+                onClick={(e) => e.stopPropagation()}
+                onBlur={commitRename}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === "Enter") commitRename();
+                  if (e.key === "Escape") onRenameCancel?.();
+                }}
+                className="h-6 py-0"
+              />
+            ) : (
+              <span className={cn(
+                "text-sm leading-normal truncate flex-1 min-w-0",
+                arrIndex && "font-mono text-muted text-xs",
+                !arrIndex && TONE_CLASSES[node.tone ?? "default"],
+              )}>{node.label}</span>
+            )}
+            {/* `trailing` renders BEFORE `value` so the value lands flush
+                against the row's right edge every time (git-history note:
+                varying trailing widths used to push badges off-alignment). */}
+            {node.trailing && (
+              <span className="shrink-0 text-xs text-muted tabular-nums">{node.trailing}</span>
+            )}
             {node.value && (
-              <span className="truncate overflow-hidden shrink min-w-0 text-right">
-                <CellType {...node.value} replacements={replacements} />
+              <span
+                className="shrink min-w-0 text-right"
+                // Compact rows override the chip-height tokens so badges fit
+                // inside --spacing-tree-row-compact instead of overlapping
+                // neighbors (same "override the var, let descendants read it"
+                // pattern as Canvas's --backdrop-blur override, AGENTS §0.12).
+                style={compact ? {
+                  ["--density-chip-min-h" as string]: "var(--spacing-tree-row-compact)",
+                  ["--density-chip-py" as string]: "0",
+                } : undefined}
+              >
+                <CellType
+                  {...node.value}
+                  compact={node.value.type === "image" ? true : undefined}
+                  replacements={replacements}
+                />
               </span>
             )}
           </div>

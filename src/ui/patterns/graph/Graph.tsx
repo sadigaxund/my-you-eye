@@ -7,7 +7,7 @@ import { snap } from "../../graph-node/grid";
 import { generatePath } from "../../connection-line";
 import { getPortAnchor } from "./types";
 import type { PortRef, EditorNode, EditorEdge } from "./types";
-import { GraphNodeRenderer } from "./GraphNode";
+import { GraphNodeRenderer } from "./GraphNodeRenderer";
 
 export type { PortRef, EditorNode, EditorEdge };
 

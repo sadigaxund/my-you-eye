@@ -52,8 +52,7 @@ const ToastItem = forwardRef<React.ComponentRef<typeof Root>, ToastItemProps>(
   ({ title, description, variant = "default", ...props }, ref) => (
     <Root
       ref={ref}
-      className={cn(toastVariants({ variant }))}
-      style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
+      className={cn("backdrop-blur-ui", toastVariants({ variant }))}
       {...props}
     >
       <div className="flex flex-col gap-1">

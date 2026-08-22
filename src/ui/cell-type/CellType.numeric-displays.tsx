@@ -1,8 +1,9 @@
-function numberParts(value: number, opts?: Intl.NumberFormatOptions) {
-  const n = Number(value);
-  if (isNaN(n)) return null;
-  return { n, parts: new Intl.NumberFormat(undefined, opts).formatToParts(n) };
-}
+import type { ReactNode } from "react";
+import { cn } from "../../lib/cn";
+import {
+  formatNumberParts, formatPercentageParts, formatBytesParts, formatDurationParts,
+  formatCurrencyParts, formatSignedParts,
+} from "../../lib/format";
 
 function styledParts(parts: Intl.NumberFormatPart[], overrides?: {
   integer?: string; fraction?: string; decimal?: string; group?: string;
@@ -16,117 +17,134 @@ function styledParts(parts: Intl.NumberFormatPart[], overrides?: {
 
 const common = "font-mono tabular-nums truncate inline-block max-w-full align-middle";
 
-const BYTE_UNITS: Intl.NumberFormatOptions["unit"][] = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"];
-const BYTE_SHORT = ["B", "KB", "MB", "GB", "TB"];
-
-function byteUnitIndex(unit?: string): number | undefined {
-  if (!unit) return undefined;
-  const u = unit.toUpperCase();
-  for (let i = 0; i < BYTE_SHORT.length; i++) {
-    if (BYTE_SHORT[i] === u || BYTE_UNITS[i] === u.toLowerCase()) return i;
-  }
-  return undefined;
+/**
+ * Shared "number + constant-width unit" layout for every numeric type that
+ * has a static suffix/prefix (% in Percentage, MB in Bytes, currency code
+ * in Currency, …). A 2-column CSS grid, not a JS measurement: column 1
+ * (the number) is `1fr` and right-aligned, column 2 (the unit) is `auto`
+ * and left-aligned. Because the unit's own text is identical for every row
+ * in the same column (all "%", all "MB", …) its `auto` track resolves to
+ * the same width on every row, which pins the number/unit boundary to a
+ * fixed x-position down the column — combined with `tabular-nums` on the
+ * digits (equal advance width per glyph), this is what actually produces
+ * column alignment. Pure CSS: no `getBoundingClientRect`, no padding
+ * strings, no per-row width measurement (AGENTS.md §7 / owner's explicit
+ * "DO NOT measure text and pad" instruction).
+ */
+function NumberUnitRow({ number, unit, unitPosition = "suffix", className }: { number: ReactNode; unit?: ReactNode; unitPosition?: "prefix" | "suffix"; className?: string }) {
+  const numberCol = <span className="text-right">{number}</span>;
+  // A suffix unit reads as a separate token ("2.0 kB", "12.3 %") and takes a
+  // thin space; a prefix unit is part of the numeral ("$1,234.56") and must
+  // not. Grid `gap` can't express that — it would space both — so the space
+  // belongs to the unit cell.
+  const unitCol = unit ? <span className={unitPosition === "suffix" ? "pl-1" : undefined}>{unit}</span> : null;
+  return (
+    <span className={cn(common, "inline-grid grid-cols-[1fr_auto_auto] items-baseline align-middle", className)}>
+      {/* The empty leading `1fr` is the whole layout. Every other track is
+          `auto`, so the number and its unit form one right-aligned group that
+          stays glued together however wide the cell is. The first version put
+          the `1fr` on the NUMBER instead, which works for a suffix but tears a
+          prefix apart: `$` sat pinned to the cell's left edge with the digits
+          flung to the right (owner: "Currency type has dollar sign on the
+          left, and the value on the right, is it purposely done?"). It also
+          left every no-unit type (`number`, `duration`, `signed`) rendering as
+          a plain left-aligned inline-block, so one column mixed both
+          alignments. The spacer gives all of them the same behaviour. */}
+      <span aria-hidden />
+      {unitPosition === "prefix" ? <>{unitCol}{numberCol}</> : <>{numberCol}{unitCol}</>}
+    </span>
+  );
 }
 
 export function NumberDisplay({ value, compact, fractionDigits }: { value: unknown; compact?: boolean; fractionDigits?: number }) {
-  const opts: Intl.NumberFormatOptions = fractionDigits != null
-    ? { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }
-    : {};
-  if (compact) { opts.notation = "compact"; opts.maximumFractionDigits = 1; }
-  const r = numberParts(Number(value), opts);
+  const r = formatNumberParts(value, { fractionDigits, compact });
   if (!r) return <span className="text-muted">—</span>;
   return (
-    <span className={common}>
-      {styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
-    </span>
+    <NumberUnitRow
+      number={styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+    />
   );
 }
 
 export function PercentageDisplay({ value, fractionDigits }: { value: unknown; fractionDigits?: number }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const maxFrac = fractionDigits ?? 1;
-  const parts = new Intl.NumberFormat(undefined, { style: "percent", minimumFractionDigits: maxFrac, maximumFractionDigits: maxFrac }).formatToParts(n);
+  const r = formatPercentageParts(value, fractionDigits ?? 1);
+  if (!r) return <span className="text-muted">—</span>;
+  // "%" is its own grid column (see NumberUnitRow) rather than trailing
+  // inline text — that's the structural separation the owner asked for,
+  // and it's what makes the "%" sign land at the same x-position on every
+  // row of the column instead of drifting with the number's digit count.
+  const numberParts = r.parts.filter((p) => p.type !== "percentSign");
+  const unitParts = r.parts.filter((p) => p.type === "percentSign");
   return (
-    <span className={common}>
-      {styledParts(parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", percentSign: "text-muted text-xs" })}
-    </span>
+    <NumberUnitRow
+      number={styledParts(numberParts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted" })}
+      unit={styledParts(unitParts, { percentSign: "text-muted text-xs" })}
+    />
   );
 }
 
 export function BytesDisplay({ value, compact, displayUnit }: { value: unknown; compact?: boolean; displayUnit?: string }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const forcedIdx = byteUnitIndex(displayUnit);
-  let i = 0, s = n;
-  if (forcedIdx != null) {
-    i = forcedIdx;
-    s = n / Math.pow(1024, i);
-  } else {
-    while (s >= 1024 && i < BYTE_UNITS.length - 1) { s /= 1024; i++; }
-  }
-  const opts: Intl.NumberFormatOptions = { style: "unit", unit: BYTE_UNITS[i], unitDisplay: "short", minimumFractionDigits: 1, maximumFractionDigits: 2 };
-  if (compact) opts.notation = "compact";
-  const parts = new Intl.NumberFormat(undefined, opts).formatToParts(s);
-  const unitLabel = parts.find(p => p.type === "unit")?.value ?? BYTE_SHORT[i];
-  const nonUnit = parts.filter(p => p.type !== "unit");
+  const r = formatBytesParts(value, { compact, displayUnit });
+  if (!r) return <span className="text-muted">—</span>;
   return (
-    <span className={common}>
-      {styledParts(nonUnit, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
-      <span className="text-muted text-xs"> {unitLabel}</span>
-    </span>
+    <NumberUnitRow
+      number={styledParts(r.parts, { integer: "font-medium", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+      unit={<span className="text-muted text-xs">{r.unitLabel}</span>}
+    />
   );
 }
 
 export function DurationDisplay({ value }: { value: unknown }) {
-  const sec = Number(value);
-  if (isNaN(sec)) return <span className="text-muted">—</span>;
-  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.round(sec % 60);
-  const segs: { v: string; u: string }[] = [];
-  if (h > 0) segs.push({ v: String(h), u: "h" });
-  if (m > 0) segs.push({ v: String(m), u: "m" });
-  if (s > 0 || segs.length === 0) segs.push({ v: String(s), u: "s" });
+  const segs = formatDurationParts(value);
+  if (!segs) return <span className="text-muted">—</span>;
   return (
-    <span className={common}>
-      {segs.map((seg, i) => (
+    <NumberUnitRow number={
+      segs.map((seg, i) => (
         <span key={i}>
           {i > 0 && <span className="text-muted text-xs"> </span>}
-          <span className={i === 0 ? "font-medium" : "text-muted text-xs"}>{seg.v}{seg.u}</span>
+          <span className={i === 0 ? "font-medium" : "text-muted text-xs"}>
+            {/* Zero-pad every non-leading segment (mirrors the AudioDisplay
+                seek-time convention elsewhere in this file's sibling module)
+                so "3h 5m" becomes "3h 05m" — a fixed 2-digit width for every
+                segment after the first, which is what lets tabular-nums
+                actually keep them lined up column-to-column. The leading
+                segment is left unpadded on purpose: it carries the value's
+                real magnitude (3h vs 12h vs 45m) and padding it would be
+                misleading, not aligning. */}
+            {i === 0 ? seg.v : seg.v.padStart(2, "0")}{seg.u}
+          </span>
         </span>
-      ))}
-    </span>
+      ))
+    } />
   );
 }
 
 export function CurrencyDisplay({ value, compact, fractionDigits, currency }: { value: unknown; compact?: boolean; fractionDigits?: number; currency?: string }) {
-  const minFrac = fractionDigits ?? 2;
-  const maxFrac = fractionDigits ?? 2;
-  const r = numberParts(Number(value), { style: "currency", currency: currency ?? "USD", minimumFractionDigits: minFrac, maximumFractionDigits: maxFrac, ...(compact ? { notation: "compact" } : {}) });
+  const r = formatCurrencyParts(value, { fractionDigits, currency, compact });
   if (!r) return <span className="text-muted">—</span>;
-  return (
-    <span className={common}>
-      {r.parts.map((p, i) => {
-        if (p.type === "currency") return <span key={i} className="text-muted text-xs">{p.value}</span>;
-        if (p.type === "fraction") return <span key={i} className="text-muted text-xs">{p.value}</span>;
-        if (p.type === "decimal") return <span key={i} className="text-muted">{p.value}</span>;
-        if (p.type === "group") return <span key={i} className="text-muted">{p.value}</span>;
-        if (p.type === "literal" && compact) return <span key={i} className="text-muted text-xs">{p.value}</span>;
-        return <span key={i} className="font-medium">{p.value}</span>;
-      })}
-    </span>
-  );
+  const currencyIdx = r.parts.findIndex((p) => p.type === "currency");
+  const isPrefix = currencyIdx <= 0;
+  const numberParts = r.parts.filter((p) => p.type !== "currency");
+  const unitParts = r.parts.filter((p) => p.type === "currency");
+  const numberNode = numberParts.map((p, i) => {
+    if (p.type === "fraction") return <span key={i} className="text-muted text-xs">{p.value}</span>;
+    if (p.type === "decimal") return <span key={i} className="text-muted">{p.value}</span>;
+    if (p.type === "group") return <span key={i} className="text-muted">{p.value}</span>;
+    if (p.type === "literal" && compact) return <span key={i} className="text-muted text-xs">{p.value}</span>;
+    return <span key={i} className="font-medium">{p.value}</span>;
+  });
+  const unitNode = <span className="text-muted text-xs">{unitParts.map((p) => p.value).join("")}</span>;
+  return <NumberUnitRow number={numberNode} unit={unitParts.length ? unitNode : undefined} unitPosition={isPrefix ? "prefix" : "suffix"} />;
 }
 
 export function SignedDisplay({ value }: { value: unknown }) {
-  const n = Number(value);
-  if (isNaN(n)) return <span className="text-muted">—</span>;
-  const positive = n > 0;
-  const negative = n < 0;
+  const r = formatSignedParts(value);
+  if (!r) return <span className="text-muted">—</span>;
+  const positive = r.sign === "positive";
+  const negative = r.sign === "negative";
   const color = positive ? "text-success" : negative ? "text-danger" : "text-muted";
-  const abs = Math.abs(n);
-  const parts = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).formatToParts(abs);
   return (
-    <span className={`${common} ${color}`}>
+    <NumberUnitRow className={color} number={
       <span className="inline-flex items-center gap-0.5">
         {positive && (
           <svg viewBox="0 0 12 12" className="size-icon-sm fill-current">
@@ -139,9 +157,9 @@ export function SignedDisplay({ value }: { value: unknown }) {
           </svg>
         )}
         <span>
-          {styledParts(parts, { integer: "font-semibold", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
+          {styledParts(r.parts, { integer: "font-semibold", fraction: "text-muted text-xs", decimal: "text-muted", group: "text-muted" })}
         </span>
       </span>
-    </span>
+    } />
   );
 }

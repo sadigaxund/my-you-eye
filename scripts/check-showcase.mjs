@@ -3,6 +3,9 @@ import { join, relative } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const UI_DIR = join(ROOT, "src/ui");
+const MOTION_DIR = join(ROOT, "src/motion");
+const SCENES_DIR = join(ROOT, "src/scenes");
+const PRESENT_DIR = join(ROOT, "src/present");
 const INDEX_TS = join(ROOT, "src/index.ts");
 
 let errors = [];
@@ -54,6 +57,29 @@ if (existsSync(INDEX_TS)) {
     }
   }
 }
+
+// 3. Same coverage rule for src/motion/, src/scenes/ and src/present/
+// (AGENTS.md §9d phase 0 / TODO.md A0, extended to src/present/ by Phase F):
+// each immediate subdirectory that contains a .tsx file must also contain a
+// *.showcase.tsx. A directory that doesn't exist yet is a no-op (does not
+// touch the src/ui logic above).
+function checkFlatShowcaseCoverage(dir) {
+  if (!existsSync(dir)) return;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const subdir = join(dir, entry.name);
+    const files = readdirSync(subdir);
+    const hasComponent = files.some((f) => f.endsWith(".tsx") && !f.endsWith(".showcase.tsx"));
+    const hasShowcase = files.some((f) => f.endsWith(".showcase.tsx"));
+    if (hasComponent && !hasShowcase) {
+      errors.push(`Missing showcase file in ${relative(ROOT, subdir)}`);
+    }
+  }
+}
+
+checkFlatShowcaseCoverage(MOTION_DIR);
+checkFlatShowcaseCoverage(SCENES_DIR);
+checkFlatShowcaseCoverage(PRESENT_DIR);
 
 if (errors.length > 0) {
   console.error("❌ Showcase coverage check failed:\n");

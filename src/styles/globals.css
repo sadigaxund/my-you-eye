@@ -48,6 +48,28 @@
   color: var(--color-fg);
 }
 
+/* Dark mode is an explicit consumer decision (.dark on <html>) — native
+   inputs, scrollbars, and form controls must follow it too (#29). */
+.dark,
+[data-theme].dark {
+  color-scheme: dark;
+}
+
+/* Reduced-motion guard (#29): every CSS animation/transition in the ui tier
+   (animate-in/out entrances, hover transitions) collapses to effectively
+   instant. The motion tier (src/motion) is frame-driven via progress and
+   unaffected by this — its pacing belongs to the timeline, not to CSS. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 [data-font="serif"] {
   --font-sans: var(--font-serif);
   --font-mono: "Courier New", monospace;
@@ -93,14 +115,14 @@ html {
 }
 
 *::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  border-radius: 3px;
+  border-radius: var(--scrollbar-radius);
   background: var(--color-scrollbar);
 }
 *::-webkit-scrollbar-thumb:hover {
@@ -109,6 +131,68 @@ html {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+/* The single definition of the library's translucent-surface blur. Every
+   surface that used to carry `style={{ backdropFilter: "blur(var(--backdrop-blur))" }}`
+   inline now writes `backdrop-blur-ui` instead.
+
+   It MUST keep reading `--backdrop-blur` through `var()`. Canvas's performance
+   contract (AGENTS.md §0.12) works by setting `--backdrop-blur: 0` as an inline
+   custom property on its transforming layer; that override only reaches
+   descendants because they resolve the token at use time. Baking a literal
+   length in here would silently break the whole mechanism. */
+@utility backdrop-blur-ui {
+  backdrop-filter: blur(var(--backdrop-blur));
+}
+
+/* ScrollArea edge-fade masks (opt-in via the `fade` prop). Token-sized via
+   --scrollarea-fade-size so a scrollable region visibly reads as scrollable
+   without any per-component scrollbar styling (AGENTS.md §0.10 — this masks
+   content opacity at the edge, it does not touch scrollbar rendering). */
+.scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+}
+.scroll-fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black var(--scrollarea-fade-size),
+    black calc(100% - var(--scrollarea-fade-size)),
+    transparent
+  );
+}
+/* Both axes at once (ScrollArea orientation="both" fade): two mask layers
+   intersected so all four edges fade, not just whichever layer's rule wins. */
+.scroll-fade-xy {
+  mask-image:
+    linear-gradient(to right, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent),
+    linear-gradient(to bottom, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent),
+    linear-gradient(to bottom, transparent, black var(--scrollarea-fade-size), black calc(100% - var(--scrollarea-fade-size)), transparent);
+  -webkit-mask-composite: source-in;
 }
 
 /* Syntax highlighting (CodeBlock) */

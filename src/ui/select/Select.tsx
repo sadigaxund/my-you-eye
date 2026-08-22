@@ -38,7 +38,7 @@ export interface SelectTriggerProps
 
 const SelectTrigger = forwardRef<React.ComponentRef<typeof Trigger>, SelectTriggerProps>(
   ({ className, size, invalid, children, ...props }, ref) => (
-    <Trigger ref={ref} className={cn(triggerVariants({ size, invalid }), className)} style={{ backdropFilter: "blur(var(--backdrop-blur))" }} {...props}>
+    <Trigger ref={ref} className={cn("backdrop-blur-ui", triggerVariants({ size, invalid }), className)} {...props}>
       {children}
       <Icon className="ml-2 shrink-0 opacity-50">
         <svg viewBox="0 0 8 8" className="size-3 fill-current">
@@ -57,10 +57,9 @@ const SelectContent = forwardRef<React.ComponentRef<typeof Content>, React.Compo
         ref={ref}
         position={position}
         className={cn(
-          "relative z-[var(--z-overlay)] max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "backdrop-blur-ui relative z-[var(--z-overlay)] max-h-96 min-w-[8rem] overflow-hidden rounded-ui border border-border bg-bg text-fg shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out",
           className,
         )}
-        style={{ backdropFilter: "blur(var(--backdrop-blur))" }}
         {...props}
       >
         <Viewport className="p-1">{children}</Viewport>
@@ -94,7 +93,12 @@ const SelectItem = forwardRef<React.ComponentRef<typeof Item>, SelectItemProps>(
           </ItemIndicator>
         </span>
       )}
-      <ItemText>{children}</ItemText>
+      {/* Item content is one visual unit: icon + label on a single row that
+          never wraps, so consumers compose an icon directly as a child
+          without hand-rolling the same wrapper span (#24). */}
+      <ItemText>
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">{children}</span>
+      </ItemText>
     </Item>
   ),
 );

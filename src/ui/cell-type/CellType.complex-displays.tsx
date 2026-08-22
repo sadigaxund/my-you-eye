@@ -1,10 +1,10 @@
-import { useRef, useLayoutEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { CodeBlock } from "../code-block";
 import { ScrollArea } from "../scroll-area";
 import { TreeView } from "../tree-view";
 import type { TreeNode } from "../tree-view";
 import { Badge } from "../badge";
+import { useTruncated, ExpandIndicator, EXPAND_POPOVER_STYLE } from "./CellType.shared";
 import type { UrlReplacement } from "./CellType";
 
 function safeStringify(value: unknown): string {
@@ -94,7 +94,7 @@ export function JsonDisplay({ value }: { value: unknown }) {
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" tone="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} {Array.isArray(value) ? "items" : "keys"}
             </Badge>
             <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap">
@@ -102,16 +102,17 @@ export function JsonDisplay({ value }: { value: unknown }) {
                 <span key={i} className={tokenStyles[t.type]}>{t.value}</span>
               ))}
             </span>
-            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
+            <ExpandIndicator />
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
-        <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-xs text-muted">JSON</span>
-        </div>
+      <PopoverContent side="bottom" align="start" className="p-2 overflow-hidden" style={EXPAND_POPOVER_STYLE}>
         <ScrollArea className="max-h-72">
-          <CodeBlock code={preview.full} />
+          {/* `bare`: no persistent "JSON" header duplicating this popover's
+              own framing — just a hover-revealed copy button, and a
+              transparent background so the block reads as part of the
+              popover surface rather than a second nested panel. */}
+          <CodeBlock code={preview.full} language="json" highlight bare />
         </ScrollArea>
       </PopoverContent>
     </Popover>
@@ -161,18 +162,10 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
     ? []
     : Object.keys(value as Record<string, unknown>);
 
-  const previewRef = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = previewRef.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
+  // Truncation detection isn't needed here anymore (the indicator is now
+  // unconditional, see below) but the ref still drives the preview span's
+  // overflow clipping, so the hook stays — just its boolean is unused.
+  const [previewRef] = useTruncated<HTMLSpanElement>([value]);
 
   return (
     <Popover>
@@ -181,7 +174,7 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
           <span className="text-muted italic">empty</span>
         ) : (
           <>
-            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
+            <Badge variant="neutral" tone="soft" className="text-xs px-1 py-0 leading-none shrink-0">
               {count} {isArray ? "items" : "keys"}
             </Badge>
             {keys.length > 0 && (
@@ -194,75 +187,25 @@ export function TreeDisplay({ value, replacements }: { value: unknown; replaceme
                 ))}
               </span>
             )}
-            {isTruncated && (
-              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
-            )}
+            {/* Tree is always expandable (the preview only shows top-level
+                keys, never nested values), so the indicator isn't gated on
+                isTruncated the way plain-text truncation is — same
+                reasoning as JsonDisplay just above. */}
+            <ExpandIndicator />
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
+      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={EXPAND_POPOVER_STYLE}>
         <div className="flex items-center justify-between px-3 pt-2">
           <span className="text-xs text-muted">Tree</span>
         </div>
         <ScrollArea className="max-h-72 p-2">
-          <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={2} replacements={replacements} />
-        </ScrollArea>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-export function ArrayDisplay({ value }: { value: unknown }) {
-  const arr = Array.isArray(value) ? value : [];
-  const count = arr.length;
-
-  const previewRef = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = previewRef.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
-
-  return (
-    <Popover>
-      <PopoverTrigger className="font-mono text-xs cursor-pointer hover:text-primary transition-colors flex w-full max-w-full min-w-0 items-center gap-1.5">
-        {count === 0 ? (
-          <span className="text-muted italic">empty</span>
-        ) : (
-          <>
-            <Badge variant="neutral" style="soft" className="text-xs px-1 py-0 leading-none shrink-0">
-              {count} items
-            </Badge>
-            <span
-              ref={previewRef}
-              className="block min-w-0 overflow-hidden whitespace-nowrap text-secondary-fg"
-            >
-              {arr.map((item, i) => (
-                <span key={i}>{i > 0 && <span className="text-muted">, </span>}{String(item)}</span>
-              ))}
-            </span>
-            {isTruncated && (
-              <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">…</span>
-            )}
-          </>
-        )}
-      </PopoverTrigger>
-      <PopoverContent side="bottom" align="start" className="p-0 overflow-hidden" style={{ minWidth: "var(--radix-popover-trigger-width)", maxWidth: "var(--radix-popover-trigger-width)" }}>
-        <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-xs text-muted">List ({count})</span>
-        </div>
-        <ScrollArea className="max-h-72 p-2">
-          <div className="flex flex-col gap-1">
-            {arr.map((item, i) => (
-              <Badge key={i} variant="neutral" style="soft">{String(item)}</Badge>
-            ))}
-          </div>
+          {/* defaultExpandedDepth={0}: every node starts collapsed. Owner:
+              "the Tree type CellType start auto-expanded... I want the leaf
+              collapsed by default." TreeView's own default (1) auto-expands
+              the root level, which is exactly the behavior being opted out
+              of here. */}
+          <TreeView data={nodes} variant="condensed" indent={12} defaultExpandedDepth={0} replacements={replacements} />
         </ScrollArea>
       </PopoverContent>
     </Popover>

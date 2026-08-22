@@ -27,6 +27,14 @@ html[data-theme="stark"].dark {
   --color-surface-active: oklch(0.94 0 0);
   --color-surface-elevated: oklch(1 0 0);
   --color-canvas-surface: oklch(1 0 0);
+  --color-surface-opaque: oklch(1 0 0);
+  --color-sidebar: oklch(1 0 0);
+  --color-sidebar-fg: oklch(0.15 0 0);
+  --color-sidebar-border: oklch(0.65 0 0);
+  --color-sidebar-item-hover: oklch(0.97 0 0);
+  --color-sidebar-item-active: oklch(0.94 0 0);
+  --color-sidebar-badge: oklch(0.15 0 0);
+  --color-sidebar-badge-fg: oklch(1 0 0);
 
   --color-border: oklch(0.65 0 0);
   --color-ring: oklch(0.15 0 0 / 0.3);
@@ -49,6 +57,7 @@ html[data-theme="stark"].dark {
 
   --opacity-dim: 0.5;
   --opacity-muted: 0.3;
+  --opacity-focus-dim: 0.25;
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
   --texture-blend: multiply;
@@ -77,6 +86,14 @@ html[data-theme="stark"].dark {
   --color-surface-active: oklch(0.15 0 0);
   --color-surface-elevated: oklch(0.08 0 0);
   --color-canvas-surface: oklch(0.05 0 0);
+  --color-surface-opaque: oklch(0.05 0 0);
+  --color-sidebar: oklch(0.05 0 0);
+  --color-sidebar-fg: oklch(0.95 0 0);
+  --color-sidebar-border: oklch(0.50 0 0);
+  --color-sidebar-item-hover: oklch(0.10 0 0);
+  --color-sidebar-item-active: oklch(0.15 0 0);
+  --color-sidebar-badge: oklch(0.95 0 0);
+  --color-sidebar-badge-fg: oklch(0 0 0);
 
   --color-border: oklch(0.50 0 0);
   --color-ring: oklch(0.95 0 0 / 0.3);
@@ -99,4 +116,5 @@ html[data-theme="stark"].dark {
 
   --opacity-dim: 0.5;
   --opacity-muted: 0.3;
+  --opacity-focus-dim: 0.25;
 }

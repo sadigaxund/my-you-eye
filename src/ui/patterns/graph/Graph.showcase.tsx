@@ -79,7 +79,7 @@ function Demo() {
 const entry: ShowcaseEntry = {
   title: "Graph",
   group: "canvas",
-  description: "A composed pattern combining Canvas, GraphNode, and Edge into a drag-and-drop pipeline editor.",
+  description: "A composed pattern that combines Canvas, GraphNode and Edge into a drag-and-drop pipeline editor.",
   demos: [{ name: "Pipeline editor (drag nodes, connect ports, delete selected)", render: () => <Demo /> }],
 };
 export default entry;

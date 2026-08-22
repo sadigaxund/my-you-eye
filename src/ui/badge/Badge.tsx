@@ -18,52 +18,52 @@ const badgeVariants = cva(
         warning: ["text-warning", "bg-warning/15"],
         danger: ["text-danger", "bg-danger/15"],
       },
-      style: {
+      tone: {
         solid: "",
         soft: "",
       },
     },
     compoundVariants: [
       {
-        style: "solid",
+        tone: "solid",
         variant: "neutral",
         className: "bg-secondary text-secondary-fg",
       },
       {
-        style: "solid",
+        tone: "solid",
         variant: "primary",
         className: "bg-primary text-primary-fg",
       },
       {
-        style: "solid",
+        tone: "solid",
         variant: "success",
         className: "bg-success text-success-fg",
       },
       {
-        style: "solid",
+        tone: "solid",
         variant: "warning",
         className: "bg-warning text-warning-fg",
       },
       {
-        style: "solid",
+        tone: "solid",
         variant: "danger",
         className: "bg-danger text-danger-fg",
       },
     ],
     defaultVariants: {
       variant: "neutral",
-      style: "solid",
+      tone: "solid",
     },
   },
 );
 
 export interface BadgeProps
-  extends Omit<HTMLAttributes<HTMLSpanElement>, "style">,
+  extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant, style, ...props }, ref) => (
-    <span ref={ref} className={cn(badgeVariants({ variant, style }), className)} {...props} />
+  ({ className, variant, tone, ...props }, ref) => (
+    <span ref={ref} className={cn(badgeVariants({ variant, tone }), className)} {...props} />
   ),
 );
 Badge.displayName = "Badge";

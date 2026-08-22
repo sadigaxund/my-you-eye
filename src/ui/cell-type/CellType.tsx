@@ -1,4 +1,5 @@
-import { useCallback, useState, useRef, useLayoutEffect } from "react";
+import { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react";
+import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge";
 import { StatusDot } from "../status-dot";
@@ -6,18 +7,31 @@ import type { StatusDotProps } from "../status-dot";
 import type { BadgeProps } from "../badge";
 import { Dialog, DialogContent, DialogTitle } from "../dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
+import { Image } from "../image";
+import { Slider } from "../slider";
+import { Button } from "../button";
 import { DateHumanDisplay, DateSystemDisplay, DateTimeTzDisplay } from "./CellType.date-displays";
 import {
   NumberDisplay, PercentageDisplay, BytesDisplay, DurationDisplay,
   CurrencyDisplay, SignedDisplay,
 } from "./CellType.numeric-displays";
-import { JsonDisplay, TreeDisplay, ArrayDisplay } from "./CellType.complex-displays";
+import { JsonDisplay, TreeDisplay } from "./CellType.complex-displays";
+import { ArrayDisplay } from "./CellType.array-display";
+import { MarkdownDisplay } from "./CellType.markdown-display";
+import { HtmlDisplay } from "./CellType.html-display";
+import {
+  SparklineDisplay, TagsDisplay, CodeDisplay, ColorDisplay,
+  HashDisplay, UserDisplay, ProgressCellDisplay, SecretDisplay,
+} from "./CellType.misc-displays";
+import { useTruncated, ExpandIndicator, EXPAND_POPOVER_STYLE } from "./CellType.shared";
 
 export type CellValueType =
   | "text" | "boolean" | "email" | "url" | "json" | "null" | "badge" | "status"
   | "number" | "percentage" | "date-human" | "date-system" | "datetime-tz"
   | "bytes" | "duration" | "currency" | "signed" | "array"
-  | "image" | "audio" | "tree";
+  | "image" | "audio" | "tree"
+  | "sparkline" | "tags" | "code" | "color" | "hash" | "user" | "progress" | "secret"
+  | "markdown" | "html";
 
 export type UrlReplacement = { pattern: string | RegExp; label: string };
 
@@ -25,7 +39,7 @@ export interface CellTypeProps {
   type?: CellValueType;
   value?: unknown;
   badgeVariant?: BadgeProps["variant"];
-  badgeStyle?: BadgeProps["style"];
+  badgeStyle?: BadgeProps["tone"];
   statusVariant?: StatusDotProps["variant"];
   statusPulse?: boolean;
   replacements?: UrlReplacement[];
@@ -37,6 +51,12 @@ export interface CellTypeProps {
   currency?: string;
   /** Force a byte unit (e.g. "GB"). Overrides auto-scaling for "bytes" type. */
   displayUnit?: string;
+  /** Highlight language for "code" type (e.g. "ts", "sql"). Omit for a
+   * plain, unhighlighted snippet. */
+  codeLanguage?: string;
+  /** Optional photo URL for "user" type — falls back to initials (Avatar's
+   * own fallback behavior) when omitted. */
+  avatarSrc?: string;
 }
 
 function BooleanDisplay({ value }: { value: unknown }) {
@@ -58,16 +78,68 @@ function applyReplacements(str: string, replacements?: UrlReplacement[]) {
   return r;
 }
 
-function ImageDisplay({ value }: { value: unknown }) {
+function GoToIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim">
+      <path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-none stroke-current opacity-dim" strokeWidth="1.1">
+      <rect x="1.5" y="2.5" width="9" height="7" rx="0.75" />
+      <path d="M1.75 3.25 6 6.25l4.25-3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Shared by "url" and "email": both are an anchor with a truncated label
+// and a small trailing action glyph — the "go to"/"mail me" icon. One
+// component with an icon slot instead of two near-identical hand-rolled
+// `<a>` tags, per the owner's ask to reuse the URL type's mechanism rather
+// than parallel it for Email.
+function LinkCellValue({ href, label, icon, external }: { href: string; label: string; icon: ReactNode; external?: boolean }) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full"
+    >
+      <span className="truncate">{label}</span>
+      {icon}
+    </a>
+  );
+}
+
+function ImageDisplay({ value, compact }: { value: unknown; compact?: boolean }) {
   const src = String(value);
   const [open, setOpen] = useState(false);
   return (
     <>
-      <img src={src} alt="" className="size-8 rounded-ui-sm object-cover border border-border cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setOpen(true)} />
+      <Image
+        src={src}
+        alt=""
+        radius="sm"
+        bordered
+        // `compact`: size-thumb (32px, --spacing-thumb) is taller than a
+        // TreeView row (24px, --spacing-tree-row) and overflows it — see
+        // TODO.md's "Known issues". size-thumb-sm (20px, --spacing-thumb-sm)
+        // fits inside a "normal" density row with margin to spare. Default
+        // (size-thumb) is unchanged for every other CellType consumer
+        // (tables, DataList, etc.) — this is opt-in only.
+        className={cn(
+          compact ? "size-thumb-sm" : "size-thumb",
+          "cursor-pointer hover:opacity-80 transition-opacity",
+        )}
+        onClick={() => setOpen(true)}
+      />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="p-0 overflow-hidden max-w-[90vw] w-auto">
           <DialogTitle className="sr-only">Image preview</DialogTitle>
-          <img src={src} alt="" className="max-w-[80vw] max-h-[80vh] object-contain" />
+          <Image src={src} alt="" fit="contain" radius="none" className="max-w-[80vw] max-h-[80vh]" />
         </DialogContent>
       </Dialog>
     </>
@@ -91,36 +163,42 @@ function AudioDisplay({ value }: { value: unknown }) {
     a.currentTime = Number(e.target.value);
     setT(a.currentTime);
   }, []);
+  // `timeupdate` only fires ~4x/second (the HTML spec's floor, not this
+  // browser's), so driving the seek thumb from it alone reads as low-fps
+  // during playback. Drive it from rAF instead while playing — cancelled
+  // on pause/unmount — for a smooth ~60fps thumb; `timeupdate` still fires
+  // and would be harmless, but rAF supersedes it, so there's no reason to
+  // keep both updating the same state (AGENTS.md TODO A11). This is plain
+  // DOM/UI polish outside src/motion/ — not the frame-driven animation
+  // tier, so rAF here is unrelated to (and doesn't conflict with)
+  // AGENTS.md §9c's "no wall-clock APIs" rule, which scopes to src/motion/.
+  useEffect(() => {
+    if (!p) return;
+    let raf: number;
+    const tick = () => {
+      setT(r.current?.currentTime ?? 0);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [p]);
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
   return (
-    <span className="inline-flex items-center gap-2 text-xs min-w-48" onClick={(e) => e.stopPropagation()}>
-      <audio ref={r} src={src} onTimeUpdate={() => setT(r.current?.currentTime ?? 0)} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
-      <button type="button" onClick={toggle}
-        className="size-6 shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-fg cursor-pointer hover:opacity-80 transition-opacity">
+    <span className="inline-flex items-center gap-inline text-xs min-w-audio-min" onClick={(e) => e.stopPropagation()}>
+      <audio ref={r} src={src} onLoadedMetadata={() => setD(r.current?.duration ?? 0)} onEnded={() => setP(false)} />
+      <Button type="button" variant="ghost" size="icon-sm" onClick={toggle} aria-label={p ? "Pause" : "Play"}>
         {p ? <svg viewBox="0 0 10 10" className="size-3 fill-current"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
           : <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>}
-      </button>
-      <input type="range" min={0} max={d || 1} step={0.1} value={t} onChange={seek}
-        className="flex-1 h-1 accent-primary cursor-pointer" />
-      <span className="font-mono tabular-nums text-muted shrink-0 w-24 text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
+      </Button>
+      <Slider aria-label="Seek" size="sm" min={0} max={d || 1} step={0.1} value={t} onChange={seek} className="flex-1" />
+      <span className="font-mono tabular-nums text-muted shrink-0 w-audio-time text-right whitespace-nowrap">{d ? `${fmt(t)} / ${fmt(d)}` : "--:-- / --:--"}</span>
     </span>
   );
 }
 
 function TruncatedCellValue({ value, className }: { value: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
+  const [ref, isTruncated] = useTruncated<HTMLSpanElement>([value]);
   const [open, setOpen] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const check = () => setIsTruncated(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [value]);
 
   useLayoutEffect(() => {
     if (!isTruncated) setOpen(false);
@@ -144,14 +222,13 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
           >
             {value}
           </span>
-          {isTruncated && (
-            <span className="ml-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded bg-muted/10 text-xs font-bold leading-none text-muted">
-              …
-            </span>
-          )}
+          {isTruncated && <ExpandIndicator />}
         </span>
       </PopoverTrigger>
-      <PopoverContent className="max-w-sm p-3 text-sm whitespace-pre-wrap break-words">
+      <PopoverContent
+        className="p-3 text-sm whitespace-pre-wrap break-words"
+        style={EXPAND_POPOVER_STYLE}
+      >
         {value}
       </PopoverContent>
     </Popover>
@@ -160,17 +237,15 @@ function TruncatedCellValue({ value, className }: { value: string; className?: s
 
 export function CellType({
   type = "text", value, badgeVariant, badgeStyle, statusVariant, statusPulse, replacements, dateFormat, compact,
-  fractionDigits, currency, displayUnit,
+  fractionDigits, currency, displayUnit, codeLanguage, avatarSrc,
 }: CellTypeProps) {
   if (value === null || value === undefined || type === "null") return <span className="text-muted">—</span>;
   switch (type) {
     case "boolean": return <BooleanDisplay value={value} />;
-    case "email": return <a href={`mailto:${String(value)}`} className="text-primary hover:underline inline-flex min-w-0 w-full"><span className="truncate">{String(value)}</span></a>;
-    case "url": return <a href={String(value)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full">
-      <span className="truncate">{applyReplacements(String(value), replacements)}</span>
-      <svg viewBox="0 0 12 12" className="size-icon-sm shrink-0 fill-current opacity-dim"><path d="M2 2h3v1H3v6h6V7h1v3H2V2zm4 0h4v4H9V4.5L6.5 7 6 6.5 8.5 4H6V2z" /></svg></a>;
+    case "email": return <LinkCellValue href={`mailto:${String(value)}`} label={String(value)} icon={<MailIcon />} />;
+    case "url": return <LinkCellValue href={String(value)} label={applyReplacements(String(value), replacements)} icon={<GoToIcon />} external />;
     case "json": return <JsonDisplay value={value} />;
-    case "badge": return <Badge variant={badgeVariant ?? "neutral"} style={badgeStyle ?? "solid"}>{String(value)}</Badge>;
+    case "badge": return <Badge variant={badgeVariant ?? "neutral"} tone={badgeStyle ?? "solid"}>{String(value)}</Badge>;
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
     case "number": return <NumberDisplay value={value} compact={compact} fractionDigits={fractionDigits} />;
     case "percentage": return <PercentageDisplay value={value} fractionDigits={fractionDigits} />;
@@ -181,10 +256,20 @@ export function CellType({
     case "duration": return <DurationDisplay value={value} />;
     case "currency": return <CurrencyDisplay value={value} compact={compact} fractionDigits={fractionDigits} currency={currency} />;
     case "signed": return <SignedDisplay value={value} />;
-    case "image": return <ImageDisplay value={value} />;
+    case "image": return <ImageDisplay value={value} compact={compact} />;
     case "audio": return <AudioDisplay value={value} />;
     case "array": return <ArrayDisplay value={value} />;
     case "tree": return <TreeDisplay value={value} replacements={replacements} />;
+    case "sparkline": return <SparklineDisplay value={value} />;
+    case "tags": return <TagsDisplay value={value} />;
+    case "code": return <CodeDisplay value={value} language={codeLanguage} />;
+    case "color": return <ColorDisplay value={value} />;
+    case "hash": return <HashDisplay value={value} />;
+    case "user": return <UserDisplay value={value} avatarSrc={avatarSrc} />;
+    case "progress": return <ProgressCellDisplay value={value} />;
+    case "secret": return <SecretDisplay value={value} />;
+    case "markdown": return <MarkdownDisplay value={value} />;
+    case "html": return <HtmlDisplay value={value} />;
     default: return <TruncatedCellValue value={String(value)} />;
   }
 }

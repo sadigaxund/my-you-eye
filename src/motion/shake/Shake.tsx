@@ -1,0 +1,83 @@
+import type { CSSProperties, ReactNode } from "react";
+import { useProgress } from "../core/useProgress";
+import { useTimeline } from "../core/TimelineContext";
+import { seededValueAt } from "../core/prng";
+import { distanceExpr } from "../core/tokens";
+import { applyEasing } from "../core/easing";
+import { Slot } from "../core/Slot";
+import type { Timing } from "../core";
+
+export type ShakeAxis = "x" | "y" | "rotate";
+
+export type ShakeProps = Timing & {
+  children: ReactNode;
+  /** Default "x". */
+  axis?: ShakeAxis;
+  /** Oscillations across the full `duration`. Default 5. */
+  cycles?: number;
+  /** Deterministic jitter seed — same seed always produces the same shake. Default "shake". */
+  seed?: string | number;
+  asChild?: boolean;
+  as?: "div" | "span";
+  className?: string;
+};
+
+// Rotation amplitude isn't a px/color design token — a small hand-tuned
+// constant for this one effect, the same convention as Reveal's SCALE_START.
+// Owner feedback: the rotate axis "was too insignificant" at 4deg — bumped
+// to a value that reads clearly without looking cartoonish.
+const ROTATE_MAX_DEG = 14;
+
+/**
+ * Oscillating error/attention indicator with decaying amplitude — strong at
+ * the start of `duration`, settling to exactly 0 once `useProgress()`
+ * clamps to 1 (TODO.md C2). The base oscillation is a deterministic `sin()`
+ * wave; a touch of extra jitter is layered on top via the seeded PRNG in
+ * `core/prng.ts` — never the browser's unseeded random source (AGENTS.md
+ * §9c determinism rule: identical `seed`+frame must always produce the
+ * identical shake).
+ *
+ * Two owner-requested changes from the original: (1) the sine's own phase
+ * runs through `applyEasing(progress, "out")` instead of raw `progress`, so
+ * successive oscillations get *closer together in time* as the shake
+ * settles — a decaying, eased rattle instead of a constant-frequency wave
+ * that just gets smaller and stops abruptly; (2) `duration` defaults to
+ * "slow" instead of inheriting the system-wide "normal" default — the
+ * original read as "way too fast" for an attention-getting gesture.
+ */
+export function Shake({ children, axis = "x", cycles = 5, seed = "shake", asChild, as: As = "div", className, ...timing }: ShakeProps) {
+  const resolvedTiming: Timing = { duration: "slow", ...timing };
+  const progress = useProgress(resolvedTiming);
+  const { frame } = useTimeline();
+
+  const decay = 1 - progress;
+  const phase = applyEasing(progress, "out");
+  const oscillation = Math.sin(phase * cycles * Math.PI * 2);
+  const jitter = seededValueAt(seed, frame) * 2 - 1;
+  // `oscillation` is naturally 0 at frame 0 (sin(0) = 0), but `jitter` is
+  // raw noise with no such property — scaling it by `decay` alone (which is
+  // 1, i.e. full strength, at progress=0) let a nonzero random offset leak
+  // into the very first frame, so the "rest" pose was already displaced
+  // (owner feedback: "the starting frame is already moved a bit"). Gating
+  // jitter by `phase` too (0 at progress=0, same as oscillation) closes
+  // that gap — both terms now start at exactly 0.
+  const value = (oscillation * 0.7 + jitter * phase * 0.3) * decay;
+
+  const style: CSSProperties =
+    axis === "rotate"
+      ? { transform: `rotate(${value * ROTATE_MAX_DEG}deg)` }
+      : { transform: `translate${axis === "x" ? "X" : "Y"}(calc(${distanceExpr("sm")} * ${value}))` };
+
+  if (asChild) {
+    return (
+      <Slot style={style} className={className}>
+        {children}
+      </Slot>
+    );
+  }
+  return (
+    <As style={style} className={className}>
+      {children}
+    </As>
+  );
+}

@@ -1,0 +1,45 @@
+import { TitleScene } from "../title-scene";
+import { BulletScene } from "../bullet-scene";
+import { CodeScene } from "../code-scene";
+import { TerminalScene } from "../terminal-scene";
+import { OutroScene } from "../outro-scene";
+import { DiagramScene } from "../diagram-scene";
+import { SequenceScene } from "../sequence-scene";
+import { ChartScene } from "../chart-scene";
+import { StatScene } from "../stat-scene";
+import { CompareScene } from "../compare-scene";
+import { WalkthroughScene } from "../walkthrough-scene";
+import type { Scene } from "../schema";
+
+export interface SceneRendererProps {
+  scene: Scene;
+}
+
+/**
+ * `Scene` -> rendered frame. The single switch consumers never touch
+ * (TODO.md Phase E). Exhaustive over `SceneKind`: the `default` branch
+ * assigns `scene` to a `never`-typed binding, so TypeScript itself flags a
+ * missing `case` the moment the union grows — this is not a runtime check,
+ * it's a compile-time guarantee that every kind is handled. All eleven
+ * `SceneKind`s render for real as of TODO.md Phase E's second batch — there
+ * is no placeholder branch left.
+ */
+export function SceneRenderer({ scene }: SceneRendererProps) {
+  switch (scene.kind) {
+    case "title": return <TitleScene scene={scene} />;
+    case "bullets": return <BulletScene scene={scene} />;
+    case "code": return <CodeScene scene={scene} />;
+    case "terminal": return <TerminalScene scene={scene} />;
+    case "outro": return <OutroScene scene={scene} />;
+    case "diagram": return <DiagramScene scene={scene} />;
+    case "sequence": return <SequenceScene scene={scene} />;
+    case "chart": return <ChartScene scene={scene} />;
+    case "stat": return <StatScene scene={scene} />;
+    case "compare": return <CompareScene scene={scene} />;
+    case "walkthrough": return <WalkthroughScene scene={scene} />;
+    default: {
+      const exhaustive: never = scene;
+      throw new Error(`SceneRenderer: unhandled scene kind ${(exhaustive as Scene).kind}`);
+    }
+  }
+}

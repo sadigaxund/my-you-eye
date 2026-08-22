@@ -15,11 +15,37 @@ type Block =
   | { type: "table"; headers: string[]; rows: string[][] }
   | { type: "empty" };
 
-function escapeHtml(text: string): string {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/**
+ * Schemes a markdown link is allowed to navigate to. Everything else — most
+ * importantly `javascript:`, but also `data:` and `vbscript:` — collapses to
+ * no href at all, leaving inert text.
+ *
+ * This matters because the link target comes from the document being
+ * rendered, which is untrusted input in every case this component exists to
+ * serve (a CellType value, a changelog, an API response). React only WARNS
+ * about a `javascript:` href; it still sets the attribute, so nothing else
+ * in the stack was stopping it.
+ *
+ * Relative and anchor links are allowed: they can't change scheme, and
+ * forbidding them would break ordinary intra-document links.
+ */
+function safeHref(raw: string): string | undefined {
+  const url = raw.trim();
+  if (/^(?:[a-z][a-z0-9+.-]*):/i.test(url)) {
+    return /^(?:https?|mailto|tel):/i.test(url) ? url : undefined;
+  }
+  // Schemeless: relative path, anchor, or protocol-relative "//host".
+  return url;
 }
 
-function renderInline(text: string): ReactNode {
+/**
+ * Exported (not just used internally) so CellType's "markdown" cell type can
+ * render a single-line inline preview — bold/italic/code/links only, no
+ * block structure — without re-implementing this regex against a second
+ * inline-formatting spec. The full `<Markdown>` component (block-aware) is
+ * used for that cell's expanded popover instead of this function directly.
+ */
+export function renderInline(text: string): ReactNode {
   const parts: ReactNode[] = [];
   const regex = /(`[^`]+`)|(\*\*(.+?)\*\*)|(\*(.+?)\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
   let lastIndex = 0;
@@ -27,22 +53,33 @@ function renderInline(text: string): ReactNode {
 
   while ((match = regex.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(escapeHtml(text.slice(lastIndex, match.index)));
+      parts.push(text.slice(lastIndex, match.index));
     }
     if (match[1]) {
       parts.push(<code key={match.index} className="rounded-ui-sm bg-secondary px-1 py-0.5 text-xs font-mono">{match[1].slice(1, -1)}</code>);
     } else if (match[3]) {
-      parts.push(<strong key={match.index}>{escapeHtml(match[3])}</strong>);
+      parts.push(<strong key={match.index}>{match[3]}</strong>);
     } else if (match[5]) {
-      parts.push(<em key={match.index}>{escapeHtml(match[5])}</em>);
+      parts.push(<em key={match.index}>{match[5]}</em>);
     } else if (match[7]) {
-      parts.push(<a key={match.index} href={match[8]} className="text-primary hover:underline">{escapeHtml(match[7])}</a>);
+      parts.push(
+        <a
+          key={match.index}
+          href={safeHref(match[8])}
+          // Untrusted markdown can link anywhere, so never hand the target
+          // page a `window.opener` reference back to this one.
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+        >
+          {match[7]}
+        </a>,
+      );
     }
     lastIndex = match.index + match[0].length;
   }
 
   if (lastIndex < text.length) {
-    parts.push(escapeHtml(text.slice(lastIndex)));
+    parts.push(text.slice(lastIndex));
   }
 
   return parts.length === 1 ? parts[0] : parts.length > 1 ? <>{parts}</> : "";

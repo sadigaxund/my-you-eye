@@ -1,9 +1,20 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type { ReactNode, KeyboardEvent } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { TreeItem } from "./TreeItem";
+import { computeInitialExpanded, flattenVisible, indexNodes, isDescendant } from "./TreeView.tree-utils";
 import type { CellValueType, UrlReplacement } from "../cell-type";
+
+// Grid-unit multiples (mirrors --grid-unit in tokens.css, same mirror-constant
+// pattern as GRID in src/ui/graph-node/grid.ts). Kept as plain numbers because
+// GuideColumn/ElbowColumn need a JS pixel value for their inline `width` style
+// and elbow-stub half-width math (indent / 2) — see AGENTS.md §0.2/§7.
+const INDENT_SIZES = {
+  sm: 12, // 0.75 * grid-unit
+  md: 16, // 1 * grid-unit
+  lg: 24, // 1.5 * grid-unit
+} as const;
+type IndentSize = keyof typeof INDENT_SIZES;
 
 export interface TreeNodeValue {
   type: CellValueType;
@@ -16,98 +27,124 @@ export interface TreeNodeValue {
 
 export interface TreeNode {
   id: string;
-  label: string;
+  /** ReactNode since #11 — external state (git status tint, strikethrough)
+   *  can render into the row without the tree knowing about it. A bare
+   *  string still behaves exactly as before (array-index sigil detection
+   *  only applies to strings). */
+  label: ReactNode;
+  /** Row label tone (#11) — semantic-token vocabulary, applied only to
+   *  string labels. `danger` strikes through (deleted-file convention). */
+  tone?: "default" | "muted" | "success" | "danger" | "warning";
   value?: TreeNodeValue;
+  /**
+   * Trailing slot rendered after `value`, at the far end of the row — for
+   * content that isn't itself a `CellType` value (e.g. `FileTree`'s file
+   * size / line count readout). Purely presentational; TreeView never
+   * inspects it. Additive: omitted renders byte-identical to before this
+   * prop existed.
+   */
+  trailing?: ReactNode;
   children?: TreeNode[];
   icon?: ReactNode;
   kind?: "object" | "array";
 }
 
-export interface TreeViewProps extends VariantProps<typeof treeVariants> {
+export interface TreeViewProps {
   data: TreeNode[];
-  indent?: number;
+  /** "sm" | "md" | "lg", mapped to --grid-unit multiples (12 / 16 / 24px).
+   *  A raw number is still accepted as a deprecated fallback for callers
+   *  migrating off the old untyped-px API — off-grid values will misalign the
+   *  guide columns, so prefer the named sizes.
+   * @deprecated pass a raw number — use "sm" | "md" | "lg" instead.
+   */
+  indent?: IndentSize | number;
+  /** @deprecated use `density` instead — "condensed" maps to density="compact". */
+  variant?: "default" | "condensed";
+  density?: "normal" | "compact";
   defaultExpandedDepth?: number;
   expandedKeys?: Set<string>;
   onToggle?: (id: string) => void;
   replacements?: UrlReplacement[];
+  /** Merged onto the root `<ul>`. Every other component in the library takes
+   * one; without it a caller can only style a tree by wrapping it in a spare
+   * `<div>`, which is what `FileTree` originally had to do. */
+  className?: string;
+
+  // --- #11 additions (all optional; omitting them is the read-only mode) ---
+  /** Controlled selection, decoupled from internal keyboard-focus state.
+   *  aria-selected reports this; focus stays internal. */
+  selectedId?: string;
+  onSelect?: (node: TreeNode) => void;
+  /** Render this row's label as an inline Input; commit on Enter/blur,
+   *  cancel on Escape. */
+  renamingId?: string | null;
+  onRenameCommit?: (node: TreeNode, newName: string) => void;
+  onRenameCancel?: () => void;
+  /** Enable HTML5 drag-and-drop of rows onto folder rows ("into" moves). */
+  draggable?: boolean;
+  /** Called after a legal drop (#11). Mode: "into" (folder target),
+   *  "before"/"after" (sibling insertion). Illegal drops — onto self, or
+   *  anywhere inside the source's own subtree — are refused inside the
+   *  tree and never reach this callback. */
+  onMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
 }
 
-const treeVariants = cva("", {
-  variants: {
-    variant: {
-      default: "space-y-0.5",
-      condensed: "space-y-0",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
 
-interface VisibleEntry {
-  id: string;
-  parentId: string | null;
-  hasChildren: boolean;
+
+
+
+
+interface RenderCtx {
+  density: "normal" | "compact";
+  indent: number;
+  expanded: Set<string>;
+  currentId: string | undefined;
+  selectedId: string | undefined;
+  hoveredId: string | undefined;
+  renamingId: string | null | undefined;
+  draggable: boolean;
+  onToggle: (id: string) => void;
+  onHover: (id: string | undefined) => void;
+  onSelect?: (node: TreeNode) => void;
+  onRenameCommit?: (node: TreeNode, newName: string) => void;
+  onRenameCancel?: () => void;
+  onDropMove?: (sourceId: string, targetId: string, mode: "into" | "before" | "after") => void;
+  replacements?: UrlReplacement[];
 }
 
-function computeInitialExpanded(data: TreeNode[], depth: number): Set<string> {
-  const set = new Set<string>();
-  function walk(nodes: TreeNode[], d: number) {
-    for (const node of nodes) {
-      if (node.children?.length && d < depth) {
-        set.add(node.id);
-        walk(node.children, d + 1);
-      }
-    }
-  }
-  walk(data, 0);
-  return set;
-}
-
-function flattenVisible(nodes: TreeNode[], expanded: Set<string>, parentId: string | null, acc: VisibleEntry[]): VisibleEntry[] {
-  for (const node of nodes) {
-    const hasChildren = !!node.children?.length;
-    acc.push({ id: node.id, parentId, hasChildren });
-    if (hasChildren && expanded.has(node.id)) {
-      flattenVisible(node.children!, expanded, node.id, acc);
-    }
-  }
-  return acc;
-}
-
-function renderNodes(
-  nodes: TreeNode[], depth: number, ancestorLines: boolean[],
-  variant: "default" | "condensed", indent: number,
-  expanded: Set<string>, currentId: string | undefined, hoveredId: string | undefined,
-  onToggle: (id: string) => void, onHover: (id: string | undefined) => void,
-  replacements: UrlReplacement[] | undefined,
-): ReactNode {
+function renderNodes(nodes: TreeNode[], depth: number, ancestorLines: boolean[], isLastOf: boolean[], ctx: RenderCtx): ReactNode {
   return nodes.map((node, i) => {
-    const isLast = i === nodes.length - 1;
     const hasChildren = !!node.children?.length;
-    const isExpanded = hasChildren && expanded.has(node.id);
+    const isExpanded = hasChildren && ctx.expanded.has(node.id);
     return (
       <TreeItem
         key={node.id}
         node={node}
         depth={depth}
-        variant={variant}
-        indent={indent}
+        density={ctx.density}
+        indent={ctx.indent}
         ancestorLines={ancestorLines}
-        isLast={isLast}
+        isLast={isLastOf[i]}
         expanded={isExpanded}
-        current={node.id === currentId}
-        hovered={node.id === hoveredId}
-        onToggle={onToggle}
-        onHover={onHover}
-        replacements={replacements}
+        current={node.id === ctx.currentId}
+        selected={node.id === ctx.selectedId}
+        hovered={node.id === ctx.hoveredId}
+        renaming={node.id === ctx.renamingId}
+        draggable={ctx.draggable}
+        onToggle={ctx.onToggle}
+        onHover={ctx.onHover}
+        onSelect={ctx.onSelect}
+        onRenameCommit={ctx.onRenameCommit}
+        onRenameCancel={ctx.onRenameCancel}
+        onDropMove={ctx.onDropMove}
+        replacements={ctx.replacements}
       >
         {isExpanded && (
           <ul role="group" className="list-none m-0 p-0">
             {renderNodes(
-              node.children!, depth + 1, [...ancestorLines, !isLast],
-              variant, indent, expanded, currentId, hoveredId,
-              onToggle, onHover, replacements,
+              node.children!, depth + 1, [...ancestorLines, !isLastOf[i]],
+              node.children!.map((_, j, arr) => j === arr.length - 1),
+              ctx,
             )}
           </ul>
         )}
@@ -117,11 +154,15 @@ function renderNodes(
 }
 
 export function TreeView({
-  data, variant = "default", indent = 16, defaultExpandedDepth = 1,
-  expandedKeys, onToggle, replacements,
+  data, variant, density, indent = "md", defaultExpandedDepth = 1,
+  expandedKeys, onToggle, replacements, className,
+  selectedId, onSelect, renamingId, onRenameCommit, onRenameCancel, draggable, onMove,
 }: TreeViewProps) {
   const treeRef = useRef<HTMLUListElement>(null);
-  const v = variant ?? "default";
+  // `variant="condensed"` is the deprecated alias for `density="compact"`.
+  // `density` wins if both are somehow passed.
+  const d = density ?? (variant === "condensed" ? "compact" : "normal");
+  const indentPx = typeof indent === "number" ? indent : INDENT_SIZES[indent];
 
   const [internalExpanded, setInternalExpanded] = useState(() =>
     computeInitialExpanded(data, defaultExpandedDepth),
@@ -147,6 +188,22 @@ export function TreeView({
     if (focusIndex > visible.length - 1) setFocusIndex(Math.max(0, visible.length - 1));
   }, [visible, focusIndex]);
 
+  const byId = useMemo(() => indexNodes(data, null, new Map()), [data]);
+
+  const handleSelect = useCallback((node: TreeNode) => onSelect?.(node), [onSelect]);
+
+  const handleDrop = useCallback(
+    (sourceId: string, targetId: string, mode: "into" | "before" | "after") => {
+      if (!onMove) return;
+      if (sourceId === targetId) return;
+      // Any target inside the source's own subtree is illegal in every
+      // mode — the move would carry its own ancestor along.
+      if (isDescendant(sourceId, targetId, byId)) return;
+      onMove(sourceId, targetId, mode);
+    },
+    [byId, onMove],
+  );
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (visible.length === 0) return;
     const cur = visible[focusIndex];
@@ -169,12 +226,15 @@ export function TreeView({
       case "Home": e.preventDefault(); setFocusIndex(0); break;
       case "End": e.preventDefault(); setFocusIndex(visible.length - 1); break;
       case "Enter":
-      case " ":
+      case " ": {
         e.preventDefault();
-        if (cur?.hasChildren) toggle(cur.id);
+        const entry = byId.get(cur.id);
+        if (cur.hasChildren) toggle(cur.id);
+        if (entry) handleSelect(entry.node);
         break;
+      }
     }
-  }, [visible, focusIndex, expanded, toggle]);
+  }, [visible, focusIndex, expanded, toggle, byId, handleSelect]);
 
   useEffect(() => {
     if (visible.length === 0) return;
@@ -184,16 +244,36 @@ export function TreeView({
     if (el instanceof HTMLElement) el.focus();
   }, [focusIndex, visible]);
 
-  const currentId = visible[focusIndex]?.id;
+  // Selection (#11) is controlled and separate from keyboard focus: when no
+  // selectedId is given, the focused row lights up as before (back-compat).
+  const currentId = selectedId ?? visible[focusIndex]?.id;
+
+  const ctx: RenderCtx = {
+    density: d,
+    indent: indentPx,
+    expanded,
+    currentId,
+    selectedId,
+    hoveredId,
+    renamingId,
+    draggable: Boolean(draggable),
+    onToggle: toggle,
+    onHover,
+    onSelect: handleSelect,
+    onRenameCommit,
+    onRenameCancel,
+    onDropMove: onMove ? handleDrop : undefined,
+    replacements,
+  };
 
   return (
     <ul
       ref={treeRef}
       role="tree"
       onKeyDown={handleKeyDown}
-      className={cn(treeVariants({ variant: v }), "list-none m-0 p-0 outline-none")}
+      className={cn(d === "compact" ? "space-y-0" : "space-y-0.5", "list-none m-0 p-0 outline-none", className)}
     >
-      {renderNodes(data, 0, [], v, indent, expanded, currentId, hoveredId, toggle, onHover, replacements)}
+      {renderNodes(data, 0, [], data.map((_, i, arr) => i === arr.length - 1), ctx)}
     </ul>
   );
 }

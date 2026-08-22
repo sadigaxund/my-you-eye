@@ -1,9 +1,9 @@
 {
   "name": "my-you-eye",
-  "version": "0.3.2",
+  "version": "2026.8.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sadigaxund/my-you-eye"
+    "url": "git+https://github.com/sadigaxund/my-you-eye.git"
   },
   "type": "module",
   "scripts": {
@@ -12,8 +12,12 @@
     "build:lib": "tsup",
     "prebuild:lib": "node scripts/gen-manifest.mjs",
     "postbuild:lib": "node scripts/copy-styles.mjs",
-    "validate": "tsc -p tsconfig.app.json --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/copy-styles.mjs",
+    "validate": "tsc -p tsconfig.app.json --noEmit && eslint . && node scripts/check-showcase.mjs && node scripts/check-exports.mjs && node scripts/check-motion.mjs && node scripts/check-themes.mjs && node scripts/check-contrast.mjs && npm run build:lib && vite build && node scripts/check-tokens.mjs && node scripts/copy-styles.mjs && node scripts/audit.mjs",
     "audit": "node scripts/audit.mjs",
+    "release": "node scripts/release.mjs",
+    "skills:init": "node bin/my-you-eye.mjs skills:init",
+    "skills:update": "node bin/my-you-eye.mjs skills:update",
+    "skills:update:latest": "node bin/my-you-eye.mjs skills:update --latest",
     "preview": "vite preview",
     "prepare": "npm run build:lib",
     "manifest": "node scripts/gen-manifest.mjs"
@@ -23,7 +27,8 @@
     "bin",
     "SKILL.md",
     "components.json",
-    "COMPONENTS.md"
+    "COMPONENTS.md",
+    "references"
   ],
   "exports": {
     ".": {
@@ -31,18 +36,54 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./motion": {
+      "types": "./dist/motion.d.ts",
+      "import": "./dist/motion.js",
+      "default": "./dist/motion.js"
+    },
+    "./motion/remotion": {
+      "types": "./dist/motion-remotion.d.ts",
+      "import": "./dist/motion-remotion.js",
+      "default": "./dist/motion-remotion.js"
+    },
+    "./scenes": {
+      "types": "./dist/scenes.d.ts",
+      "import": "./dist/scenes.js",
+      "default": "./dist/scenes.js"
+    },
+    "./present": {
+      "types": "./dist/present.d.ts",
+      "import": "./dist/present.js",
+      "default": "./dist/present.js"
+    },
+    "./present/player": {
+      "types": "./dist/present-player.d.ts",
+      "import": "./dist/present-player.js",
+      "default": "./dist/present-player.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.js",
+      "default": "./dist/video.js"
+    },
     "./styles.css": "./dist/styles.css",
-    "./styles.compiled.css": "./dist/styles.compiled.css"
+    "./styles.compiled.css": "./dist/styles.compiled.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./themes/*.css": "./dist/themes/*.css"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "*.css"
+  ],
   "bin": {
     "my-you-eye": "./bin/my-you-eye.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.2",
     "@radix-ui/react-checkbox": "^1.3.7",
+    "@radix-ui/react-context-menu": "^2.3.7",
     "@radix-ui/react-dialog": "^1.1.19",
     "@radix-ui/react-dropdown-menu": "^2.1.20",
     "@radix-ui/react-label": "^2.1.11",
@@ -55,13 +96,32 @@
     "@radix-ui/react-tooltip": "^1.2.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.13",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.2.0"
   },
+  "peerDependencies": {
+    "@remotion/player": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "remotion": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@remotion/player": {
+      "optional": true
+    },
+    "@remotion/transitions": {
+      "optional": true
+    },
+    "remotion": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@remotion/player": "^4.0.507",
+    "@remotion/transitions": "^4.0.507",
     "@tailwindcss/vite": "^4.1.0",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
@@ -70,6 +130,7 @@
     "eslint": "^9.25.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
+    "remotion": "^4.0.507",
     "tailwindcss": "^4.1.0",
     "tsup": "^8.4.0",
     "typescript": "~6.0.2",

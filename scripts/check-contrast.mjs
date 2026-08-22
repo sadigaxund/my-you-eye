@@ -17,12 +17,18 @@ const TOKENS = join(ROOT, "src/styles/tokens.css");
 const THEMES_DIR = join(ROOT, "src/styles/themes");
 
 function parseBlock(css, selectorRegex) {
+  // Strip /* */ comments FIRST: comment prose may legitimately mention token
+  // names ("--color-fg: fg is themed…", "--color-surface: some themes…"),
+  // and the naive definition regex below would otherwise match inside the
+  // comment, swallow following real definitions into a garbage value, or
+  // overwrite an earlier correct one (surfaced by #27's var()-alias pairs).
+  const clean = css.replace(/\/\*[\s\S]*?\*\//g, "");
   // selectorRegex must be a `g`-flagged regex; merges every matching block
   // (a selector may appear more than once, e.g. an `html[data-theme]` block
   // with only background rules, plus a bare `[data-theme]` block with tokens).
   const tokens = {};
   let m;
-  while ((m = selectorRegex.exec(css)) !== null) {
+  while ((m = selectorRegex.exec(clean)) !== null) {
     const body = m[1];
     const re = /--([\w-]+):\s*([^;]+);/g;
     let mm;
@@ -96,13 +102,28 @@ function relativeLuminance(value) {
   return { lum: 0.2126 * r + 0.7152 * g + 0.0722 * b, alpha: parsed.A };
 }
 
+// Returns { ratio } on success, or { error } describing why no honest ratio
+// can be produced. Alpha is a hard error rather than a silent approximation:
+// the WCAG formula is defined on composited colours, and this script has no
+// model of what a translucent token would actually be composited over (it
+// varies per component, per theme, and per stacking context). Treating
+// `oklch(... / 0.6)` as opaque would report a ratio the user never sees, so a
+// checked pair carrying alpha must be either made opaque or removed from
+// PAIRS — never quietly rounded up to 1.
 function contrastRatio(fgValue, bgValue) {
   const fg = relativeLuminance(fgValue);
   const bg = relativeLuminance(bgValue);
-  if (!fg || !bg) return null;
+  if (!fg || !bg) return { error: "could not parse oklch" };
+  for (const [role, parsed, raw] of [["fg", fg, fgValue], ["bg", bg, bgValue]]) {
+    if (parsed.alpha < 1) {
+      return {
+        error: `${role} token is translucent (alpha ${parsed.alpha}) — contrast is undefined without knowing what it composites over. Make it opaque, or drop the pair from PAIRS. (${raw})`,
+      };
+    }
+  }
   const l1 = Math.max(fg.lum, bg.lum);
   const l2 = Math.min(fg.lum, bg.lum);
-  return (l1 + 0.05) / (l2 + 0.05);
+  return { ratio: (l1 + 0.05) / (l2 + 0.05) };
 }
 
 // --- Build effective token maps per theme/mode --------------------------
@@ -123,10 +144,34 @@ const PAIRS = [
   ["danger-fg", "danger"],
   ["success-fg", "success"],
   ["secondary-fg", "secondary"],
+  // Sidebar chrome family (#27): panel text must read on the resting panel,
+  // on a hovered row, and on an active row; badge counts on their accent chip.
+  // This is why glass/frosted define OPAQUE sidebar item-hover/active tokens
+  // while their generic surface family stays translucent.
+  ["sidebar-fg", "sidebar"],
+  ["sidebar-fg", "sidebar-item-hover"],
+  ["sidebar-fg", "sidebar-item-active"],
+  ["sidebar-badge-fg", "sidebar-badge"],
   ["warning-fg", "warning"],
-  ["fg", "surface"],
-  ["muted", "surface"],
+  // Panel-surface legibility (#master hardening): checked against the OPAQUE
+  // surface companion — glass/frosted's --color-surface is deliberately
+  // translucent, and contrast on a translucent color is undefined.
+  ["fg", "surface-opaque"],
+  ["muted", "surface-opaque"],
 ];
+
+// Base tokens.css may define a color as a var() alias of another token
+// (e.g. --color-sidebar: var(--color-surface-opaque), #27). Resolve such
+// chains against the theme's own effective map so derived pairs are checked
+// at their real resolved values; a named theme's explicit overrides win
+// because they live in the same map.
+function resolveToken(value, tokens, depth = 0) {
+  if (depth > 8) return value;
+  const m = /^var\(\s*--([\w-]+)\s*\)$/.exec(value.trim());
+  if (!m) return value;
+  const next = tokens[m[1]];
+  return next ? resolveToken(next, tokens, depth + 1) : value;
+}
 
 const MIN_RATIO = 4.5;
 let failures = [];
@@ -135,18 +180,18 @@ for (const theme of themes) {
   for (const mode of ["light", "dark"]) {
     const tokens = effectiveTokens(theme, mode);
     for (const [fgKey, bgKey] of PAIRS) {
-      const fgVal = tokens[`color-${fgKey}`];
-      const bgVal = tokens[`color-${bgKey}`];
+      const fgVal = resolveToken(tokens[`color-${fgKey}`], tokens);
+      const bgVal = resolveToken(tokens[`color-${bgKey}`], tokens);
       if (!fgVal || !bgVal) {
         failures.push(
           `${theme.name} (${mode}): missing token for pair color-${fgKey}/color-${bgKey}`,
         );
         continue;
       }
-      const ratio = contrastRatio(fgVal, bgVal);
-      if (ratio === null) {
+      const { ratio, error } = contrastRatio(fgVal, bgVal);
+      if (error) {
         failures.push(
-          `${theme.name} (${mode}): could not parse oklch for color-${fgKey}/color-${bgKey}`,
+          `${theme.name} (${mode}): color-${fgKey}/color-${bgKey} — ${error}`,
         );
         continue;
       }

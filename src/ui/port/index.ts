@@ -1,2 +1,2 @@
-export { Port } from "./Port";
+export { Port, portVariants } from "./Port";
 export type { PortProps } from "./Port";

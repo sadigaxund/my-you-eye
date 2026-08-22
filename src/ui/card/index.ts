@@ -1,6 +1,9 @@
-export { Card } from "./Card";
+export { Card, cardVariants } from "./Card";
 export type { CardProps } from "./Card";
-export { CardHeader } from "./CardHeader";
+export { CardHeader, cardHeaderVariants } from "./CardHeader";
+export type { CardHeaderProps } from "./CardHeader";
 export { CardTitle } from "./CardTitle";
-export { CardContent } from "./CardContent";
-export { CardFooter } from "./CardFooter";
+export { CardContent, cardContentVariants } from "./CardContent";
+export type { CardContentProps } from "./CardContent";
+export { CardFooter, cardFooterVariants } from "./CardFooter";
+export type { CardFooterProps } from "./CardFooter";

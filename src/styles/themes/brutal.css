@@ -27,6 +27,22 @@ html[data-theme="brutal"].dark {
   --color-surface-active: oklch(0.90 0 0);
   --color-surface-elevated: oklch(1 0 0);
   --color-canvas-surface: oklch(1 0 0);
+  --color-surface-opaque: oklch(1 0 0);
+  --color-sidebar: oklch(1 0 0);
+  --color-sidebar-fg: oklch(0.10 0 0);
+  --color-sidebar-border: oklch(0.10 0 0);
+  --color-sidebar-item-hover: oklch(0.95 0 0);
+  --color-sidebar-item-active: oklch(0.90 0 0);
+  --color-sidebar-badge: oklch(0.70 0.18 45);
+  --color-sidebar-badge-fg: oklch(0.10 0 0);
+
+  /* Chart palette override (Batch 4 / TODO.md D3): the general derivation
+     in tokens.css rotates 8 hues off --color-primary (H=45 here); at this
+     specific hue, slot 4 collides with slot 3 under deutan simulation
+     (verified with scripts/validate_palette.js — see tokens.css comment).
+     Slot 4 alone is re-stepped to a fixed hue far from every other slot;
+     every other chart-* token still inherits the shared formula. */
+  --color-chart-4: oklch(0.485 0.141 240);
 
   --color-border: oklch(0.10 0 0);
   --color-ring: oklch(0.10 0 0);
@@ -49,6 +65,7 @@ html[data-theme="brutal"].dark {
 
   --opacity-dim: 1;
   --opacity-muted: 1;
+  --opacity-focus-dim: 0.5;
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
   --texture-blend: multiply;
@@ -76,6 +93,14 @@ html[data-theme="brutal"].dark {
   --color-surface-active: oklch(0.35 0.01 250);
   --color-surface-elevated: oklch(0.25 0.01 250);
   --color-canvas-surface: oklch(0.25 0.01 250);
+  --color-surface-opaque: oklch(0.25 0.01 250);
+  --color-sidebar: oklch(0.25 0.01 250);
+  --color-sidebar-fg: oklch(0.95 0 0);
+  --color-sidebar-border: oklch(0.95 0 0);
+  --color-sidebar-item-hover: oklch(0.30 0.01 250);
+  --color-sidebar-item-active: oklch(0.35 0.01 250);
+  --color-sidebar-badge: oklch(0.78 0.18 45);
+  --color-sidebar-badge-fg: oklch(0.10 0 0);
 
   --color-border: oklch(0.95 0 0);
   --color-ring: oklch(0.95 0 0);
@@ -98,4 +123,5 @@ html[data-theme="brutal"].dark {
 
   --opacity-dim: 1;
   --opacity-muted: 1;
+  --opacity-focus-dim: 0.5;
 }

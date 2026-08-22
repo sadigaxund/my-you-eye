@@ -1,12 +1,17 @@
-import { forwardRef, useState, useCallback, useMemo } from "react";
+import { forwardRef, useCallback, useMemo } from "react";
 import type { HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
+import { ScrollArea } from "../scroll-area";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
-import { MergedHighlight } from "./CodeBlock.merged-highlight";
-import type { Rect } from "./CodeBlock.merged-outline";
+import { useHighlightOverlay } from "./CodeBlock.useHighlightOverlay";
+import { useCopy } from "./CodeBlock.useCopy";
+import type { CopyState } from "./CodeBlock.useCopy";
+import { CodeHeaderBar, LanguageBadge } from "./CodeBlock.chrome";
 
-const codeBlockVariants = cva(
+/** Exported so the scenes-tier `CodeDiff` frames itself identically instead
+ * of copying the class string — see CodeBlock.chrome.tsx. */
+export const codeBlockVariants = cva(
   "group relative overflow-clip rounded-ui border border-border bg-code-bg text-sm flex flex-col",
   {
     variants: {
@@ -26,12 +31,45 @@ export interface CodeBlockHighlightGroup {
   color?: "primary" | "warning" | "success" | "danger";
 }
 
-export interface HighlightRangeDef {
+/**
+ * One substring highlight. Give it either a `match` (preferred) or an
+ * explicit `start`/`end` char offset pair.
+ *
+ * `match` exists because offsets are unverifiable by eye. Nobody reading
+ * `{ line: 2, start: 6, end: 18 }` can tell what it highlights without
+ * counting characters, so in practice they end up landing mid-token — which
+ * is exactly what the owner saw across the showcase ("highlighting random
+ * incomprehensible parts of the code"). `{ line: 2, match: "order.valid" }`
+ * says what it means and cannot be subtly wrong: if the text isn't on that
+ * line, nothing is highlighted rather than the wrong thing being
+ * highlighted.
+ */
+export type HighlightRangeDef = {
+  /** 1-based line number. */
   line: number;
-  start: number;
-  end: number;
   color?: "primary" | "warning" | "success" | "danger";
-}
+} & (
+  | {
+      /** Text to highlight. A string matches literally; a RegExp is applied
+       * to the line (the `g` flag is unnecessary — `occurrence` selects). */
+      match: string | RegExp;
+      /** Which occurrence to take when the line contains several, 1-based.
+       * Default 1. */
+      occurrence?: number;
+      start?: never;
+      end?: never;
+    }
+  | {
+      /** 0-based char offset, inclusive. Escape hatch for a span that no
+       * substring names — e.g. a run of whitespace, or a slice of a
+       * repeated token. Prefer `match`. */
+      start: number;
+      /** 0-based char offset, exclusive. */
+      end: number;
+      match?: never;
+      occurrence?: never;
+    }
+);
 
 export interface CodeBlockProps
   extends HTMLAttributes<HTMLPreElement>,
@@ -49,8 +87,46 @@ export interface CodeBlockProps
   highlightColor?: CodeBlockHighlightGroup["color"];
   /** Multi-color highlight groups. When provided, takes precedence over highlightLines. */
   highlightGroups?: CodeBlockHighlightGroup[];
-  /** Substring-level highlight ranges (0-indexed char positions within each line). */
+  /**
+   * Substring-level highlight ranges (0-indexed char positions within each line).
+   * Rects are positioned from real rendered line/glyph geometry (measured via a
+   * hidden ruler + ResizeObserver), so they stay correct across theme/font changes
+   * and container resizes — see AGENTS.md TODO A1.
+   *
+   * Forces `wrap={false}` internally: the overlay assumes exactly one visual row
+   * per logical line, and a wrapped row would push every highlight below it out
+   * of alignment. If you need highlights on long lines, keep them unwrapped and
+   * let the block scroll horizontally instead.
+   */
   highlightRanges?: HighlightRangeDef[];
+  /**
+   * 1-based line numbers outside this `[start, end]` range get a reduced
+   * opacity (the `opacity-focus-dim` token) instead of full contrast — the
+   * "focus on this range, dim the rest" treatment a code walkthrough needs.
+   * Added for `my-you-eye/scenes`' `CodeScene` (TODO.md Phase E): additive,
+   * defaults to no dimming.
+   */
+  focusRange?: [number, number];
+  /**
+   * Assigns an `id` to each rendered line's row element, keyed by its
+   * 1-based line number. Added for `CodeScene`, which needs to measure a
+   * specific line's on-screen position (via `offsetTop`/`offsetLeft`, never
+   * `getBoundingClientRect()` — AGENTS.md §7) to drive `Camera`/`Annotation`
+   * at that line. Optional, additive: omit it and lines render without ids,
+   * exactly as before.
+   */
+  lineId?: (lineNumber: number) => string;
+  /**
+   * Strips the persistent header bar (filename/language badge) and the
+   * block's own opaque background/border, leaving only a hover-revealed
+   * copy button in the corner. For embedding CodeBlock inside a surface
+   * that already provides its own chrome — e.g. a Popover — where a
+   * second header and a second opaque panel read as a redundant nested
+   * box (CellType's JSON/code cell previews). `language` is still used
+   * for syntax highlighting when `highlight` is set; it's just never
+   * displayed. Additive: omit for CodeBlock's normal framed appearance.
+   */
+  bare?: boolean;
 }
 
 function CopyIcon() {
@@ -70,7 +146,21 @@ function CheckIcon() {
   );
 }
 
-function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void }) {
+function CrossIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="size-3.5 fill-danger">
+      <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+const COPY_LABEL: Record<CopyState, string> = { idle: "Copy", copied: "Copied", failed: "Copy failed" };
+const COPY_TEXT: Record<CopyState, string> = { idle: "", copied: "text-success", failed: "text-danger" };
+
+/** Three states, because two of them were indistinguishable from a dead
+ * button: a copy that never reached the clipboard now says so in the danger
+ * color for the same beat "Copied" would have held. */
+function CopyButton({ state, onCopy }: { state: CopyState; onCopy: () => void }) {
   return (
     <button
       type="button"
@@ -80,44 +170,37 @@ function CopyButton({ copied, onCopy }: { copied: boolean; onCopy: () => void })
         "text-xs text-code-muted hover:text-code-fg hover:bg-code-bg/80 border border-transparent hover:border-border",
         "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-[var(--duration-fast)]",
         "outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring cursor-pointer",
-        copied && "opacity-100",
+        state !== "idle" && "opacity-100",
       )}
       title="Copy code"
     >
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      <span className={cn(copied && "text-success")}>{copied ? "Copied" : "Copy"}</span>
+      {state === "copied" ? <CheckIcon /> : state === "failed" ? <CrossIcon /> : <CopyIcon />}
+      <span className={cn(COPY_TEXT[state])}>{COPY_LABEL[state]}</span>
     </button>
   );
 }
 
+const HIGHLIGHT_BG: Record<string, string> = {
+  primary: "bg-primary/10",
+  warning: "bg-warning/15",
+  success: "bg-success/10",
+  danger: "bg-danger/10",
+};
+
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, ...props }, ref) => {
-    const [copied, setCopied] = useState(false);
-    const copy = useCallback(() => {
-      navigator.clipboard.writeText(code).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      });
-    }, [code]);
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, bare = false, ...props }, ref) => {
+    const { state: copyState, copy } = useCopy(code);
 
     const lines = useMemo(() => code.split("\n"), [code]);
-    const hasHeader = Boolean(header || language);
-    const showGutter = showLineNumbers
-      || (highlightLines != null && highlightLines.length > 0)
-      || (highlightGroups != null && highlightGroups.length > 0)
-      || (highlightRanges != null && highlightRanges.length > 0);
+    // `bare` always suppresses the header bar, even if header/language were
+    // passed — `language` is still forwarded to the tokenizer below for
+    // highlighting, it's just never displayed as a badge.
+    const hasHeader = !bare && Boolean(header || language);
 
     const highlighted = useMemo(() => {
       if (!highlight) return null;
       return tokenize(code, language);
     }, [code, language, highlight]);
-
-    const HIGHLIGHT_BG: Record<string, string> = {
-      primary: "bg-primary/10",
-      warning: "bg-warning/15",
-      success: "bg-success/10",
-      danger: "bg-danger/10",
-    };
 
     const lineColor = useMemo(() => {
       const map = new Map<number, string>();
@@ -138,122 +221,117 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
       return splitTokensByLine(highlighted);
     }, [highlighted]);
 
-    const overlayRectsByColor = useMemo(() => {
-      if (!highlightRanges || highlightRanges.length === 0) return new Map<string, Rect[]>();
-      const CHAR_W = 7.2;
-      const LINE_H = 19.5;
-      const PAD = 16;
-      const map = new Map<string, Rect[]>();
-      for (const r of highlightRanges) {
-        const color = r.color ?? "primary";
-        if (!map.has(color)) map.set(color, []);
-        map.get(color)!.push({
-          x: PAD + r.start * CHAR_W,
-          y: PAD + (r.line - 1) * LINE_H,
-          width: (r.end - r.start) * CHAR_W,
-          height: LINE_H,
-        });
-      }
-      return map;
-    }, [highlightRanges]);
-
-    const COLOR_VARS: Record<string, string> = {
-      primary: "var(--color-primary)",
-      warning: "var(--color-warning)",
-      success: "var(--color-success)",
-      danger: "var(--color-danger)",
-    };
+    // See CodeBlock.useHighlightOverlay.tsx for why this is measured from
+    // real rendered geometry rather than the old CHAR_W/LINE_H/PAD constants.
+    const { rulerRef, setLineRef, hasRanges, overlays, RULER_LEN } = useHighlightOverlay(highlightRanges, code, perLineTokens);
+    // The overlay assumes one visual row per logical line. Wrapping would
+    // desync every rect below the first wrapped line, so a correct-but-
+    // scrolling block beats a silently-misaligned wrapped one — see the
+    // highlightRanges JSDoc above.
+    const effectiveWrap = wrap && !hasRanges;
+    const isDimmed = useCallback(
+      (lineNumber: number) => focusRange != null && (lineNumber < focusRange[0] || lineNumber > focusRange[1]),
+      [focusRange],
+    );
+    const showGutter = showLineNumbers
+      || (highlightLines != null && highlightLines.length > 0)
+      || (highlightGroups != null && highlightGroups.length > 0)
+      || hasRanges;
 
     return (
-      <div className={cn(codeBlockVariants({ variant }), className)}>
+      <div
+        className={cn(
+          codeBlockVariants({ variant }),
+          // Overrides the base bg-code-bg/border-border pair (tailwind-merge
+          // resolves the conflict, last write wins) so the block blends into
+          // whatever surface it's embedded in instead of drawing a second,
+          // redundant panel — see the `bare` JSDoc above.
+          bare && "bg-transparent border-transparent",
+          className,
+        )}
+      >
+        {hasRanges && (
+          <span
+            ref={rulerRef}
+            aria-hidden
+            className="invisible absolute size-0 overflow-hidden whitespace-pre font-mono text-xs leading-relaxed"
+          >
+            {"0".repeat(RULER_LEN)}
+          </span>
+        )}
         {hasHeader && (
-          <div className="flex items-center justify-between gap-2 h-9 pl-panel pr-1.5 border-b border-border">
-            <div className="flex items-center gap-2 min-w-0">
-              {header && <span className="text-xs font-medium text-code-fg truncate">{header}</span>}
-              {language && (
-                <span className="shrink-0 rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50">
-                  {language}
-                </span>
-              )}
-            </div>
-            <CopyButton copied={copied} onCopy={copy} />
+          <CodeHeaderBar header={header} language={language} trailing={<CopyButton state={copyState} onCopy={copy} />} />
+        )}
+        {!hasHeader && (
+          <div className="absolute top-1 right-1 z-10 flex items-center gap-1">
+            {/* `bare` drops the floating language badge too — the point is
+                no persistent chrome at all, just the hover-revealed copy
+                button (CopyButton is opacity-0 until group-hover on its own). */}
+            {!bare && language && <LanguageBadge language={language} floating />}
+            <CopyButton state={copyState} onCopy={copy} />
           </div>
         )}
         <div className="flex flex-col flex-1 min-h-0">
-          {!hasHeader && (
-            <div className="sticky top-0 z-10 flex justify-end pr-1 -mb-7">
-              <div className="flex items-center gap-1 pt-1">
-                {language && (
-                  <span className="rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50 pointer-events-none">
-                    {language}
-                  </span>
-                )}
-                <CopyButton copied={copied} onCopy={copy} />
+          <ScrollArea orientation="horizontal" className="flex flex-1 min-h-0 rounded-b-[inherit]">
+            {showGutter && (
+              <div
+                aria-hidden
+                className="sticky left-0 z-10 select-none shrink-0 bg-code-bg py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
+              >
+                {lines.map((_, i) => (
+                  <div key={i} className={cn("pl-compact-x pr-compact-x", lineColor.get(i + 1))}>{i + 1}</div>
+                ))}
               </div>
-            </div>
-          )}
-          <div className="flex flex-1 min-h-0 overflow-x-auto">
-          {showGutter && (
-            <div
-              aria-hidden
-              className="select-none shrink-0 py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
-            >
-              {lines.map((_, i) => (
-                <div key={i} className={cn("pl-compact-x pr-compact-x", lineColor.get(i + 1))}>{i + 1}</div>
-              ))}
-            </div>
-          )}
-          {perLineTokens ? (
-            <pre
-              ref={ref}
-              className={cn(
-                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
-                wrap && "whitespace-pre-wrap break-words",
-              )}
-              {...props}
-            >
-              <code>
-                {perLineTokens.map((lineTokens, i) => (
-                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>
-                    {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
-                  </div>
-                ))}
-              </code>
-              {overlayRectsByColor.size > 0 && Array.from(overlayRectsByColor.entries()).map(([color, rects]) => (
-                <MergedHighlight
-                  key={color}
-                  rects={rects}
-                  color={COLOR_VARS[color] ?? COLOR_VARS.primary}
-                  strokeColor={COLOR_VARS[color] ?? COLOR_VARS.primary}
-                />
-              ))}
-            </pre>
-          ) : (
-            <pre
-              ref={ref}
-              className={cn(
-                "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
-                wrap && "whitespace-pre-wrap break-words",
-              )}
-              {...props}
-            >
-              <code>
-                {lines.map((line, i) => (
-                  <div key={i} className={cn("px-panel", lineColor.get(i + 1))}>{line || " "}</div>
-                ))}
-              </code>
-              {overlayRectsByColor.size > 0 && Array.from(overlayRectsByColor.entries()).map(([color, rects]) => (
-                <MergedHighlight
-                  key={color}
-                  rects={rects}
-                  color={COLOR_VARS[color] ?? COLOR_VARS.primary}
-                  strokeColor={COLOR_VARS[color] ?? COLOR_VARS.primary}
-                />
-              ))}
-            </pre>
-          )}
+            )}
+            {perLineTokens ? (
+              <pre
+                ref={ref}
+                className={cn(
+                  "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
+                  effectiveWrap && "whitespace-pre-wrap break-words",
+                )}
+                {...props}
+              >
+                <code>
+                  {perLineTokens.map((lineTokens, i) => (
+                    <div
+                      key={i}
+                      id={lineId?.(i + 1)}
+                      ref={setLineRef(i)}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-focus-dim")}
+                    >
+                      {lineTokens.length > 0 ? renderHighlightedLine(lineTokens) : " "}
+                    </div>
+                  ))}
+                </code>
+                {overlays}
+              </pre>
+            ) : (
+              <pre
+                ref={ref}
+                className={cn(
+                  "flex-1 min-w-0 py-panel font-mono text-xs leading-relaxed text-code-fg relative",
+                  effectiveWrap && "whitespace-pre-wrap break-words",
+                )}
+                {...props}
+              >
+                <code>
+                  {lines.map((line, i) => (
+                    <div
+                      key={i}
+                      id={lineId?.(i + 1)}
+                      ref={setLineRef(i)}
+                      className={cn("px-panel", lineColor.get(i + 1), isDimmed(i + 1) && "opacity-focus-dim")}
+                    >
+                      {line || " "}
+                    </div>
+                  ))}
+                </code>
+                {overlays}
+              </pre>
+            )}
+          </ScrollArea>
         </div>
-      </div>
       </div>
     );
   },

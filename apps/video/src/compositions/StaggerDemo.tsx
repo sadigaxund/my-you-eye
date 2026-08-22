@@ -1,4 +1,5 @@
-import { Stagger } from "@lib/motion";
+import { MotionRoot, Stagger } from "my-you-eye/motion";
+import { RemotionDriver } from "my-you-eye/motion/remotion";
 
 const steps = [
   { label: "Step 1", description: "Initialize the project" },
@@ -10,48 +11,28 @@ const steps = [
 ];
 
 export const StaggerDemo = () => (
-  <div
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "#0f172a",
-      fontFamily: "system-ui, sans-serif",
-      gap: 24,
-    }}
-  >
-    <Stagger delay={10} staggerDelay={15}>
-      {steps.map((step) => (
-        <div
-          key={step.label}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 48,
-              fontWeight: 700,
-              color: "#38bdf8",
-            }}
-          >
-            {step.label}
+  <MotionRoot mode="video" driver={RemotionDriver}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#0f172a",
+        fontFamily: "system-ui, sans-serif",
+        gap: 24,
+      }}
+    >
+      <Stagger delay={10} each={15}>
+        {steps.map((step) => (
+          <div key={step.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontSize: 48, fontWeight: 700, color: "#38bdf8" }}>{step.label}</div>
+            <div style={{ fontSize: 28, color: "#94a3b8" }}>{step.description}</div>
           </div>
-          <div
-            style={{
-              fontSize: 28,
-              color: "#94a3b8",
-            }}
-          >
-            {step.description}
-          </div>
-        </div>
-      ))}
-    </Stagger>
-  </div>
+        ))}
+      </Stagger>
+    </div>
+  </MotionRoot>
 );

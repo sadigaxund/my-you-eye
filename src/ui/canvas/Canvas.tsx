@@ -102,9 +102,15 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(
       if (childrenRef.current) {
         childrenRef.current.style.transform = `translate(${newOffset.x}px, ${newOffset.y}px) scale(${clamped})`;
       }
-      setInternalOffset(newOffset);
-      setInternalZoom(clamped);
-    }, [minZoom, maxZoom, zoomStep]);
+      // Through the controlled-aware setters, not setInternal* directly:
+      // when nothing is controlled these ARE setInternal* (see their
+      // definitions), but when a caller owns `zoom`/`offset` — e.g. a scene
+      // that fits the diagram to the viewport and hands the result back in —
+      // writing internal state would be silently discarded on the next
+      // render, leaving ctrl+wheel zoom visually snapping back.
+      setOffset(newOffset);
+      setZoom(clamped);
+    }, [minZoom, maxZoom, zoomStep, setOffset, setZoom]);
 
     useEffect(() => {
       const el = containerRef.current;

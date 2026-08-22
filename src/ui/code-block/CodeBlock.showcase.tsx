@@ -174,14 +174,33 @@ const entry: ShowcaseEntry = {
             header="process.ts"
             showLineNumbers
             highlight
+            // `match` rather than char offsets — see HighlightRangeDef. Each
+            // of these names the token it highlights, so the demo is also
+            // readable as documentation.
             highlightRanges={[
-              { line: 2, start: 6, end: 18, color: "danger" },
-              { line: 3, start: 15, end: 45, color: "warning" },
-              { line: 4, start: 13, end: 33, color: "success" },
+              { line: 2, match: "!order.valid", color: "danger" },
+              { line: 3, match: "order.items.reduce((s, i) => s + i.price, 0)", color: "warning" },
+              { line: 4, match: "{ id: order.id, total, status: \"done\" }", color: "success" },
             ]}
           />
         );
       },
+    },
+    {
+      name: "Substring highlights on a long line (wrap forced off)",
+      description: "highlightRanges forces wrap={false} internally so every rect stays on its own logical line, even though wrap is left at its default of true here.",
+      render: () => (
+        <CodeBlock
+          code={`const veryLongVariableNameThatWouldNormallyWrapOntoASecondVisualLine = computeSomethingExpensive(argumentOne, argumentTwo, argumentThree);\nconst ok = true;`}
+          language="typescript"
+          header="long.ts"
+          showLineNumbers
+          highlightRanges={[
+            { line: 1, match: "computeSomethingExpensive", color: "danger" },
+            { line: 2, match: "ok", color: "success" },
+          ]}
+        />
+      ),
     },
     {
       name: "Merged highlights",
@@ -193,15 +212,29 @@ const entry: ShowcaseEntry = {
           showLineNumbers
           highlight
           highlightRanges={[
-            { line: 2, start: 16, end: 41, color: "primary" },
-            { line: 3, start: 8, end: 34, color: "primary" },
-            { line: 4, start: 6, end: 28, color: "primary" },
-            { line: 5, start: 8, end: 30, color: "primary" },
-            { line: 7, start: 16, end: 36, color: "primary" },
-            { line: 8, start: 6, end: 36, color: "primary" },
-            { line: 9, start: 6, end: 44, color: "primary" },
+            { line: 3, match: "if (order.items.length === 0) {", color: "primary" },
+            { line: 4, match: "throw new ValidationError(", color: "primary" },
+            { line: 5, match: '"Order must have items"', color: "primary" },
+            { line: 6, match: ");", color: "primary" },
+            { line: 7, match: "}", color: "primary" },
           ]}
         />
+      ),
+    },
+    {
+      name: "Focus range (dims everything outside it)",
+      description: "focusRange dims lines outside [start, end] with the opacity-focus-dim token, which CodeScene uses to spotlight the lines a step is talking about while Camera frames them.",
+      render: () => (
+        <CodeBlock code={typescript} language="typescript" header="api.ts" showLineNumbers highlight focusRange={[8, 12]} />
+      ),
+    },
+    {
+      name: "Bare (embedded in another surface)",
+      description: "bare drops the header bar and the block's own background and border, leaving only a hover-revealed copy button, for a CodeBlock inside a surface that already has its own chrome such as CellType's JSON and code cell previews.",
+      render: () => (
+        <div className="rounded-ui border border-border bg-surface-elevated p-3">
+          <CodeBlock code={json} language="json" highlight bare />
+        </div>
       ),
     },
     {

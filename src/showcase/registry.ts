@@ -13,6 +13,9 @@ export const GROUPS: ShowcaseGroup[] = [
   "patterns",
   "decorators",
   "typography",
+  "motion",
+  "charts",
+  "scenes",
 ];
 
 export interface RegistryDemo {
@@ -23,6 +26,8 @@ export interface RegistryDemo {
   source: string | null;
   layout?: "fill" | "center";
   overflow?: "visible" | "auto" | "hidden";
+  /** See `ShowcaseDemo.contain` — opts a demo out of the card's paint containment. */
+  contain?: boolean;
 }
 
 export interface RegistryEntry {
@@ -48,22 +53,56 @@ export interface RegistryPage {
   entries: RegistryEntry[];
 }
 
-function slugify(title: string): string {
+export function slugify(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
 
-// Auto-discovery: every `*.showcase.tsx` under src/ui/ registers itself just
-// by existing — no manual list. We glob twice: once for the live module
+/**
+ * The `id` of one demo's card heading, and the hash a TOC entry links to.
+ * Namespaced by the entry slug so a parent page holding several entries
+ * (Table / DataTable / DataList) can't collide two demos that share a name
+ * ("Default" exists three times there), and so the leading segment is still
+ * a page slug — `App.tsx`'s hash router reads everything before `--` as the
+ * page to open, which is what makes a demo anchor deep-linkable.
+ */
+export function demoAnchor(entrySlug: string, demoName: string): string {
+  return `${entrySlug}--${slugify(demoName)}`;
+}
+
+/** The `id` of an entry's generated API section. Same namespacing rules. */
+export function apiAnchor(entrySlug: string): string {
+  return `${entrySlug}--api`;
+}
+
+// Auto-discovery: every `*.showcase.tsx` under src/ui/ (and, once they exist,
+// src/motion/, src/scenes/ and src/present/ — AGENTS.md §9d phase 0 /
+// TODO.md A0, extended to src/present/ by Phase F) registers itself just by
+// existing — no manual list. We glob twice: once for the live module
 // (component + render fns) and once for the raw file text (used only to
-// extract copy-pasteable JSX for the code toggle).
-const modules = import.meta.glob("../ui/**/*.showcase.tsx", { eager: true }) as Record<
-  string,
-  { default: ShowcaseEntry }
->;
-const rawSources = import.meta.glob("../ui/**/*.showcase.tsx", {
+// extract copy-pasteable JSX for the code toggle). Vite's import.meta.glob
+// accepts an array of patterns and is happy when some of them match nothing,
+// so this keeps working today even if any of these directories were empty.
+//
+// The pattern list MUST be written inline at each call site. `import.meta.glob`
+// is compile-time syntax, not a function: Vite statically parses its arguments
+// and rejects anything that isn't a literal ("Invalid glob import syntax: Could
+// only use literals"). Hoisting these into a shared `const` array reads better
+// but breaks the dev server outright — don't.
+const modules = import.meta.glob([
+  "../ui/**/*.showcase.tsx",
+  "../motion/**/*.showcase.tsx",
+  "../scenes/**/*.showcase.tsx",
+  "../present/**/*.showcase.tsx",
+], { eager: true }) as Record<string, { default: ShowcaseEntry }>;
+const rawSources = import.meta.glob([
+  "../ui/**/*.showcase.tsx",
+  "../motion/**/*.showcase.tsx",
+  "../scenes/**/*.showcase.tsx",
+  "../present/**/*.showcase.tsx",
+], {
   eager: true,
   query: "?raw",
   import: "default",
@@ -86,6 +125,7 @@ export const entries: RegistryEntry[] = Object.entries(modules)
         source: raw ? extractDemoSource(raw, demo.name) : null,
         layout: demo.layout,
         overflow: demo.overflow,
+        contain: demo.contain,
       })),
     };
   })
@@ -119,4 +159,20 @@ export const pages: RegistryPage[] = (() => {
 
 export function findPage(slug: string): RegistryPage | undefined {
   return pages.find((p) => p.slug === slug);
+}
+
+/**
+ * Every page in the order the sidebar shows them: `GROUPS` order first, then
+ * the alphabetical `pages` order within each group. This is the sequence the
+ * prev/next footer walks, so "next" always means "the next thing down the
+ * sidebar" rather than some second, invisible ordering.
+ */
+export const orderedPages: RegistryPage[] = GROUPS.flatMap((group) =>
+  pages.filter((page) => page.group === group),
+);
+
+export function pageNeighbours(slug: string): { prev?: RegistryPage; next?: RegistryPage } {
+  const index = orderedPages.findIndex((page) => page.slug === slug);
+  if (index < 0) return {};
+  return { prev: orderedPages[index - 1], next: orderedPages[index + 1] };
 }

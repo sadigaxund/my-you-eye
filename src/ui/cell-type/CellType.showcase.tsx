@@ -3,6 +3,22 @@ import type { ReactNode } from "react";
 import { CellType } from ".";
 import { cn } from "../../lib/cn";
 
+const HTML_RICH =
+  '<p>Invoice for <b>Acme Corp</b> &mdash; see the <a href="https://example.com">portal</a>.</p>';
+
+// Deliberately hostile, so the demo PROVES the sanitiser rather than
+// asserting it: a javascript: href, an onerror image, an inline script and a
+// style tag. Expand the cell — the paragraph and the safe link survive, the
+// hostile link loses its href entirely, and nothing else renders or runs.
+const HTML_HOSTILE =
+  '<p>Rich <b>text</b> from a CMS.</p>' +
+  '<p><a href="https://example.com">safe link</a> &middot; ' +
+  '<a href="javascript:alert(document.cookie)">hostile link</a></p>' +
+  '<img src=x onerror="alert(1)">' +
+  '<script>alert(2)</' + 'script>' +
+  '<style>body{display:none}</' + 'style>' +
+  '<table><tr><th>key</th><td>value</td></tr></table>';
+
 function TableGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
@@ -49,6 +65,31 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "New data types",
+      description: "sparkline, tags, code, color, hash/uuid, user, progress, secret, markdown and html cells, each reusing the component that already does the job (Sparkline, Badge, CodeBlock's highlighter, Avatar, Progress, Markdown); hash/uuid is middle-truncated monospace and secret stays masked until you click it. Markdown link targets are scheme-checked and html goes through DOMPurify on both render paths, so the hostile-input row's javascript: link, onerror image, script tag and style tag are all stripped before anything reaches the DOM.",
+      render: () => (
+        <TableGrid>
+          <div role="row" className="contents">
+            <div role="columnheader" className="p-3 min-w-0 font-medium text-muted whitespace-nowrap">Type</div>
+            <div role="columnheader" className="p-3 min-w-0 font-medium text-muted">Value</div>
+          </div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Sparkline</div><div role="cell" className="p-3 min-w-0"><CellType type="sparkline" value={[4, 7, 5, 9, 12, 10, 15, 13, 18, 22, 19, 25]} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Tags</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="tags" value={["frontend", "api", "docs"]} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Code</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="code" value={"SELECT * FROM users\nWHERE active = true"} codeLanguage="sql" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Color</div><div role="cell" className="p-3 min-w-0"><CellType type="color" value="#6366f1" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Hash / UUID</div><div role="cell" className="p-3 min-w-0"><CellType type="hash" value="a1b2c3d4e5f678901234567890abcdef12345678" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">User</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="user" value="Jordan Ellis" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">User (with photo)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="user" value="Sam Rivera" avatarSrc="https://picsum.photos/seed/user/64/64" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Progress</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="progress" value={68} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Secret</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="secret" value="sk_live_51H8x9fJ2mN3qR7vT" /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"Ships with **bold**, *italic*, `inline code`, and [links](https://example.com)."} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Markdown (multi-block)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="markdown" value={"# Release notes\n\n- Fixed the **login** bug\n- Added `dark mode`\n\nSee the [changelog](https://example.com) for details, and note that a [hostile link](javascript:alert(1)) is rendered inert."} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">HTML</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="html" value={HTML_RICH} /></div></div>
+          <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">HTML (hostile input)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="html" value={HTML_HOSTILE} /></div></div>
+        </TableGrid>
+      ),
+    },
+    {
       name: "Numeric types",
       render: () => (
         <TableGrid>
@@ -78,6 +119,46 @@ const entry: ShowcaseEntry = {
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Number (compact)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="number" value={1234567} compact /></div></div>
           <div role="row" className="contents"><div role="cell" className="p-3 min-w-0 whitespace-nowrap">Bytes (compact)</div><div role="cell" className="p-3 min-w-0 [&>*]:w-full"><CellType type="bytes" value={1073741824} compact /></div></div>
         </TableGrid>
+      ),
+    },
+    {
+      name: "Column alignment",
+      description: "Several rows of the same numeric or date type stacked in a fixed-width column, where tabular-nums plus a structural number/unit (or date/time/zone) split line the constant-width parts up in pure CSS without measuring anything.",
+      render: () => (
+        <div className="flex flex-wrap gap-8">
+          <div className="flex flex-col gap-1 w-24">
+            <div className="text-xs font-medium text-muted mb-1">Percentage</div>
+            <CellType type="percentage" value={0.4} />
+            <CellType type="percentage" value={0.123} />
+            <CellType type="percentage" value={0.98} />
+            <CellType type="percentage" value={0.05} />
+          </div>
+          <div className="flex flex-col gap-1 w-28">
+            <div className="text-xs font-medium text-muted mb-1">Bytes</div>
+            <CellType type="bytes" value={2048} />
+            <CellType type="bytes" value={1073741824} />
+            <CellType type="bytes" value={512} />
+            <CellType type="bytes" value={9876543} />
+          </div>
+          <div className="flex flex-col gap-1 w-32">
+            <div className="text-xs font-medium text-muted mb-1">Currency</div>
+            <CellType type="currency" value={1234.56} />
+            <CellType type="currency" value={9.5} />
+            <CellType type="currency" value={102345.1} />
+          </div>
+          <div className="flex flex-col gap-1 w-28">
+            <div className="text-xs font-medium text-muted mb-1">Duration</div>
+            <CellType type="duration" value={3661} />
+            <CellType type="duration" value={45} />
+            <CellType type="duration" value={7325} />
+          </div>
+          <div className="flex flex-col gap-1 w-48">
+            <div className="text-xs font-medium text-muted mb-1">DateTime TZ</div>
+            <CellType type="datetime-tz" value="2026-07-17T12:00:00Z" />
+            <CellType type="datetime-tz" value="2026-11-03T09:05:00Z" />
+            <CellType type="datetime-tz" value="2026-01-05T23:45:00Z" />
+          </div>
+        </div>
       ),
     },
   ],

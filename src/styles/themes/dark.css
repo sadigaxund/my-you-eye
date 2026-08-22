@@ -11,6 +11,14 @@
   --color-surface-active: oklch(0.22 0.01 260);
   --color-surface-elevated: oklch(0.19 0.01 260);
   --color-canvas-surface: oklch(0.17 0.01 260);
+  --color-surface-opaque: oklch(0.17 0.01 260);
+  --color-sidebar: oklch(0.17 0.01 260);
+  --color-sidebar-fg: oklch(0.95 0 0);
+  --color-sidebar-border: oklch(0.3 0.01 260);
+  --color-sidebar-item-hover: oklch(0.2 0.01 260);
+  --color-sidebar-item-active: oklch(0.22 0.01 260);
+  --color-sidebar-badge: oklch(0.65 0.22 265);
+  --color-sidebar-badge-fg: oklch(0 0 0);
   --color-border: oklch(0.3 0.01 260);
   --color-ring: oklch(0.65 0.22 265);
   --color-grid-dot: oklch(0.35 0.01 260);
@@ -27,6 +35,7 @@
   --color-warning-fg: oklch(0.145 0 0);
   --texture-opacity: 0;
   --texture-opacity-surface: 0;
+  --opacity-focus-dim: 0.25;
   --texture-blend: multiply;
   --texture-type: paper-grain;
 }

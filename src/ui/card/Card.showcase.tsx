@@ -32,11 +32,31 @@ const entry: ShowcaseEntry = {
         <div className="flex justify-center"><Card className="max-w-sm">
           <CardHeader><CardTitle>Confirm action</CardTitle></CardHeader>
           <CardContent>Are you sure you want to delete this item?</CardContent>
-          <CardFooter className="flex justify-end gap-2">
+          <CardFooter className="flex justify-end gap-inline">
             <Button variant="ghost" size="sm">Cancel</Button>
             <Button variant="danger" size="sm">Delete</Button>
           </CardFooter>
         </Card></div>
+      ),
+    },
+    {
+      name: "Size",
+      description: "size on CardHeader, CardContent and CardFooter controls padding (sm/md/lg, from --spacing-panel-sm, --spacing-panel and --spacing-panel-lg). The default md matches Alert's default padding, and the old hardcoded p-6 is still available as lg.",
+      render: () => (
+        <div className="flex flex-col gap-4 max-w-sm mx-auto">
+          <Card>
+            <CardHeader size="sm"><CardTitle>Small</CardTitle></CardHeader>
+            <CardContent size="sm">Tighter padding for dense layouts.</CardContent>
+          </Card>
+          <Card>
+            <CardHeader size="md"><CardTitle>Medium (default)</CardTitle></CardHeader>
+            <CardContent size="md">The default density, aligned with Alert.</CardContent>
+          </Card>
+          <Card>
+            <CardHeader size="lg"><CardTitle>Large</CardTitle></CardHeader>
+            <CardContent size="lg">Roomier padding — matches the previous default.</CardContent>
+          </Card>
+        </div>
       ),
     },
   ],

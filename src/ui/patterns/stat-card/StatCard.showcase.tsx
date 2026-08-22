@@ -15,6 +15,43 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Size",
+      description: "size (sm/md/lg, default md) controls padding density and forwards to CardContent on Card's own size scale.",
+      render: () => (
+        <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
+          <StatCard size="sm" label="Revenue (sm)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+          <StatCard size="md" label="Revenue (md)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+          <StatCard size="lg" label="Revenue (lg)" value="$12,345" delta={{ value: "12%", direction: "up" }} />
+        </div>
+      ),
+    },
+    {
+      name: "Numeric delta",
+      description: "A numeric delta.value derives the arrow and the success/danger/neutral color from its sign, formatted by src/lib/format.ts's formatSignedParts, the same logic CellType's `signed` display uses, so there is no direction prop.",
+      render: () => (
+        <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
+          <StatCard label="Latency (ms)" value="182" delta={{ value: -14.2, label: "vs last week" }} />
+          <StatCard label="Error rate" value="0.4%" delta={{ value: 0.3, label: "vs last week" }} />
+          <StatCard label="Churn" value="2.1%" delta={{ value: 0, label: "unchanged" }} />
+        </div>
+      ),
+    },
+    {
+      name: "Icon + sparkline",
+      description: "The icon slot plus an inline Sparkline, which composes the standalone Sparkline component over the same trend data.",
+      render: () => (
+        <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
+          <StatCard
+            label="Active users"
+            value="8,204"
+            delta={{ value: 6.4, label: "vs last month" }}
+            icon={<span className="text-xl">👤</span>}
+            sparkline={{ data: [40, 44, 42, 48, 52, 50, 58, 63, 60, 68], area: true }}
+          />
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

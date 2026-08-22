@@ -66,6 +66,14 @@ html[data-theme="metallic"].dark {
   --color-surface-active: oklch(0.88 0.018 255);
   --color-surface-elevated: oklch(0.97 0.01 255);
   --color-canvas-surface: oklch(0.90 0.018 255);
+  --color-surface-opaque: oklch(0.95 0.012 255);
+  --color-sidebar: oklch(0.95 0.012 255);
+  --color-sidebar-fg: oklch(0.15 0.005 255);
+  --color-sidebar-border: oklch(0.55 0.02 255);
+  --color-sidebar-item-hover: oklch(0.92 0.015 255);
+  --color-sidebar-item-active: oklch(0.88 0.018 255);
+  --color-sidebar-badge: oklch(0.40 0.04 255);
+  --color-sidebar-badge-fg: oklch(1 0 0);
 
   --color-border: oklch(0.55 0.02 255);
   --color-ring: oklch(0.40 0.04 255 / 0.35);
@@ -90,6 +98,7 @@ html[data-theme="metallic"].dark {
 
   --opacity-dim: 0.55;
   --opacity-muted: 0.35;
+  --opacity-focus-dim: 0.25;
 
   --texture-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='m' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.38 0.0012' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='2.4 0 0 0 -0.700 2.4 0 0 0 -0.700 2.4 0 0 0 -0.700 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
   --texture-size: 300px 300px;
@@ -121,6 +130,14 @@ html[data-theme="metallic"].dark {
   --color-surface-active: oklch(0.32 0.025 255);
   --color-surface-elevated: oklch(0.22 0.018 255);
   --color-canvas-surface: oklch(0.24 0.02 255);
+  --color-surface-opaque: oklch(0.24 0.02 255);
+  --color-sidebar: oklch(0.24 0.02 255);
+  --color-sidebar-fg: oklch(0.93 0.003 255);
+  --color-sidebar-border: oklch(0.50 0.025 255);
+  --color-sidebar-item-hover: oklch(0.28 0.022 255);
+  --color-sidebar-item-active: oklch(0.32 0.025 255);
+  --color-sidebar-badge: oklch(0.68 0.06 255);
+  --color-sidebar-badge-fg: oklch(0.10 0.005 255);
 
   --color-border: oklch(0.50 0.025 255);
   --color-ring: oklch(0.68 0.06 255 / 0.35);

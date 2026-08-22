@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { CellType } from "../cell-type";
@@ -18,61 +18,81 @@ export interface DataListItem {
 
 const dataListVariants = cva("overflow-hidden divide-y divide-border", {
   variants: {
-    variant: {
-      default: "",
-      compact: "",
+    striped: {
+      true: "[&>div:nth-child(odd)]:bg-secondary/50",
+      false: "",
     },
   },
   defaultVariants: {
-    variant: "default",
+    striped: false,
   },
 });
+
+const LABEL_WIDTH = {
+  sm: "var(--width-data-list-label-sm)",
+  md: "var(--width-data-list-label-md)", // matches the previous hardcoded w-36
+  lg: "var(--width-data-list-label-lg)",
+} as const;
 
 export interface DataListProps
   extends HTMLAttributes<HTMLDListElement>,
     VariantProps<typeof dataListVariants> {
   items: DataListItem[];
   replacements?: UrlReplacement[];
+  /** @deprecated use `density` instead — "compact" maps to density="compact". */
+  variant?: "default" | "compact";
+  density?: "normal" | "compact";
+  /** Label ("dt") column width. Default "md" matches the previous hardcoded w-36. */
+  labelWidth?: "sm" | "md" | "lg";
 }
 
 const DataList = forwardRef<HTMLDListElement, DataListProps>(
-  ({ className, variant, items, replacements, ...props }, ref) => (
-    <dl
-      ref={ref}
-      className={cn(dataListVariants({ variant }), className)}
-      {...props}
-    >
-      {items.map((item, i) => (
-        <div
-          key={i}
-          className={cn(
-            "flex items-center gap-4 min-w-0",
-            variant === "compact" ? "py-1 px-2" : "py-2 px-3",
-          )}
-        >
-          <dt className="flex w-36 shrink-0 items-center gap-2 text-sm text-muted">
-            {item.icon && <span className="shrink-0">{item.icon}</span>}
-            {item.label}
-          </dt>
-          <dd className="min-w-0 flex-1 overflow-hidden text-sm text-fg font-medium">
-            {item.value !== undefined ? (
-              <CellType
-                type={item.type ?? "text"}
-                value={item.value}
-                badgeVariant={item.badgeVariant}
-                badgeStyle={item.badgeStyle}
-                statusVariant={item.statusVariant}
-                statusPulse={item.statusPulse}
-                replacements={replacements}
-              />
-            ) : (
-              <span className="text-muted">—</span>
+  ({ className, variant, density, striped, labelWidth = "md", items, replacements, ...props }, ref) => {
+    const d = density ?? (variant === "compact" ? "compact" : "normal");
+    return (
+      <dl
+        ref={ref}
+        className={cn(dataListVariants({ striped }), className)}
+        {...props}
+      >
+        {items.map((item, i) => (
+          <div
+            key={i}
+            className={cn(
+              "grid grid-cols-[var(--data-list-label-w)_1fr] items-center gap-4 min-w-0",
+              d === "compact" ? "py-1 px-2" : "py-2 px-3",
             )}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  ),
+            style={{ "--data-list-label-w": LABEL_WIDTH[labelWidth] } as CSSProperties}
+          >
+            <dt className="flex min-w-0 items-center gap-2 text-sm text-muted">
+              {item.icon && <span className="shrink-0">{item.icon}</span>}
+              {/* Reuses CellType's own truncate-and-expand (TruncatedCellValue)
+                  instead of a bare `truncate` span — a long label ("Autoscaling
+                  group desired capacity" at labelWidth="sm") used to clip with
+                  no way to read the rest. Same affordance the value column
+                  already had. */}
+              <CellType type="text" value={item.label} />
+            </dt>
+            <dd className="min-w-0 overflow-hidden text-sm text-fg font-medium">
+              {item.value !== undefined ? (
+                <CellType
+                  type={item.type ?? "text"}
+                  value={item.value}
+                  badgeVariant={item.badgeVariant}
+                  badgeStyle={item.badgeStyle}
+                  statusVariant={item.statusVariant}
+                  statusPulse={item.statusPulse}
+                  replacements={replacements}
+                />
+              ) : (
+                <span className="text-muted">—</span>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    );
+  },
 );
 DataList.displayName = "DataList";
 

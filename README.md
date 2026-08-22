@@ -1,153 +1,141 @@
 # my-you-eye
 
-A themeable, AI-maintainable UI component library — primitives, rich data components, and a
-full **node-based canvas editor** — built so that agents (even cheap ones) can reuse and extend
-it without drifting from the house style.
+A personally curated UI kit for building clean, simple apps fast — plus a motion and
+scene system for turning the same components into interactive presentations and
+rendered videos. Built so AI agents (even cheap ones) can use it correctly on the
+first try.
 
-<sub>Radix · Tailwind v4 · CVA · shadcn-style owned components · 50+ components · light/dark + swappable themes</sub>
+<sub>React 19 · Radix · Tailwind v4 · 100+ components across 4 tiers · 10 themes · light/dark</sub>
 
 ```tsx
-import { Button, Card, Table } from "my-you-eye";
+import { Button, Card, DataTable } from "my-you-eye";
 import "my-you-eye/styles.css";
 
 <Button variant="primary">Save</Button>
 ```
 
----
+**Browse everything live:** [sadigaxund.github.io/my-you-eye](https://sadigaxund.github.io/my-you-eye/) —
+every component, every variant, with theme/font/dark switches and a generated API
+reference on each page.
 
-## Highlights
+## A quick look
 
-- **50+ components** — inputs, overlays, feedback, navigation, and rich data (`Table`,
-  `TreeView`, `CellValue`, `DataList`, `CodeBlock`, `Markdown`). Full list:
-  **[COMPONENTS.md](./COMPONENTS.md)**.
-- **Canvas / data-orchestration editor** — `Canvas`, `GraphNode`, `Port`, `Edge`, plus an
-  `Orchestrator` pattern with node drag, grid snapping, port-to-port connections, pan/zoom,
-  selection, and delete.
-- **Themes without forks** — every color, radius, spacing, font, and border value is a CSS
-  token. A theme is a token-override block; `data-theme` + `.dark` swap the entire look. No
-  component is restyled per theme.
-- **Guardrails, not vibes** — `npm run validate` turns rule violations into a red build: no
-  styled native elements outside `src/ui/`, no hardcoded colors, every component has a showcase,
-  every theme defines the full token set.
+<!-- screenshot: showcase overview — a component page in the glass theme, showing
+     the sidebar, demo cards, and the API reference panel -->
+![The showcase](docs/screenshots/showcase.png)
 
-## Install
+<!-- screenshot: the Graph pattern — pipeline editor with a few connected nodes,
+     a group boundary, and colored edge kinds -->
+![Node editor](docs/screenshots/graph.png)
+
+<!-- screenshot: a CodeScene frame mid-walkthrough — focused lines, camera zoomed,
+     caption at the bottom (render one frame from apps/video) -->
+![A video scene](docs/screenshots/code-scene.png)
+
+<!-- screenshot: the same page in 3-4 themes side by side (default, neon, comic,
+     metallic) to sell the token system -->
+![Themes](docs/screenshots/themes.png)
+
+## What's inside
+
+One package, four tiers — install once, import what the job needs:
+
+| Import | What you get |
+|---|---|
+| `my-you-eye` | The static kit: inputs, overlays, tables, charts, code/terminal/diff blocks, a node-canvas editor, stat cards, file trees… |
+| `my-you-eye/motion` | Frame-driven animation primitives (`Reveal`, `Stagger`, `TypeText`, `Camera`, …) that render identically live and in video |
+| `my-you-eye/scenes` | Author a whole presentation or video as **one typed data object** — title, code walkthrough, diagram, chart, terminal scenes |
+| `my-you-eye/present` / `my-you-eye/video` | Deliver that object as a live click-through (no Remotion needed) or render it to MP4 |
+
+Everything is themed by CSS tokens: set `data-theme="neon"` (or `glass`, `comic`,
+`brutal`, `stark`, `contrast`, `metallic`, `frosted`, `dark`) and `.dark` on `<html>`
+and the entire kit restyles — no component forks, ever.
+
+## Install & get started
 
 ```bash
-npm install github:sadigaxund/my-you-eye
+npm install my-you-eye
 ```
 
 ```tsx
-// once, at your app root
-import "my-you-eye/styles.css";
-// anywhere
-import { Dialog, TreeView } from "my-you-eye";
+// once, at your app root — pick ONE stylesheet:
+import "my-you-eye/styles.css";          // your app runs Tailwind v4 (the normal path)
+// or
+import "my-you-eye/styles.compiled.css"; // no Tailwind in your pipeline (Remotion, plain bundlers)
+
+// then, anywhere:
+import { Dialog, TreeView, BarChart } from "my-you-eye";
 ```
 
-To pick up changes: bump the tag here, then `npm update` in each app.
+Every component ships its `Props` type and its variants from the same import. The
+full catalog with prop signatures lives in [COMPONENTS.md](./COMPONENTS.md) /
+`components.json`, or run `npx my-you-eye list`.
 
-## Customize — three channels, in order of preference
+### Bundle discipline
 
-1. **Theme tokens** — global restyle, zero code. Override the CSS variables at your root, or
-   set `data-theme="neon"` / `class="dark"` on `<html>`.
-   ```css
-   :root {
-     --color-primary: oklch(0.6 0.2 25);
-     --radius-ui: 4px;
-   }
-   ```
-2. **Variant props** — per-use choice from the approved set (see [COMPONENTS.md](./COMPONENTS.md)):
-   ```tsx
-   <Button variant="danger" size="sm">Delete</Button>
-   ```
-3. **`className`** — one-off *layout* only (width, margin), never a redesign:
-   ```tsx
-   <Button className="w-full">Submit</Button>
-   ```
+The sanctioned import path is the barrel (`my-you-eye`) plus its tier subpaths —
+per-component subpaths are not published. Tree-shaking is guaranteed by
+`"sideEffects": ["*.css"]`: every JS module is pure, only stylesheets carry side
+effects, so unused component groups drop out of production builds.
 
-If a `className` tweak keeps recurring, it should become a variant in this repo — see
-[AGENTS.md](./AGENTS.md).
-
-## Discovering components (humans and agents)
-
-`components.json` and [COMPONENTS.md](./COMPONENTS.md) are **auto-generated** from the showcase
-files on every commit and every library build, so they never drift. An agent working in a
-consuming app should read `components.json` and follow [SKILL.md](./SKILL.md) before building
-any UI.
-
-## CLI
-
-The package ships a tiny Node CLI (`my-you-eye`) for project setup:
-
-```
-my-you-eye init          Copy SKILL.md + components.json to skills/
-my-you-eye list          Print table of all components with groups and variants
-my-you-eye sync          Re-copy SKILL.md + components.json (overwrite)
-my-you-eye --help        Show usage
-```
-
-All file paths resolve from the package location, not the caller's cwd. The CLI has zero external dependencies.
-
-## The showcase
-
-Every component and every variant renders in a live showcase with light/dark, font, and theme
-switches — the source of truth for how things actually look.
+To verify on your side, dump your bundle's symbols and grep for a group you
+never import:
 
 ```bash
-npm run dev        # http://localhost:5173
+# Vite: build, then inspect what shipped
+npx vite build --mode production
+grep -c "GraphEdge\|GraphNode" dist/assets/index-*.js   # canvas group: expect 0 hits if unused
 ```
 
-## What this is / is not
+If an unused group leaks into your bundle, check that your bundler resolves the
+ESM build (`module`/`exports` fields) and that no barrel re-export of
+`my-you-eye` is being force-included by a `sideEffects: true` override in your
+own config.
 
-- **Is** a curated house standard: primitives in `src/ui/`, compositions in `src/ui/patterns/`,
-  each with a small fixed set of approved variants.
-- **Is not** a general-purpose library for the world, a home for business logic or data
-  fetching, or a parts bin of one-off styles.
+## Why this works well with AI agents
 
-## For contributors and agents
+The package is designed to be *agent-legible*, so you can hand a coding agent a
+one-line request and get house-style UI back:
 
-> **If you are an AI agent working in this repo, read [AGENTS.md](./AGENTS.md) first.** It is
-> the binding ruleset; nothing here overrides it.
+- **[SKILL.md](./SKILL.md)** is a ready-made agent skill: request→recipe playbooks
+  ("build me an IDE-like tool", "a dashboard", "a landing page"), design rules, and
+  a script→scenes workflow for authoring videos. Drop it into a project with:
+  ```bash
+  npx my-you-eye init   # copies SKILL.md + references/ + components.json into skills/
+  ```
+- **The skills pack** (`references/skills-index.md` + `references/skills-analysis.md`)
+  is a curated, trust-ranked index of the wider frontend agent-skill ecosystem —
+  React perf, component API design, accessibility, motion, UX copy. `skills:init` +
+  `skills:update` vendor third-party skill bodies into a project at pinned commits,
+  so agents route to vetted guidance instead of guessing.
+- **`components.json`** is generated from the source on every build — prop
+  signatures, variants, defaults — so agents pick from the real API instead of
+  guessing.
+- **Scene data can't be styled wrong**: a video/presentation is plain data with
+  closed unions — no `className`, no colors, no pixel pushing — and
+  `assertVideo()` validates every reference before a frame renders.
+
+## Versioning
+
+Releases are **date-versioned** (`YYYY.M.N` — year, month, release-counter within
+the month, e.g. `2026.8.0`). Semver semantics don't fit a personal kit that evolves
+continuously; the version tells you *when*, the [CHANGELOG](./CHANGELOG.md) tells
+you *what*. The format is still npm/semver-compatible, so ranges and tooling work
+unchanged.
+
+## Contributing / working in this repo
+
+> **AI agents: read [AGENTS.md](./AGENTS.md) first.** It is the binding ruleset.
 
 ```bash
-npm install
-npm run dev        # showcase
-npm run validate   # typecheck + lint + coverage + themes + build — the definition of done
-npm run audit      # non-blocking drift report
-npm run manifest   # regenerate components.json + COMPONENTS.md
+npm run dev        # the showcase, locally
+npm run validate   # the definition of done — types, lint, coverage, themes, contrast, build
+npm run release    # CalVer bump + changelog + signed tag (push to publish)
 ```
 
-| Concern | Choice | Why |
-|---|---|---|
-| Build/dev | Vite + React + TypeScript (strict) | Simple SPA, no SSR footguns |
-| Styling | Tailwind CSS v4 (local build, no CDN) | Compiled at build time, no remote deps |
-| Behavior | Radix UI (per-component packages) | Mature accessibility: focus, keyboard, ARIA |
-| Variants | `class-variance-authority` | Declarative, enforceable variant sets |
-| Class merging | `clsx` + `tailwind-merge` via `cn()` | Predictable `className` overrides |
-| Library build | `tsup` | Consumable via `npm install` from a git URL |
-
-Components follow the **shadcn/ui pattern**: code is copied in and owned here, so no upstream
-dependency can break or restyle us.
-
-### Layout
-
-```
-src/
-  index.ts             # public API — the ONLY entry consuming apps import from
-  lib/cn.ts            # clsx + tailwind-merge helper
-  styles/
-    tokens.css         # ALL base design tokens
-    themes/*.css       # per-theme token overrides (dark, neon, contrast, …)
-    globals.css        # tailwind entry, global scrollbar, base styles
-  ui/<component>/      # Component.tsx + Component.showcase.tsx + index.ts
-  ui/patterns/         # compositions built FROM primitives (FormField, Orchestrator, …)
-  showcase/            # dev-only showcase app (glob-discovers *.showcase.tsx)
-scripts/
-  check-showcase.mjs   # every component folder has a showcase + export
-  check-themes.mjs     # every theme defines the full token set
-  gen-manifest.mjs     # regenerates components.json + COMPONENTS.md
-  audit.mjs            # non-blocking drift report
-AGENTS.md · SKILL.md · TODO.md · CHANGELOG.md
-```
+Components follow the shadcn/ui pattern — code is owned here, Radix supplies
+behavior, CVA declares variants, and every visual constant is a token in
+`src/styles/tokens.css`. `npm run validate` turns rule violations into a red build.
 
 ## License
 

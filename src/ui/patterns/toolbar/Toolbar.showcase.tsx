@@ -54,7 +54,7 @@ const entry: ShowcaseEntry = {
                 <>
                   <Button size="sm" variant="secondary">Status</Button>
                   <Button size="sm" variant="secondary">Date</Button>
-                  <Badge variant="primary" style="soft">2 active</Badge>
+                  <Badge variant="primary" tone="soft">2 active</Badge>
                 </>
               }
               actions={
