@@ -114,6 +114,8 @@ export { DiffStatChip, diffStatChipVariants } from "./ui/diff-stat-chip";
 export type { DiffStatChipProps } from "./ui/diff-stat-chip";
 export { EmptyState } from "./ui/empty-state";
 export type { EmptyStateProps } from "./ui/empty-state";
+export { FileIcon } from "./ui/file-icon";
+export type { FileIconProps, FileIconResolver } from "./ui/file-icon";
 export { Image, imageVariants } from "./ui/image";
 export type { ImageProps } from "./ui/image";
 export { Kbd } from "./ui/kbd";
@@ -334,6 +336,8 @@ export type {
   TableHeadProps,
   TableCellProps,
 } from "./ui/table";
+export { TreeList, treeListVariants } from "./ui/tree-list";
+export type { TreeListProps, TreeListColumn, TreeListNode } from "./ui/tree-list";
 export { Timeline } from "./ui/timeline";
 export type {
   TimelineProps,
