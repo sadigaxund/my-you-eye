@@ -44,6 +44,8 @@ export { RadioGroup, RadioGroupItem, radioGroupItemVariants } from "./ui/radio-g
 export type { RadioGroupProps, RadioGroupItemProps } from "./ui/radio-group";
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/select";
 export type { SelectTriggerProps, SelectItemProps } from "./ui/select";
+export { SegmentedControl, segmentedControlVariants } from "./ui/segmented-control";
+export type { SegmentedControlProps, SegmentedOption } from "./ui/segmented-control";
 export { Slider, sliderTrackVariants } from "./ui/slider";
 export type { SliderProps } from "./ui/slider";
 export { Switch, switchVariants } from "./ui/switch";
