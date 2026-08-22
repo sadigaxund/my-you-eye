@@ -74,6 +74,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": ["*.css"],
   "bin": {
     "my-you-eye": "./bin/my-you-eye.mjs"
   },

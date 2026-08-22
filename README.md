@@ -71,6 +71,27 @@ Every component ships its `Props` type and its variants from the same import. Th
 full catalog with prop signatures lives in [COMPONENTS.md](./COMPONENTS.md) /
 `components.json`, or run `npx my-you-eye list`.
 
+### Bundle discipline
+
+The sanctioned import path is the barrel (`my-you-eye`) plus its tier subpaths —
+per-component subpaths are not published. Tree-shaking is guaranteed by
+`"sideEffects": ["*.css"]`: every JS module is pure, only stylesheets carry side
+effects, so unused component groups drop out of production builds.
+
+To verify on your side, dump your bundle's symbols and grep for a group you
+never import:
+
+```bash
+# Vite: build, then inspect what shipped
+npx vite build --mode production
+grep -c "GraphEdge\|GraphNode" dist/assets/index-*.js   # canvas group: expect 0 hits if unused
+```
+
+If an unused group leaks into your bundle, check that your bundler resolves the
+ESM build (`module`/`exports` fields) and that no barrel re-export of
+`my-you-eye` is being force-included by a `sideEffects: true` override in your
+own config.
+
 ## Why this works well with AI agents
 
 The package is designed to be *agent-legible*, so you can hand a coding agent a
