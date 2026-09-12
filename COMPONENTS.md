@@ -581,7 +581,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">
 | `CellType` | `my-you-eye` | — | Data Types, New data types, Numeric types, Column alignment |
 | `CheckboxTree` | `my-you-eye` | — | Publish-style picker |
 | `DataList` | `my-you-eye` | striped: **false** / true | Density (normal vs compact), Striped, Label width, Alignment, Scrolling |
-| `DataTable` | `my-you-eye` | variant: **default** / striped<br>density: compact / **normal** | Default, Striped, Scrolling + sticky header, Alignment, Truncation, Row click & actions |
+| `DataTable` | `my-you-eye` | variant: **default** / striped<br>density: compact / **normal** | Default, Striped, Scrolling + sticky header, Alignment, Truncation, Row click & actions, Empty state |
 | `Table` | `my-you-eye` | variant: **default** / striped | Composition, Variants, Density, Truncation & expand, Sticky header |
 | `Timeline` | `my-you-eye` | — | Horizontal — single lane, Horizontal — lanes, Spans — events with a duration, Shared scale across lanes, Label placement, Density, Progress (playhead reveal), Vertical — single lane, Vertical — lanes |
 | `TreeList` | `my-you-eye` | density: compact / **normal** | Vault browser |
@@ -646,6 +646,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `renderActions?` | `(row: Record<string, unknown>) => React.ReactNode` | Per-row action controls rendered in a trailing cell (#25) — icon buttons, menus. |
 | `actionsHeader?` | `string` | Column header for the actions cell. |
 | `actionsWidth?` | `string` | Width of the trailing actions column under layout="fixed" (any CSS width: "10%", "8rem"). |
+| `emptyState?` | `ReactNode` | Rendered in place of rows when `rows` is empty. |
 
 #### `Table`
 
@@ -726,7 +727,7 @@ Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Om
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `Avatar` | `my-you-eye` | size: lg / **md** / sm | Sizes, Fallback variants, With image, With ring, With status dot |
-| `Badge` | `my-you-eye` | variant: danger / **neutral** / primary / success / warning<br>tone: soft / **solid** | Variants (solid), Variants (soft) |
+| `Badge` | `my-you-eye` | variant: danger / **neutral** / primary / success / warning<br>tone: soft / **solid** | Variants (solid), Variants (soft), Long label |
 | `Card` | `my-you-eye` | variant: **default** / elevated / outlined | Variants, With footer actions, Size |
 | `CodeBlock` | `my-you-eye` | variant: **default** / elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python), Pre-tokenised lines, Extending the built-in tokenizer |
 | `DeviceFrame` | `my-you-eye` | variant: **browser** / phone / window | Browser, Window, Phone |

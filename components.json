@@ -2516,6 +2516,11 @@
           "type": "string",
           "optional": true,
           "doc": "Width of the trailing actions column under layout=\"fixed\" (any CSS width: \"10%\", \"8rem\")."
+        },
+        "emptyState": {
+          "type": "ReactNode",
+          "optional": true,
+          "doc": "Rendered in place of rows when `rows` is empty."
         }
       },
       "demos": [
@@ -2524,7 +2529,8 @@
         "Scrolling + sticky header",
         "Alignment",
         "Truncation",
-        "Row click & actions"
+        "Row click & actions",
+        "Empty state"
       ],
       "description": "A composed table pattern that renders columns + rows through CellType, with variant/density options and an optional sticky header.",
       "parent": "Table",
@@ -2902,7 +2908,8 @@
       "props": {},
       "demos": [
         "Variants (solid)",
-        "Variants (soft)"
+        "Variants (soft)",
+        "Long label"
       ],
       "variantDefaults": {
         "variant": "neutral",
