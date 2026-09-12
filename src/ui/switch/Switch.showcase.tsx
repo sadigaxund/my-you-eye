@@ -1,4 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
+import { Card } from "../card";
 import { Switch } from ".";
 
 const entry: ShowcaseEntry = {
@@ -32,6 +33,24 @@ const entry: ShowcaseEntry = {
             <Switch disabled /> <span className="text-sm">Disabled</span>
           </label>
         </div>
+      ),
+    },
+    {
+      name: "On a surface",
+      render: () => (
+        <Card className="p-panel">
+          <div className="flex flex-col gap-3 items-start w-max mx-auto">
+            <label className="flex items-center gap-2">
+              <Switch /> <span className="text-sm">Show git status in explorer</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <Switch defaultChecked /> <span className="text-sm">Never expires</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <Switch disabled /> <span className="text-sm">Show title</span>
+            </label>
+          </div>
+        </Card>
       ),
     },
   ],
