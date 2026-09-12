@@ -61,6 +61,10 @@ export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from ".
 export type { SelectTriggerProps, SelectItemProps } from "./ui/select";
 export { SegmentedControl, segmentedControlVariants } from "./ui/segmented-control";
 export type { SegmentedControlProps, SegmentedOption } from "./ui/segmented-control";
+export { SettingsRow, settingsRowVariants } from "./ui/settings-row";
+export type { SettingsRowProps, SettingsControlWidth } from "./ui/settings-row";
+export { SettingsSection } from "./ui/settings-section";
+export type { SettingsSectionProps } from "./ui/settings-section";
 export { Slider, sliderTrackVariants } from "./ui/slider";
 export type { SliderProps } from "./ui/slider";
 export { Switch, switchVariants } from "./ui/switch";
