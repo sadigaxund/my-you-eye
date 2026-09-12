@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ShowcaseEntry } from "../../../showcase/types";
 import { DataTable } from ".";
 import { Button } from "../../button";
+import { EmptyState } from "../../empty-state";
 
 const users = [
   { name: "Alice", email: "alice@example.com", role: "Admin", status: "Active", sessions: 1245, lastLogin: "2026-07-17T10:30:00Z" },
@@ -202,6 +203,26 @@ const entry: ShowcaseEntry = {
       description:
         "onRowClick opens the row's detail; renderActions adds a trailing per-row cell. Clicks on the action buttons stay with the buttons.",
       render: () => <RowActionsDemo />,
+    },
+    {
+      name: "Empty state",
+      description: "emptyState is opt-in: passing it with an empty rows array renders one centered row in place of the (otherwise header-only) body.",
+      render: () => (
+        <DataTable
+          columns={[
+            { key: "name", header: "Name", width: "sm" },
+            { key: "role", header: "Role", width: "xs" },
+            { key: "status", header: "Status", width: "xs" },
+          ]}
+          rows={[]}
+          emptyState={
+            <EmptyState
+              title="No results"
+              description="Try adjusting your search or filters."
+            />
+          }
+        />
+      ),
     },
   ],
 };

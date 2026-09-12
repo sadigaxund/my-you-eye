@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **DataTable `emptyState`** — opt-in `ReactNode` prop rendered in a single centered row spanning all columns when `rows` is empty; omitted, an empty table renders the header only, as before (impeccable audit).
+
 ### Fixed
 
 - **Badge** — long unbroken labels are now contained: `max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead (impeccable audit).
