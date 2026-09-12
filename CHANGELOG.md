@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Badge** — long unbroken labels are now contained: `max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead (impeccable audit).
+
 ## [2026.9.0] - 2026-09-12
 
 ### Added

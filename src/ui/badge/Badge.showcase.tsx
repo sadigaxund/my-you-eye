@@ -29,6 +29,18 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Long label",
+      render: () => (
+        <div className="flex max-w-sm flex-wrap items-center gap-2">
+          <Badge variant="neutral">Neutral</Badge>
+          <Badge variant="primary">
+            Supercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocious
+          </Badge>
+          <Badge variant="success">Success</Badge>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;
