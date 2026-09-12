@@ -41,7 +41,7 @@ export function CodeHeaderBar({ header, language, trailing }: CodeHeaderBarProps
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-2 h-9 pl-panel border-b border-border shrink-0",
+        "flex items-center justify-between gap-2 h-9 pl-panel border-b border-border-subtle shrink-0",
         trailing ? "pr-1.5" : "pr-panel",
       )}
     >

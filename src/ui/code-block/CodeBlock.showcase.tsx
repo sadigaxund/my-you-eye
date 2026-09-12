@@ -1,5 +1,6 @@
 import type { ShowcaseEntry } from "../../showcase/types";
 import { CodeBlock } from ".";
+import { tokensDemos } from "./CodeBlock.showcase.tokens";
 
 const python = `def fibonacci(n):
     a, b = 0, 1
@@ -249,6 +250,7 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    ...tokensDemos,
   ],
 };
 export default entry;

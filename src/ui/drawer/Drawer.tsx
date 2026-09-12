@@ -50,7 +50,7 @@ DrawerContent.displayName = "DrawerContent";
 
 const DrawerHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col gap-1.5 p-panel border-b border-border", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-col gap-1.5 p-panel border-b border-border-subtle", className)} {...props} />
   ),
 );
 DrawerHeader.displayName = "DrawerHeader";
@@ -80,7 +80,7 @@ DrawerBody.displayName = "DrawerBody";
 
 const DrawerFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center justify-end gap-inline p-panel border-t border-border", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center justify-end gap-inline p-panel border-t border-border-subtle", className)} {...props} />
   ),
 );
 DrawerFooter.displayName = "DrawerFooter";

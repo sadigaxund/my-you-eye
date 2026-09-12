@@ -61,6 +61,10 @@ export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from ".
 export type { SelectTriggerProps, SelectItemProps } from "./ui/select";
 export { SegmentedControl, segmentedControlVariants } from "./ui/segmented-control";
 export type { SegmentedControlProps, SegmentedOption } from "./ui/segmented-control";
+export { SettingsRow, settingsRowVariants } from "./ui/settings-row";
+export type { SettingsRowProps, SettingsControlWidth } from "./ui/settings-row";
+export { SettingsSection } from "./ui/settings-section";
+export type { SettingsSectionProps } from "./ui/settings-section";
 export { Slider, sliderTrackVariants } from "./ui/slider";
 export type { SliderProps } from "./ui/slider";
 export { Switch, switchVariants } from "./ui/switch";
@@ -87,12 +91,15 @@ export {
   cardFooterVariants,
 } from "./ui/card";
 export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps } from "./ui/card";
-export { CodeBlock, codeBlockVariants, CodeHeaderBar, LanguageBadge } from "./ui/code-block";
+export { CodeBlock, codeBlockVariants, CodeHeaderBar, LanguageBadge, tokenizeCode } from "./ui/code-block";
 export type {
   CodeBlockProps,
   CodeBlockHighlightGroup,
   HighlightRangeDef,
   CodeHeaderBarProps,
+  CodeToken,
+  CodeTokenKind,
+  HighlightedLine,
 } from "./ui/code-block";
 export { DeviceFrame, deviceFrameVariants } from "./ui/device-frame";
 export type { DeviceFrameProps, DeviceFrameVariant } from "./ui/device-frame";
@@ -144,7 +151,8 @@ export { Skeleton, skeletonVariants } from "./ui/skeleton";
 export type { SkeletonProps } from "./ui/skeleton";
 export { Spinner, spinnerVariants } from "./ui/spinner";
 export type { SpinnerProps } from "./ui/spinner";
-export { Toaster, useToast } from "./ui/toast";
+export { Toaster, useToast, toastVariants } from "./ui/toast";
+export type { ToastData, ToastClassNames } from "./ui/toast";
 
 // ---------------------------------------------------------------------------
 // Overlay — anything that renders in a portal above the page.
@@ -197,10 +205,28 @@ export { Breadcrumbs } from "./ui/breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./ui/breadcrumbs";
 export { Link, linkVariants } from "./ui/link";
 export type { LinkProps } from "./ui/link";
+export { NavList, NavListItem, NavListGroup, navListItemVariants } from "./ui/nav-list";
+export type { NavListProps, NavListOrientation, NavListItemProps, NavListGroupProps } from "./ui/nav-list";
 export { Pagination } from "./ui/pagination";
 export type { PaginationProps } from "./ui/pagination";
 export { StatusBar, StatusBarItem } from "./ui/status-bar";
 export type { StatusBarProps, StatusBarItemProps } from "./ui/status-bar";
+export {
+  Stepper,
+  StepperList,
+  StepperPanel,
+  StepperPanelTitle,
+  StepperActions,
+  stepperMarkerVariants,
+} from "./ui/stepper";
+export type {
+  StepperProps,
+  StepperStep,
+  StepperListProps,
+  StepperPanelProps,
+  StepperPanelTitleProps,
+  StepperActionsProps,
+} from "./ui/stepper";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 export type { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps } from "./ui/tabs";
 

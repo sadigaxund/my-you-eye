@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { ScrollArea } from "../scroll-area";
 import { tokenize, splitTokensByLine, renderHighlightedLine } from "./CodeBlock.highlight";
+import type { HighlightedLine } from "./CodeBlock.tokens";
 import { useHighlightOverlay } from "./CodeBlock.useHighlightOverlay";
 import { useCopy } from "./CodeBlock.useCopy";
 import type { CopyState } from "./CodeBlock.useCopy";
@@ -79,7 +80,12 @@ export interface CodeBlockProps
   header?: string;
   wrap?: boolean;
   showLineNumbers?: boolean;
-  /** Enable syntax highlighting for supported languages (js, ts, tsx, json, bash). */
+  /**
+   * Enable syntax highlighting via the built-in tokenizer — see
+   * `tokenizeCode` for the full built-in language set (JS/TS, JSON, shell,
+   * CSS, HTML, Python, YAML, SQL, with aliases). For any other language,
+   * pre-tokenise and pass `tokens` instead.
+   */
   highlight?: boolean;
   /** 1-indexed line numbers to highlight. Implicitly enables line numbers. */
   highlightLines?: number[];
@@ -127,6 +133,19 @@ export interface CodeBlockProps
    * displayed. Additive: omit for CodeBlock's normal framed appearance.
    */
   bare?: boolean;
+  /**
+   * Pre-tokenised lines, bypassing the built-in tokenizer entirely — the
+   * escape hatch for a language outside `tokenizeCode`'s built-in set (an
+   * external Lezer/CM6 parser, for example). When provided it is rendered
+   * as-is, one entry per line: the built-in tokenizer and `highlight` are
+   * bypassed for colouring (`language` still drives the header/badge
+   * chrome). `code` is still required — it's what the copy button copies.
+   * Rendered line count follows `tokens.length`: the line-number gutter,
+   * `highlightLines`, `highlightGroups`, `focusRange` and `lineId` all index
+   * these rendered lines, not `code`'s lines. If `tokens.length` differs
+   * from `code`'s line count, the rendered lines win — keep them in sync.
+   */
+  tokens?: readonly HighlightedLine[];
 }
 
 function CopyIcon() {
@@ -188,7 +207,7 @@ const HIGHLIGHT_BG: Record<string, string> = {
 };
 
 const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, bare = false, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, focusRange, lineId, bare = false, tokens, ...props }, ref) => {
     const { state: copyState, copy } = useCopy(code);
 
     const lines = useMemo(() => code.split("\n"), [code]);
@@ -198,9 +217,9 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
     const hasHeader = !bare && Boolean(header || language);
 
     const highlighted = useMemo(() => {
-      if (!highlight) return null;
+      if (!highlight || tokens) return null;
       return tokenize(code, language);
-    }, [code, language, highlight]);
+    }, [code, language, highlight, tokens]);
 
     const lineColor = useMemo(() => {
       const map = new Map<number, string>();
@@ -217,9 +236,16 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
     }, [highlightLines, highlightColor, highlightGroups]);
 
     const perLineTokens = useMemo(() => {
+      if (tokens) return tokens;
       if (!highlighted) return null;
       return splitTokensByLine(highlighted);
-    }, [highlighted]);
+    }, [tokens, highlighted]);
+
+    // The gutter renders one row per rendered line: `tokens.length` when
+    // `tokens` is provided (it may legitimately differ from `code`'s line
+    // count — the caller's tokens win), otherwise `code`'s own line count,
+    // byte-identical to the pre-existing behaviour.
+    const gutterLines = tokens ?? lines;
 
     // See CodeBlock.useHighlightOverlay.tsx for why this is measured from
     // real rendered geometry rather than the old CHAR_W/LINE_H/PAD constants.
@@ -276,9 +302,9 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             {showGutter && (
               <div
                 aria-hidden
-                className="sticky left-0 z-10 select-none shrink-0 bg-code-bg py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
+                className="sticky left-0 z-10 select-none shrink-0 bg-code-bg py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border-subtle"
               >
-                {lines.map((_, i) => (
+                {gutterLines.map((_, i) => (
                   <div key={i} className={cn("pl-compact-x pr-compact-x", lineColor.get(i + 1))}>{i + 1}</div>
                 ))}
               </div>

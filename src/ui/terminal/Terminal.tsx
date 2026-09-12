@@ -275,7 +275,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     return (
       <div ref={ref} className={cn(terminalVariants({ variant, scheme, chrome }), className)} {...props}>
         {titleBarCaption && (
-          <div className="flex items-center gap-inline h-9 px-panel border-b border-border shrink-0">
+          <div className="flex items-center gap-inline h-9 px-panel border-b border-border-subtle shrink-0">
             {chrome !== "none" && (
               <span className="flex items-center gap-1.5">
                 <span className="size-2.5 rounded-full bg-danger/70" />

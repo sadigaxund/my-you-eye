@@ -20,6 +20,58 @@ function ToastDemo() {
   );
 }
 
+function ToastSoftToneDemo() {
+  const { toast } = useToast();
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3">
+      <Button
+        variant="secondary"
+        onClick={() => toast({ title: "Hello", description: "This is a default toast.", tone: "soft" })}
+      >
+        Default (soft)
+      </Button>
+      <Button
+        onClick={() =>
+          toast({ title: "Share link created", description: "Anyone with the link can view this note.", variant: "success", tone: "soft" })
+        }
+      >
+        Success (soft)
+      </Button>
+      <Button
+        variant="danger"
+        onClick={() =>
+          toast({ title: "Could not publish note", description: "Check your connection and try again.", variant: "danger", tone: "soft" })
+        }
+      >
+        Danger (soft)
+      </Button>
+    </div>
+  );
+}
+
+function ToastCustomClassNameDemo() {
+  const { toast } = useToast();
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3">
+      <Button
+        variant="secondary"
+        onClick={() =>
+          toast({
+            title: "Draft synced",
+            description: "Your note was synced to all devices.",
+            className: "border-dashed",
+            classNames: { title: "font-mono", description: "italic", close: "opacity-100" },
+          })
+        }
+      >
+        Custom className toast
+      </Button>
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Toast",
   group: "feedback",
@@ -27,13 +79,21 @@ const entry: ShowcaseEntry = {
   demos: [
     {
       name: "Trigger toasts",
+      description: "Solid (default) tone, the soft tone with a status accent bar, and className/classNames overrides.",
       // The Toaster's viewport is `position: fixed` — it belongs to the
       // viewport corner, not to this demo's card, so the card must not
-      // become its containing block (see ShowcaseDemo.contain).
+      // become its containing block (see ShowcaseDemo.contain). Every
+      // trigger lives inside this ONE Toaster on purpose: a demo card
+      // creates its own stacking context, so a toast viewport mounted in an
+      // earlier card would paint underneath every later card on the page.
       contain: false,
       render: () => (
         <Toaster>
-          <ToastDemo />
+          <div className="flex flex-col gap-4">
+            <ToastDemo />
+            <ToastSoftToneDemo />
+            <ToastCustomClassNameDemo />
+          </div>
         </Toaster>
       ),
     },

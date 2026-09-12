@@ -72,6 +72,9 @@ html[data-theme="comic"].dark {
   --color-chart-3: oklch(0.665 0.141 185);
 
   --color-border: oklch(0.12 0.03 40);
+  /* Intentionally flat/hard-edged theme (ink-outline look): subtle tier
+     matches the structural border exactly so nothing softens. */
+  --color-border-subtle: var(--color-border);
   --color-ring: oklch(0.50 0.22 240 / 0.5);
   --color-scrollbar: oklch(0.12 0.03 40 / 0.25);
   --color-scrollbar-hover: oklch(0.12 0.03 40 / 0.45);
@@ -125,6 +128,9 @@ html[data-theme="comic"].dark {
   --color-sidebar-badge: oklch(0.62 0.22 240);
   --color-sidebar-badge-fg: oklch(0 0 0);
   --color-border: oklch(0.55 0.02 50);
+  /* Intentionally flat/hard-edged theme (ink-outline look): subtle tier
+     matches the structural border exactly so nothing softens. */
+  --color-border-subtle: var(--color-border);
   --color-ring: oklch(0.62 0.22 240 / 0.5);
   --color-scrollbar: oklch(0.55 0.02 50 / 0.25);
   --color-scrollbar-hover: oklch(0.55 0.02 50 / 0.45);

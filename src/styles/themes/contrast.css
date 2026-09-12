@@ -26,6 +26,9 @@
   --color-sidebar-badge: oklch(0.3 0.15 265);
   --color-sidebar-badge-fg: oklch(1 0 0);
   --color-border: oklch(0.4 0 0);
+  /* Intentionally flat/hard-edged theme: subtle tier matches the structural
+     border exactly so nothing softens. */
+  --color-border-subtle: var(--color-border);
   --color-ring: oklch(0.3 0.15 265);
   --color-grid-dot: oklch(0.5 0 0);
   --color-scrollbar: oklch(0.4 0 0);
@@ -66,6 +69,9 @@
   --color-sidebar-badge: oklch(0.7 0.2 265);
   --color-sidebar-badge-fg: oklch(0 0 0);
   --color-border: oklch(0.6 0 0);
+  /* Intentionally flat/hard-edged theme: subtle tier matches the structural
+     border exactly so nothing softens. */
+  --color-border-subtle: var(--color-border);
   --color-ring: oklch(0.7 0.2 265);
   --color-danger: oklch(0.62 0.24 25);
   --color-danger-fg: oklch(0 0 0);

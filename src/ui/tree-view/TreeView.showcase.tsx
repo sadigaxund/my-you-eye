@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ShowcaseEntry } from "../../showcase/types";
 import { TreeView } from ".";
 import type { TreeNode } from ".";
+import { longValueDemos } from "./TreeView.showcase.long-value";
 
 function FolderIcon() {
   return (
@@ -337,6 +338,7 @@ const entry: ShowcaseEntry = {
       name: "Drag to move",
       render: () => <DragDemo />,
     },
+    ...longValueDemos,
   ],
 };
 export default entry;

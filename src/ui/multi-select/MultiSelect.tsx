@@ -148,7 +148,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
         align="start"
         className="w-[var(--radix-popover-trigger-width)] p-0 overflow-hidden"
       >
-        <div className="border-b border-border">
+        <div className="border-b border-border-subtle">
           <Input
             ref={inputRef}
             value={query}

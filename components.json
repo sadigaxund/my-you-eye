@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 129,
+  "count": 133,
   "components": [
     {
       "name": "Beat",
@@ -2776,7 +2776,8 @@
         "Messy nested payload (hover to trace depth guides)",
         "Controlled selection & tones",
         "Inline rename",
-        "Drag to move"
+        "Drag to move",
+        "Long leaf value"
       ],
       "description": "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, typed value rendering, and controlled selection with rename and drag hooks."
     },
@@ -2976,7 +2977,7 @@
         "highlight": {
           "type": "boolean",
           "optional": true,
-          "doc": "Enable syntax highlighting for supported languages (js, ts, tsx, json, bash)."
+          "doc": "Enable syntax highlighting via the built-in tokenizer — see `tokenizeCode` for the full built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases)."
         },
         "highlightLines": {
           "type": "number[]",
@@ -3012,6 +3013,11 @@
           "type": "boolean",
           "optional": true,
           "doc": "Strips the persistent header bar (filename/language badge) and the block's own opaque background/border, leaving only a hover-revealed copy button in the corner."
+        },
+        "tokens": {
+          "type": "readonly HighlightedLine[]",
+          "optional": true,
+          "doc": "Pre-tokenised lines, bypassing the built-in tokenizer entirely — the escape hatch for a language outside `tokenizeCode`'s built-in set (an external Lezer/CM6 parser, for example)."
         }
       },
       "demos": [
@@ -3030,7 +3036,9 @@
         "Merged highlights",
         "Focus range (dims everything outside it)",
         "Bare (embedded in another surface)",
-        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
+        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
+        "Pre-tokenised lines",
+        "Extending the built-in tokenizer"
       ],
       "variantDefaults": {
         "variant": "default"
@@ -3116,7 +3124,7 @@
         "highlight": {
           "type": "boolean",
           "optional": true,
-          "doc": "Syntax-highlight line content via CodeBlock's tokenizer (js/ts/json/bash/css/html/py/yaml/sql)."
+          "doc": "Syntax-highlight line content via CodeBlock's built-in tokenizer — see `tokenizeCode` for the built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases)."
         },
         "wordDiff": {
           "type": "boolean",
@@ -3401,7 +3409,8 @@
       "props": {},
       "demos": [
         "Horizontal",
-        "Vertical"
+        "Vertical",
+        "Border tiers"
       ],
       "variantDefaults": {
         "orientation": "horizontal"
@@ -3729,6 +3738,10 @@
           "danger",
           "default",
           "success"
+        ],
+        "tone": [
+          "soft",
+          "solid"
         ]
       },
       "props": {},
@@ -3737,7 +3750,8 @@
       ],
       "description": "A transient notification for success, danger, and default states, triggered imperatively via the useToast hook.",
       "variantDefaults": {
-        "variant": "default"
+        "variant": "default",
+        "tone": "solid"
       }
     },
     {
@@ -4156,6 +4170,104 @@
       }
     },
     {
+      "name": "SettingsRow",
+      "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/settings-row",
+      "variants": {
+        "stackAt": [
+          "md",
+          "sm"
+        ]
+      },
+      "props": {
+        "label": {
+          "type": "ReactNode",
+          "optional": false,
+          "doc": "Setting name, left column."
+        },
+        "description": {
+          "type": "ReactNode",
+          "optional": true,
+          "doc": "Longer explanation under the label, left column."
+        },
+        "htmlFor": {
+          "type": "string",
+          "optional": true,
+          "doc": "Associates the left column's `<Label>` with the control (a Switch's `id`, say) so the whole label+description column becomes its click target."
+        },
+        "controlWidth": {
+          "type": "SettingsControlWidth",
+          "optional": true,
+          "doc": "Overrides the width the row inherits from its `SettingsSection` (`\"auto\"` when there is no enclosing section and this is unset)."
+        },
+        "stackAt": {
+          "type": "\"sm\" | \"md\"",
+          "optional": true,
+          "doc": "Container-query breakpoint (the row's own width, not the viewport) at which it switches from stacked (label above control) to a single row (label left, control right). `\"sm\"` (default) or `\"md\"`."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false,
+          "doc": "The control (Switch, Input, Select, ...)."
+        }
+      },
+      "demos": [
+        "Control widths",
+        "Stacked (narrow container)",
+        "Label as click target"
+      ],
+      "description": "Label and description on the left, a right-aligned control that stacks below on narrow widths.",
+      "parent": "Settings",
+      "variantDefaults": {
+        "stackAt": "sm"
+      },
+      "extends": [
+        "Omit<HTMLAttributes<HTMLDivElement>, \"children\">",
+        "VariantProps<typeof settingsRowVariants>"
+      ]
+    },
+    {
+      "name": "SettingsSection",
+      "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/settings-section",
+      "variants": {},
+      "props": {
+        "title": {
+          "type": "string",
+          "optional": false,
+          "doc": "Section heading; also labels the `<section>` landmark."
+        },
+        "description": {
+          "type": "ReactNode",
+          "optional": true,
+          "doc": "Short blurb under the heading."
+        },
+        "controlWidth": {
+          "type": "SettingsControlWidth",
+          "optional": true,
+          "doc": "Shared default `controlWidth` for every `SettingsRow` inside, so their control columns line up."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false,
+          "doc": "`SettingsRow`s, rendered with a rule between each."
+        }
+      },
+      "demos": [
+        "Appearance",
+        "Shared control width"
+      ],
+      "description": "Titled group of settings rows whose controls share one column width so they line up.",
+      "parent": "Settings",
+      "extends": [
+        "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
       "name": "Slider",
       "group": "inputs",
       "tier": "ui",
@@ -4204,7 +4316,8 @@
       "props": {},
       "demos": [
         "Sizes",
-        "States"
+        "States",
+        "On a surface"
       ],
       "variantDefaults": {
         "size": "md"
@@ -4393,6 +4506,37 @@
       ]
     },
     {
+      "name": "NavList",
+      "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/nav-list",
+      "variants": {},
+      "props": {
+        "orientation": {
+          "type": "NavListOrientation",
+          "optional": true,
+          "doc": "Vertical (default) or horizontal row of items."
+        },
+        "aria-label": {
+          "type": "string",
+          "optional": true,
+          "doc": "Encouraged: identifies the landmark, e.g. \"Settings\" or \"Table of contents\", since a bare `<nav>` is otherwise indistinguishable to assistive tech from any other nav region on the page."
+        }
+      },
+      "demos": [
+        "Settings rail",
+        "Horizontal",
+        "With groups",
+        "Links",
+        "Disabled & states"
+      ],
+      "description": "Unfilled navigation list for sidebars, settings rails and tables of contents — aria-current, not tabs.",
+      "extends": [
+        "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
       "name": "Pagination",
       "group": "navigation",
       "tier": "ui",
@@ -4455,6 +4599,56 @@
       },
       "extends": [
         "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
+      "name": "Stepper",
+      "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/stepper",
+      "variants": {},
+      "props": {
+        "steps": {
+          "type": "readonly StepperStep[]",
+          "optional": false,
+          "doc": "Ordered steps."
+        },
+        "current": {
+          "type": "string",
+          "optional": false,
+          "doc": "`id` of the current step (controlled)."
+        },
+        "onCurrentChange": {
+          "type": "(id: string) => void",
+          "optional": false,
+          "doc": "Called with the target step's `id` when the user activates a reachable step in `StepperList` or presses Back."
+        },
+        "completed": {
+          "type": "ReadonlySet<string>",
+          "optional": true,
+          "doc": "`id`s of completed steps."
+        },
+        "orientation": {
+          "type": "\"horizontal\" | \"vertical\"",
+          "optional": true,
+          "doc": "Horizontal (default): markers in a row with labels underneath, panel below."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false,
+          "doc": "`StepperList`, `StepperPanel`s and `StepperActions`, in any layout."
+        }
+      },
+      "demos": [
+        "Horizontal",
+        "Vertical",
+        "Error & optional",
+        "Terminal step"
+      ],
+      "description": "Ordered multi-step flow with locked later steps, per-step actions and a terminal result step.",
+      "extends": [
+        "Omit<HTMLAttributes<HTMLDivElement>, \"children\">"
       ]
     },
     {

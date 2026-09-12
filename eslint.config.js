@@ -6,7 +6,10 @@ export default tseslint.config(
   // skills/vendor/ holds gitignored third-party agent-skill bodies vendored at
   // pinned commits (`npm run skills:update`) — derived data like dist/, never
   // repo source, so house lint rules (styled-native-elements etc.) do not apply.
-  { ignores: ["dist/", "node_modules/", "skills/vendor/"] },
+  // .claude/ is the (gitignored) agent-tooling directory; it can hold whole git
+  // worktrees (`.claude/worktrees/<agent>/`) while a sibling task runs, which
+  // would otherwise be linted as a second copy of the repo.
+  { ignores: ["dist/", "node_modules/", "skills/vendor/", ".claude/**"] },
   tseslint.configs.recommended,
   {
     rules: {

@@ -100,6 +100,7 @@ html[data-theme="glass"]::before {
 
   /* Colors - Utilities */
   --color-border: oklch(0.32 0.06 290 / 0.45);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.55 0.22 290 / 0.4);
   --color-scrollbar: oklch(0 0 0 / 0.15);
   --color-scrollbar-hover: oklch(0 0 0 / 0.25);
@@ -174,6 +175,7 @@ html[data-theme="glass"]::before {
 
   /* Colors - Utilities */
   --color-border: oklch(1 0 0 / 0.30);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.72 0.20 290 / 0.4);
   --color-scrollbar: oklch(1 1 1 / 0.15);
   --color-scrollbar-hover: oklch(1 1 1 / 0.25);

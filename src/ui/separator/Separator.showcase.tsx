@@ -27,6 +27,24 @@ const entry: ShowcaseEntry = {
         </div>
       ),
     },
+    {
+      name: "Border tiers",
+      description: "Structural --color-border vs the nested --color-border-subtle tier for dividers inside a bordered box.",
+      render: () => (
+        <div className="flex items-start justify-center gap-6">
+          <div className="w-56 rounded-ui border border-border text-sm">
+            <div className="border-b border-border-subtle px-3 py-2">Editor</div>
+            <div className="border-b border-border-subtle px-3 py-2">Git &amp; sync</div>
+            <div className="px-3 py-2">Sharing</div>
+          </div>
+          <div className="flex w-56 flex-col gap-2 text-sm">
+            <p>Above</p>
+            <Separator />
+            <p>Below</p>
+          </div>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

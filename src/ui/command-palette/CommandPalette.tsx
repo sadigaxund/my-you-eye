@@ -99,7 +99,7 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
     <Dialog open={open} onOpenChange={onOpenChange}>
       <div ref={ref}>
       <DialogContent size="lg" className="p-0 overflow-hidden gap-0">
-        <div className="border-b border-border">
+        <div className="border-b border-border-subtle">
           <input
             ref={inputRef}
             value={query}

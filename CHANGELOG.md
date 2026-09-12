@@ -4,6 +4,27 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **NavList** — `NavList`, `NavListItem`, `NavListGroup` (+ `navListItemVariants`): an unfilled navigation list (`<nav>` + list markup, `aria-current="page" | "true"`) for sidebars, settings rails and tables of contents. Muted rows, hover surface, leading (vertical) or bottom (horizontal) accent bar on the current row; `href` rows render `Link`, others a button with `onSelect`; roving tabindex with arrow keys, Home and End (#41).
+- **Stepper** — `Stepper`, `StepperList`, `StepperPanel`, `StepperPanelTitle`, `StepperActions` (+ `stepperMarkerVariants`): a controlled multi-step flow for wizards and publish dialogs. A step is reachable only when current, completed, or the first not-completed one; `terminal` steps lock everything before them; markers show number / check / error; locked steps are disabled buttons with sr-only "locked"; the panel title receives focus on advance (never on first mount, so it works inside `Dialog`); `StepperActions` composes `Button` with "Continue" / "Done" defaults, `busy` and custom labels. Horizontal and vertical orientations (#35).
+- **SettingsSection / SettingsRow** — settings-page rows: label + description left, right-aligned control right, stacking below a container-query breakpoint (`stackAt: "sm" | "md"`). `controlWidth` (`auto | xs | sm | md | lg | full`, backed by new `--width-settings-control-*` tokens) is inherited from the section so controls line up; `htmlFor` makes the whole left column a `<label>` click target (#34).
+- **`--color-border-subtle`** — a second border tier for dividers nested inside an already-bordered container (`color-mix` alpha of `--color-border`, so it composites on any surface). Defined in every theme; the flat themes (contrast, brutal, comic) alias it to `--color-border`. Utilities: `border-border-subtle`, `divide-border-subtle`, `bg-border-subtle` (#39).
+- **Toast** — `ToastData` accepts `className` and a per-slot `classNames` map (`root` / `title` / `description` / `close`); `toastVariants` plus the `ToastData` / `ToastClassNames` types are exported; new `tone: "solid" | "soft"` — `soft` is an elevated surface with a 1px border and a status-coloured left bar and title instead of a full-bleed fill. `solid` (default) is unchanged (#40).
+- **CodeBlock** — `tokens?: readonly HighlightedLine[]` renders pre-tokenised lines from any external highlighter, bypassing the built-in tokenizer; `tokenizeCode(code, language)` and the `CodeToken` / `CodeTokenKind` / `HighlightedLine` types expose the library's token vocabulary so colours stay on library tokens and themes (#36).
+
+### Changed
+
+- **CodeBlock docs** — the built-in language list is stated once, on `tokenizeCode` (JS/TS, JSON, shell, CSS, HTML/XML, Python, YAML, SQL, with aliases) (#36).
+- **Nested dividers use `--color-border-subtle`** — Table row rules (previously an unset `border-b`), Drawer header/footer rules, DropdownMenu / ContextMenu separators, the search-field rule in CommandPalette / Combobox / MultiSelect, and the header and gutter dividers in CodeBlock / Terminal / DiffBlock. Outer edges and structural separators keep `--color-border` (#39).
+
+### Fixed
+
+- **SegmentedControl** — the radiogroup is `position: relative`, so focusing an option's sr-only radio can no longer scroll the host app's own scroll container (#43).
+- **TreeView** — a leaf with a long unbroken `value` no longer collapses its key to zero width: the key is capped at `--width-tree-view-key-max` (50%) and the value truncates with an ellipsis and a full-text `title` (#42).
+- **Switch** — the track has a persistent 1px `border-border` edge (`border-primary` when checked) so the off state stays visible in dark themes; geometry is pixel-identical to before (#37).
+- **Default theme (`.dark`)** — overrides the three `--shadow-*` tiers with dark-tuned alphas so popovers, dialogs and drawers keep their elevation on a dark canvas (#38).
+
 ## [2026.8.3] - 2026-08-22
 
 ## [2026.8.2] - 2026-08-22
