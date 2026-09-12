@@ -7,9 +7,11 @@ All notable changes to this project are documented here.
 ### Added
 
 - **`--color-border-subtle` token** — a second border tier (`color-mix(in oklab, var(--color-border) 55%, transparent)`, an alpha of the structural border so it composites on any surface) for dividers nested inside an already-bordered container; every theme defines it in light and dark, and the flat themes (contrast, brutal, comic) alias it to `--color-border` so they do not change. Tailwind maps it as `border-border-subtle` / `divide-border-subtle` / `bg-border-subtle` (#39).
+- **CodeBlock pluggable highlighting** — `tokens?: readonly HighlightedLine[]` renders pre-tokenised lines from any external highlighter (Lezer/CM6/…), bypassing the built-in tokenizer; `tokenizeCode(code, language)` and the `CodeToken` / `CodeTokenKind` / `HighlightedLine` types expose the library's token vocabulary so consumers map their tags onto it and colours stay on library tokens (#36).
 
 ### Changed
 
+- **CodeBlock / DiffBlock docs** — the two conflicting built-in-language-list comments are consolidated into one, on `tokenizeCode` (JS/TS, JSON, shell, CSS, HTML/XML, Python, YAML, SQL with aliases) (#36).
 - **Nested dividers use `--color-border-subtle`** — Table row rules (previously an unset `border-b` that inherited `currentColor`), Drawer header/footer rules, DropdownMenu/ContextMenu separators, the search-field rule in CommandPalette/Combobox/MultiSelect, and the header-bar / line-number-gutter dividers in CodeBlock, Terminal and DiffBlock. Outer edges and structural separators (Separator, Tabs, sidebar chrome, split panes) keep `--color-border` (#39).
 
 ### Fixed

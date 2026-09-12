@@ -43,7 +43,11 @@ export interface DiffBlockProps
   header?: string;
   /** "unified" (default): single column with +/- markers. "split": two-column side-by-side. */
   mode?: "unified" | "split";
-  /** Syntax-highlight line content via CodeBlock's tokenizer (js/ts/json/bash/css/html/py/yaml/sql). */
+  /**
+   * Syntax-highlight line content via CodeBlock's built-in tokenizer — see
+   * `tokenizeCode` for the built-in language set (JS/TS, JSON, shell, CSS,
+   * HTML, Python, YAML, SQL, with aliases).
+   */
   highlight?: boolean;
   /**
    * Word-level intra-line diff for a removed line immediately followed by an

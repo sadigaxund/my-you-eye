@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import type { CodeToken, CodeTokenKind, HighlightedLine } from "./CodeBlock.tokens";
 
 const KEYWORDS = new Set([
   "break", "case", "catch", "class", "const", "continue", "debugger", "default",
@@ -11,7 +12,12 @@ const KEYWORDS = new Set([
   "any", "unknown", "boolean", "string", "number", "symbol", "object",
 ]);
 
-export interface Token { text: string; className: string; }
+/** Internal alias — the built-in tokenizers below and their two other
+ * consumers (`Terminal.Output.tsx`, `DiffBlock.tsx`) import this name.
+ * `CodeTokenKind`, `CodeToken` and `HighlightedLine` are the public surface,
+ * defined in `./CodeBlock.tokens` (see that file's JSDoc for the vocabulary
+ * and why it exists). */
+export type Token = CodeToken;
 
 function skipWs(code: string, i: number) { let j = i; while (j < code.length && /\s/.test(code[j])) j++; return j; }
 
@@ -19,32 +25,32 @@ export function tokenizeJsTs(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
-    if (code[i] === "/" && code[i + 1] === "/") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "`") { let j = i + 1; while (j < code.length && code[j] !== "`") { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
-    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
+    if (code[i] === "/" && code[i + 1] === "/") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "`") { let j = i + 1; while (j < code.length && code[j] !== "`") { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
+    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     // Number
     if (/[0-9]/.test(code[i]) || (code[i] === "." && /[0-9]/.test(code[i + 1] || ""))) {
       let j = i;
       if (code[j] === "0" && /[xX]/.test(code[j + 1] || "")) { j += 2; while (j < code.length && /[0-9a-fA-F]/.test(code[j])) j++; }
       else if (code[j] === "0" && /[bB]/.test(code[j + 1] || "")) { j += 2; while (j < code.length && /[01]/.test(code[j])) j++; }
       else { while (j < code.length && /[0-9.eE+\-_]/.test(code[j])) j++; }
-      tokens.push({ text: code.slice(i, j), className: "number" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: "number" }); i = j; continue;
     }
     // Identifier / keyword
     if (/[a-zA-Z_$]/.test(code[i])) {
       let j = i; while (j < code.length && /[a-zA-Z0-9_$]/.test(code[j])) j++;
       const word = code.slice(i, j);
-      tokens.push({ text: word, className: KEYWORDS.has(word) ? "keyword" : /^[A-Z]/.test(word) ? "type" : "identifier" });
+      tokens.push({ text: word, kind: KEYWORDS.has(word) ? "keyword" : /^[A-Z]/.test(word) ? "type" : "identifier" });
       i = j; continue;
     }
     // Multi-char operators
     const multiChar = ["===", "!==", "==", "!=", "<=", ">=", "&&", "||", "??", "=>", "++", "--", "**", "+=", "-=", "*=", "/=", "%=", "<<", ">>", "..."];
     let matched = false;
-    for (const op of multiChar) { if (code.startsWith(op, i)) { tokens.push({ text: op, className: "operator" }); i += op.length; matched = true; break; } }
+    for (const op of multiChar) { if (code.startsWith(op, i)) { tokens.push({ text: op, kind: "operator" }); i += op.length; matched = true; break; } }
     if (matched) continue;
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -53,19 +59,19 @@ export function tokenizeJson(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
     if (code[i] === '"') {
       let j = i + 1; while (j < code.length && code[j] !== '"') { if (code[j] === "\\") j++; j++; } j++;
-      tokens.push({ text: code.slice(i, j), className: code.slice(j).trimStart().startsWith(":") ? "key" : "string" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: code.slice(j).trimStart().startsWith(":") ? "key" : "string" }); i = j; continue;
     }
     if (/[0-9]/.test(code[i]) || (code[i] === "-" && /[0-9]/.test(code[i + 1] || ""))) {
       let j = i; if (code[j] === "-") j++; while (j < code.length && /[0-9.eE+\-]/.test(code[j])) j++;
-      tokens.push({ text: code.slice(i, j), className: "number" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: "number" }); i = j; continue;
     }
     const words = { true: 4, false: 5, null: 4 };
-    for (const [w, len] of Object.entries(words)) { if (code.startsWith(w, i)) { tokens.push({ text: w, className: "keyword" }); i += len; break; } }
+    for (const [w, len] of Object.entries(words)) { if (code.startsWith(w, i)) { tokens.push({ text: w, kind: "keyword" }); i += len; break; } }
     if (i >= code.length || words[code[i] as keyof typeof words]) continue;
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -73,7 +79,7 @@ export function tokenizeJson(code: string): Token[] {
 export function tokenizeBash(code: string): Token[] {
   const tokens: Token[] = [];
   const lines = code.split("\n");
-  const add = (text: string, cls: string) => { if (text) tokens.push({ text, className: cls }); };
+  const add = (text: string, cls: CodeTokenKind) => { if (text) tokens.push({ text, kind: cls }); };
   for (let li = 0; li < lines.length; li++) {
     const line = lines[li];
     let i = 0;
@@ -96,25 +102,25 @@ export function tokenizeCss(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
-    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
+    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     if (/[0-9]/.test(code[i]) || (code[i] === "." && /[0-9]/.test(code[i + 1] || ""))) {
       let j = i; while (j < code.length && /[0-9.eE%pxsvw]/.test(code[j])) j++;
-      tokens.push({ text: code.slice(i, j), className: "number" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: "number" }); i = j; continue;
     }
-    if (code[i] === "@") { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), className: "keyword" }); i = j; continue; }
-    if (code[i] === "#" || code[i] === "." && /[a-zA-Z0-9]/.test(code[i + 1] || "")) { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), className: "tag" }); i = j; continue; }
-    if (CSS_PSEUDO.test(code.slice(i))) { const m = CSS_PSEUDO.exec(code.slice(i))!; tokens.push({ text: m[0], className: "type" }); i += m[0].length; continue; }
+    if (code[i] === "@") { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), kind: "keyword" }); i = j; continue; }
+    if (code[i] === "#" || code[i] === "." && /[a-zA-Z0-9]/.test(code[i + 1] || "")) { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), kind: "tag" }); i = j; continue; }
+    if (CSS_PSEUDO.test(code.slice(i))) { const m = CSS_PSEUDO.exec(code.slice(i))!; tokens.push({ text: m[0], kind: "type" }); i += m[0].length; continue; }
     if (/[a-zA-Z_-]/.test(code[i])) {
       let j = i; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++;
       const word = code.slice(i, j);
       // Heuristic: word followed by ':' is a property, otherwise a selector/tag
       const after = code.slice(j).trimStart();
-      tokens.push({ text: word, className: after.startsWith(":") ? "key" : "tag" });
+      tokens.push({ text: word, kind: after.startsWith(":") ? "key" : "tag" });
       i = j; continue;
     }
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -124,25 +130,25 @@ export function tokenizeHtml(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (code.startsWith("<!--", i)) { let j = i + 4; while (j < code.length && !code.startsWith("-->", j)) j++; j += 3; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "<" && (code[i + 1] === "!" || code[i + 1] === "?")) { let j = i; while (j < code.length && code[j] !== ">") j++; j++; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "<" && code[i + 1] === "/") { tokens.push({ text: "</", className: "punctuation" }); i += 2; continue; }
-    if (code[i] === "<") { tokens.push({ text: "<", className: "punctuation" }); i++;
-      if (/[a-zA-Z]/.test(code[i] || "")) { let j = i; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), className: "tag" }); i = j; }
+    if (code.startsWith("<!--", i)) { let j = i + 4; while (j < code.length && !code.startsWith("-->", j)) j++; j += 3; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "<" && (code[i + 1] === "!" || code[i + 1] === "?")) { let j = i; while (j < code.length && code[j] !== ">") j++; j++; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "<" && code[i + 1] === "/") { tokens.push({ text: "</", kind: "punctuation" }); i += 2; continue; }
+    if (code[i] === "<") { tokens.push({ text: "<", kind: "punctuation" }); i++;
+      if (/[a-zA-Z]/.test(code[i] || "")) { let j = i; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), kind: "tag" }); i = j; }
       continue;
     }
-    if (code[i] === "/" && code[i + 1] === ">") { tokens.push({ text: "/>", className: "punctuation" }); i += 2; continue; }
-    if (code[i] === ">") { tokens.push({ text: ">", className: "punctuation" }); i++; continue; }
+    if (code[i] === "/" && code[i + 1] === ">") { tokens.push({ text: "/>", kind: "punctuation" }); i += 2; continue; }
+    if (code[i] === ">") { tokens.push({ text: ">", kind: "punctuation" }); i++; continue; }
     // Attribute value
-    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) j++; j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) j++; j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     // Attribute name
     if (/[a-zA-Z_]/.test(code[i])) { let j = i; while (j < code.length && /[a-zA-Z0-9_-]/.test(code[j])) j++;
       const word = code.slice(i, j);
-      tokens.push({ text: word, className: code.slice(j).trimStart().startsWith("=") ? "key" : "identifier" });
+      tokens.push({ text: word, kind: code.slice(j).trimStart().startsWith("=") ? "key" : "identifier" });
       i = j; continue;
     }
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -159,26 +165,26 @@ export function tokenizePython(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (code[i] === "#") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
+    if (code[i] === "#") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
     // Triple-quoted strings
-    if (code.startsWith("'''", i) || code.startsWith('"""', i)) { const q = code.slice(i, i + 3); let j = i + 3; while (j < code.length && !code.startsWith(q, j)) j++; j += 3; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
-    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (code.startsWith("'''", i) || code.startsWith('"""', i)) { const q = code.slice(i, i + 3); let j = i + 3; while (j < code.length && !code.startsWith(q, j)) j++; j += 3; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
+    if (code[i] === '"' || code[i] === "'") { const q = code[i]; let j = i + 1; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     // f-strings
-    if (/[fF]/.test(code[i]) && (code[i + 1] === '"' || code[i + 1] === "'")) { const q = code[i + 1]; let j = i + 2; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (/[fF]/.test(code[i]) && (code[i + 1] === '"' || code[i + 1] === "'")) { const q = code[i + 1]; let j = i + 2; while (j < code.length && code[j] !== q) { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     if (/[0-9]/.test(code[i]) || (code[i] === "." && /[0-9]/.test(code[i + 1] || ""))) {
       let j = i; if (code[j] === "0" && /[xXbB]/.test(code[j + 1] || "")) { j += 2; while (j < code.length && /[0-9a-fA-F_]/.test(code[j])) j++; } else { while (j < code.length && /[0-9.eE_jJ]/.test(code[j])) j++; }
-      tokens.push({ text: code.slice(i, j), className: "number" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: "number" }); i = j; continue;
     }
     // Decorator
-    if (code[i] === "@") { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_.]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), className: "type" }); i = j; continue; }
+    if (code[i] === "@") { let j = i + 1; while (j < code.length && /[a-zA-Z0-9_.]/.test(code[j])) j++; tokens.push({ text: code.slice(i, j), kind: "type" }); i = j; continue; }
     if (/[a-zA-Z_]/.test(code[i])) {
       let j = i; while (j < code.length && /[a-zA-Z0-9_]/.test(code[j])) j++;
       const word = code.slice(i, j);
-      tokens.push({ text: word, className: PY_KEYWORDS.has(word) ? "keyword" : /^[A-Z]/.test(word) ? "type" : "identifier" });
+      tokens.push({ text: word, kind: PY_KEYWORDS.has(word) ? "keyword" : /^[A-Z]/.test(word) ? "type" : "identifier" });
       i = j; continue;
     }
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -191,31 +197,31 @@ export function tokenizeYaml(code: string): Token[] {
     const line = lines[li];
     let i = 0;
     // Leading indent
-    if (/^\s+/.test(line)) { const m = line.match(/^\s+/)!; tokens.push({ text: m[0], className: "whitespace" }); i = m[0].length; }
-    if (i >= line.length) { if (li < lines.length - 1) tokens.push({ text: "\n", className: "whitespace" }); continue; }
-    if (line[i] === "#") { tokens.push({ text: line.slice(i), className: "comment" }); if (li < lines.length - 1) tokens.push({ text: "\n", className: "whitespace" }); continue; }
-    if (line[i] === "-" && (line[i + 1] === " " || i + 1 >= line.length)) { tokens.push({ text: "-", className: "punctuation" }); i++; while (i < line.length && line[i] === " ") i++; }
+    if (/^\s+/.test(line)) { const m = line.match(/^\s+/)!; tokens.push({ text: m[0], kind: "whitespace" }); i = m[0].length; }
+    if (i >= line.length) { if (li < lines.length - 1) tokens.push({ text: "\n", kind: "whitespace" }); continue; }
+    if (line[i] === "#") { tokens.push({ text: line.slice(i), kind: "comment" }); if (li < lines.length - 1) tokens.push({ text: "\n", kind: "whitespace" }); continue; }
+    if (line[i] === "-" && (line[i + 1] === " " || i + 1 >= line.length)) { tokens.push({ text: "-", kind: "punctuation" }); i++; while (i < line.length && line[i] === " ") i++; }
     // Key (word before colon)
     if (/[a-zA-Z_"]/.test(line[i])) {
-      if (line[i] === '"' || line[i] === "'") { const q = line[i]; let j = i + 1; while (j < line.length && line[j] !== q) j++; j++; tokens.push({ text: line.slice(i, j), className: "key" }); i = j; }
-      else { let j = i; while (j < line.length && !/[:\s#]/.test(line[j])) j++; const word = line.slice(i, j); const after = line.slice(j).trimStart(); tokens.push({ text: word, className: after.startsWith(":") ? "key" : "string" }); i = j; }
+      if (line[i] === '"' || line[i] === "'") { const q = line[i]; let j = i + 1; while (j < line.length && line[j] !== q) j++; j++; tokens.push({ text: line.slice(i, j), kind: "key" }); i = j; }
+      else { let j = i; while (j < line.length && !/[:\s#]/.test(line[j])) j++; const word = line.slice(i, j); const after = line.slice(j).trimStart(); tokens.push({ text: word, kind: after.startsWith(":") ? "key" : "string" }); i = j; }
       // Consume colon + space
-      while (i < line.length && /[:\s]/.test(line[i])) { tokens.push({ text: line[i], className: line[i] === ":" ? "punctuation" : "whitespace" }); i++; }
+      while (i < line.length && /[:\s]/.test(line[i])) { tokens.push({ text: line[i], kind: line[i] === ":" ? "punctuation" : "whitespace" }); i++; }
       // Value
       if (i < line.length && line[i] !== "#") {
-        if (line[i] === '"' || line[i] === "'") { const q = line[i]; let j = i + 1; while (j < line.length && line[j] !== q) { if (line[j] === "\\") j++; j++; } j++; tokens.push({ text: line.slice(i, j), className: "string" }); i = j; }
-        else if (/true|false|yes|no|null|on|off/i.test(line.slice(i).split(/#|\s/)[0])) { const w = line.slice(i).split(/#|\s/)[0]; tokens.push({ text: w, className: "keyword" }); i += w.length; }
-        else if (/[0-9]/.test(line[i]) || line[i] === "-") { let j = i; if (line[j] === "-") j++; while (j < line.length && /[0-9.eE]/.test(line[j])) j++; tokens.push({ text: line.slice(i, j), className: "number" }); i = j; }
-        else { let j = i; while (j < line.length && line[j] !== "#") j++; tokens.push({ text: line.slice(i, j).trimEnd(), className: "string" }); i = j; }
+        if (line[i] === '"' || line[i] === "'") { const q = line[i]; let j = i + 1; while (j < line.length && line[j] !== q) { if (line[j] === "\\") j++; j++; } j++; tokens.push({ text: line.slice(i, j), kind: "string" }); i = j; }
+        else if (/true|false|yes|no|null|on|off/i.test(line.slice(i).split(/#|\s/)[0])) { const w = line.slice(i).split(/#|\s/)[0]; tokens.push({ text: w, kind: "keyword" }); i += w.length; }
+        else if (/[0-9]/.test(line[i]) || line[i] === "-") { let j = i; if (line[j] === "-") j++; while (j < line.length && /[0-9.eE]/.test(line[j])) j++; tokens.push({ text: line.slice(i, j), kind: "number" }); i = j; }
+        else { let j = i; while (j < line.length && line[j] !== "#") j++; tokens.push({ text: line.slice(i, j).trimEnd(), kind: "string" }); i = j; }
       }
-      if (i < line.length && line[i] === "#") tokens.push({ text: line.slice(i), className: "comment" });
-      if (li < lines.length - 1) tokens.push({ text: "\n", className: "whitespace" });
+      if (i < line.length && line[i] === "#") tokens.push({ text: line.slice(i), kind: "comment" });
+      if (li < lines.length - 1) tokens.push({ text: "\n", kind: "whitespace" });
       continue;
     }
     // Pipe / angle (block scalar indicators)
-    if (line[i] === "|" || line[i] === ">") { tokens.push({ text: line[i], className: "operator" }); i++; }
-    while (i < line.length) { tokens.push({ text: line[i], className: "punctuation" }); i++; }
-    if (li < lines.length - 1) tokens.push({ text: "\n", className: "whitespace" });
+    if (line[i] === "|" || line[i] === ">") { tokens.push({ text: line[i], kind: "operator" }); i++; }
+    while (i < line.length) { tokens.push({ text: line[i], kind: "punctuation" }); i++; }
+    if (li < lines.length - 1) tokens.push({ text: "\n", kind: "whitespace" });
   }
   return tokens;
 }
@@ -238,21 +244,21 @@ export function tokenizeSql(code: string): Token[] {
   const tokens: Token[] = [];
   let i = 0;
   while (i < code.length) {
-    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), className: "whitespace" }); i = j; continue; }
-    if (code[i] === "-" && code[i + 1] === "-") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), className: "comment" }); i = j; continue; }
-    if (code[i] === "'") { let j = i + 1; while (j < code.length && code[j] !== "'") { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), className: "string" }); i = j; continue; }
+    if (/\s/.test(code[i])) { const j = skipWs(code, i); if (j > i) tokens.push({ text: code.slice(i, j), kind: "whitespace" }); i = j; continue; }
+    if (code[i] === "-" && code[i + 1] === "-") { let j = i; while (j < code.length && code[j] !== "\n") j++; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "/" && code[i + 1] === "*") { let j = i + 2; while (j < code.length && !(code[j] === "*" && code[j + 1] === "/")) j++; j += 2; tokens.push({ text: code.slice(i, j), kind: "comment" }); i = j; continue; }
+    if (code[i] === "'") { let j = i + 1; while (j < code.length && code[j] !== "'") { if (code[j] === "\\") j++; j++; } j++; tokens.push({ text: code.slice(i, j), kind: "string" }); i = j; continue; }
     if (/[0-9]/.test(code[i]) || (code[i] === "." && /[0-9]/.test(code[i + 1] || ""))) {
       let j = i; while (j < code.length && /[0-9.eE]/.test(code[j])) j++;
-      tokens.push({ text: code.slice(i, j), className: "number" }); i = j; continue;
+      tokens.push({ text: code.slice(i, j), kind: "number" }); i = j; continue;
     }
     if (/[a-zA-Z_]/.test(code[i])) {
       let j = i; while (j < code.length && /[a-zA-Z0-9_]/.test(code[j])) j++;
       const word = code.slice(i, j);
-      tokens.push({ text: word, className: SQL_KEYWORDS.has(word.toUpperCase()) ? "keyword" : "identifier" });
+      tokens.push({ text: word, kind: SQL_KEYWORDS.has(word.toUpperCase()) ? "keyword" : "identifier" });
       i = j; continue;
     }
-    tokens.push({ text: code[i], className: "punctuation" }); i++;
+    tokens.push({ text: code[i], kind: "punctuation" }); i++;
   }
   return tokens;
 }
@@ -269,6 +275,8 @@ const TOKENIZERS: Record<string, (code: string) => Token[]> = {
   sql: tokenizeSql, pgsql: tokenizeSql, mysql: tokenizeSql,
 };
 
+/** Internal: flat token stream for a whole file. Public callers use
+ * `tokenizeCode`, which also splits per line. */
 export function tokenize(code: string, language?: string): Token[] | null {
   const lang = language?.toLowerCase();
   if (!lang || !TOKENIZERS[lang]) return null;
@@ -279,7 +287,7 @@ export function renderHighlighted(tokens: Token[]): ReactElement {
   return (
     <>
       {tokens.map((t, i) => (
-        <span key={i} className={t.className === "whitespace" ? undefined : `hl-${t.className}`}>{t.text}</span>
+        <span key={i} className={!t.kind || t.kind === "whitespace" ? undefined : `hl-${t.kind}`}>{t.text}</span>
       ))}
     </>
   );
@@ -295,7 +303,7 @@ export function splitTokensByLine(tokens: Token[]): Token[][] {
       const parts = t.text.split("\n");
       for (let i = 0; i < parts.length; i++) {
         if (i > 0) { result.push(current); current = []; }
-        if (parts[i]) current.push({ text: parts[i], className: t.className });
+        if (parts[i]) current.push({ text: parts[i], kind: t.kind });
       }
     } else {
       current.push(t);
@@ -306,11 +314,11 @@ export function splitTokensByLine(tokens: Token[]): Token[][] {
 }
 
 /** Render a single line of tokens. */
-export function renderHighlightedLine(tokens: Token[]): ReactElement {
+export function renderHighlightedLine(tokens: HighlightedLine): ReactElement {
   return (
     <>
       {tokens.map((t, i) => (
-        <span key={i} className={t.className === "whitespace" ? undefined : `hl-${t.className}`}>{t.text}</span>
+        <span key={i} className={!t.kind || t.kind === "whitespace" ? undefined : `hl-${t.kind}`}>{t.text}</span>
       ))}
     </>
   );

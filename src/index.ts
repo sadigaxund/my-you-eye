@@ -87,12 +87,15 @@ export {
   cardFooterVariants,
 } from "./ui/card";
 export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps } from "./ui/card";
-export { CodeBlock, codeBlockVariants, CodeHeaderBar, LanguageBadge } from "./ui/code-block";
+export { CodeBlock, codeBlockVariants, CodeHeaderBar, LanguageBadge, tokenizeCode } from "./ui/code-block";
 export type {
   CodeBlockProps,
   CodeBlockHighlightGroup,
   HighlightRangeDef,
   CodeHeaderBarProps,
+  CodeToken,
+  CodeTokenKind,
+  HighlightedLine,
 } from "./ui/code-block";
 export { DeviceFrame, deviceFrameVariants } from "./ui/device-frame";
 export type { DeviceFrameProps, DeviceFrameVariant } from "./ui/device-frame";
