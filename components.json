@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 129,
+  "count": 133,
   "components": [
     {
       "name": "Beat",
@@ -4170,6 +4170,99 @@
       }
     },
     {
+      "name": "SettingsRow",
+      "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/settings-row",
+      "variants": {
+        "stackAt": [
+          "md",
+          "sm"
+        ]
+      },
+      "props": {
+        "label": {
+          "type": "ReactNode",
+          "optional": false
+        },
+        "description": {
+          "type": "ReactNode",
+          "optional": true
+        },
+        "htmlFor": {
+          "type": "string",
+          "optional": true,
+          "doc": "Associates the left column's `<Label>` with the control (a Switch's `id`, say) so the whole label+description column becomes its click target."
+        },
+        "controlWidth": {
+          "type": "SettingsControlWidth",
+          "optional": true,
+          "doc": "Overrides the width the row inherits from its `SettingsSection` (`\"auto\"` when there is no enclosing section and this is unset)."
+        },
+        "stackAt": {
+          "type": "\"sm\" | \"md\"",
+          "optional": true,
+          "doc": "Container-query breakpoint at which the row switches from stacked (label above control) to a single row (label left, control right). `\"sm\"` (default) or `\"md\"` — the repo has no facility for an arbitrary numeric breakpoint."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false,
+          "doc": "The control (Switch, Input, Select, ...)."
+        }
+      },
+      "demos": [
+        "Control widths",
+        "Stacked (narrow container)",
+        "Label as click target"
+      ],
+      "description": "Label and description on the left, a right-aligned control that stacks below on narrow widths.",
+      "parent": "Settings",
+      "variantDefaults": {
+        "stackAt": "sm"
+      },
+      "extends": [
+        "Omit<HTMLAttributes<HTMLDivElement>, \"children\">",
+        "VariantProps<typeof settingsRowVariants>"
+      ]
+    },
+    {
+      "name": "SettingsSection",
+      "group": "inputs",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/settings-section",
+      "variants": {},
+      "props": {
+        "title": {
+          "type": "string",
+          "optional": false
+        },
+        "description": {
+          "type": "ReactNode",
+          "optional": true
+        },
+        "controlWidth": {
+          "type": "SettingsControlWidth",
+          "optional": true,
+          "doc": "Shared default `controlWidth` for every `SettingsRow` inside, so their control columns line up."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false
+        }
+      },
+      "demos": [
+        "Appearance",
+        "Shared control width"
+      ],
+      "description": "Titled group of settings rows whose controls share one column width so they line up.",
+      "parent": "Settings",
+      "extends": [
+        "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
       "name": "Slider",
       "group": "inputs",
       "tier": "ui",
@@ -4408,6 +4501,37 @@
       ]
     },
     {
+      "name": "NavList",
+      "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/nav-list",
+      "variants": {},
+      "props": {
+        "orientation": {
+          "type": "NavListOrientation",
+          "optional": true,
+          "doc": "Vertical (default) or horizontal row of items."
+        },
+        "aria-label": {
+          "type": "string",
+          "optional": true,
+          "doc": "Encouraged: identifies the landmark, e.g. \"Settings\" or \"Table of contents\", since a bare `<nav>` is otherwise indistinguishable to assistive tech from any other nav region on the page."
+        }
+      },
+      "demos": [
+        "Settings rail",
+        "Horizontal",
+        "With groups",
+        "Links",
+        "Disabled & states"
+      ],
+      "description": "Unfilled navigation list for sidebars, settings rails and tables of contents — aria-current, not tabs.",
+      "extends": [
+        "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
       "name": "Pagination",
       "group": "navigation",
       "tier": "ui",
@@ -4470,6 +4594,50 @@
       },
       "extends": [
         "HTMLAttributes<HTMLElement>"
+      ]
+    },
+    {
+      "name": "Stepper",
+      "group": "navigation",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/stepper",
+      "variants": {},
+      "props": {
+        "steps": {
+          "type": "readonly StepperStep[]",
+          "optional": false
+        },
+        "current": {
+          "type": "string",
+          "optional": false
+        },
+        "onCurrentChange": {
+          "type": "(id: string) => void",
+          "optional": false
+        },
+        "completed": {
+          "type": "ReadonlySet<string>",
+          "optional": true
+        },
+        "orientation": {
+          "type": "\"horizontal\" | \"vertical\"",
+          "optional": true
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": false
+        }
+      },
+      "demos": [
+        "Horizontal",
+        "Vertical",
+        "Error & optional",
+        "Terminal step"
+      ],
+      "description": "Ordered multi-step flow with locked later steps, per-step actions and a terminal result step.",
+      "extends": [
+        "Omit<HTMLAttributes<HTMLDivElement>, \"children\">"
       ]
     },
     {

@@ -14,7 +14,7 @@ import { VideoRoot } from "my-you-eye/video";
 import "my-you-eye/styles.css";
 ```
 
-**129 components** across 13 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
+**133 components** across 13 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
 
 ## Video schema
 
@@ -966,6 +966,8 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `RadioGroup` | `my-you-eye` | — | Default |
 | `SegmentedControl` | `my-you-eye` | size: md / **sm** / xs | Sizes, Disabled segment, Icon only, Controlled |
 | `Select` | `my-you-eye` | size: **md** / sm<br>invalid: true | Icon + label, Sizes, States, No indicator |
+| `SettingsRow` | `my-you-eye` | stackAt: md / **sm** | Control widths, Stacked (narrow container), Label as click target |
+| `SettingsSection` | `my-you-eye` | — | Appearance, Shared control width |
 | `Slider` | `my-you-eye` | size: **md** / sm | Basic slider, Sizes |
 | `Switch` | `my-you-eye` | size: **md** / sm | Sizes, States, On a surface |
 | `Textarea` | `my-you-eye` | variant: **default** / filled<br>invalid: true | Variants, States |
@@ -1061,6 +1063,30 @@ Also accepts everything from `React.HTMLAttributes<HTMLDivElement>`, `VariantPro
 | `value` | `T \| undefined` | — |
 | `onValueChange?` | `(value: T) => void` | — |
 | `iconOnly?` | `boolean` | Hide label text; each label moves into its segment's Tooltip instead. |
+
+#### `SettingsRow`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`, `VariantProps<typeof settingsRowVariants>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `label` | `ReactNode` | — |
+| `description?` | `ReactNode` | — |
+| `htmlFor?` | `string` | Associates the left column's `<Label>` with the control (a Switch's `id`, say) so the whole label+description column becomes its click target. |
+| `controlWidth?` | `SettingsControlWidth` | Overrides the width the row inherits from its `SettingsSection` (`"auto"` when there is no enclosing section and this is unset). |
+| `stackAt?` | `"sm" \| "md"` | Container-query breakpoint at which the row switches from stacked (label above control) to a single row (label left, control right). `"sm"` (default) or `"md"` — the repo has no facility for an arbitrary numeric breakpoint. |
+| `children` | `ReactNode` | The control (Switch, Input, Select, ...). |
+
+#### `SettingsSection`
+
+Also accepts everything from `HTMLAttributes<HTMLElement>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `title` | `string` | — |
+| `description?` | `ReactNode` | — |
+| `controlWidth?` | `SettingsControlWidth` | Shared default `controlWidth` for every `SettingsRow` inside, so their control columns line up. |
+| `children` | `ReactNode` | — |
 
 #### `Slider`
 
@@ -1360,8 +1386,10 @@ Also accepts everything from `Timing`.
 | `Breadcrumbs` | `my-you-eye` | — | Default, Custom separator |
 | `EditorTabBar` | `my-you-eye` | — | Open documents |
 | `Link` | `my-you-eye` | variant: muted / **primary**<br>underline: false / **true** | Variants, underline={false}, In a sentence |
+| `NavList` | `my-you-eye` | — | Settings rail, Horizontal, With groups, Links, Disabled & states |
 | `Pagination` | `my-you-eye` | — | Default (10 pages), Few pages |
 | `StatusBar` | `my-you-eye` | tone: danger / **default** / primary / success / warning | Left and right slots |
+| `Stepper` | `my-you-eye` | — | Horizontal, Vertical, Error & optional, Terminal step |
 | `Tabs` | `my-you-eye` | variant: filing / pills / **underline** | Underline, Pills, Filing |
 | `TitleBar` | `my-you-eye` | — | Identity, breadcrumb, actions |
 
@@ -1409,6 +1437,15 @@ Also accepts everything from `AnchorHTMLAttributes<HTMLAnchorElement>`, `Variant
 |---|---|---|
 | `underline?` | `boolean` | Underline the label on hover. |
 
+#### `NavList`
+
+Also accepts everything from `HTMLAttributes<HTMLElement>`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `orientation?` | `NavListOrientation` | Vertical (default) or horizontal row of items. |
+| `aria-label?` | `string` | Encouraged: identifies the landmark, e.g. "Settings" or "Table of contents", since a bare `<nav>` is otherwise indistinguishable to assistive tech from any other nav region on the page. |
+
 #### `Pagination`
 
 Also accepts everything from `HTMLAttributes<HTMLElement>`.
@@ -1427,6 +1464,19 @@ Also accepts everything from `HTMLAttributes<HTMLElement>`.
 |---|---|---|
 | `left?` | `ReactNode` | — |
 | `right?` | `ReactNode` | — |
+
+#### `Stepper`
+
+Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
+
+| Prop | Type | Description |
+|---|---|---|
+| `steps` | `readonly StepperStep[]` | — |
+| `current` | `string` | — |
+| `onCurrentChange` | `(id: string) => void` | — |
+| `completed?` | `ReadonlySet<string>` | — |
+| `orientation?` | `"horizontal" \| "vertical"` | — |
+| `children` | `ReactNode` | — |
 
 #### `Tabs`
 
