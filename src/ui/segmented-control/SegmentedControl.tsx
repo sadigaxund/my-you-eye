@@ -11,7 +11,13 @@ export interface SegmentedOption<T extends string> {
   disabled?: boolean;
 }
 
-const segmentedControlVariants = cva("inline-flex items-center rounded-ui border border-border bg-bg p-0.5 gap-0.5", {
+const segmentedControlVariants = cva(
+  // relative: each option's sr-only radio is position:absolute; without an
+  // in-component positioned ancestor its containing block search escapes
+  // into the host app and native focus-scroll-into-view can scroll the
+  // host's own scroll container instead of this one (#43).
+  "relative inline-flex items-center rounded-ui border border-border bg-bg p-0.5 gap-0.5",
+  {
   variants: {
     size: {
       xs: "h-5",
