@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2026.9.0] - 2026-09-12
+
 ### Added
 
 - **NavList** — `NavList`, `NavListItem`, `NavListGroup` (+ `navListItemVariants`): an unfilled navigation list (`<nav>` + list markup, `aria-current="page" | "true"`) for sidebars, settings rails and tables of contents. Muted rows, hover surface, leading (vertical) or bottom (horizontal) accent bar on the current row; `href` rows render `Link`, others a button with `onSelect`; roving tabindex with arrow keys, Home and End (#41).
