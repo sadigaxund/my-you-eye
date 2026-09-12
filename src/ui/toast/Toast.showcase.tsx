@@ -62,7 +62,7 @@ function ToastCustomClassNameDemo() {
             title: "Draft synced",
             description: "Your note was synced to all devices.",
             className: "border-dashed",
-            classNames: { title: "font-mono" },
+            classNames: { title: "font-mono", description: "italic", close: "opacity-100" },
           })
         }
       >

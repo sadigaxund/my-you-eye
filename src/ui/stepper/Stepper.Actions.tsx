@@ -5,12 +5,19 @@ import { Button } from "../button";
 import { useStepperContext } from "./Stepper";
 
 export interface StepperActionsProps extends HTMLAttributes<HTMLDivElement> {
+  /** Overrides the default Back behaviour (go to the previous step). */
   onBack?: () => void;
+  /** Continue / Done handler. Advancing is the consumer's call (mark the step completed, set `current`). */
   onNext?: () => void;
+  /** Overrides the Continue / Done label for the current step. */
   nextLabel?: string;
+  /** Disables Continue / Done (it is also disabled while the current step has an `error`). */
   nextDisabled?: boolean;
+  /** Shows Continue / Done in its loading state and disables Back. */
   busy?: boolean;
+  /** Back button label. Default "Back". */
   backLabel?: string;
+  /** Label of the primary button on the last or a terminal step. Default "Done". */
   doneLabel?: string;
 }
 

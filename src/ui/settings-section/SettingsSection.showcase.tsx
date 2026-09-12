@@ -11,9 +11,9 @@ function AppearanceDemo() {
   const [reduceMotion, setReduceMotion] = useState(false);
   return (
     <SettingsSection title="Appearance" description="How the editor looks.">
-      <SettingsRow label="Theme" description="Applies to the editor and the preview pane.">
+      <SettingsRow label="Theme" description="Applies to the editor and the preview pane." htmlFor="theme">
         <Select defaultValue="system">
-          <SelectTrigger>
+          <SelectTrigger id="theme">
             <SelectValue placeholder="Theme" />
           </SelectTrigger>
           <SelectContent>
@@ -37,8 +37,8 @@ function AppearanceDemo() {
       <SettingsRow label="Line width" controlWidth="xs">
         <Input type="number" defaultValue={80} aria-label="Line width in characters" />
       </SettingsRow>
-      <SettingsRow label="Custom CSS" description="Applied after the theme's own stylesheet." controlWidth="full" stackAt="md">
-        <Textarea placeholder=".cm-editor { font-variant-ligatures: none; }" />
+      <SettingsRow label="Custom CSS" description="Applied after the theme's own stylesheet." htmlFor="custom-css" controlWidth="full" stackAt="md">
+        <Textarea id="custom-css" placeholder=".cm-editor { font-variant-ligatures: none; }" />
       </SettingsRow>
     </SettingsSection>
   );
@@ -60,9 +60,9 @@ const entry: ShowcaseEntry = {
       description: "controlWidth set on the section applies to every row that does not override it.",
       render: () => (
         <SettingsSection title="Editor" description="Text editing defaults." controlWidth="lg">
-          <SettingsRow label="Default language">
+          <SettingsRow label="Default language" htmlFor="default-language">
             <Select defaultValue="plaintext">
-              <SelectTrigger>
+              <SelectTrigger id="default-language">
                 <SelectValue placeholder="Language" />
               </SelectTrigger>
               <SelectContent>
@@ -72,9 +72,9 @@ const entry: ShowcaseEntry = {
               </SelectContent>
             </Select>
           </SettingsRow>
-          <SettingsRow label="Tab size">
+          <SettingsRow label="Tab size" htmlFor="tab-size">
             <Select defaultValue="2">
-              <SelectTrigger>
+              <SelectTrigger id="tab-size">
                 <SelectValue placeholder="Tab size" />
               </SelectTrigger>
               <SelectContent>

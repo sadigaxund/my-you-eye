@@ -48,6 +48,7 @@ const StepperPanel = forwardRef<HTMLDivElement, StepperPanelProps>(
 StepperPanel.displayName = "StepperPanel";
 
 export interface StepperPanelTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  /** Heading level to render. Default `"h3"`. */
   as?: "h2" | "h3" | "h4";
 }
 

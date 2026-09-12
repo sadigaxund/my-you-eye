@@ -69,10 +69,14 @@ const toastDescriptionVariants = cva("text-sm", {
   defaultVariants: { tone: "solid" },
 });
 
+/** Per-slot class overrides for one toast (#40). Each is merged last, after
+ * the variant classes, via `cn()`. */
 export interface ToastClassNames {
+  /** The toast panel — same target as `ToastData.className`. */
   root?: string;
   title?: string;
   description?: string;
+  /** The close button. */
   close?: string;
 }
 
@@ -80,9 +84,14 @@ export interface ToastData {
   id: string;
   title: string;
   description?: string;
+  /** Status colour. */
   variant?: "default" | "success" | "danger";
+  /** `solid` (default): full-bleed status fill. `soft`: elevated surface,
+   * 1px border and a status-coloured left accent bar + title. */
   tone?: "solid" | "soft";
+  /** Extra classes on the toast panel. */
   className?: string;
+  /** Per-slot class overrides. */
   classNames?: ToastClassNames;
 }
 

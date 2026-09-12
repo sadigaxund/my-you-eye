@@ -24,18 +24,28 @@ function focusItem(items: HTMLElement[], index: number, current: HTMLElement) {
 }
 
 /**
- * Ensures exactly one enabled item is a tab stop. Called on mount and
- * whenever the list of items could have changed (no dependency array — the
- * DOM query is cheap and this only ever flips a `tabIndex` attribute, never
- * triggers a render), since there is no per-item registration to hook a
- * more targeted effect off of.
+ * Ensures exactly one enabled item is a tab stop. Called after every render
+ * (no dependency array — the DOM query is cheap and this only ever flips a
+ * `tabIndex` attribute, never triggers a render), since there is no per-item
+ * registration to hook a more targeted effect off of.
+ *
+ * Precedence: the item that currently has focus (so arrow-key navigation is
+ * not undone by an unrelated re-render), else the `current` item (React just
+ * rendered it with `tabIndex=0`), else whatever already is a stop, else the
+ * first enabled item. Every other item is demoted — a re-render that moved
+ * `current` to a clicked row must not leave the previously arrow-focused row
+ * as a second stop.
  */
 export function ensureRovingTabStop(container: HTMLElement | null) {
   if (!container) return;
   const items = getItems(container);
   if (items.length === 0) return;
-  if (items.some((item) => item.tabIndex === 0)) return;
-  items[0].tabIndex = 0;
+  const stop =
+    items.find((item) => item === document.activeElement) ??
+    items.find((item) => item.hasAttribute("data-current")) ??
+    items.find((item) => item.tabIndex === 0) ??
+    items[0];
+  for (const item of items) item.tabIndex = item === stop ? 0 : -1;
 }
 
 export function createRovingKeyDownHandler(orientation: "vertical" | "horizontal") {

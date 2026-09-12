@@ -38,6 +38,7 @@ export interface NavListItemProps extends Omit<HTMLAttributes<HTMLElement>, "onS
   href?: string;
   /** Fires on click when there is no `href`. */
   onSelect?: () => void;
+  /** Dims the row, removes it from the roving tab order and ignores activation. */
   disabled?: boolean;
   children?: ReactNode;
 }

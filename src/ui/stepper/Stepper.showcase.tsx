@@ -78,18 +78,18 @@ function VerticalDemo() {
     >
       <StepperList />
       <StepperPanel step="intro">
-        <StepperPanelTitle>Welcome</StepperPanelTitle>
+        <StepperPanelTitle as="h4">Welcome</StepperPanelTitle>
         <p className="text-sm text-muted">This wizard sets up a synced vault on this device.</p>
       </StepperPanel>
       <StepperPanel step="vault">
-        <StepperPanelTitle>Vault location</StepperPanelTitle>
+        <StepperPanelTitle as="h4">Vault location</StepperPanelTitle>
         <Input placeholder="~/Documents/Vault" />
       </StepperPanel>
       <StepperPanel step="done">
-        <StepperPanelTitle>Done</StepperPanelTitle>
+        <StepperPanelTitle as="h4">Done</StepperPanelTitle>
         <p className="text-sm text-muted">Your vault is syncing.</p>
       </StepperPanel>
-      <StepperActions onNext={next ? advance : undefined} />
+      <StepperActions onNext={next ? advance : undefined} backLabel="Previous" doneLabel="Finish" />
     </Stepper>
   );
 }
@@ -117,7 +117,7 @@ function ErrorOptionalDemo() {
         <StepperPanelTitle>Review</StepperPanelTitle>
         <p className="text-sm text-muted">Nothing to review yet.</p>
       </StepperPanel>
-      <StepperActions onNext={() => {}} />
+      <StepperActions onNext={() => {}} nextLabel="Export" />
     </Stepper>
   );
 }
@@ -158,10 +158,14 @@ const entry: ShowcaseEntry = {
     "Ordered multi-step flow with locked later steps, per-step actions and a terminal result step.",
   demos: [
     { name: "Horizontal", render: () => <HorizontalDemo /> },
-    { name: "Vertical", render: () => <VerticalDemo /> },
+    {
+      name: "Vertical",
+      description: "List beside the panel; custom Back / Done labels and h4 panel titles.",
+      render: () => <VerticalDemo />,
+    },
     {
       name: "Error & optional",
-      description: "An error on the current step blocks Continue; optional steps say so on their marker.",
+      description: "An error on the current step blocks Continue (relabelled \"Export\"); optional steps say so on their marker.",
       render: () => <ErrorOptionalDemo />,
     },
     {

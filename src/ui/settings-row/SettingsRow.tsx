@@ -29,7 +29,9 @@ const settingsRowVariants = cva("flex flex-col gap-inline", {
 export interface SettingsRowProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "children">,
     VariantProps<typeof settingsRowVariants> {
+  /** Setting name, left column. */
   label: ReactNode;
+  /** Longer explanation under the label, left column. */
   description?: ReactNode;
   /** Associates the left column's `<Label>` with the control (a Switch's
    * `id`, say) so the whole label+description column becomes its click
@@ -40,10 +42,9 @@ export interface SettingsRowProps
   /** Overrides the width the row inherits from its `SettingsSection`
    * (`"auto"` when there is no enclosing section and this is unset). */
   controlWidth?: SettingsControlWidth;
-  /** Container-query breakpoint at which the row switches from stacked
-   * (label above control) to a single row (label left, control right).
-   * `"sm"` (default) or `"md"` — the repo has no facility for an arbitrary
-   * numeric breakpoint. */
+  /** Container-query breakpoint (the row's own width, not the viewport) at
+   * which it switches from stacked (label above control) to a single row
+   * (label left, control right). `"sm"` (default) or `"md"`. */
   stackAt?: "sm" | "md";
   /** The control (Switch, Input, Select, ...). */
   children: ReactNode;

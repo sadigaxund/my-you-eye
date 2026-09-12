@@ -31,6 +31,11 @@ function markerState(step: StepperStep, isCurrent: boolean, isCompleted: boolean
   return "upcoming" as const;
 }
 
+/**
+ * The ordered `<ol>` of step buttons. `aria-current="step"` sits on the
+ * current step's button (the element that receives focus, so it is announced
+ * on focus), locked steps are real disabled buttons with sr-only "locked".
+ */
 const StepperList = forwardRef<HTMLOListElement, StepperListProps>(
   ({ className, "aria-label": ariaLabel = "Steps", ...rest }, ref) => {
     const { steps, current, completed, orientation, isLocked, go } = useStepperContext();
@@ -95,12 +100,13 @@ const StepperList = forwardRef<HTMLOListElement, StepperListProps>(
             // (hidden at the two outer ends); the half between step i-1 and i
             // is painted "done" when step i-1 is completed.
             return (
-              <li key={step.id} aria-current={isCurrent ? "step" : undefined} className="min-w-0 flex-1">
+              <li key={step.id} className="min-w-0 flex-1">
                 <button
                   type="button"
                   onClick={() => go(step.id)}
                   disabled={locked}
                   aria-disabled={locked || undefined}
+                  aria-current={isCurrent ? "step" : undefined}
                   className={cn("flex w-full flex-col items-center gap-tight", buttonClass)}
                 >
                   <span className="flex w-full items-center">
@@ -118,12 +124,13 @@ const StepperList = forwardRef<HTMLOListElement, StepperListProps>(
           // the marker (ml-3 = half the size-6 marker) — a column flex item
           // has no free height for a flex-1 connector to grow into.
           return (
-            <li key={step.id} aria-current={isCurrent ? "step" : undefined} className="flex flex-col">
+            <li key={step.id} className="flex flex-col">
               <button
                 type="button"
                 onClick={() => go(step.id)}
                 disabled={locked}
                 aria-disabled={locked || undefined}
+                aria-current={isCurrent ? "step" : undefined}
                 className={cn("flex items-start gap-inline text-left", buttonClass)}
               >
                 {marker}

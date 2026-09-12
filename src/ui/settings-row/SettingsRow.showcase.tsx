@@ -16,8 +16,8 @@ const entry: ShowcaseEntry = {
       description: "Each width matches its control's content instead of stretching them all alike.",
       render: () => (
         <SettingsSection title="Sizing" description="One row per controlWidth value.">
-          <SettingsRow label="Auto" description="Sized to the control's own content." controlWidth="auto">
-            <Switch />
+          <SettingsRow label="Auto" description="Sized to the control's own content." htmlFor="width-auto" controlWidth="auto">
+            <Switch id="width-auto" />
           </SettingsRow>
           <SettingsRow label="Extra small" description="Short numeric fields." controlWidth="xs">
             <Input type="number" defaultValue={80} aria-label="Extra small control" />

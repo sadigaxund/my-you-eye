@@ -3,22 +3,32 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/cn";
 
 export interface StepperStep {
+  /** Stable identifier — the value of `current`, `completed` entries and `StepperPanel.step`. */
   id: string;
+  /** Step name shown next to the marker. */
   label: string;
+  /** One-line hint under the label. Replaced by `error` while that is set. */
   description?: string;
+  /** Appends "(optional)" to the label. Purely presentational — reachability is unchanged. */
   optional?: boolean;
-  /** Blocks Continue and shows on the step marker. */
+  /** Error message shown under the label; the marker turns to the danger state and Continue is disabled. */
   error?: string;
   /** A result/summary step: reaching it hides Back and locks every earlier step. */
   terminal?: boolean;
 }
 
 export interface StepperProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+  /** Ordered steps. Order defines which step is "next". */
   steps: readonly StepperStep[];
+  /** `id` of the current step (controlled). */
   current: string;
+  /** Called with the target step's `id` when the user activates a reachable step in `StepperList` or presses Back. */
   onCurrentChange: (id: string) => void;
+  /** `id`s of completed steps. A step is reachable iff it is current, completed, or the first not-completed step. */
   completed?: ReadonlySet<string>;
+  /** Horizontal (default): markers in a row with labels underneath, panel below. Vertical: list on the left, panel beside it. */
   orientation?: "horizontal" | "vertical";
+  /** `StepperList`, `StepperPanel`s and `StepperActions`, in any layout. */
   children: ReactNode;
 }
 
