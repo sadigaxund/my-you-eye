@@ -201,6 +201,8 @@ export { Breadcrumbs } from "./ui/breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./ui/breadcrumbs";
 export { Link, linkVariants } from "./ui/link";
 export type { LinkProps } from "./ui/link";
+export { NavList, NavListItem, NavListGroup, navListItemVariants } from "./ui/nav-list";
+export type { NavListProps, NavListItemProps, NavListGroupProps } from "./ui/nav-list";
 export { Pagination } from "./ui/pagination";
 export type { PaginationProps } from "./ui/pagination";
 export { StatusBar, StatusBarItem } from "./ui/status-bar";
