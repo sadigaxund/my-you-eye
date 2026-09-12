@@ -147,7 +147,8 @@ export { Skeleton, skeletonVariants } from "./ui/skeleton";
 export type { SkeletonProps } from "./ui/skeleton";
 export { Spinner, spinnerVariants } from "./ui/spinner";
 export type { SpinnerProps } from "./ui/spinner";
-export { Toaster, useToast } from "./ui/toast";
+export { Toaster, useToast, toastVariants } from "./ui/toast";
+export type { ToastData, ToastClassNames } from "./ui/toast";
 
 // ---------------------------------------------------------------------------
 // Overlay — anything that renders in a portal above the page.
