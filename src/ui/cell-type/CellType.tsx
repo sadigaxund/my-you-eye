@@ -108,7 +108,11 @@ function LinkCellValue({ href, label, icon, external }: { href: string; label: s
       rel={external ? "noopener noreferrer" : undefined}
       className="inline-flex items-center gap-tight text-primary hover:underline min-w-0 w-full"
     >
-      <span className="truncate">{label}</span>
+      {/* Force LTR: this span is a block container (flex item), so text-overflow
+          follows its own direction. Under an RTL document, an inherited rtl
+          direction would clip the leading part of the email/URL instead of
+          ellipsizing the end (e.g. "john.doe@exam…"). */}
+      <span dir="ltr" className="truncate">{label}</span>
       {icon}
     </a>
   );

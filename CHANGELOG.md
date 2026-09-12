@@ -11,6 +11,7 @@ All notable changes to this project are documented here.
 ### Fixed
 
 - **Badge** — long unbroken labels are now contained: `max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead (impeccable audit).
+- **CellType** — the truncated label in email/URL cells is forced `dir="ltr"` so the ellipsis stays on the end of the string under an RTL document instead of clipping the leading characters (impeccable audit).
 
 ## [2026.9.0] - 2026-09-12
 
