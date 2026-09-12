@@ -40,7 +40,7 @@ html[data-theme="comic"].dark {
 [data-theme="comic"] {
   --color-bg: oklch(0.92 0.025 65);
   --color-fg: oklch(0.08 0.02 40);
-  --color-muted: oklch(0.42 0.03 45);
+  --color-muted: oklch(0.40 0.03 45);
   --color-primary: oklch(0.50 0.22 240);
   --color-primary-fg: oklch(1 0 0);
   --color-secondary: oklch(0.78 0.22 85);
@@ -103,7 +103,7 @@ html[data-theme="comic"].dark {
 [data-theme="comic"].dark {
   --color-bg: oklch(0.14 0.02 50);
   --color-fg: oklch(0.92 0.015 65);
-  --color-muted: oklch(0.62 0.02 55);
+  --color-muted: oklch(0.64 0.02 55);
   --color-primary: oklch(0.62 0.22 240);
   --color-primary-fg: oklch(0 0 0);
   --color-secondary: oklch(0.26 0.03 55);

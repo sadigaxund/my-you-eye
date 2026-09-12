@@ -8,7 +8,16 @@ const badgeVariants = cva(
   // come from --density-chip-* so Badge isn't vertically cramped next to
   // its text — was a bare `py-0.5` (2px), which reads as a sliver at
   // default text-xs line-height.
-  "inline-flex items-center rounded-ui-sm px-2.5 py-[var(--density-chip-py)] min-h-[var(--density-chip-min-h)] text-xs font-medium",
+  //
+  // max-w-full + overflow-hidden + wrap-anywhere contain pathological long
+  // labels: overflow-hidden also collapses the flex item's automatic min
+  // size, so a badge can no longer push its parent row past the viewport,
+  // and wrap-anywhere (Tailwind 4.1 `overflow-wrap:anywhere`) breaks an
+  // unbroken token inside the badge instead of letting it overflow. We
+  // deliberately avoid `truncate`: `text-overflow` doesn't render on an
+  // inline-flex box, and `whitespace-nowrap` would change today's wrapping
+  // behaviour for multi-word labels.
+  "inline-flex items-center max-w-full overflow-hidden wrap-anywhere rounded-ui-sm px-2.5 py-[var(--density-chip-py)] min-h-[var(--density-chip-min-h)] text-xs font-medium",
   {
     variants: {
       variant: {

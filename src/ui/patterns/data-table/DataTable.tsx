@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/cn";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../../table";
@@ -56,6 +56,9 @@ export interface DataTableProps extends HTMLAttributes<HTMLDivElement>, VariantP
   /** Width of the trailing actions column under layout="fixed" (any CSS width:
    *  "10%", "8rem"). Unset, the column shares the leftover space equally. */
   actionsWidth?: string;
+  /** Rendered in place of rows when `rows` is empty. Opt-in: when omitted, an
+   *  empty table renders the header only, as before. */
+  emptyState?: ReactNode;
 }
 
 const INTERACTIVE_SELECTOR = "button,a,input,select,textarea,label,[role='button'],[role='menuitem']";
@@ -78,7 +81,7 @@ const dataTableVariants = cva("", {
 });
 
 const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
-  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", rowKey, onRowClick, renderActions, actionsHeader = "Actions", actionsWidth, ...props }, ref) => {
+  ({ className, columns, rows, variant, density, stickyHeader, replacements, layout = "fixed", rowKey, onRowClick, renderActions, actionsHeader = "Actions", actionsWidth, emptyState, ...props }, ref) => {
     const hasActions = Boolean(renderActions);
     // `density` is intentionally NOT forwarded to Table/TableRow — that variant
     // was a no-op there (see TODO.md A2) and was removed. TableHead/TableCell
@@ -112,7 +115,18 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((row, i) => (
+            {rows.length === 0 && emptyState ? (
+              <TableRow>
+                <TableCell
+                  density={density}
+                  colSpan={columns.length + (hasActions ? 1 : 0)}
+                  align="center"
+                >
+                  {emptyState}
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((row, i) => (
               <TableRow
                 key={rowKey ? rowKey(row, i) : i}
                 className={onRowClick ? "cursor-pointer" : undefined}
@@ -146,7 +160,8 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps>(
                   </TableCell>
                 )}
               </TableRow>
-            ))}
+              ))
+            )}
           </TableBody>
         </Table>
       </ScrollArea>

@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **DataTable `emptyState`** — opt-in `ReactNode` prop rendered in a single centered row spanning all columns when `rows` is empty; omitted, an empty table renders the header only, as before (impeccable audit).
+
+### Changed
+
+- **`--color-muted` contrast on `--color-secondary`** — the pair is now checked by `check-contrast.mjs` (Kbd text, `filled` Input/Textarea placeholder); `--color-muted` lightness nudged in default (light), comic (light and dark), frosted (light), metallic (light and dark), and stark (light) so it reaches AA. Other themes untouched (impeccable audit).
+
+### Fixed
+
+- **Badge** — long unbroken labels are now contained: `max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead (impeccable audit).
+- **CellType** — the truncated label in email/URL cells is forced `dir="ltr"` so the ellipsis stays on the end of the string under an RTL document instead of clipping the leading characters (impeccable audit).
+- **Markdown** — `# H1` now renders at `text-xl`; it previously had no size class and inherited the body size, so it was smaller than `## H2` (impeccable audit).
+
 ## [2026.9.0] - 2026-09-12
 
 ### Added
