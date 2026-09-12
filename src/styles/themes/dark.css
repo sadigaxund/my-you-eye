@@ -38,4 +38,16 @@
   --opacity-focus-dim: 0.25;
   --texture-blend: multiply;
   --texture-type: paper-grain;
+
+  /* Shadows: the base tokens' alphas (0.05 / 0.06+0.05 / 0.08+0.10) are tuned
+     for a near-white canvas and composite to essentially nothing on a dark
+     surface — every popover, dropdown, tooltip, dialog and drawer loses its
+     elevation layer and reads as a flat cut-out rectangle. frosted/glass/
+     comic/brutal/stark/metallic already override --shadow-* in their .dark
+     blocks; this brings the default theme in line (#38). Same three-tier,
+     two-layer shape as the base tokens (identical offsets/blur/spread) —
+     only the alphas are raised for a dark canvas. */
+  --shadow-subtle: 0 1px 2px 0 oklch(0 0 0 / 0.30);
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.40), 0 2px 6px -2px oklch(0 0 0 / 0.30);
+  --shadow-elevated: 0 4px 10px -2px oklch(0 0 0 / 0.50), 0 12px 28px -6px oklch(0 0 0 / 0.35);
 }

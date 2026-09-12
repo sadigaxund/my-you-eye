@@ -9,6 +9,7 @@ All notable changes to this project are documented here.
 - **SegmentedControl**: the `role="radiogroup"` wrapper is now `position: relative`, so its sr-only radio inputs resolve their containing block inside the component; focusing an option can no longer scroll the host app's own scroll container (#43).
 - **TreeView**: a leaf row with a long, unbroken `value` no longer collapses its key to zero width — the key sizes to its content (capped by the new `--width-tree-view-key-max` token, 50%) and the value truncates with an ellipsis plus a full-text `title` (#42).
 - **Switch**: the track carries a persistent 1px `border-border` edge (matching `border-primary` when checked, so the on state is unchanged) so the off state stays visible in dark themes where `--color-secondary` sits close to `--color-bg`. Geometry is pixel-identical to before (1px border + 1px padding replaces the old 2px transparent border) (#37).
+- **Default theme (`.dark`)**: now overrides `--shadow-subtle` / `--shadow-card` / `--shadow-elevated` with dark-tuned alphas (0.30 / 0.40+0.30 / 0.50+0.35), matching the frosted/glass/comic/brutal precedent; the light-tuned base alphas composited to nothing on dark surfaces (#38).
 
 ## [2026.8.3] - 2026-08-22
 
