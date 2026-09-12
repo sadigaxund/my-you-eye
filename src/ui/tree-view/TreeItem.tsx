@@ -213,7 +213,15 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
               />
             ) : (
               <span className={cn(
-                "text-sm leading-normal truncate flex-1 min-w-0",
+                "text-sm leading-normal truncate min-w-0",
+                // A value present means the value wrapper below now claims
+                // the row's flexible space (flex-1); the key instead sizes
+                // to its own content and is capped at --width-tree-view-key-max
+                // so a very long key can't starve the value, nor a very long
+                // value squeeze the key to zero (#42). No value: keep today's
+                // flex-1 so a long label alone still truncates across the
+                // full row exactly as before.
+                node.value ? "shrink-0 max-w-[var(--width-tree-view-key-max)]" : "flex-1",
                 arrIndex && "font-mono text-muted text-xs",
                 !arrIndex && TONE_CLASSES[node.tone ?? "default"],
               )}>{node.label}</span>
@@ -226,7 +234,8 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
             )}
             {node.value && (
               <span
-                className="shrink min-w-0 text-right"
+                className="flex-1 min-w-0 truncate text-right"
+                title={typeof node.value.value === "string" ? node.value.value : undefined}
                 // Compact rows override the chip-height tokens so badges fit
                 // inside --spacing-tree-row-compact instead of overlapping
                 // neighbors (same "override the var, let descendants read it"

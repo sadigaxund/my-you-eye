@@ -145,6 +145,11 @@
   --width-data-list-label-md: 9rem;
   --width-data-list-label-lg: 11rem;
 
+  /* TreeItem key column cap when a value is present: a very long key may
+     not starve the value, and a very long value may not squeeze the key
+     to zero (#42). */
+  --width-tree-view-key-max: 50%;
+
   /* Compact icon-only control size (Button size="icon-sm"; matches the
      previous hand-rolled 24px play/pause button in CellType's AudioDisplay
      before it was composed from Button — see AGENTS.md TODO A3). */

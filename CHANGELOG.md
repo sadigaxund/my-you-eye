@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 ### Fixed
 
 - **SegmentedControl**: the `role="radiogroup"` wrapper is now `position: relative`, so its sr-only radio inputs resolve their containing block inside the component; focusing an option can no longer scroll the host app's own scroll container (#43).
+- **TreeView**: a leaf row with a long, unbroken `value` no longer collapses its key to zero width — the key sizes to its content (capped by the new `--width-tree-view-key-max` token, 50%) and the value truncates with an ellipsis plus a full-text `title` (#42).
 
 ## [2026.8.3] - 2026-08-22
 
