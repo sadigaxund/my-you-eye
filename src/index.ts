@@ -207,6 +207,22 @@ export { Pagination } from "./ui/pagination";
 export type { PaginationProps } from "./ui/pagination";
 export { StatusBar, StatusBarItem } from "./ui/status-bar";
 export type { StatusBarProps, StatusBarItemProps } from "./ui/status-bar";
+export {
+  Stepper,
+  StepperList,
+  StepperPanel,
+  StepperPanelTitle,
+  StepperActions,
+  stepperMarkerVariants,
+} from "./ui/stepper";
+export type {
+  StepperProps,
+  StepperStep,
+  StepperListProps,
+  StepperPanelProps,
+  StepperPanelTitleProps,
+  StepperActionsProps,
+} from "./ui/stepper";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 export type { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps } from "./ui/tabs";
 
