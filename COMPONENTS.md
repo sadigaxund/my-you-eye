@@ -1070,11 +1070,11 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`,
 
 | Prop | Type | Description |
 |---|---|---|
-| `label` | `ReactNode` | — |
-| `description?` | `ReactNode` | — |
+| `label` | `ReactNode` | Setting name, left column. |
+| `description?` | `ReactNode` | Longer explanation under the label, left column. |
 | `htmlFor?` | `string` | Associates the left column's `<Label>` with the control (a Switch's `id`, say) so the whole label+description column becomes its click target. |
 | `controlWidth?` | `SettingsControlWidth` | Overrides the width the row inherits from its `SettingsSection` (`"auto"` when there is no enclosing section and this is unset). |
-| `stackAt?` | `"sm" \| "md"` | Container-query breakpoint at which the row switches from stacked (label above control) to a single row (label left, control right). `"sm"` (default) or `"md"` — the repo has no facility for an arbitrary numeric breakpoint. |
+| `stackAt?` | `"sm" \| "md"` | Container-query breakpoint (the row's own width, not the viewport) at which it switches from stacked (label above control) to a single row (label left, control right). `"sm"` (default) or `"md"`. |
 | `children` | `ReactNode` | The control (Switch, Input, Select, ...). |
 
 #### `SettingsSection`
@@ -1083,10 +1083,10 @@ Also accepts everything from `HTMLAttributes<HTMLElement>`.
 
 | Prop | Type | Description |
 |---|---|---|
-| `title` | `string` | — |
-| `description?` | `ReactNode` | — |
+| `title` | `string` | Section heading; also labels the `<section>` landmark. |
+| `description?` | `ReactNode` | Short blurb under the heading. |
 | `controlWidth?` | `SettingsControlWidth` | Shared default `controlWidth` for every `SettingsRow` inside, so their control columns line up. |
-| `children` | `ReactNode` | — |
+| `children` | `ReactNode` | `SettingsRow`s, rendered with a rule between each. |
 
 #### `Slider`
 
@@ -1471,12 +1471,12 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
 
 | Prop | Type | Description |
 |---|---|---|
-| `steps` | `readonly StepperStep[]` | — |
-| `current` | `string` | — |
-| `onCurrentChange` | `(id: string) => void` | — |
-| `completed?` | `ReadonlySet<string>` | — |
-| `orientation?` | `"horizontal" \| "vertical"` | — |
-| `children` | `ReactNode` | — |
+| `steps` | `readonly StepperStep[]` | Ordered steps. |
+| `current` | `string` | `id` of the current step (controlled). |
+| `onCurrentChange` | `(id: string) => void` | Called with the target step's `id` when the user activates a reachable step in `StepperList` or presses Back. |
+| `completed?` | `ReadonlySet<string>` | `id`s of completed steps. |
+| `orientation?` | `"horizontal" \| "vertical"` | Horizontal (default): markers in a row with labels underneath, panel below. |
+| `children` | `ReactNode` | `StepperList`, `StepperPanel`s and `StepperActions`, in any layout. |
 
 #### `Tabs`
 

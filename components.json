@@ -4184,11 +4184,13 @@
       "props": {
         "label": {
           "type": "ReactNode",
-          "optional": false
+          "optional": false,
+          "doc": "Setting name, left column."
         },
         "description": {
           "type": "ReactNode",
-          "optional": true
+          "optional": true,
+          "doc": "Longer explanation under the label, left column."
         },
         "htmlFor": {
           "type": "string",
@@ -4203,7 +4205,7 @@
         "stackAt": {
           "type": "\"sm\" | \"md\"",
           "optional": true,
-          "doc": "Container-query breakpoint at which the row switches from stacked (label above control) to a single row (label left, control right). `\"sm\"` (default) or `\"md\"` — the repo has no facility for an arbitrary numeric breakpoint."
+          "doc": "Container-query breakpoint (the row's own width, not the viewport) at which it switches from stacked (label above control) to a single row (label left, control right). `\"sm\"` (default) or `\"md\"`."
         },
         "children": {
           "type": "ReactNode",
@@ -4236,11 +4238,13 @@
       "props": {
         "title": {
           "type": "string",
-          "optional": false
+          "optional": false,
+          "doc": "Section heading; also labels the `<section>` landmark."
         },
         "description": {
           "type": "ReactNode",
-          "optional": true
+          "optional": true,
+          "doc": "Short blurb under the heading."
         },
         "controlWidth": {
           "type": "SettingsControlWidth",
@@ -4249,7 +4253,8 @@
         },
         "children": {
           "type": "ReactNode",
-          "optional": false
+          "optional": false,
+          "doc": "`SettingsRow`s, rendered with a rule between each."
         }
       },
       "demos": [
@@ -4606,27 +4611,33 @@
       "props": {
         "steps": {
           "type": "readonly StepperStep[]",
-          "optional": false
+          "optional": false,
+          "doc": "Ordered steps."
         },
         "current": {
           "type": "string",
-          "optional": false
+          "optional": false,
+          "doc": "`id` of the current step (controlled)."
         },
         "onCurrentChange": {
           "type": "(id: string) => void",
-          "optional": false
+          "optional": false,
+          "doc": "Called with the target step's `id` when the user activates a reachable step in `StepperList` or presses Back."
         },
         "completed": {
           "type": "ReadonlySet<string>",
-          "optional": true
+          "optional": true,
+          "doc": "`id`s of completed steps."
         },
         "orientation": {
           "type": "\"horizontal\" | \"vertical\"",
-          "optional": true
+          "optional": true,
+          "doc": "Horizontal (default): markers in a row with labels underneath, panel below."
         },
         "children": {
           "type": "ReactNode",
-          "optional": false
+          "optional": false,
+          "doc": "`StepperList`, `StepperPanel`s and `StepperActions`, in any layout."
         }
       },
       "demos": [
