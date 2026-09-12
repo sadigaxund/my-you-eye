@@ -585,7 +585,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLUListElement>, "children">
 | `Table` | `my-you-eye` | variant: **default** / striped | Composition, Variants, Density, Truncation & expand, Sticky header |
 | `Timeline` | `my-you-eye` | — | Horizontal — single lane, Horizontal — lanes, Spans — events with a duration, Shared scale across lanes, Label placement, Density, Progress (playhead reveal), Vertical — single lane, Vertical — lanes |
 | `TreeList` | `my-you-eye` | density: compact / **normal** | Vault browser |
-| `TreeView` | `my-you-eye` | — | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides), Controlled selection & tones, Inline rename, Drag to move |
+| `TreeView` | `my-you-eye` | — | Density (normal vs compact), Tall values (elbow/chevron alignment), Depth-based expand, Controlled expand state, Leading icons (click a row, then use arrow keys), Messy nested payload (hover to trace depth guides), Controlled selection & tones, Inline rename, Drag to move, Long leaf value |
 
 ### data — props
 
@@ -728,7 +728,7 @@ Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Om
 | `Avatar` | `my-you-eye` | size: lg / **md** / sm | Sizes, Fallback variants, With image, With ring, With status dot |
 | `Badge` | `my-you-eye` | variant: danger / **neutral** / primary / success / warning<br>tone: soft / **solid** | Variants (solid), Variants (soft) |
 | `Card` | `my-you-eye` | variant: **default** / elevated / outlined | Variants, With footer actions, Size |
-| `CodeBlock` | `my-you-eye` | variant: **default** / elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python) |
+| `CodeBlock` | `my-you-eye` | variant: **default** / elevated | Bare (no header, no language), Language-only (badge overlay, no header bar), With header + language, Elevated, Line numbers, No wrap (horizontal scroll), Syntax highlighting (TS), Line highlights, Line highlights (implicit gutter), Multi-color highlights, Substring highlights, Substring highlights on a long line (wrap forced off), Merged highlights, Focus range (dims everything outside it), Bare (embedded in another surface), Syntax highlighting (CSS / HTML / SQL / YAML / Python), Pre-tokenised lines, Extending the built-in tokenizer |
 | `DeviceFrame` | `my-you-eye` | variant: **browser** / phone / window | Browser, Window, Phone |
 | `DiffBlock` | `my-you-eye` | variant: **default** / elevated | Unified, Unified — word diff, Unified — word diff, heavily rewritten lines, Split, Split — word diff, Elevated |
 | `DiffStatChip` | `my-you-eye` | size: md / **sm** | Sizes, In context |
@@ -738,7 +738,7 @@ Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Om
 | `Kbd` | `my-you-eye` | — | Default, Combinations |
 | `Markdown` | `my-you-eye` | — | Rendered markdown |
 | `ScrollArea` | `my-you-eye` | orientation: **both** / horizontal / vertical | Vertical scroll, Horizontal scroll, Both axes, Rounded corners (radius on ScrollArea itself, not a wrapper), Edge fade |
-| `Separator` | `my-you-eye` | orientation: **horizontal** / vertical | Horizontal, Vertical |
+| `Separator` | `my-you-eye` | orientation: **horizontal** / vertical | Horizontal, Vertical, Border tiers |
 | `StatusDot` | `my-you-eye` | variant: danger / info / **neutral** / success / warning<br>size: **md** / sm | Variants, Sizes, Pulsing |
 | `Terminal` | `my-you-eye` | variant: **default** / elevated<br>scheme: amber / **default** / matrix<br>chrome: **dots** / none | Prompt glyphs, Title bar, Exit status & spinner, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
 | `VirtualList` | `my-you-eye` | — | 10,000 rows |
@@ -774,7 +774,7 @@ Also accepts everything from `HTMLAttributes<HTMLPreElement>`, `VariantProps<typ
 | `header?` | `string` | — |
 | `wrap?` | `boolean` | — |
 | `showLineNumbers?` | `boolean` | — |
-| `highlight?` | `boolean` | Enable syntax highlighting for supported languages (js, ts, tsx, json, bash). |
+| `highlight?` | `boolean` | Enable syntax highlighting via the built-in tokenizer — see `tokenizeCode` for the full built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases). |
 | `highlightLines?` | `number[]` | 1-indexed line numbers to highlight. |
 | `highlightColor?` | `CodeBlockHighlightGroup["color"]` | Color for highlightLines (default "primary"). |
 | `highlightGroups?` | `CodeBlockHighlightGroup[]` | Multi-color highlight groups. |
@@ -782,6 +782,7 @@ Also accepts everything from `HTMLAttributes<HTMLPreElement>`, `VariantProps<typ
 | `focusRange?` | `[number, number]` | 1-based line numbers outside this `[start, end]` range get a reduced opacity (the `opacity-focus-dim` token) instead of full contrast — the "focus on this range, dim the rest" treatment a code walkthrough needs. |
 | `lineId?` | `(lineNumber: number) => string` | Assigns an `id` to each rendered line's row element, keyed by its 1-based line number. |
 | `bare?` | `boolean` | Strips the persistent header bar (filename/language badge) and the block's own opaque background/border, leaving only a hover-revealed copy button in the corner. |
+| `tokens?` | `readonly HighlightedLine[]` | Pre-tokenised lines, bypassing the built-in tokenizer entirely — the escape hatch for a language outside `tokenizeCode`'s built-in set (an external Lezer/CM6 parser, for example). |
 
 #### `DeviceFrame`
 
@@ -803,7 +804,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `language?` | `string` | — |
 | `header?` | `string` | — |
 | `mode?` | `"unified" \| "split"` | "unified" (default): single column with +/- markers. "split": two-column side-by-side. |
-| `highlight?` | `boolean` | Syntax-highlight line content via CodeBlock's tokenizer (js/ts/json/bash/css/html/py/yaml/sql). |
+| `highlight?` | `boolean` | Syntax-highlight line content via CodeBlock's built-in tokenizer — see `tokenizeCode` for the built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases). |
 | `wordDiff?` | `boolean` | Word-level intra-line diff for a removed line immediately followed by an added line (a 1:1 changed pair). |
 
 #### `DiffStatChip`
@@ -915,7 +916,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
 | `Progress` | `my-you-eye` | variant: danger / **default** / success / warning | Variants, No label |
 | `Skeleton` | `my-you-eye` | shape: circle / rect / **text** | Shapes |
 | `Spinner` | `my-you-eye` | size: lg / **md** / sm | Sizes |
-| `Toast` | `my-you-eye` | variant: danger / **default** / success | Trigger toasts |
+| `Toast` | `my-you-eye` | variant: danger / **default** / success<br>tone: soft / **solid** | Trigger toasts |
 
 ### feedback — props
 
@@ -966,7 +967,7 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `SegmentedControl` | `my-you-eye` | size: md / **sm** / xs | Sizes, Disabled segment, Icon only, Controlled |
 | `Select` | `my-you-eye` | size: **md** / sm<br>invalid: true | Icon + label, Sizes, States, No indicator |
 | `Slider` | `my-you-eye` | size: **md** / sm | Basic slider, Sizes |
-| `Switch` | `my-you-eye` | size: **md** / sm | Sizes, States |
+| `Switch` | `my-you-eye` | size: **md** / sm | Sizes, States, On a surface |
 | `Textarea` | `my-you-eye` | variant: **default** / filled<br>invalid: true | Variants, States |
 
 ### inputs — props

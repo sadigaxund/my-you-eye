@@ -2776,7 +2776,8 @@
         "Messy nested payload (hover to trace depth guides)",
         "Controlled selection & tones",
         "Inline rename",
-        "Drag to move"
+        "Drag to move",
+        "Long leaf value"
       ],
       "description": "A collapsible hierarchical list for nested data, with indent guide lines, controlled expand/collapse, arrow-key navigation, typed value rendering, and controlled selection with rename and drag hooks."
     },
@@ -2976,7 +2977,7 @@
         "highlight": {
           "type": "boolean",
           "optional": true,
-          "doc": "Enable syntax highlighting for supported languages (js, ts, tsx, json, bash)."
+          "doc": "Enable syntax highlighting via the built-in tokenizer — see `tokenizeCode` for the full built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases)."
         },
         "highlightLines": {
           "type": "number[]",
@@ -3012,6 +3013,11 @@
           "type": "boolean",
           "optional": true,
           "doc": "Strips the persistent header bar (filename/language badge) and the block's own opaque background/border, leaving only a hover-revealed copy button in the corner."
+        },
+        "tokens": {
+          "type": "readonly HighlightedLine[]",
+          "optional": true,
+          "doc": "Pre-tokenised lines, bypassing the built-in tokenizer entirely — the escape hatch for a language outside `tokenizeCode`'s built-in set (an external Lezer/CM6 parser, for example)."
         }
       },
       "demos": [
@@ -3030,7 +3036,9 @@
         "Merged highlights",
         "Focus range (dims everything outside it)",
         "Bare (embedded in another surface)",
-        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
+        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)",
+        "Pre-tokenised lines",
+        "Extending the built-in tokenizer"
       ],
       "variantDefaults": {
         "variant": "default"
@@ -3116,7 +3124,7 @@
         "highlight": {
           "type": "boolean",
           "optional": true,
-          "doc": "Syntax-highlight line content via CodeBlock's tokenizer (js/ts/json/bash/css/html/py/yaml/sql)."
+          "doc": "Syntax-highlight line content via CodeBlock's built-in tokenizer — see `tokenizeCode` for the built-in language set (JS/TS, JSON, shell, CSS, HTML, Python, YAML, SQL, with aliases)."
         },
         "wordDiff": {
           "type": "boolean",
@@ -3401,7 +3409,8 @@
       "props": {},
       "demos": [
         "Horizontal",
-        "Vertical"
+        "Vertical",
+        "Border tiers"
       ],
       "variantDefaults": {
         "orientation": "horizontal"
@@ -3729,6 +3738,10 @@
           "danger",
           "default",
           "success"
+        ],
+        "tone": [
+          "soft",
+          "solid"
         ]
       },
       "props": {},
@@ -3737,7 +3750,8 @@
       ],
       "description": "A transient notification for success, danger, and default states, triggered imperatively via the useToast hook.",
       "variantDefaults": {
-        "variant": "default"
+        "variant": "default",
+        "tone": "solid"
       }
     },
     {
@@ -4204,7 +4218,8 @@
       "props": {},
       "demos": [
         "Sizes",
-        "States"
+        "States",
+        "On a surface"
       ],
       "variantDefaults": {
         "size": "md"
