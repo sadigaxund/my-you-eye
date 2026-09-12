@@ -21,6 +21,13 @@
   --color-surface-active: oklch(0.95 0 0);
   --color-surface-elevated: oklch(1 0 0);
   --color-border: oklch(0.87 0.01 260);
+  /* Second border tier for dividers NESTED inside an already-bordered
+     container (table row rules, drawer header/footer rules, menu
+     separators, code-panel chrome dividers); --color-border stays the
+     structural tier (outer edges, sidebar/split edges, tab strips,
+     Separator). It is an alpha of the structural border, not a blend
+     toward bg, so it composites correctly on any surface (#39). */
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.5 0.2 265);
 
   /* Canvas surface boundary (Phase 1): always opaque, never blurred —

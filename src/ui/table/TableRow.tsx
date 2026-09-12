@@ -9,7 +9,7 @@ import { cn } from "../../lib/cn";
 // row height). `DataTable`'s `density` prop still works end to end — it's
 // forwarded only to TableHead/TableCell.
 const rowClassName =
-  "border-b transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-secondary/50 data-[state=selected]:bg-secondary";
+  "border-b border-border-subtle transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-secondary/50 data-[state=selected]:bg-secondary";
 
 export type TableRowProps = HTMLAttributes<HTMLTableRowElement>;
 

@@ -276,7 +276,7 @@ const CodeBlock = forwardRef<HTMLPreElement, CodeBlockProps>(
             {showGutter && (
               <div
                 aria-hidden
-                className="sticky left-0 z-10 select-none shrink-0 bg-code-bg py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border"
+                className="sticky left-0 z-10 select-none shrink-0 bg-code-bg py-panel text-right font-mono text-xs leading-relaxed text-code-muted border-r border-border-subtle"
               >
                 {lines.map((_, i) => (
                   <div key={i} className={cn("pl-compact-x pr-compact-x", lineColor.get(i + 1))}>{i + 1}</div>

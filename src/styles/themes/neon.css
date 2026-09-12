@@ -35,6 +35,7 @@
   --color-chart-7: oklch(0.53 0.141 230);
 
   --color-border: oklch(0.3 0.12 180 / 0.5);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.7 0.28 180);
   --color-grid-dot: oklch(0.4 0.12 180 / 0.4);
   --color-scrollbar: oklch(0.3 0.12 180 / 0.5);
@@ -75,6 +76,7 @@
   --color-sidebar-badge: oklch(0.8 0.28 180);
   --color-sidebar-badge-fg: oklch(0 0 0);
   --color-border: oklch(0.25 0.1 180 / 0.5);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.6 0.28 180);
   --color-grid-dot: oklch(0.35 0.1 180 / 0.4);
   --color-scrollbar: oklch(0.25 0.1 180 / 0.5);

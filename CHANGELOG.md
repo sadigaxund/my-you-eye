@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **`--color-border-subtle` token** — a second border tier (`color-mix(in oklab, var(--color-border) 55%, transparent)`, an alpha of the structural border so it composites on any surface) for dividers nested inside an already-bordered container; every theme defines it in light and dark, and the flat themes (contrast, brutal, comic) alias it to `--color-border` so they do not change. Tailwind maps it as `border-border-subtle` / `divide-border-subtle` / `bg-border-subtle` (#39).
+
+### Changed
+
+- **Nested dividers use `--color-border-subtle`** — Table row rules (previously an unset `border-b` that inherited `currentColor`), Drawer header/footer rules, DropdownMenu/ContextMenu separators, the search-field rule in CommandPalette/Combobox/MultiSelect, and the header-bar / line-number-gutter dividers in CodeBlock, Terminal and DiffBlock. Outer edges and structural separators (Separator, Tabs, sidebar chrome, split panes) keep `--color-border` (#39).
+
 ### Fixed
 
 - **SegmentedControl**: the `role="radiogroup"` wrapper is now `position: relative`, so its sr-only radio inputs resolve their containing block inside the component; focusing an option can no longer scroll the host app's own scroll container (#43).

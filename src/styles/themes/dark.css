@@ -20,6 +20,7 @@
   --color-sidebar-badge: oklch(0.65 0.22 265);
   --color-sidebar-badge-fg: oklch(0 0 0);
   --color-border: oklch(0.3 0.01 260);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.65 0.22 265);
   --color-grid-dot: oklch(0.35 0.01 260);
   --color-scrollbar: oklch(0.3 0.01 260);

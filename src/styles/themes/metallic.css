@@ -76,6 +76,7 @@ html[data-theme="metallic"].dark {
   --color-sidebar-badge-fg: oklch(1 0 0);
 
   --color-border: oklch(0.55 0.02 255);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.40 0.04 255 / 0.35);
   --color-scrollbar: oklch(0.55 0.02 255);
   --color-scrollbar-hover: oklch(0.40 0.02 255);
@@ -140,6 +141,7 @@ html[data-theme="metallic"].dark {
   --color-sidebar-badge-fg: oklch(0.10 0.005 255);
 
   --color-border: oklch(0.50 0.025 255);
+  --color-border-subtle: color-mix(in oklab, var(--color-border) 55%, transparent);
   --color-ring: oklch(0.68 0.06 255 / 0.35);
   --color-scrollbar: oklch(0.45 0.025 255);
   --color-scrollbar-hover: oklch(0.60 0.025 255);

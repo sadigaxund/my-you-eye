@@ -185,7 +185,7 @@ const DiffBlock = forwardRef<HTMLDivElement, DiffBlockProps>(
     return (
       <div ref={ref} className={cn(diffBlockVariants({ variant }), className)} {...props}>
         {header && (
-          <div className="flex items-center gap-2 h-9 px-panel border-b border-border shrink-0">
+          <div className="flex items-center gap-2 h-9 px-panel border-b border-border-subtle shrink-0">
             <span className="text-xs font-medium text-code-fg truncate">{header}</span>
             {language && (
               <span className="shrink-0 rounded-ui-sm bg-code-bg/80 px-1.5 py-0.5 font-mono text-xs uppercase tracking-wide text-code-muted border border-border/50">
