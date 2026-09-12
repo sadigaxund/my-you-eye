@@ -144,6 +144,9 @@ const PAIRS = [
   ["danger-fg", "danger"],
   ["success-fg", "success"],
   ["secondary-fg", "secondary"],
+  // Kbd default text and the `filled` Input/Textarea placeholder are
+  // text-muted on bg-secondary; real text, so AA applies (impeccable audit).
+  ["muted", "secondary"],
   // Sidebar chrome family (#27): panel text must read on the resting panel,
   // on a hovered row, and on an active row; badge counts on their accent chip.
   // This is why glass/frosted define OPAQUE sidebar item-hover/active tokens

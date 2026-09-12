@@ -42,7 +42,7 @@ html[data-theme="frosted"].dark::before {
   /* Colors - Core & Text (cool, near-achromatic) */
   --color-bg: oklch(0.96 0.006 235);
   --color-fg: oklch(0.22 0.01 235);
-  --color-muted: oklch(0.50 0.01 235);
+  --color-muted: oklch(0.49 0.01 235);
 
   /* Colors - Accents (low-chroma cool blue-grey, not saturated like glass) */
   --color-primary: oklch(0.52 0.10 235);

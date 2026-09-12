@@ -8,7 +8,7 @@ html[data-theme="stark"].dark {
 [data-theme="stark"] {
   --color-bg: oklch(1 0 0);
   --color-fg: oklch(0.15 0 0);
-  --color-muted: oklch(0.55 0 0);
+  --color-muted: oklch(0.54 0 0);
 
   --color-primary: oklch(0.15 0 0);
   --color-primary-fg: oklch(1 0 0);

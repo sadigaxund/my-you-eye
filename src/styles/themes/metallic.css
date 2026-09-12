@@ -47,7 +47,7 @@ html[data-theme="metallic"].dark {
 [data-theme="metallic"] {
   --color-bg: oklch(0.90 0.018 255);
   --color-fg: oklch(0.15 0.005 255);
-  --color-muted: oklch(0.48 0.005 255);
+  --color-muted: oklch(0.43 0.005 255);
 
   --color-primary: oklch(0.40 0.04 255);
   --color-primary-fg: oklch(1 0 0);
@@ -112,7 +112,7 @@ html[data-theme="metallic"].dark {
 [data-theme="metallic"].dark {
   --color-bg: oklch(0.20 0.025 255);
   --color-fg: oklch(0.93 0.003 255);
-  --color-muted: oklch(0.62 0.005 255);
+  --color-muted: oklch(0.65 0.005 255);
 
   --color-primary: oklch(0.68 0.06 255);
   --color-primary-fg: oklch(0.10 0.005 255);
