@@ -167,7 +167,9 @@ export function Markdown({ content, className, ...props }: MarkdownProps) {
       {blocks.map((block, i) => {
         switch (block.type) {
           case "heading": {
-            const sizes = ["", "text-lg", "text-base", "text-sm", "text-xs", "text-xs"];
+            // h1 previously had no size class here and inherited the body size,
+            // rendering smaller than h2; text-xl restores the expected step.
+            const sizes = ["text-xl", "text-lg", "text-base", "text-sm", "text-xs", "text-xs"];
             const cls = cn(sizes[block.level - 1] ?? "text-base", "font-semibold text-fg");
             const h = block.level;
             return h === 1 ? <h1 key={i} className={cls}>{renderInline(block.text)}</h1>
