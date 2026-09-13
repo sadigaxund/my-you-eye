@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2026.9.1] - 2026-09-13
+
 ### Added
 
 - **DataTable `emptyState`** — opt-in `ReactNode` prop rendered in a single centered row spanning all columns when `rows` is empty; omitted, an empty table renders the header only, as before (impeccable audit).
