@@ -32,7 +32,7 @@ const entry: ShowcaseEntry = {
     {
       name: "Long label",
       render: () => (
-        <div className="flex max-w-sm flex-wrap items-center gap-2">
+        <div className="mx-auto flex max-w-sm flex-wrap items-center justify-center gap-2">
           <Badge variant="neutral">Neutral</Badge>
           <Badge variant="primary">
             Supercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocioussupercalifragilisticexpialidocious

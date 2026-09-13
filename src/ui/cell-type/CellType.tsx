@@ -249,7 +249,13 @@ export function CellType({
     case "email": return <LinkCellValue href={`mailto:${String(value)}`} label={String(value)} icon={<MailIcon />} />;
     case "url": return <LinkCellValue href={String(value)} label={applyReplacements(String(value), replacements)} icon={<GoToIcon />} external />;
     case "json": return <JsonDisplay value={value} />;
-    case "badge": return <Badge variant={badgeVariant ?? "neutral"} tone={badgeStyle ?? "solid"}>{String(value)}</Badge>;
+    // max-w-none: a DataTable cell is `table-fixed` + `overflow-hidden`, so the
+    // cell (not the badge) is the containment boundary. Badge's own max-w-full
+    // would clamp the label to the cell's content box and wrap a one-word
+    // label ("Viewer") mid-word in a narrow `width: "xs"` column; sized to its
+    // label it overflows a few px into the cell padding instead, as it did
+    // before Badge gained its guard.
+    case "badge": return <Badge variant={badgeVariant ?? "neutral"} tone={badgeStyle ?? "solid"} className="max-w-none">{String(value)}</Badge>;
     case "status": return <span className="inline-flex items-center gap-1.5 min-w-0 w-full"><StatusDot variant={statusVariant ?? "neutral"} size="sm" pulse={statusPulse} /><TruncatedCellValue value={String(value)} /></span>;
     case "number": return <NumberDisplay value={value} compact={compact} fractionDigits={fractionDigits} />;
     case "percentage": return <PercentageDisplay value={value} fractionDigits={fractionDigits} />;

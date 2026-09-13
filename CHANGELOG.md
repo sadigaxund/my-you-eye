@@ -14,7 +14,8 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
-- **Badge** — long unbroken labels are now contained: `max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead (impeccable audit).
+- **Badge** — long unbroken labels are now contained: `w-max max-w-full overflow-hidden wrap-anywhere` on the base class stops a pathological token from pushing the badge's parent row past the viewport, wrapping inside the badge instead. `w-max` keeps the badge's min-content contribution at its whole label, so an auto-layout table column stays as wide as the word instead of squeezing a one-word label ("Viewer") into a mid-word wrap (impeccable audit).
+- **CellType `badge`** — the badge in a DataTable cell opts out of Badge's `max-w-full` cap (`max-w-none`): the cell is `table-fixed` + `overflow-hidden` and is the containment boundary there, so a label a few px wider than a narrow `width: "xs"` column overflows into the cell padding as before instead of wrapping mid-word.
 - **CellType** — the truncated label in email/URL cells is forced `dir="ltr"` so the ellipsis stays on the end of the string under an RTL document instead of clipping the leading characters (impeccable audit).
 - **Markdown** — `# H1` now renders at `text-xl`; it previously had no size class and inherited the body size, so it was smaller than `## H2` (impeccable audit).
 

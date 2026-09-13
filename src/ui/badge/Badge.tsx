@@ -9,15 +9,23 @@ const badgeVariants = cva(
   // its text — was a bare `py-0.5` (2px), which reads as a sliver at
   // default text-xs line-height.
   //
-  // max-w-full + overflow-hidden + wrap-anywhere contain pathological long
-  // labels: overflow-hidden also collapses the flex item's automatic min
-  // size, so a badge can no longer push its parent row past the viewport,
-  // and wrap-anywhere (Tailwind 4.1 `overflow-wrap:anywhere`) breaks an
-  // unbroken token inside the badge instead of letting it overflow. We
-  // deliberately avoid `truncate`: `text-overflow` doesn't render on an
-  // inline-flex box, and `whitespace-nowrap` would change today's wrapping
-  // behaviour for multi-word labels.
-  "inline-flex items-center max-w-full overflow-hidden wrap-anywhere rounded-ui-sm px-2.5 py-[var(--density-chip-py)] min-h-[var(--density-chip-min-h)] text-xs font-medium",
+  // w-max + max-w-full + overflow-hidden + wrap-anywhere contain pathological
+  // long labels without collapsing table columns. `wrap-anywhere`
+  // (`overflow-wrap: anywhere`) breaks an unbroken token inside the badge,
+  // but on its own it also shrinks the badge's min-content width to one
+  // character, so an auto-layout table column could squeeze a one-word
+  // label ("Viewer") into a mid-word wrap. `w-max` (`width: max-content`)
+  // makes the badge's min-content contribution its whole label again, while
+  // `max-w-full` still caps it inside any definite-width container so the
+  // token wraps there instead of overflowing. `overflow-hidden` collapses the
+  // flex item's automatic min size so a badge can't push its parent row past
+  // the viewport. `overflow-wrap: break-word` is not an option: the label is
+  // an anonymous flex item whose min-width is the word, so it never breaks
+  // and would just be clipped. We deliberately avoid `truncate`:
+  // `text-overflow` doesn't render on an inline-flex box, and
+  // `whitespace-nowrap` would change today's wrapping behaviour for
+  // multi-word labels.
+  "inline-flex items-center w-max max-w-full overflow-hidden wrap-anywhere rounded-ui-sm px-2.5 py-[var(--density-chip-py)] min-h-[var(--density-chip-min-h)] text-xs font-medium",
   {
     variants: {
       variant: {
