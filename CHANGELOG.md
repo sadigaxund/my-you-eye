@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+- AGENTS.md §3a: binding hardening contract (text overflow, flex sizing, table min-content, positioned sr-only inputs, zero states, RTL, per-theme contrast, keyboard/focus, range-end tests) plus a required "Stress" showcase demo for new and layout-touching component work.
+
+
 ## [2026.9.1] - 2026-09-13
 
 ### Added

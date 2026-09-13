@@ -198,6 +198,8 @@ Work through every step. Do not skip. Do not reorder.
 6. **Run `npm run validate`.** Fix everything until green.
 7. **Visually verify:** `npm run dev`, open the showcase, confirm the component renders
    in its group with all variants, in both light and dark mode (toggle in showcase header).
+   Then walk **§3a (hardening)** line by line against the code you wrote — including the
+   "Stress" demo — before you call it done.
 8. **Update TODO.md:** check the component off the backlog list.
 
 A file exceeding **250 lines** is flagged by lint (warning). If a component
@@ -236,6 +238,69 @@ A decorator lives under `src/ui/decorators/<kebab-name>/` with the same file lay
 3. If you change or add any variant/prop: **update the showcase file** to demonstrate it.
 4. If you change a token: check the showcase visually — tokens affect everything.
 5. `npm run validate` green + visual check in showcase (§2.6–7).
+6. If the change touches text handling, layout, sizing, focus, or a token: walk **§3a
+   (hardening)** and update or add the "Stress" demo.
+
+### 3a. Hardening — the edge-case contract (binding for §2 and §3)
+
+Every rule below is a bug that shipped and was reported by a consuming app. A component is not
+done — new or edited — until each line has been checked against **the code you touched**, and
+the "Stress" showcase demo (rule 11) proves it in the showcase. Cheap to check, expensive to skip.
+
+1. **Every text slot survives a 220-character unbroken string and a 200-character sentence.**
+   Caller-supplied text must be contained by the component, never pushed past its box or its
+   parent's box. Pick one strategy per slot and state it in a comment: `truncate` (+ `title`
+   with the full string when it is plain text) or wrapping (`wrap-anywhere`, see rule 4).
+   `break-words` (`overflow-wrap: break-word`) does NOT break text inside a flex or
+   inline-flex box — the text is an anonymous flex item whose min-width is the word, so it
+   is clipped, not wrapped. A slot with neither strategy is a defect.
+2. **Every flex child that holds text gets `min-w-0`.** Without it the flex item's automatic
+   min-size is the longest word, and the row overflows. (TreeView #42, Badge.)
+3. **Two siblings sharing a row never mix `flex-1` (basis 0%) with `shrink` (basis auto).**
+   The basis-0 sibling contributes nothing to shrink distribution and collapses to zero width
+   while the other keeps its intrinsic width. Give the fixed side `shrink-0` with a `max-w-*`
+   token cap, and the flexible side `flex-1 min-w-0`. (TreeView key vs value, #42.)
+4. **Anything that can land in an auto-layout table cell keeps its min-content width equal to
+   its shortest word.** `overflow-wrap: anywhere` alone lets min-content collapse to one
+   character, so table columns squeeze a one-word label into a mid-word wrap. The working
+   recipe for a wrapping chip is `w-max max-w-full overflow-hidden wrap-anywhere`: `w-max`
+   restores min-content to the whole label, `max-w-full` caps it in definite-width parents.
+   Check the component inside `DataTable` (which is `table-fixed`) at `width: "xs"`; a
+   fixed-layout cell is its own containment boundary, so a cell renderer may opt out of the
+   cap with `max-w-none`. (Badge "Viewer" regression, v2026.9.1.)
+5. **Every `sr-only` or otherwise absolutely-positioned element has a `relative` ancestor inside
+   the component.** Otherwise its containing block resolves to whatever the host app happens to
+   have, and focusing it scrolls the wrong container — the app "goes black". (SegmentedControl #43.)
+6. **Every collection renders a deliberate zero state.** Table with no rows, Select/Combobox with
+   no options, Pagination with 0 pages, List/Tree with no items: an opt-in slot with a sane
+   default (`EmptyState`, muted text, or a documented "renders nothing") — never a zero-height
+   box that looks broken. (DataTable `emptyState`.)
+7. **Truncated LTR content stays LTR under `dir="rtl"`.** URLs, emails, code, file paths and
+   numbers get `dir="ltr"` on the truncating span, or the ellipsis eats the wrong end. Prefer
+   logical utilities (`ps-`/`pe-`, `ms-`/`me-`, `start-`/`end-`) over `pl-`/`pr-` in new code.
+   (CellType link cells.)
+8. **Every visual state is distinguishable in every theme, light and dark, and never by fill
+   alone.** Two tokens that differ in the default theme may coincide in another (`secondary` ≈
+   `bg` in a dark palette). Unchecked/inactive/placeholder/disabled states need an edge or a
+   contrast-checked pair, not just a different fill. Any new fg-on-bg token pair goes into
+   `PAIRS` in `scripts/check-contrast.mjs` so the gate enforces it. A theme `.dark` block that
+   introduces surfaces must also define its `--shadow-*` tiers — 5% black on black is invisible.
+   (Switch #37, dark shadows #38, `--color-muted` on `--color-secondary`.)
+9. **Keyboard and focus are explicit.** Roving-tabindex groups have exactly one tab stop after
+   every render, including after a mouse click. Locked/disabled items are real `disabled`
+   buttons with sr-only text saying why, not dimmed clickables. Navigation lists use
+   `aria-current`, not `role="tab"`/`aria-selected`, unless activating an item swaps a panel.
+   When a step/page advances, move focus to the new panel's heading — but never on first mount.
+   (NavList #41, Stepper #35.)
+10. **Any lookup keyed by level/index/size is tested at both ends of its range.** Off-by-one in
+    a size map means `# H1` renders smaller than `## H2` for months without anyone noticing.
+    (Markdown h1.)
+11. **The showcase ships a demo named "Stress".** Required for every new component; required
+    for an edit whenever it touches text handling, layout, or sizing. It contains, in one
+    demo: the longest realistic label, a 220-character unbroken token, the zero state, and the
+    component inside a `w-80` (20rem) container. Visual verification (§2.7 / §3.5) includes
+    this demo in default dark and one non-default theme. This is the artefact reviewers and
+    screenshot diffs look at first; a component without it is not done.
 
 ## 4. Showcase rules
 
