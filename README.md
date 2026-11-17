@@ -59,7 +59,7 @@ npm install my-you-eye
 
 ```tsx
 // once, at your app root — pick ONE stylesheet:
-import "my-you-eye/styles.css";          // your app runs Tailwind v4 (the normal path)
+import "my-you-eye/styles.css";          // your app runs Tailwind v4 (the normal path); carries its own @source + fonts, nothing else to configure
 // or
 import "my-you-eye/styles.compiled.css"; // no Tailwind in your pipeline (Remotion, plain bundlers)
 

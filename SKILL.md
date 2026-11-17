@@ -73,6 +73,8 @@ import "my-you-eye/styles.css"; // once, at the app root
 ```
 
 **Setup requirements:**
+- `@import "my-you-eye/styles.css";` (or the JS import above) is all the setup needed — the
+  stylesheet carries its own `@source` for the shipped bundles and its fonts, so no extra Tailwind config.
 - `my-you-eye/styles.css` is raw Tailwind v4 source — the consuming app must
   run Tailwind v4 itself. If it doesn't (Remotion, plain bundlers), import
   `my-you-eye/styles.compiled.css` instead: pre-compiled, drop-in, but only
