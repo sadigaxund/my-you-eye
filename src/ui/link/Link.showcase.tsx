@@ -49,6 +49,33 @@ const entry: ShowcaseEntry = {
         </p>
       ),
     },
+    {
+      name: "Sizes",
+      description: "size=\"target\" gives standalone links a 44px minimum height for touch.",
+      render: () => (
+        <div className="flex flex-wrap items-center gap-6">
+          <Link href="mailto:hello@example.com" size="target">hello@example.com</Link>
+          <Link href="tel:+15550100" size="target" variant="muted">+1 555 0100</Link>
+          <Link href="https://example.com/contact" size="target">Contact page</Link>
+        </div>
+      ),
+    },
+    {
+      name: "Stress",
+      description: "Long labels and a 220-character token inside a 20rem container.",
+      render: () => (
+        <div className="w-80 space-y-2">
+          <Link href="https://example.com" size="target" className="max-w-full">
+            <span className="min-w-0 truncate" title="The longest realistic link label: Read the complete annual accessibility and compliance report for every region">
+              The longest realistic link label: Read the complete annual accessibility and compliance report for every region
+            </span>
+          </Link>
+          <Link href="https://example.com" className="block wrap-anywhere">
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          </Link>
+        </div>
+      ),
+    },
   ],
 };
 export default entry;

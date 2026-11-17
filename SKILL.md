@@ -409,6 +409,12 @@ document.documentElement.dataset.theme = "glass"; // switch theme
 document.documentElement.classList.toggle("dark"); // toggle dark mode
 ```
 
+**Focus style.** Default focus is a token-driven box-shadow ring. Set
+`data-focus-style="outline"` on `<html>` (or any subtree) to use an outline
+instead (`--focus-outline-*`, `--focus-ring-offset`); an invisible outline is
+always present so focus stays visible in Windows forced-colors mode. Touch
+targets: override `--spacing-touch-target` (default 44px).
+
 Character guide: `default` neutral/safe · `contrast` accessibility-first,
 data-dense tools · `stark` minimal editorial · `brutal` bold borders, hard
 shadows · `neon` vibrant dev-tool energy · `glass` translucent modern SaaS ·

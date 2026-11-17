@@ -100,7 +100,7 @@ const StepperList = forwardRef<HTMLOListElement, StepperListProps>(
             </span>
           );
           const buttonClass = cn(
-            "rounded-ui-sm focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+            "rounded-ui-sm focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
             // Locked: the dimming sits on the marker + text, not the whole
             // button, so the connector halves inside it stay full strength.
             locked && "cursor-not-allowed",

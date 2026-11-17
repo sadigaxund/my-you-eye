@@ -110,7 +110,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           disabled={disabled}
           className={cn(
             "flex w-full items-center justify-between rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg",
-            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
+            "focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
             "disabled:cursor-not-allowed disabled:opacity-50",
             !selectedLabel && "text-muted",
             className,
@@ -148,7 +148,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="filled"
             aria-controls={listId}
             aria-activedescendant={activeId}
-            className="border-0 rounded-none ring-0 focus-visible:ring-0"
+            className="border-0 rounded-none ring-0 focus-visible:ring-0 focus-visible:outline-none!"
           />
         </div>
         {/* rounded-b-[inherit]: matches PopoverContent's inherited bottom

@@ -1,4 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
+import { Link } from "../link";
 import { Button } from ".";
 
 const entry: ShowcaseEntry = {
@@ -44,6 +45,30 @@ const entry: ShowcaseEntry = {
           <Button variant="ghost" size="xs" aria-label="Refresh">
             <svg viewBox="0 0 12 12" className="size-2.5 fill-none stroke-current"><path d="M10 6a4 4 0 11-1.2-2.8M10 1v2.5H7.5" /></svg>
           </Button>
+        </div>
+      ),
+    },
+    {
+      name: "Touch target",
+      description: "On coarse pointers, sm and md get an invisible 44px hit area; icon-sm and xs do not.",
+      render: () => (
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <Button size="sm">Small (hit area 44px)</Button>
+          <Button size="md">Medium (hit area 44px)</Button>
+          <Button size="icon-sm" variant="ghost" aria-label="Play (dense tier, no expansion)">
+            <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>
+          </Button>
+        </div>
+      ),
+    },
+    {
+      name: "Outline focus",
+      description: "data-focus-style=\"outline\" swaps the focus ring for an outline across a subtree.",
+      render: () => (
+        <div data-focus-style="outline" className="flex flex-wrap items-center justify-center gap-4">
+          <Button variant="primary">Save changes</Button>
+          <Button variant="secondary">Cancel</Button>
+          <Link href="https://example.com" size="target">Read the guide</Link>
         </div>
       ),
     },

@@ -114,7 +114,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
           ref={ref}
           className={cn(
             "flex w-full items-center gap-1 flex-wrap rounded-ui border border-border bg-bg px-3 py-2 text-sm text-left ring-offset-bg min-h-10",
-            "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
+            "focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset",
             "disabled:cursor-not-allowed disabled:opacity-50",
             selectedLabels.length === 0 && "text-muted",
             className,
@@ -158,7 +158,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
             variant="filled"
             aria-controls={listId}
             aria-activedescendant={activeId}
-            className="border-0 rounded-none ring-0 focus-visible:ring-0"
+            className="border-0 rounded-none ring-0 focus-visible:ring-0 focus-visible:outline-none!"
           />
         </div>
         {/* rounded-b-[inherit]: matches PopoverContent's inherited bottom

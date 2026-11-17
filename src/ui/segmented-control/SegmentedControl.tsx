@@ -34,7 +34,7 @@ const segmentedSegmentVariants = cva(
   // Native <input type="radio"> inside the label carries the semantics and
   // the radiogroup's arrow-key model; the visible segment is this label,
   // which rings via focus-within when the hidden radio takes focus.
-  "inline-flex h-full cursor-pointer select-none items-center justify-center rounded-[calc(var(--radius-ui)-3px)] px-2 text-sm text-muted transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] outline-none hover:text-fg focus-within:ring-[length:var(--focus-ring-width)] focus-within:ring-ring focus-within:ring-inset",
+  "inline-flex h-full cursor-pointer select-none items-center justify-center rounded-[calc(var(--radius-ui)-3px)] px-2 text-sm text-muted transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] focus-ring-within hover:text-fg focus-within:ring-[length:var(--focus-ring-width)] focus-within:ring-ring focus-within:ring-inset",
   {
     variants: {
       size: {

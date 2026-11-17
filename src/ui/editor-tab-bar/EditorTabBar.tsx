@@ -93,7 +93,7 @@ const EditorTabBar = forwardRef<HTMLDivElement, EditorTabBarProps>(
                 onClick={() => onSelect?.(tab.id)}
                 onKeyDown={(e) => handleKeyDown(e, i)}
                 className={cn(
-                  "group relative flex max-w-48 shrink-0 cursor-pointer select-none items-center gap-1.5 border-b-2 px-3 py-1.5 text-sm outline-none",
+                  "group relative flex max-w-48 shrink-0 cursor-pointer select-none items-center gap-1.5 border-b-2 px-3 py-1.5 text-sm focus-ring",
                   "-mb-px",
                   active
                     ? "border-primary text-fg"
@@ -122,7 +122,7 @@ const EditorTabBar = forwardRef<HTMLDivElement, EditorTabBarProps>(
                     }}
                     className={cn(
                       "flex size-4 shrink-0 items-center justify-center rounded-full text-muted",
-                      "hover:bg-sidebar-item-active hover:text-fg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+                      "hover:bg-sidebar-item-active hover:text-fg focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
                     )}
                   >
                     <svg viewBox="0 0 8 8" aria-hidden="true" className="size-2 fill-none stroke-current strokeWidth-[1.25]">
