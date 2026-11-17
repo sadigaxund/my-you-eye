@@ -70,7 +70,7 @@ const StepperSegments = forwardRef<HTMLOListElement, OlHTMLAttributes<HTMLOListE
                   aria-label={`${step.label}, step ${index + 1} of ${steps.length}${stateText}`}
                   title={step.label}
                   className={cn(
-                    "flex h-control w-full items-center rounded-ui-sm focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+                    "flex h-control w-full items-center rounded-ui-sm focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
                     locked && "cursor-not-allowed",
                   )}
                 >
