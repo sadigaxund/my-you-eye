@@ -25,10 +25,21 @@ const linkVariants = cva(
         true: "hover:underline",
         false: "",
       },
+      /**
+       * `inline` (default) is the in-prose link, sized by its text.
+       * `target` is for standalone links (contact rows, footers): a
+       * 44px-tall flex row (`--spacing-touch-target`) with the label centred
+       * vertically, so it meets WCAG 2.5.5 on any pointer.
+       */
+      size: {
+        inline: "",
+        target: "inline-flex items-center min-h-touch-target",
+      },
     },
     defaultVariants: {
       variant: "primary",
       underline: true,
+      size: "inline",
     },
   },
 );
@@ -39,6 +50,9 @@ export interface LinkProps
   /** Underline the label on hover. Default true. Set false for links that
    * are already a card or a nav row, where the underline fights the box. */
   underline?: boolean;
+  /** `inline` (default): sized by its text, for use in prose. `target`: a
+   * standalone link with a 44px minimum height (touch-target token). */
+  size?: "inline" | "target";
 }
 
 /**
@@ -51,8 +65,8 @@ export interface LinkProps
  * it as a standalone, reusable component).
  */
 const Link = forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, variant, underline, ...props }, ref) => (
-    <a ref={ref} className={cn(linkVariants({ variant, underline }), className)} {...props} />
+  ({ className, variant, underline, size, ...props }, ref) => (
+    <a ref={ref} className={cn(linkVariants({ variant, underline, size }), className)} {...props} />
   ),
 );
 Link.displayName = "Link";
