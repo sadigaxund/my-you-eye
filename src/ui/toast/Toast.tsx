@@ -93,7 +93,70 @@ export interface ToastData {
   className?: string;
   /** Per-slot class overrides. */
   classNames?: ToastClassNames;
+  /** Auto-dismiss delay in ms for this toast; overrides `Toaster`'s `duration`. */
+  duration?: number;
+  /**
+   * Screen-reader urgency. `polite` renders a `role="status"` (Radix
+   * `background` type); `assertive` is `foreground` (interrupts). Default is
+   * Radix's own: assertive.
+   */
+  politeness?: "polite" | "assertive";
 }
+
+export type ToasterPlacement =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
+
+// Declared as `ToastProps` because scripts/gen-manifest.mjs documents the
+// props of the "Toast" showcase page from `<Title>Props`; the public name is
+// the `ToasterProps` alias below.
+interface ToastProps {
+  /** Where the toast stack sits from `sm` up. Default `"bottom-right"`. */
+  placement?: ToasterPlacement;
+  /** Where the stack sits below the `sm` breakpoint. Defaults to `placement`. */
+  mobilePlacement?: ToasterPlacement;
+  /** Max toasts shown at once; when exceeded the oldest are removed. Default unlimited. */
+  limit?: number;
+  /** Default auto-dismiss delay in ms (Radix default 5000). A toast's own `duration` wins. */
+  duration?: number;
+  /** Accessible label of the toast region (Radix default "Notifications (F8)"). */
+  label?: string;
+  children?: ReactNode;
+}
+
+export type ToasterProps = ToastProps;
+
+// Static lookup maps: Tailwind must see every class literally. Each entry
+// resets the opposing edge so the unprefixed (mobile) and `sm:` sets can
+// override one another.
+const MOBILE_PLACEMENT: Record<ToasterPlacement, string> = {
+  "top-left": "top-panel bottom-auto left-panel right-auto translate-x-0",
+  "top-center": "top-panel bottom-auto left-1/2 right-auto -translate-x-1/2",
+  "top-right": "top-panel bottom-auto right-panel left-auto translate-x-0",
+  "bottom-left": "bottom-panel top-auto left-panel right-auto translate-x-0",
+  "bottom-center": "bottom-panel top-auto left-1/2 right-auto -translate-x-1/2",
+  "bottom-right": "bottom-panel top-auto right-panel left-auto translate-x-0",
+};
+const DESKTOP_PLACEMENT: Record<ToasterPlacement, string> = {
+  "top-left": "sm:top-panel sm:bottom-auto sm:left-panel sm:right-auto sm:translate-x-0",
+  "top-center": "sm:top-panel sm:bottom-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2",
+  "top-right": "sm:top-panel sm:bottom-auto sm:right-panel sm:left-auto sm:translate-x-0",
+  "bottom-left": "sm:bottom-panel sm:top-auto sm:left-panel sm:right-auto sm:translate-x-0",
+  "bottom-center": "sm:bottom-panel sm:top-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2",
+  "bottom-right": "sm:bottom-panel sm:top-auto sm:right-panel sm:left-auto sm:translate-x-0",
+};
+const SWIPE_DIRECTION: Record<ToasterPlacement, "left" | "right" | "up" | "down"> = {
+  "top-left": "left",
+  "top-center": "up",
+  "top-right": "right",
+  "bottom-left": "left",
+  "bottom-center": "down",
+  "bottom-right": "right",
+};
 
 interface ToastContextValue {
   toast: (data: Omit<ToastData, "id">) => void;
@@ -118,14 +181,16 @@ const ToastItem = forwardRef<React.ComponentRef<typeof Root>, ToastItemProps>(
       tone = "solid",
       className,
       classNames,
+      politeness,
       ...props
     },
     ref,
   ) => (
     <Root
       ref={ref}
+      type={politeness === "polite" ? "background" : politeness === "assertive" ? "foreground" : undefined}
       className={cn(
-        "backdrop-blur-ui",
+        "backdrop-blur-ui data-[swipe=move]:translate-y-[var(--radix-toast-swipe-move-y)] data-[swipe=cancel]:translate-y-0",
         toastVariants({ variant, tone }),
         className,
         classNames?.root,
@@ -154,28 +219,47 @@ const ToastItem = forwardRef<React.ComponentRef<typeof Root>, ToastItemProps>(
 );
 ToastItem.displayName = "ToastItem";
 
-export function Toaster({ children }: { children?: ReactNode }) {
+export function Toaster({
+  children,
+  placement = "bottom-right",
+  mobilePlacement = placement,
+  limit,
+  duration,
+  label,
+}: ToasterProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
   const toast = useCallback(
     (data: Omit<ToastData, "id">) => {
       const id = Math.random().toString(36).slice(2);
-      setToasts((prev) => [...prev, { ...data, id }]);
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 5000);
+      setToasts((prev) => {
+        const next = [...prev, { ...data, id }];
+        return limit !== undefined && limit >= 0 ? next.slice(Math.max(0, next.length - limit)) : next;
+      });
     },
-    [],
+    [limit],
   );
+
+  // Radix owns the timer (it pauses on hover/focus); we drop the toast once
+  // it reports closed, whether by timeout, swipe or the close button.
+  const remove = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <Provider>
+      <Provider duration={duration} label={label} swipeDirection={SWIPE_DIRECTION[placement]}>
         {toasts.map((t) => (
-          <ToastItem key={t.id} {...t} />
+          <ToastItem key={t.id} {...t} onOpenChange={(open) => !open && remove(t.id)} />
         ))}
-        <Viewport className="fixed bottom-panel right-panel z-[var(--z-toast)] flex flex-col gap-inline w-full max-w-sm" />
+        <Viewport
+          className={cn(
+            "fixed z-[var(--z-toast)] flex flex-col gap-inline w-full max-w-sm",
+            MOBILE_PLACEMENT[mobilePlacement],
+            DESKTOP_PLACEMENT[placement],
+          )}
+        />
       </Provider>
     </ToastContext.Provider>
   );

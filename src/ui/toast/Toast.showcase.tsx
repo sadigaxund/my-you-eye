@@ -1,5 +1,8 @@
 import type { ShowcaseEntry } from "../../showcase/types";
+import { useEffect, useSyncExternalStore } from "react";
+import type { ReactNode } from "react";
 import { Toaster, useToast } from ".";
+import type { ToasterProps } from ".";
 import { Button } from "../button";
 
 function ToastDemo() {
@@ -72,11 +75,103 @@ function ToastCustomClassNameDemo() {
   );
 }
 
+// The demo cards each create a stacking context, so a Toaster mounted in an
+// earlier card would paint its toasts underneath every later card. All demos
+// therefore share the ONE Toaster mounted by the LAST demo ("Trigger toasts"); the Placement
+// and "Limit and duration" demos steer it through this tiny store and fire
+// toasts through the bridge below.
+type Placement = NonNullable<ToasterProps["placement"]>;
+interface HostOptions {
+  placement: Placement;
+  mobilePlacement: Placement;
+  limit?: number;
+}
+let hostOptions: HostOptions = { placement: "bottom-right", mobilePlacement: "bottom-right" };
+let hostToast: ReturnType<typeof useToast>["toast"] | null = null;
+const hostListeners = new Set<() => void>();
+function setHostOptions(next: HostOptions) {
+  hostOptions = next;
+  hostListeners.forEach((l) => l());
+}
+function useHostOptions(): HostOptions {
+  return useSyncExternalStore(
+    (l) => {
+      hostListeners.add(l);
+      return () => void hostListeners.delete(l);
+    },
+    () => hostOptions,
+  );
+}
+
+function ToastBridge() {
+  const { toast } = useToast();
+  useEffect(() => {
+    hostToast = toast;
+    return () => {
+      hostToast = null;
+    };
+  }, [toast]);
+  return null;
+}
+
+function SharedToaster({ children }: { children: ReactNode }) {
+  const { placement, mobilePlacement, limit } = useHostOptions();
+  return (
+    <Toaster placement={placement} mobilePlacement={mobilePlacement} limit={limit} duration={4000}>
+      <ToastBridge />
+      {children}
+    </Toaster>
+  );
+}
+
+function PlacementButtons() {
+  const show = (p: Placement) => {
+    setHostOptions({ placement: p, mobilePlacement: "bottom-center" });
+    hostToast?.({ title: p, description: "Placed via the Toaster placement prop.", tone: "soft" });
+  };
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3">
+      <Button variant="secondary" onClick={() => show("top-left")}>Top left</Button>
+      <Button variant="secondary" onClick={() => show("top-center")}>Top center</Button>
+      <Button variant="secondary" onClick={() => show("top-right")}>Top right</Button>
+      <Button variant="secondary" onClick={() => show("bottom-left")}>Bottom left</Button>
+      <Button variant="secondary" onClick={() => show("bottom-center")}>Bottom center</Button>
+      <Button variant="secondary" onClick={() => show("bottom-right")}>Bottom right</Button>
+    </div>
+  );
+}
+
+function LimitButtons() {
+  const show = () => {
+    setHostOptions({ placement: "bottom-right", mobilePlacement: "bottom-right", limit: 1 });
+    hostToast?.({ title: "Synced", description: "Only the newest toast stays visible.", politeness: "polite", duration: 2000 });
+  };
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3">
+      <Button variant="secondary" onClick={show}>
+        Polite toast (limit 1, 2s)
+      </Button>
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Toast",
   group: "feedback",
   description: "A transient notification for success, danger, and default states, triggered imperatively via the useToast hook.",
   demos: [
+    {
+      name: "Placement",
+      description: "Toaster placement moves the stack to any corner or edge centre; mobilePlacement overrides it below sm.",
+      render: () => <PlacementButtons />,
+    },
+    {
+      name: "Limit and duration",
+      description: "Toaster limit keeps only the newest toasts; duration and politeness can be set per toast.",
+      render: () => <LimitButtons />,
+    },
     {
       name: "Trigger toasts",
       description: "Solid (default) tone, the soft tone with a status accent bar, and className/classNames overrides.",
@@ -88,13 +183,13 @@ const entry: ShowcaseEntry = {
       // earlier card would paint underneath every later card on the page.
       contain: false,
       render: () => (
-        <Toaster>
+        <SharedToaster>
           <div className="flex flex-col gap-4">
             <ToastDemo />
             <ToastSoftToneDemo />
             <ToastCustomClassNameDemo />
           </div>
-        </Toaster>
+        </SharedToaster>
       ),
     },
   ],
