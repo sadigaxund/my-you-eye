@@ -4,8 +4,23 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+- **Thread** — `Thread` / `ThreadStop` (+ `threadVariants`): a plain vertical rule with open-ring stops for career histories, step lists and outlines. `tone` (`default` | `accent`), `size` (`sm` | `md`); a stop takes `label`, `meta`, `headingLevel`, `current` (filled marker + `aria-current="step"`) and a body. Empty `Thread` renders nothing. New tokens `--spacing-thread-stop-sm` / `-md` / `--spacing-thread-rule` (#52).
+- **Stepper `variant="segmented"`** on `StepperList` — "Step n of N · label" plus one bar segment per step, for narrow containers such as a 5-step dialog where numbered markers clip. Same reachability, locked-step and `aria-current` contract as markers; 24px hit area over a 4px bar (`--spacing-stepper-segment`) (#35).
+- **ConfirmDialog** — `cancelLabel`, `cancelVariant`, `onCancel` (cancel button only) and a `children` body slot between the description and the actions. `title` is optional; without it the description becomes the dialog's accessible name (#46, #47).
+- **Toaster** — `placement`, `mobilePlacement` (below `sm`), `limit`, `duration` and `label` props (`ToasterProps`, `ToasterPlacement` exported); `ToastData` gains per-toast `duration` and `politeness` (`polite` → `role="status"`). Swipe direction follows placement (#51).
+- **Touch targets** — `--spacing-touch-target` (44px) and a `touch-target` utility: an invisible hit area on coarse pointers, no visible change. Applied to Button `sm` / `md` and the CodeBlock Copy button; `icon-sm` / `xs` stay dense by design (#48, #53).
+- **Link `size`** — `inline` (default, unchanged) or `target` (`inline-flex`, `min-h-touch-target`) for standalone links in rows (#50).
+- **Focus style switch** — `--focus-outline-width` / `--focus-outline-color` tokens and a `focus-ring` utility on every focusable component; set `data-focus-style="outline"` on `<html>` (or any subtree) to swap the ring for a 2px outline with `--focus-ring-offset` library-wide (#49).
+
 ### Changed
+- **Toaster** removes a toast when Radix closes it (timeout, swipe or close button) instead of a fixed 5 s timer, so toasts now pause on hover. Default duration is still 5 s (#51).
+- **Focus in forced-colors mode** — focusable components carry a transparent token-driven outline, so keyboard focus stays visible in Windows forced-colors mode where box-shadow rings vanish. Default appearance unchanged (#49).
 - AGENTS.md §3a: binding hardening contract (text overflow, flex sizing, table min-content, positioned sr-only inputs, zero states, RTL, per-theme contrast, keyboard/focus, range-end tests) plus a required "Stress" showcase demo for new and layout-touching component work.
+
+### Fixed
+- **`styles.css` works from `node_modules`** — the published stylesheet carries `@source "./*.js"`, so a Tailwind v4 consumer gets the library's utilities with a bare `@import "my-you-eye/styles.css"` (Tailwind skips `node_modules` by default) (#44).
+- **Fonts ship with the package** — Plus Jakarta Sans woff2 files are published in `dist/fonts/` and `dist/styles.css` references them relatively, so consumer bundlers resolve them without warnings (#45).
 
 
 ## [2026.9.1] - 2026-09-13

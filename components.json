@@ -1,7 +1,7 @@
 {
   "package": "my-you-eye",
   "generated": "auto — do not edit by hand; run `npm run manifest`",
-  "count": 133,
+  "count": 134,
   "components": [
     {
       "name": "Beat",
@@ -3545,6 +3545,40 @@
       ]
     },
     {
+      "name": "Thread",
+      "group": "display",
+      "tier": "ui",
+      "entry": "my-you-eye",
+      "folder": "ui/thread",
+      "variants": {
+        "tone": [
+          "accent",
+          "default"
+        ],
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "props": {},
+      "demos": [
+        "Career history",
+        "Tones",
+        "Sizes",
+        "Headings & current",
+        "Stress"
+      ],
+      "description": "A plain vertical rule with stops, for histories, step lists and outlines.",
+      "variantDefaults": {
+        "tone": "default",
+        "size": "md"
+      },
+      "extends": [
+        "OlHTMLAttributes<HTMLOListElement>",
+        "VariantProps<typeof threadVariants>"
+      ]
+    },
+    {
       "name": "VirtualList",
       "group": "display",
       "tier": "ui",
@@ -3751,8 +3785,40 @@
           "solid"
         ]
       },
-      "props": {},
+      "props": {
+        "placement": {
+          "type": "ToasterPlacement",
+          "optional": true,
+          "doc": "Where the toast stack sits from `sm` up."
+        },
+        "mobilePlacement": {
+          "type": "ToasterPlacement",
+          "optional": true,
+          "doc": "Where the stack sits below the `sm` breakpoint."
+        },
+        "limit": {
+          "type": "number",
+          "optional": true,
+          "doc": "Max toasts shown at once; when exceeded the oldest are removed."
+        },
+        "duration": {
+          "type": "number",
+          "optional": true,
+          "doc": "Default auto-dismiss delay in ms (Radix default 5000)."
+        },
+        "label": {
+          "type": "string",
+          "optional": true,
+          "doc": "Accessible label of the toast region (Radix default \"Notifications (F8)\")."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": true
+        }
+      },
       "demos": [
+        "Placement",
+        "Limit and duration",
         "Trigger toasts"
       ],
       "description": "A transient notification for success, danger, and default states, triggered imperatively via the useToast hook.",
@@ -3792,6 +3858,8 @@
         "Variants",
         "Sizes",
         "Icon-only (compact)",
+        "Touch target",
+        "Outline focus",
         "Disabled & loading"
       ],
       "description": "A clickable action trigger with primary, secondary, ghost, and danger variants, three sizes, and loading/disabled states.",
@@ -4488,6 +4556,10 @@
         "underline": [
           "false",
           "true"
+        ],
+        "size": [
+          "inline",
+          "target"
         ]
       },
       "props": {
@@ -4495,17 +4567,25 @@
           "type": "boolean",
           "optional": true,
           "doc": "Underline the label on hover."
+        },
+        "size": {
+          "type": "\"inline\" | \"target\"",
+          "optional": true,
+          "doc": "`inline` (default): sized by its text, for use in prose. `target`: a standalone link with a 44px minimum height (touch-target token)."
         }
       },
       "demos": [
         "Variants",
         "underline={false}",
-        "In a sentence"
+        "In a sentence",
+        "Sizes",
+        "Stress"
       ],
       "description": "A styled <a>, the primitive underneath any real navigable link: OutroScene's link list, prose, cards.",
       "variantDefaults": {
         "variant": "primary",
-        "underline": "true"
+        "underline": "true",
+        "size": "inline"
       },
       "extends": [
         "AnchorHTMLAttributes<HTMLAnchorElement>",
@@ -4651,7 +4731,9 @@
         "Horizontal",
         "Vertical",
         "Error & optional",
-        "Terminal step"
+        "Terminal step",
+        "Segmented",
+        "Stress"
       ],
       "description": "Ordered multi-step flow with locked later steps, per-step actions and a terminal result step.",
       "extends": [
@@ -5029,39 +5111,70 @@
       "props": {
         "title": {
           "type": "string",
-          "optional": false
+          "optional": true,
+          "doc": "Dialog heading and accessible name."
         },
         "description": {
           "type": "string",
-          "optional": true
+          "optional": true,
+          "doc": "Supporting text under the title."
         },
         "confirmLabel": {
           "type": "string",
-          "optional": true
+          "optional": true,
+          "doc": "Label of the confirm button."
+        },
+        "cancelLabel": {
+          "type": "string",
+          "optional": true,
+          "doc": "Label of the cancel button."
+        },
+        "cancelVariant": {
+          "type": "ButtonProps[\"variant\"]",
+          "optional": true,
+          "doc": "Visual variant of the cancel button."
         },
         "destructive": {
           "type": "boolean",
-          "optional": true
+          "optional": true,
+          "doc": "Styles the confirm button as `danger` instead of `primary`."
         },
         "onConfirm": {
           "type": "() => void",
-          "optional": false
+          "optional": false,
+          "doc": "Called when the confirm button is clicked."
+        },
+        "onCancel": {
+          "type": "() => void",
+          "optional": true,
+          "doc": "Called when the cancel button is clicked."
+        },
+        "children": {
+          "type": "ReactNode",
+          "optional": true,
+          "doc": "Extra content rendered between the header and the action buttons."
         },
         "trigger": {
           "type": "ReactNode",
-          "optional": true
+          "optional": true,
+          "doc": "Element that opens the dialog (rendered via `asChild`)."
         },
         "open": {
           "type": "boolean",
-          "optional": true
+          "optional": true,
+          "doc": "Controlled open state."
         },
         "onOpenChange": {
           "type": "(open: boolean) => void",
-          "optional": true
+          "optional": true,
+          "doc": "Called whenever the open state changes (confirm, cancel, Escape, overlay)."
         }
       },
       "demos": [
-        "Variants"
+        "Variants",
+        "Custom labels",
+        "Body slot",
+        "Stress"
       ]
     },
     {
