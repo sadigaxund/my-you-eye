@@ -5,15 +5,15 @@ import type { VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 /**
- * Tone and size are expressed as two custom properties on the list (`--thread-color`,
- * `--thread-marker`) that every `ThreadStop` reads, so a stop can never disagree with
+ * Tone and size are expressed as custom properties on the list (`--thread-color` for the
+ * rule, `--thread-ring` / `--thread-current` for markers, `--thread-marker` for size) that every `ThreadStop` reads, so a stop can never disagree with
  * its list and no context is needed.
  */
 const threadVariants = cva("relative m-0 list-none p-0", {
   variants: {
     tone: {
-      default: "[--thread-color:var(--color-border)] [--thread-current:var(--color-muted)]",
-      accent: "[--thread-color:var(--color-primary)] [--thread-current:var(--color-primary)]",
+      default: "[--thread-color:var(--color-border)] [--thread-ring:var(--color-muted)] [--thread-current:var(--color-muted)]",
+      accent: "[--thread-color:var(--color-primary)] [--thread-ring:var(--color-primary)] [--thread-current:var(--color-primary)]",
     },
     size: {
       sm: "[--thread-marker:var(--spacing-thread-stop-sm)] text-sm",

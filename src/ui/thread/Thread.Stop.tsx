@@ -37,7 +37,7 @@ const ThreadStop = forwardRef<HTMLLIElement, ThreadStopProps>(
         <span
           aria-hidden="true"
           className={cn(
-            "absolute start-0 top-[calc((1.5rem-var(--thread-marker))/2)] box-border size-(--thread-marker) rounded-full border-(length:--spacing-thread-rule) border-(--thread-color)",
+            "absolute start-0 top-[calc((1.5rem-var(--thread-marker))/2)] box-border size-(--thread-marker) rounded-full border-(length:--spacing-thread-rule) border-(--thread-ring)",
             current && "border-(--thread-current) bg-(--thread-current)",
           )}
         />
