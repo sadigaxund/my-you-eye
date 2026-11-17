@@ -139,6 +139,8 @@ export { StatusDot, statusDotVariants } from "./ui/status-dot";
 export type { StatusDotProps } from "./ui/status-dot";
 export { Terminal, terminalVariants } from "./ui/terminal";
 export type { TerminalProps, TerminalEntry, TerminalPromptGlyph } from "./ui/terminal";
+export { Thread, ThreadStop, threadVariants } from "./ui/thread";
+export type { ThreadProps, ThreadStopProps } from "./ui/thread";
 
 // ---------------------------------------------------------------------------
 // Feedback — transient status: loading, progress, alerts, toasts.
@@ -152,7 +154,7 @@ export type { SkeletonProps } from "./ui/skeleton";
 export { Spinner, spinnerVariants } from "./ui/spinner";
 export type { SpinnerProps } from "./ui/spinner";
 export { Toaster, useToast, toastVariants } from "./ui/toast";
-export type { ToastData, ToastClassNames } from "./ui/toast";
+export type { ToastData, ToastClassNames, ToasterProps, ToasterPlacement } from "./ui/toast";
 
 // ---------------------------------------------------------------------------
 // Overlay — anything that renders in a portal above the page.

@@ -77,7 +77,7 @@ const FindWidget = forwardRef<HTMLDivElement, FindWidgetProps>(
               aria-expanded={replaceOpen ? true : undefined}
               aria-label="Toggle replace row"
               onClick={() => setReplaceOpen((o) => !o)}
-              className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-ui-sm text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring"
+              className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-ui-sm text-muted hover:bg-surface-hover focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring"
             >
               <svg viewBox="0 0 12 12" aria-hidden="true" className={cn("size-3 fill-none stroke-current transition-transform duration-[var(--duration-fast)]", showReplaceRow && "rotate-90")}>
                 <path d="M4 2l4 4-4 4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -143,7 +143,7 @@ const FindWidget = forwardRef<HTMLDivElement, FindWidgetProps>(
               type="button"
               onClick={onReplace}
               disabled={!onReplace}
-              className="shrink-0 cursor-pointer rounded-ui-sm px-2 py-1 text-xs hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              className="shrink-0 cursor-pointer rounded-ui-sm px-2 py-1 text-xs hover:bg-surface-hover focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             >
               Replace
             </button>
@@ -151,7 +151,7 @@ const FindWidget = forwardRef<HTMLDivElement, FindWidgetProps>(
               type="button"
               onClick={onReplaceAll}
               disabled={!onReplaceAll}
-              className="shrink-0 cursor-pointer rounded-ui-sm px-2 py-1 text-xs hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              className="shrink-0 cursor-pointer rounded-ui-sm px-2 py-1 text-xs hover:bg-surface-hover focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             >
               All
             </button>
@@ -183,7 +183,7 @@ function FindToggle({
         pressed
           ? "bg-primary/15 text-primary"
           : "text-muted hover:bg-surface-hover hover:text-fg",
-        "focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+        "focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
       )}
     >
       <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5 stroke-current" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -209,7 +209,7 @@ function FindIconButton({
       disabled={!onClick}
       className={cn(
         "flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-ui-sm fill-none stroke-current text-muted",
-        "hover:bg-surface-hover hover:text-fg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+        "hover:bg-surface-hover hover:text-fg focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
         "disabled:pointer-events-none disabled:opacity-50",
       )}
     >

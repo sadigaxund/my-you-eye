@@ -36,7 +36,7 @@ const ActivityBarButton = ({
       aria-label={item.label}
       onClick={() => onSelect?.(item.id)}
       className={cn(
-        "relative flex h-8 w-full shrink-0 cursor-pointer items-center justify-center outline-none",
+        "relative flex h-8 w-full shrink-0 cursor-pointer items-center justify-center focus-ring",
         "hover:bg-sidebar-item-hover focus-visible:bg-sidebar-item-hover",
         item.active ? "text-primary" : "text-muted",
       )}

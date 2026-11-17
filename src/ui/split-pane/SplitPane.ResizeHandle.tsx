@@ -83,7 +83,7 @@ const ResizeHandle = forwardRef<HTMLDivElement, ResizeHandleProps>(
         onKeyDown={keyMove}
         onDoubleClick={onDoubleClick}
         className={cn(
-          "group relative z-10 shrink-0 select-none outline-none",
+          "group relative z-10 shrink-0 select-none focus-ring",
           direction === "row"
             ? "w-px cursor-col-resize after:absolute after:inset-y-0 after:-left-1 after:w-2.5"
             : "h-px cursor-row-resize after:absolute after:inset-x-0 after:-top-1 after:h-2.5",

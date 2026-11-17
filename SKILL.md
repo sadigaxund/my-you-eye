@@ -73,6 +73,8 @@ import "my-you-eye/styles.css"; // once, at the app root
 ```
 
 **Setup requirements:**
+- `@import "my-you-eye/styles.css";` (or the JS import above) is all the setup needed — the
+  stylesheet carries its own `@source` for the shipped bundles and its fonts, so no extra Tailwind config.
 - `my-you-eye/styles.css` is raw Tailwind v4 source — the consuming app must
   run Tailwind v4 itself. If it doesn't (Remotion, plain bundlers), import
   `my-you-eye/styles.compiled.css` instead: pre-compiled, drop-in, but only
@@ -406,6 +408,12 @@ chrome and page content can be tuned independently per theme.
 document.documentElement.dataset.theme = "glass"; // switch theme
 document.documentElement.classList.toggle("dark"); // toggle dark mode
 ```
+
+**Focus style.** Default focus is a token-driven box-shadow ring. Set
+`data-focus-style="outline"` on `<html>` (or any subtree) to use an outline
+instead (`--focus-outline-*`, `--focus-ring-offset`); an invisible outline is
+always present so focus stays visible in Windows forced-colors mode. Touch
+targets: override `--spacing-touch-target` (default 44px).
 
 Character guide: `default` neutral/safe · `contrast` accessibility-first,
 data-dense tools · `stark` minimal editorial · `brutal` bold borders, hard

@@ -14,7 +14,7 @@ import { VideoRoot } from "my-you-eye/video";
 import "my-you-eye/styles.css";
 ```
 
-**133 components** across 13 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
+**134 components** across 13 groups and 4 tiers (`ui` / `motion` / `scenes` / `present`).
 
 ## Video schema
 
@@ -742,6 +742,7 @@ Also accepts everything from `VariantProps<typeof texturedSurfaceVariants>`, `Om
 | `Separator` | `my-you-eye` | orientation: **horizontal** / vertical | Horizontal, Vertical, Border tiers |
 | `StatusDot` | `my-you-eye` | variant: danger / info / **neutral** / success / warning<br>size: **md** / sm | Variants, Sizes, Pulsing |
 | `Terminal` | `my-you-eye` | variant: **default** / elevated<br>scheme: amber / **default** / matrix<br>chrome: **dots** / none | Prompt glyphs, Title bar, Exit status & spinner, Variant, Color schemes, Chrome decorator, Fixed height, scrolls as content grows, Prompt segments, changed mid-session |
+| `Thread` | `my-you-eye` | tone: accent / **default**<br>size: **md** / sm | Career history, Tones, Sizes, Headings & current, Stress |
 | `VirtualList` | `my-you-eye` | — | 10,000 rows |
 
 ### display — props
@@ -895,6 +896,10 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 | `title?` | `string` | Caption for an optional window-style title bar above the entries. |
 | `rows?` | `number` | Fixed visible height, expressed as a whole number of text lines (owner feedback: "I want to see a constant height terminal that does not change or move, and the content gets added within it ... like a scrolling action"). |
 
+#### `Thread`
+
+Also accepts everything from `OlHTMLAttributes<HTMLOListElement>`, `VariantProps<typeof threadVariants>`.
+
 #### `VirtualList`
 
 Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
@@ -917,7 +922,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "children">`.
 | `Progress` | `my-you-eye` | variant: danger / **default** / success / warning | Variants, No label |
 | `Skeleton` | `my-you-eye` | shape: circle / rect / **text** | Shapes |
 | `Spinner` | `my-you-eye` | size: lg / **md** / sm | Sizes |
-| `Toast` | `my-you-eye` | variant: danger / **default** / success<br>tone: soft / **solid** | Trigger toasts |
+| `Toast` | `my-you-eye` | variant: danger / **default** / success<br>tone: soft / **solid** | Placement, Limit and duration, Trigger toasts |
 
 ### feedback — props
 
@@ -952,11 +957,22 @@ Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typ
 
 Also accepts everything from `HTMLAttributes<HTMLDivElement>`, `VariantProps<typeof spinnerVariants>`.
 
+#### `Toast`
+
+| Prop | Type | Description |
+|---|---|---|
+| `placement?` | `ToasterPlacement` | Where the toast stack sits from `sm` up. |
+| `mobilePlacement?` | `ToasterPlacement` | Where the stack sits below the `sm` breakpoint. |
+| `limit?` | `number` | Max toasts shown at once; when exceeded the oldest are removed. |
+| `duration?` | `number` | Default auto-dismiss delay in ms (Radix default 5000). |
+| `label?` | `string` | Accessible label of the toast region (Radix default "Notifications (F8)"). |
+| `children?` | `ReactNode` | — |
+
 ## inputs
 
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
-| `Button` | `my-you-eye` | variant: danger / ghost / **primary** / secondary<br>size: icon-sm / lg / **md** / sm / xs | Variants, Sizes, Icon-only (compact), Disabled & loading |
+| `Button` | `my-you-eye` | variant: danger / ghost / **primary** / secondary<br>size: icon-sm / lg / **md** / sm / xs | Variants, Sizes, Icon-only (compact), Touch target, Outline focus, Disabled & loading |
 | `Checkbox` | `my-you-eye` | size: **md** / sm | Sizes, States |
 | `ColorField` | `my-you-eye` | — | Accent color |
 | `Combobox` | `my-you-eye` | — | Basic, Uncontrolled, Disabled |
@@ -1386,11 +1402,11 @@ Also accepts everything from `Timing`.
 | `ActivityBar` | `my-you-eye` | — | Rail with footer item |
 | `Breadcrumbs` | `my-you-eye` | — | Default, Custom separator |
 | `EditorTabBar` | `my-you-eye` | — | Open documents |
-| `Link` | `my-you-eye` | variant: muted / **primary**<br>underline: false / **true** | Variants, underline={false}, In a sentence |
+| `Link` | `my-you-eye` | variant: muted / **primary**<br>underline: false / **true**<br>size: **inline** / target | Variants, underline={false}, In a sentence, Sizes, Stress |
 | `NavList` | `my-you-eye` | — | Settings rail, Horizontal, With groups, Links, Disabled & states |
 | `Pagination` | `my-you-eye` | — | Default (10 pages), Few pages |
 | `StatusBar` | `my-you-eye` | tone: danger / **default** / primary / success / warning | Left and right slots |
-| `Stepper` | `my-you-eye` | — | Horizontal, Vertical, Error & optional, Terminal step |
+| `Stepper` | `my-you-eye` | — | Horizontal, Vertical, Error & optional, Terminal step, Segmented, Stress |
 | `Tabs` | `my-you-eye` | variant: filing / pills / **underline** | Underline, Pills, Filing |
 | `TitleBar` | `my-you-eye` | — | Identity, breadcrumb, actions |
 
@@ -1437,6 +1453,7 @@ Also accepts everything from `AnchorHTMLAttributes<HTMLAnchorElement>`, `Variant
 | Prop | Type | Description |
 |---|---|---|
 | `underline?` | `boolean` | Underline the label on hover. |
+| `size?` | `"inline" \| "target"` | `inline` (default): sized by its text, for use in prose. `target`: a standalone link with a 44px minimum height (touch-target token). |
 
 #### `NavList`
 
@@ -1556,7 +1573,7 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onClose">`.
 | Component | Tier | Variants (**default**) | Demos |
 |---|---|---|---|
 | `Comparison` | `my-you-eye` | — | Side-by-side, Wipe (draggable), Wipe — progress-driven |
-| `ConfirmDialog` | `my-you-eye` | — | Variants |
+| `ConfirmDialog` | `my-you-eye` | — | Variants, Custom labels, Body slot, Stress |
 | `FileTree` | `my-you-eye` | — | Project tree with git status, Compact density |
 | `FormField` | `my-you-eye` | — | Default, With hint, Required with error |
 | `PageShell` | `my-you-eye` | — | Default, With actions |
@@ -1589,14 +1606,18 @@ Also accepts everything from `Omit<HTMLAttributes<HTMLDivElement>, "onChange">`.
 
 | Prop | Type | Description |
 |---|---|---|
-| `title` | `string` | — |
-| `description?` | `string` | — |
-| `confirmLabel?` | `string` | — |
-| `destructive?` | `boolean` | — |
-| `onConfirm` | `() => void` | — |
-| `trigger?` | `ReactNode` | — |
-| `open?` | `boolean` | — |
-| `onOpenChange?` | `(open: boolean) => void` | — |
+| `title?` | `string` | Dialog heading and accessible name. |
+| `description?` | `string` | Supporting text under the title. |
+| `confirmLabel?` | `string` | Label of the confirm button. |
+| `cancelLabel?` | `string` | Label of the cancel button. |
+| `cancelVariant?` | `ButtonProps["variant"]` | Visual variant of the cancel button. |
+| `destructive?` | `boolean` | Styles the confirm button as `danger` instead of `primary`. |
+| `onConfirm` | `() => void` | Called when the confirm button is clicked. |
+| `onCancel?` | `() => void` | Called when the cancel button is clicked. |
+| `children?` | `ReactNode` | Extra content rendered between the header and the action buttons. |
+| `trigger?` | `ReactNode` | Element that opens the dialog (rendered via `asChild`). |
+| `open?` | `boolean` | Controlled open state. |
+| `onOpenChange?` | `(open: boolean) => void` | Called whenever the open state changes (confirm, cancel, Escape, overlay). |
 
 #### `FileTree`
 

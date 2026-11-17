@@ -38,7 +38,7 @@ export const StatusBarItem = ({ icon, label, tooltip, tone, onClick }: StatusBar
     <button
       type="button"
       onClick={onClick as (e: MouseEvent) => void}
-      className={cn(statusBarItemVariants({ tone }), "cursor-pointer hover:bg-sidebar-item-hover focus-visible:bg-sidebar-item-hover focus-visible:outline-none")}
+      className={cn(statusBarItemVariants({ tone }), "cursor-pointer hover:bg-sidebar-item-hover focus-visible:bg-sidebar-item-hover focus-ring")}
     >
       {icon && <span aria-hidden="true" className="[&>svg]:size-3.5">{icon}</span>}
       {label}
