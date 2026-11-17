@@ -18,7 +18,7 @@ const publishSteps: readonly StepperStep[] = [
   { id: "result", label: "Result", terminal: true },
 ];
 
-function PublishFlow() {
+function PublishFlow({ variant = "markers" }: { variant?: "markers" | "segmented" }) {
   const [current, setCurrent] = useState("mode");
   const [completed, setCompleted] = useState<ReadonlySet<string>>(new Set());
   const [protect, setProtect] = useState(false);
@@ -42,7 +42,7 @@ function PublishFlow() {
 
   return (
     <Stepper steps={publishSteps} current={current} onCurrentChange={setCurrent} completed={completed}>
-      <StepperList />
+      <StepperList variant={variant} />
       <StepperPanel step="mode">
         <StepperPanelTitle>Mode</StepperPanelTitle>
         <RadioGroup defaultValue="link" aria-label="Sharing mode">
@@ -92,7 +92,7 @@ function PublishFlow() {
   );
 }
 
-function DialogDemo() {
+function DialogDemo({ variant }: { variant?: "markers" | "segmented" }) {
   return (
     <div className="flex justify-center">
       <Dialog>
@@ -104,7 +104,7 @@ function DialogDemo() {
             <DialogTitle>Share this document</DialogTitle>
             <DialogDescription>Choose who can open it and how.</DialogDescription>
           </DialogHeader>
-          <PublishFlow />
+          <PublishFlow variant={variant} />
         </DialogContent>
       </Dialog>
     </div>
@@ -117,6 +117,11 @@ const demos: ShowcaseDemo[] = [
     description:
       "A publish flow: mode, audience, optional protection, details, then a terminal result step. Details → Result shows the busy state.",
     render: () => <DialogDemo />,
+  },
+  {
+    name: "Segmented in a Dialog",
+    description: "The same five-step flow with variant=\"segmented\": no clipping at dialog width.",
+    render: () => <DialogDemo variant="segmented" />,
   },
 ];
 
