@@ -139,6 +139,8 @@ export { StatusDot, statusDotVariants } from "./ui/status-dot";
 export type { StatusDotProps } from "./ui/status-dot";
 export { Terminal, terminalVariants } from "./ui/terminal";
 export type { TerminalProps, TerminalEntry, TerminalPromptGlyph } from "./ui/terminal";
+export { Thread, ThreadStop, threadVariants } from "./ui/thread";
+export type { ThreadProps, ThreadStopProps } from "./ui/thread";
 
 // ---------------------------------------------------------------------------
 // Feedback — transient status: loading, progress, alerts, toasts.

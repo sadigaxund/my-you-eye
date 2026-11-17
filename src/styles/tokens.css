@@ -138,6 +138,11 @@
   --spacing-icon: 0.875rem;
   --spacing-dot: 0.375rem;
   --spacing-port: 0.75rem;
+  /* Thread (src/ui/thread): marker diameter per size, and the rule's width.
+     The marker sits on the same vertical axis as the rule by construction. */
+  --spacing-thread-stop-sm: 0.625rem;
+  --spacing-thread-stop-md: 0.875rem;
+  --spacing-thread-rule: 2px;
   /* Highlight's overlay is absolutely positioned over inline content
      (src/motion/highlight) — expanding it needs a negative inset, not
      padding (padding would push the text itself apart). Owner feedback:
