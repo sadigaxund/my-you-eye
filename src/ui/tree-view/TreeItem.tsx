@@ -156,7 +156,7 @@ const TreeItem = forwardRef<HTMLLIElement, TreeItemProps>(
             }
           }}
           className={cn(
-            "group/row flex items-stretch min-w-0 rounded-ui-sm cursor-pointer outline-none",
+            "group/row flex items-stretch min-w-0 rounded-ui-sm cursor-pointer focus-ring",
             "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
             "hover:bg-surface-hover",
             (current || selected) && "bg-surface-active",

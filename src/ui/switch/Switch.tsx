@@ -10,7 +10,7 @@ import { cn } from "../../lib/cn";
 // unchanged; checked state sets border-primary so the border color matches
 // the fill and stays invisible under it, keeping that look unchanged too.
 const switchVariants = cva(
-  "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border border-border p-px bg-secondary ring-offset-bg transition-colors focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-offset-[length:var(--focus-ring-offset)] disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:border-primary",
+  "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border border-border p-px bg-secondary ring-offset-bg transition-colors focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-offset-[length:var(--focus-ring-offset)] disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:border-primary",
   {
     variants: {
       size: {

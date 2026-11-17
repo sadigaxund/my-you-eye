@@ -281,6 +281,13 @@
   /* ---- Focus ring ---- */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
+  /* Focus outline (#49). Transparent by default: invisible on screen (the
+     box-shadow ring is the visible indicator) but painted in a system colour
+     in Windows forced-colors mode, where box-shadow rings vanish. Setting
+     `data-focus-style="outline"` (globals.css) makes the outline the
+     visible indicator instead of the ring. Used via the `focus-ring` utility. */
+  --focus-outline-width: 2px;
+  --focus-outline-color: transparent;
 
   /* ---- Density (min-height + vertical padding for compact chips) ---- */
   --density-chip-min-h: 1.375rem;

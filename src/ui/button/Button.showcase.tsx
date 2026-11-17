@@ -1,4 +1,5 @@
 import type { ShowcaseEntry } from "../../showcase/types";
+import { Link } from "../link";
 import { Button } from ".";
 
 const entry: ShowcaseEntry = {
@@ -57,6 +58,17 @@ const entry: ShowcaseEntry = {
           <Button size="icon-sm" variant="ghost" aria-label="Play (dense tier, no expansion)">
             <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>
           </Button>
+        </div>
+      ),
+    },
+    {
+      name: "Outline focus",
+      description: "data-focus-style=\"outline\" swaps the focus ring for an outline across a subtree.",
+      render: () => (
+        <div data-focus-style="outline" className="flex flex-wrap items-center justify-center gap-4">
+          <Button variant="primary">Save changes</Button>
+          <Button variant="secondary">Cancel</Button>
+          <Link href="https://example.com" size="target">Read the guide</Link>
         </div>
       ),
     },

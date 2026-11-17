@@ -6,7 +6,7 @@ import { Link } from "../link";
 import { useNavListContext } from "./NavList";
 
 const navListItemVariants = cva(
-  "relative flex w-full items-center gap-inline rounded-ui-sm px-3 py-1.5 text-sm text-muted transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-surface-hover hover:text-fg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset data-[current]:text-fg data-[current]:font-medium aria-disabled:pointer-events-none aria-disabled:opacity-50 no-underline",
+  "relative flex w-full items-center gap-inline rounded-ui-sm px-3 py-1.5 text-sm text-muted transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-surface-hover hover:text-fg focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring focus-visible:ring-inset data-[current]:text-fg data-[current]:font-medium aria-disabled:pointer-events-none aria-disabled:opacity-50 no-underline",
   {
     variants: {
       orientation: {

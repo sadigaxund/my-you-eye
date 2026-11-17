@@ -22,7 +22,7 @@ const tabsListVariants = cva("inline-flex items-center", {
 });
 
 const tabsTriggerVariants = cva(
-  "relative inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-bg transition-all focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "relative inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-bg transition-all focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -44,7 +44,7 @@ const tabsTriggerVariants = cva(
 );
 
 const tabsContentVariants = cva(
-  "relative ring-offset-bg focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
+  "relative ring-offset-bg focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring",
   {
     variants: {
       variant: {

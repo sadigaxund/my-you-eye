@@ -40,7 +40,7 @@ const DialogContent = forwardRef<React.ComponentRef<typeof Content>, DialogConte
             <DialogTitle className="sr-only">. */}
         <Close
           aria-label="Close"
-          className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring"
+          className="absolute right-panel top-panel rounded-ui-sm opacity-70 hover:opacity-100 focus-ring focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring"
         >
           <svg viewBox="0 0 15 15" aria-hidden="true" className="size-4 fill-current">
             <path d="M2 2l11 11M13 2L2 13" stroke="currentColor" strokeWidth="1.5" fill="none" />

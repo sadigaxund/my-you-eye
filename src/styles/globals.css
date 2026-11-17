@@ -157,6 +157,39 @@ html {
   backdrop-filter: blur(var(--backdrop-blur));
 }
 
+/* Focus style switch (#49). Default: the box-shadow ring (today's look).
+   Opt in to an outline-based focus indicator for a whole subtree by setting
+   `data-focus-style="outline"` on <html> (or any ancestor): the outline takes
+   the ring colour and the ring width collapses to 0. */
+[data-focus-style="outline"] {
+  --focus-outline-color: var(--color-ring);
+  --focus-ring-width: 0px;
+}
+
+/* `focus-ring` — the outline half of every focusable component's focus style.
+   Components pair it with the ring classes (`focus-visible:ring-...`). The
+   outline is token-driven and transparent by default, so it is invisible on
+   screen yet still painted by the browser in forced-colors mode (which
+   recolours transparent outlines to a system colour). `focus-ring-within` is
+   the :focus-within twin for wrappers around a hidden native input. */
+/* The unfocused `outline-color` is pinned to the token too: otherwise it is
+   `currentcolor`, and a `transition-colors` element (Button, Tabs, ...) would
+   visibly fade the outline from its text colour to transparent on focus. */
+@utility focus-ring {
+  outline-color: var(--focus-outline-color);
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+@utility focus-ring-within {
+  outline-color: var(--focus-outline-color);
+  &:focus-within {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
 /* Invisible touch hit area (#48). Only under a coarse pointer, grows the
    element's tappable area to at least --spacing-touch-target on both axes via
    a centred ::after, without changing its visible size or layout. Fine
