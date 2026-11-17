@@ -185,7 +185,7 @@ function CopyButton({ state, onCopy }: { state: CopyState; onCopy: () => void })
       type="button"
       onClick={onCopy}
       className={cn(
-        "flex items-center gap-1 rounded-ui-sm px-1.5 h-6 shrink-0",
+        "flex items-center gap-1 rounded-ui-sm px-1.5 h-6 shrink-0 touch-target",
         "text-xs text-code-muted hover:text-code-fg hover:bg-code-bg/80 border border-transparent hover:border-border",
         "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-[var(--duration-fast)]",
         "outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-ring cursor-pointer",

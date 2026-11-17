@@ -48,6 +48,19 @@ const entry: ShowcaseEntry = {
       ),
     },
     {
+      name: "Touch target",
+      description: "On coarse pointers, sm and md get an invisible 44px hit area; icon-sm and xs do not.",
+      render: () => (
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <Button size="sm">Small (hit area 44px)</Button>
+          <Button size="md">Medium (hit area 44px)</Button>
+          <Button size="icon-sm" variant="ghost" aria-label="Play (dense tier, no expansion)">
+            <svg viewBox="0 0 10 10" className="size-3 fill-current"><path d="M2 1l7 4-7 4V1z" /></svg>
+          </Button>
+        </div>
+      ),
+    },
+    {
       name: "Disabled & loading",
       render: () => (
         <div className="flex flex-wrap justify-center gap-3">

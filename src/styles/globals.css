@@ -157,6 +157,26 @@ html {
   backdrop-filter: blur(var(--backdrop-blur));
 }
 
+/* Invisible touch hit area (#48). Only under a coarse pointer, grows the
+   element's tappable area to at least --spacing-touch-target on both axes via
+   a centred ::after, without changing its visible size or layout. Fine
+   pointers get no rule at all. Do not combine with an element that already
+   uses ::after for something else. */
+@utility touch-target {
+  @media (pointer: coarse) {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, var(--spacing-touch-target));
+      height: max(100%, var(--spacing-touch-target));
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
 /* ScrollArea edge-fade masks (opt-in via the `fade` prop). Token-sized via
    --scrollarea-fade-size so a scrollable region visibly reads as scrollable
    without any per-component scrollbar styling (AGENTS.md §0.10 — this masks

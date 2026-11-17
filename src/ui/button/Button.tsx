@@ -21,8 +21,11 @@ const buttonVariants = cva(
         danger: "bg-danger text-danger-fg hover:bg-danger/90",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4 text-sm",
+        // sm/md get an invisible 44px hit area on coarse pointers (`touch-target`).
+        // icon-sm and xs deliberately do NOT: they are dense-toolbar tiers where an
+        // expanded hit area would overlap neighbouring controls.
+        sm: "h-8 px-3 text-xs touch-target",
+        md: "h-10 px-4 text-sm touch-target",
         lg: "h-12 px-6 text-base",
         // Compact icon-only control (no text label) — for inline, dense
         // contexts like a table-cell audio player's play/pause toggle,

@@ -272,6 +272,12 @@
   --z-overlay: 50;
   --z-toast: 60;
 
+  /* ---- Touch target ----
+     Minimum hit-area edge for coarse pointers (44px, WCAG 2.5.5 / Apple HIG).
+     Used by `min-h-touch-target` and the `touch-target` utility in globals.css.
+     Hosts may override it. */
+  --spacing-touch-target: 2.75rem;
+
   /* ---- Focus ring ---- */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
