@@ -4,6 +4,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 import { useStepperContext } from "./Stepper";
 import type { StepperStep } from "./Stepper";
+import { StepperSegments } from "./Stepper.Segments";
 
 const stepperMarkerVariants = cva(
   "size-6 shrink-0 rounded-full border text-xs font-medium inline-flex items-center justify-center",
@@ -22,7 +23,15 @@ const stepperMarkerVariants = cva(
   },
 );
 
-export type StepperListProps = OlHTMLAttributes<HTMLOListElement>;
+export interface StepperListProps extends OlHTMLAttributes<HTMLOListElement> {
+  /**
+   * `markers` (default): numbered circles with connectors and labels.
+   * `segmented`: compact progress bar, one segment per step, with a
+   * "Step n of N · label" line above — for narrow containers. Always laid out
+   * horizontally, regardless of `Stepper`'s `orientation`.
+   */
+  variant?: "markers" | "segmented";
+}
 
 function markerState(step: StepperStep, isCurrent: boolean, isCompleted: boolean) {
   if (step.error) return "error" as const;
@@ -37,8 +46,12 @@ function markerState(step: StepperStep, isCurrent: boolean, isCompleted: boolean
  * on focus), locked steps are real disabled buttons with sr-only "locked".
  */
 const StepperList = forwardRef<HTMLOListElement, StepperListProps>(
-  ({ className, "aria-label": ariaLabel = "Steps", ...rest }, ref) => {
+  ({ className, variant = "markers", "aria-label": ariaLabel = "Steps", ...rest }, ref) => {
     const { steps, current, completed, orientation, isLocked, go } = useStepperContext();
+
+    if (variant === "segmented") {
+      return <StepperSegments ref={ref} aria-label={ariaLabel} className={className} {...rest} />;
+    }
 
     return (
       <ol

@@ -134,6 +134,8 @@
   --spacing-inline: 0.5rem;
   --spacing-tight: 0.25rem;
   --spacing-bar: 0.25rem;
+  /* Height of one StepperList variant="segmented" segment bar. */
+  --spacing-stepper-segment: 0.25rem;
   --spacing-icon-sm: 0.75rem;
   --spacing-icon: 0.875rem;
   --spacing-dot: 0.375rem;

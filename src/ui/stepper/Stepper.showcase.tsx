@@ -151,6 +151,68 @@ function TerminalDemo() {
   );
 }
 
+const segmentedSteps: readonly StepperStep[] = [
+  { id: "mode", label: "Mode" },
+  { id: "audience", label: "Audience" },
+  { id: "protection", label: "Protection", optional: true },
+  { id: "details", label: "Details" },
+  { id: "result", label: "Result" },
+];
+
+function SegmentedDemo() {
+  const [current, setCurrent] = useState("audience");
+  const completed = new Set(["mode"]);
+  return (
+    <Stepper steps={segmentedSteps} current={current} onCurrentChange={setCurrent} completed={completed}>
+      <StepperList variant="segmented" />
+      <StepperPanel step="mode">
+        <StepperPanelTitle>Mode</StepperPanelTitle>
+      </StepperPanel>
+      <StepperPanel step="audience">
+        <StepperPanelTitle>Audience</StepperPanelTitle>
+        <p className="text-sm text-muted">Anyone with the link can open this document.</p>
+      </StepperPanel>
+      <StepperPanel step="protection">
+        <StepperPanelTitle>Protection</StepperPanelTitle>
+      </StepperPanel>
+      <StepperPanel step="details">
+        <StepperPanelTitle>Details</StepperPanelTitle>
+      </StepperPanel>
+      <StepperPanel step="result">
+        <StepperPanelTitle>Result</StepperPanelTitle>
+      </StepperPanel>
+      <StepperActions onNext={() => {}} />
+    </Stepper>
+  );
+}
+
+const longToken = "A".repeat(220);
+const stressSteps: readonly StepperStep[] = [
+  { id: "one", label: "Configure the destination bucket, region, credentials and retention policy for nightly exports" },
+  { id: "two", label: longToken, error: "Token is not valid" },
+  { id: "three", label: "Review" },
+];
+
+function StressDemo() {
+  const [current, setCurrent] = useState("one");
+  const [empty, setEmpty] = useState("none");
+  const completed = new Set(["one"]);
+  return (
+    <div className="flex flex-col gap-panel">
+      <div className="w-80">
+        <Stepper steps={stressSteps} current={current} onCurrentChange={setCurrent} completed={completed}>
+          <StepperList variant="segmented" />
+        </Stepper>
+      </div>
+      <div className="w-80">
+        <Stepper steps={[{ id: "none", label: "Only step" }]} current={empty} onCurrentChange={setEmpty}>
+          <StepperList variant="segmented" />
+        </Stepper>
+      </div>
+    </div>
+  );
+}
+
 const entry: ShowcaseEntry = {
   title: "Stepper",
   group: "navigation",
@@ -173,7 +235,17 @@ const entry: ShowcaseEntry = {
       description: "Reaching a terminal step hides Back and locks every earlier step.",
       render: () => <TerminalDemo />,
     },
+    {
+      name: "Segmented",
+      description: "Compact progress bar for narrow containers; the line above names the current step.",
+      render: () => <SegmentedDemo />,
+    },
     ...dialogDemos,
+    {
+      name: "Stress",
+      description: "Long label, 220-character token and a single step inside a 20rem container.",
+      render: () => <StressDemo />,
+    },
   ],
 };
 export default entry;
