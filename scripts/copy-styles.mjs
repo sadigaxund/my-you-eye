@@ -15,11 +15,27 @@ function fail(msg) {
 //  1. #44: Tailwind v4 skips node_modules when auto-detecting sources, so the
 //     published stylesheet must point at the shipped JS bundles (all at dist root,
 //     next to this file) with an explicit @source, or consumers get no utilities.
+//  2. #45: font urls become relative to the CSS file; the woff2 files are copied
+//     into dist/fonts/ below.
 const TW_IMPORT = '@import "tailwindcss";';
+const FONT_URL = 'url("/fonts/';
 let css = readFileSync(join(STYLES_DIR, "globals.css"), "utf8");
 if (!css.includes(TW_IMPORT)) fail(`anchor ${TW_IMPORT} not found in globals.css`);
+if (!css.includes(FONT_URL)) fail(`no ${FONT_URL}...) font urls found in globals.css`);
 css = css.replace(TW_IMPORT, `${TW_IMPORT}\n@source "./*.js";`);
+css = css.replaceAll(FONT_URL, 'url("./fonts/');
 writeFileSync(join(DIST_DIR, "styles.css"), css);
+
+const FONTS_SRC = join(ROOT, "public/fonts");
+const FONTS_DIST = join(DIST_DIR, "fonts");
+const fonts = existsSync(FONTS_SRC) ? readdirSync(FONTS_SRC).filter((f) => extname(f) === ".woff2") : [];
+if (fonts.length === 0) fail("no public/fonts/*.woff2 found to ship");
+mkdirSync(FONTS_DIST, { recursive: true });
+for (const f of fonts) copyFileSync(join(FONTS_SRC, f), join(FONTS_DIST, f));
+for (const m of css.matchAll(/url\("\.\/fonts\/([^"]+)"\)/g)) {
+  if (!fonts.includes(m[1])) fail(`styles.css references fonts/${m[1]} but it is not in public/fonts`);
+}
+copyFileSync(join(STYLES_DIR, "tokens.css"), join(DIST_DIR, "tokens.css"));
 
 const themesDist = join(DIST_DIR, "themes");
 if (!existsSync(themesDist)) mkdirSync(themesDist, { recursive: true });
