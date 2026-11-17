@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [2026.11.0] - 2026-11-17
+
 ### Added
 - **Thread** — `Thread` / `ThreadStop` (+ `threadVariants`): a plain vertical rule with open-ring stops for career histories, step lists and outlines. `tone` (`default` | `accent`), `size` (`sm` | `md`); a stop takes `label`, `meta`, `headingLevel`, `current` (filled marker + `aria-current="step"`) and a body. Empty `Thread` renders nothing. New tokens `--spacing-thread-stop-sm` / `-md` / `--spacing-thread-rule` (#52).
 - **Stepper `variant="segmented"`** on `StepperList` — "Step n of N · label" plus one bar segment per step, for narrow containers such as a 5-step dialog where numbered markers clip. Same reachability, locked-step and `aria-current` contract as markers; 24px hit area over a 4px bar (`--spacing-stepper-segment`) (#35).
